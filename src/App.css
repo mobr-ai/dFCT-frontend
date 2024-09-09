@@ -3,13 +3,26 @@
 }
 
 .App-logo {
-  height: 40vmin;
   pointer-events: none;
+  /* width: 87vw; */
+  height: 37vh;
+  object-fit: cover;
+}
+
+.App-drop {
+  display: inline-table;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.App-drop-item {
+  text-decoration: underline;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 20s ease-in-out;
   }
 }
 
@@ -21,6 +34,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
+  font-family: "Anton";
   color: white;
 }
 
