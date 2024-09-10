@@ -51,9 +51,8 @@
   }
 }
 
-/* HTML: <div class="loader"></div> */
 .loader {
-  width: 80px;
+  width: 40px;
   aspect-ratio: 1;
   border: 10px solid #000;
   box-sizing: border-box;

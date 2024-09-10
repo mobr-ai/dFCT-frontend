@@ -4,7 +4,7 @@ import StyledDropzone from './StyledDropzone.js'
 import request from 'superagent';
 import { useCallback } from 'react';
 
-function App() {
+function LandingPage() {
   const onDrop = useCallback((acceptedFiles) => {
     const req = request.post('/upload')
     acceptedFiles.forEach(file => {
@@ -14,11 +14,11 @@ function App() {
   }, []);
   
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="Landing">
+      <header className="Landing-header">
+        <img src={logo} className="Landing-logo" alt="logo" />
 
-        <div className="App-drop">
+        <div className="Landing-drop">
           <StyledDropzone onDrop={onDrop}/>
         </div>
       </header>
@@ -26,4 +26,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;

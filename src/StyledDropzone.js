@@ -54,6 +54,7 @@ function StyledDropzone(props) {
     const files = acceptedFiles.map((file) => (
       <p className="App-drop-item" key={file.path}>
         {file.path} ({(file.size/1024/1024).toFixed(2)} MB)
+        <div class="loader"></div>
       </p>
     ));
   
