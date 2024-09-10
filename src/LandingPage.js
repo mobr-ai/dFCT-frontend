@@ -1,5 +1,5 @@
 import logo from './logo.svg';
-import './App.css';
+import './LandingPage.css';
 import StyledDropzone from './StyledDropzone.js'
 import request from 'superagent';
 import { useCallback } from 'react';
