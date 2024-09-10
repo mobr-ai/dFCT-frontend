@@ -18,6 +18,8 @@
 
 .Landing-drop-item {
   text-decoration: underline;
+  display: flex;
+  align-items: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -52,34 +54,16 @@
 }
 
 .loader {
-  width: 40px;
-  aspect-ratio: 1;
-  border: 10px solid #000;
-  box-sizing: border-box;
-  background: radial-gradient(farthest-side, #fff 98%, #0000) top,
-    radial-gradient(farthest-side, #fff 98%, #0000) top,
-    radial-gradient(farthest-side, #fff 98%, #0000) left,
-    radial-gradient(farthest-side, #fff 98%, #0000) right,
-    radial-gradient(farthest-side, #fff 98%, #0000) bottom, #000;
-  background-size: 20px 20px;
-  background-repeat: no-repeat;
-  filter: blur(4px) contrast(10);
-  animation: l19 2s infinite;
+  width: 120px;
+  height: 20px;
+  background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%)
+    lightslategrey;
+  background-size: 300% 100%;
+  animation: l1 1s infinite linear;
+  margin-left: 10px;
 }
-@keyframes l19 {
+@keyframes l1 {
   0% {
-    background-position: top, top, left, right, bottom;
-  }
-  25% {
-    background-position: right, top, left, right, bottom;
-  }
-  50% {
-    background-position: bottom, top, left, right, bottom;
-  }
-  75% {
-    background-position: left, top, left, right, bottom;
-  }
-  100% {
-    background-position: top, top, left, right, bottom;
+    background-position: right;
   }
 }
