@@ -1,9 +1,19 @@
-import React from 'react';
+import {React} from 'react';
 import {useDropzone} from 'react-dropzone';
 import styled from 'styled-components';
 import './LandingPage.css';
 
+const getBackgroundColor = (props) => {
+  if(props.background) {
+    return props.background
+  }
+  return '#37474fff'
+}
+
 const getColor = (props) => {
+  if (props.border) {
+      return props.border;
+  }
   if (props.isDragAccept) {
       return '#00e676';
   }
@@ -13,6 +23,7 @@ const getColor = (props) => {
   if (props.isFocused) {
       return '#2196f3';
   }
+  
   return '#eeeeee';
 }
 
@@ -29,10 +40,11 @@ const Container = styled.div`
   border-radius: 25px;
   border-color: ${props => getColor(props)};
   border-style: dashed;
-  background-color: #37474fff;
+  background-color: ${props => getBackgroundColor(props)};
   color: #bdbdbd;
   outline: none;
   transition: border .24s ease-in-out;
+  cursor: pointer;
 `;
 
 function StyledDropzone(props) {
@@ -50,24 +62,24 @@ function StyledDropzone(props) {
         'image/png': ['.png'],
         'audio/mp3': ['.mp3']
         },
-        onDropAccepted: props.onDrop
+        onDropAccepted: props.onDropAccepted
     });
 
     const files = acceptedFiles.map((file) => (
       <p className="Landing-drop-item" key={file.path}>
         {file.path} ({(file.size/1024/1024).toFixed(2)} MB)
-        <div class="loader"></div>
+        <div className="loader"></div>
       </p>
     ));
   
   
   return (
-    <Container {...getRootProps({isFocused, isDragAccept, isDragReject})}>
+    <Container border={props.border} background={props.background} {...getRootProps({isFocused, isDragAccept, isDragReject})}>
       <input {...getInputProps()} />
-      <p>Drop files to verify, or click to select</p>
-      <aside>
+      <div>{props.msg}</div>
+      {props.showFiles ? <aside>
         <div>{files}</div>
-      </aside>
+      </aside>:""}
     </Container>
   );
 }

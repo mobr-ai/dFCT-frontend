@@ -4,8 +4,8 @@
 
 .Landing-logo {
   pointer-events: none;
-  /* width: 87vw; */
-  height: 37vh;
+  padding: 3vh;
+  height: 28vh;
   object-fit: cover;
 }
 
