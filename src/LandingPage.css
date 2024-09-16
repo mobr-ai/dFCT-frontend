@@ -16,10 +16,16 @@
   cursor: pointer;
 }
 
+.Landing-drop-message {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .Landing-drop-item {
   text-decoration: underline;
   display: flex;
   align-items: center;
+  padding-top: 10px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -51,6 +57,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.done:before {
+  content: "\2713";
+  display: inline-block;
+  color: rgb(204, 204, 204);
+  padding: 0 6px 0 0;
+  margin-left: 10px;
 }
 
 .loader {

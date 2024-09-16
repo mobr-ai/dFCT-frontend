@@ -28,9 +28,9 @@ const getColor = (props) => {
 }
 
 const Container = styled.div`
-  // flex: 1;
-  // display: flex;
-  // flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   font-size: 15px;
   padding: 15px;
@@ -68,7 +68,7 @@ function StyledDropzone(props) {
     const files = acceptedFiles.map((file) => (
       <div className="Landing-drop-item" key={file.path}>
         {file.path} ({(file.size/1024/1024).toFixed(2)} MB)
-        <div className="loader"></div>
+        <div className={file.completed?'done':'loader'}></div>
       </div>
     ));
   
@@ -76,10 +76,11 @@ function StyledDropzone(props) {
   return (
     <Container border={props.border} background={props.background} {...getRootProps({isFocused, isDragAccept, isDragReject})}>
       <input {...getInputProps()} />
-      <div>{props.msg}</div>
+      <div className='Landing-drop-message'>{props.msg}</div>
       {props.showFiles ? <aside>
         <div>{files}</div>
       </aside>:""}
+      {props.showLoading ? <div className='loader'></div>:""}
     </Container>
   );
 }

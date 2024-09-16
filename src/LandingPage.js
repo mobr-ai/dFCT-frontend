@@ -9,24 +9,43 @@ function LandingPage() {
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
   const [showFiles, setShowFiles] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [files, setFiles] = useState([])
 
 
   function onDropAccepted(acceptedFiles){
+    setFiles(acceptedFiles)
 
-    console.log("User dropped files = " + acceptedFiles.length)
+    console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
     
     function uploadSuccess(res){
-      console.log("Upload success: " + res.status)
+      console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
+
+      const newFiles = acceptedFiles.map((f, i) => {
+        if(f.name === res.req._data.get('key')){
+          f.completed = true
+        }
+        return f
+      });
+      if(newFiles.filter((f) => f.completed).length == acceptedFiles.length){
+        setDropMsg("Upload complete, processing files...")
+        console.log(dropMsg)
+        setShowFiles(false)
+        setLoading(true)
+      }
+      setFiles(newFiles);    
     }
 
     function uploadError(res){
       // display error msg
       showError("Oops, upload failed. Please try again later.")
-      console.log("Upload failed: " + res.status + " (" + res.message + ")")
+      console.log("Upload failed: " + res.req._data.get('key') + " [" + res.status + "] (" + res.message + ")")
     }
 
     function reqSuccess(res){
       setDropMsg("Signed request success, uploading files...")
+      setShowFiles(true)
+      setLoading(false)
       console.log(dropMsg)
 
       // upload files directly to s3
@@ -80,15 +99,13 @@ function LandingPage() {
       .then(reqSuccess, reqError)
   }
 
-  onDropAccepted.bind(this)
-
   return (
     <div className="Landing">
       <header className="Landing-header">
         <img src={logo} className="Landing-logo" alt="logo" />
 
         <div className="Landing-drop">
-          <StyledDropzone onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} background={dropBackground} border={dropBorder}/>
+          <StyledDropzone onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder}/>
         </div>
       </header>
     </div>
