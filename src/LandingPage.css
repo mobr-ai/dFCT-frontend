@@ -9,6 +9,13 @@
   object-fit: cover;
 }
 
+.Landing-logo-static {
+  pointer-events: none;
+  padding: 3vh;
+  height: 28vh;
+  object-fit: cover;
+}
+
 .Landing-drop {
   display: inline-table;
   align-items: center;

@@ -8,6 +8,7 @@ function LandingPage() {
   const [dropMsg, setDropMsg] = useState("Drop files to verify, or click to select.")
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
+  const [logoAnimation, setLogoAnimation] = useState(false)
   const [showFiles, setShowFiles] = useState(true)
   const [loading, setLoading] = useState(false)
   const [files, setFiles] = useState([])
@@ -16,6 +17,7 @@ function LandingPage() {
 
   function onDropAccepted(acceptedFiles){
     setFiles(acceptedFiles)
+    setLogoAnimation(true)
 
     console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
     
@@ -34,6 +36,7 @@ function LandingPage() {
         setShowFiles(false)
         setLoading(true)
         setDisableDrop(true)
+        setLogoAnimation(true)
       }
       setFiles(newFiles);    
     }
@@ -80,6 +83,7 @@ function LandingPage() {
       setDropBackground("#ff000045")
       setDropBorder("#eeeeee")
       setDisableDrop(false)
+      setLogoAnimation(false)
 
       // console.log("Error: " + msg)
     }
@@ -106,7 +110,8 @@ function LandingPage() {
   return (
     <div className="Landing">
       <header className="Landing-header">
-        <img src={logo} className="Landing-logo" alt="logo" />
+        {logoAnimation ? <img src={logo} className="Landing-logo" alt="logo"></img>:<img src={logo} className="Landing-logo-static" alt="logo"></img>}
+
 
         <div className="Landing-drop">
           <StyledDropzone noKeyboard={disableDrop} noClick={disableDrop} noDrag={disableDrop} onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder}/>
