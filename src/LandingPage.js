@@ -11,6 +11,7 @@ function LandingPage() {
   const [showFiles, setShowFiles] = useState(true)
   const [loading, setLoading] = useState(false)
   const [files, setFiles] = useState([])
+  const [disableDrop, setDisableDrop] = useState(false)
 
 
   function onDropAccepted(acceptedFiles){
@@ -27,11 +28,12 @@ function LandingPage() {
         }
         return f
       });
-      if(newFiles.filter((f) => f.completed).length == acceptedFiles.length){
+      if(newFiles.filter((f) => f.completed).length === acceptedFiles.length){
         setDropMsg("Upload complete, processing files...")
         console.log(dropMsg)
         setShowFiles(false)
         setLoading(true)
+        setDisableDrop(true)
       }
       setFiles(newFiles);    
     }
@@ -46,6 +48,7 @@ function LandingPage() {
       setDropMsg("Signed request success, uploading files...")
       setShowFiles(true)
       setLoading(false)
+      setDisableDrop(true)
       console.log(dropMsg)
 
       // upload files directly to s3
@@ -76,6 +79,7 @@ function LandingPage() {
       setShowFiles(false)
       setDropBackground("#ff000045")
       setDropBorder("#eeeeee")
+      setDisableDrop(false)
 
       // console.log("Error: " + msg)
     }
@@ -105,7 +109,7 @@ function LandingPage() {
         <img src={logo} className="Landing-logo" alt="logo" />
 
         <div className="Landing-drop">
-          <StyledDropzone onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder}/>
+          <StyledDropzone noKeyboard={disableDrop} noClick={disableDrop} noDrag={disableDrop} onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder}/>
         </div>
       </header>
     </div>

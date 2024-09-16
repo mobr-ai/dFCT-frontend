@@ -45,6 +45,7 @@ const Container = styled.div`
   outline: none;
   transition: border .24s ease-in-out;
   cursor: pointer;
+  padding-bottom: 20px;
 `;
 
 function StyledDropzone(props) {
@@ -62,7 +63,10 @@ function StyledDropzone(props) {
         'image/png': ['.png'],
         'audio/mp3': ['.mp3']
         },
-        onDropAccepted: props.onDropAccepted
+        onDropAccepted: props.onDropAccepted,
+        noClick: props.noClick,
+        noDrag: props.noDrag,
+        noKeyboard: props.noKeyboard
     });
 
     const files = acceptedFiles.map((file) => (
