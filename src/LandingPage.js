@@ -9,17 +9,60 @@ function LandingPage() {
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
   const [logoAnimation, setLogoAnimation] = useState(false)
-  const [showFiles, setShowFiles] = useState(true)
-  const [loading, setLoading] = useState(false)
+  const [showFiles, setShowFiles] = useState(false)
+  const [loading, showLoading] = useState(false)
   const [files, setFiles] = useState([])
   const [disableDrop, setDisableDrop] = useState(false)
-
+  const [progress, setProgress] = useState(10)
+  // const pollingInterval = 1000
 
   function onDropAccepted(acceptedFiles){
     setFiles(acceptedFiles)
     setLogoAnimation(true)
 
     console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
+    
+    function topicProcessError(res){
+      // display error msg
+      showError("Topic processing failed. Please try again later.")
+      console.log("Topic processing failed: [" + res.status + "] (" + res.message + ")")
+    }
+
+    async function waitTopicProcess(res){
+      var nextProgress = progress
+      // const sleep = ms => new Promise(r => setTimeout(r, ms));
+      const topic_id = res.body
+      const check_status = (res) => {
+        try {
+          var p = Number(res.text)
+          if(p === -1){
+            throw new Error("Could not read metadata")
+          }
+          setProgress(p)
+          nextProgress = p
+          console.log("Topic processing progress=" + p)
+        }
+        catch(e){
+          console.log("Error retrieving processing progress: " + e.message)
+          setProgress(0)
+          nextProgress = -1
+          showError("Error retrieving processing progress: " + e.message)
+        }
+      }
+
+      // request progress and wait for topic to be processed
+      while(nextProgress >= 0 && nextProgress < 100){
+        // request synchronously to check progress
+        await request.post("/check").send(topic_id).then((res) => check_status(res))
+        // await sleep(pollingInterval)
+      }
+
+      // TODO: send user to topic breakdown page
+      setDropMsg("Topic processing ended")
+      // showLoading(false)
+      setLogoAnimation(false)
+      // setDisableDrop(true)
+    }
     
     function uploadSuccess(res){
       console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
@@ -30,13 +73,21 @@ function LandingPage() {
         }
         return f
       });
+
+      // all files completed
       if(newFiles.filter((f) => f.completed).length === acceptedFiles.length){
+        console.log("Upload complete, processing files...")
+
         setDropMsg("Upload complete, processing files...")
-        console.log(dropMsg)
         setShowFiles(false)
-        setLoading(true)
+        showLoading(true)
         setDisableDrop(true)
         setLogoAnimation(true)
+
+        // create request to process content
+        var req = request.post("/process")
+        req.send(newFiles)
+        req.then(waitTopicProcess, topicProcessError);
       }
       setFiles(newFiles);    
     }
@@ -50,7 +101,7 @@ function LandingPage() {
     function reqSuccess(res){
       setDropMsg("Signed request success, uploading files...")
       setShowFiles(true)
-      setLoading(false)
+      showLoading(false)
       setDisableDrop(true)
       console.log(dropMsg)
 
@@ -84,6 +135,7 @@ function LandingPage() {
       setDropBorder("#eeeeee")
       setDisableDrop(false)
       setLogoAnimation(false)
+      showLoading(false)
 
       // console.log("Error: " + msg)
     }
@@ -114,7 +166,7 @@ function LandingPage() {
 
 
         <div className="Landing-drop">
-          <StyledDropzone noKeyboard={disableDrop} noClick={disableDrop} noDrag={disableDrop} onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder}/>
+          <StyledDropzone noKeyboard={disableDrop} noClick={disableDrop} noDrag={disableDrop} onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder} progress={progress}/>
         </div>
       </header>
     </div>

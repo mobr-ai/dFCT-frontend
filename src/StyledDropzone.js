@@ -31,11 +31,9 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: baseline;
   font-size: 15px;
-  padding: 15px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 15px 40px 20px 40px;
   border-width: 2px;
   border-radius: 25px;
   border-color: ${props => getColor(props)};
@@ -45,7 +43,8 @@ const Container = styled.div`
   outline: none;
   transition: border .24s ease-in-out;
   cursor: pointer;
-  padding-bottom: 20px;
+  min-width: 310px;
+}
 `;
 
 function StyledDropzone(props) {
@@ -76,15 +75,15 @@ function StyledDropzone(props) {
       </div>
     ));
   
-  
   return (
     <Container border={props.border} background={props.background} {...getRootProps({isFocused, isDragAccept, isDragReject})}>
       <input {...getInputProps()} />
       <div className='Landing-drop-message'>{props.msg}</div>
-      {props.showFiles ? <aside>
+      {(props.showFiles && !props.showLoading) ? <aside>
         <div>{files}</div>
+        {/* <div className='loader'></div> */}
       </aside>:""}
-      {props.showLoading ? <div className='loader'></div>:""}
+      {(props.showLoading && !props.showFiles) ? <div className='loader' style={{width: props.progress + "%", marginLeft : 0}}></div>:""}
     </Container>
   );
 }
