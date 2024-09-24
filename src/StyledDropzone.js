@@ -60,7 +60,9 @@ function StyledDropzone(props) {
         'video/mp4': ['.mp4'],
         'image/jpg': ['.jpg', '.jpeg'],
         'image/png': ['.png'],
-        'audio/mp3': ['.mp3']
+        'audio/mpeg': ['.mp3', '.mpga', '.m4a'],
+        'audio/wav': ['.wav'],
+        'audio/webm': ['.weba']
         },
         onDropAccepted: props.onDropAccepted,
         noClick: props.noClick,
