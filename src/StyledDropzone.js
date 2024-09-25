@@ -58,7 +58,7 @@ function StyledDropzone(props) {
     } = useDropzone({
         accept: {
         'video/mp4': ['.mp4'],
-        'image/jpg': ['.jpg', '.jpeg'],
+        'image/jpeg': ['.jpg', '.jpeg'],
         'image/png': ['.png'],
         'audio/mpeg': ['.mp3', '.mpga', '.m4a'],
         'audio/wav': ['.wav'],
