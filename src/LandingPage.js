@@ -2,7 +2,9 @@ import logo from './logo.svg';
 import './LandingPage.css';
 import StyledDropzone from './StyledDropzone.js'
 import request from 'superagent';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import GoogleAuth from './GoogleAuth';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function LandingPage() {
   const USER_ID = "22" // TODO: handle login and authentication
@@ -18,6 +20,13 @@ function LandingPage() {
   const [progress, setProgress] = useState(10)
   const [userId, setUserId] = useState(USER_ID)
   // const pollingInterval = 1000
+
+  const [user, setUser] = useState(null);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    //TODO: check if we want to fetch user-specific data
+  };
 
   function onDropAccepted(acceptedFiles){
     setFiles(acceptedFiles)
@@ -180,16 +189,32 @@ function LandingPage() {
   }
 
   return (
-    <div className="Landing">
-      <header className="Landing-header">
-        {logoAnimation ? <img src={logo} className="Landing-logo" alt="logo"></img>:<img src={logo} className="Landing-logo-static" alt="logo"></img>}
+    <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
+      <div className="Landing">
+        <header className="Landing-header">
+          {logoAnimation ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
 
+          <GoogleAuth onLoginSuccess={handleLoginSuccess} />
 
-        <div className="Landing-drop">
-          <StyledDropzone noKeyboard={disableDrop} noClick={disableDrop} noDrag={disableDrop} onDropAccepted={onDropAccepted} msg={dropMsg} showFiles={showFiles} showLoading={loading} background={dropBackground} border={dropBorder} progress={progress}/>
-        </div>
-      </header>
-    </div>
+          {user && (
+            <div className="Landing-drop">
+              <StyledDropzone
+                noKeyboard={disableDrop}
+                noClick={disableDrop}
+                noDrag={disableDrop}
+                onDropAccepted={onDropAccepted}
+                msg={dropMsg}
+                showFiles={showFiles}
+                showLoading={loading}
+                background={dropBackground}
+                border={dropBorder}
+                progress={progress}
+              />
+            </div>
+          )}
+        </header>
+      </div>
+    </GoogleOAuthProvider>
   );
 }
 
