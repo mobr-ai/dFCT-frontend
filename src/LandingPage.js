@@ -7,8 +7,6 @@ import GoogleAuth from './GoogleAuth';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function LandingPage() {
-  const USER_ID = "22" // TODO: handle login and authentication
-
   const [dropMsg, setDropMsg] = useState("Drop files to verify, or click to select.")
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
@@ -18,9 +16,7 @@ function LandingPage() {
   const [files, setFiles] = useState([])
   const [disableDrop, setDisableDrop] = useState(false)
   const [progress, setProgress] = useState(10)
-  const [userId, setUserId] = useState(USER_ID)
-  // const pollingInterval = 1000
-
+  
   const [user, setUser] = useState(null);
 
   const handleLoginSuccess = (userData) => {
@@ -75,7 +71,7 @@ function LandingPage() {
       // showLoading(false)
       setLogoAnimation(false)
       // setDisableDrop(true)
-      // this.props.history.push('/topic/' + userId + "/" + topicId)
+      // this.props.history.push('/topic/' + user.id + "/" + topicId)
     }
     
     function uploadSuccess(res){
@@ -102,7 +98,7 @@ function LandingPage() {
         request.post("/process")
           .send({files: newFiles})
           .send({topicId: topicId})
-          .send({userId: userId})
+          .send({userId: user.id})
           .then(waitTopicProcess, topicProcessError);
       }
       setFiles(newFiles);    
@@ -182,7 +178,7 @@ function LandingPage() {
 
     // create new topic for the content
     request
-      .put('/topic/' + userId)
+      .put('/topic/' + user.id)
       .send({'title': 'Topic template'})
       .send({'description': 'This is a new topic'})
       .then(getSignedRequest, () => showError("Oops, failed to create topic."))
