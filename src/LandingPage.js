@@ -5,6 +5,8 @@ import request from 'superagent';
 import { useState } from 'react';
 
 function LandingPage() {
+  const USER_ID = "22" // TODO: handle login and authentication
+
   const [dropMsg, setDropMsg] = useState("Drop files to verify, or click to select.")
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
@@ -14,11 +16,13 @@ function LandingPage() {
   const [files, setFiles] = useState([])
   const [disableDrop, setDisableDrop] = useState(false)
   const [progress, setProgress] = useState(10)
+  const [userId, setUserId] = useState(USER_ID)
   // const pollingInterval = 1000
 
   function onDropAccepted(acceptedFiles){
     setFiles(acceptedFiles)
     setLogoAnimation(true)
+    var topicId
 
     console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
     
@@ -31,7 +35,7 @@ function LandingPage() {
     async function waitTopicProcess(res){
       var nextProgress = progress
       // const sleep = ms => new Promise(r => setTimeout(r, ms));
-      const topic_id = res.body
+      const topicId = res.body
       const check_status = (res) => {
         try {
           var p = Number(res.text)
@@ -53,15 +57,16 @@ function LandingPage() {
       // request progress and wait for topic to be processed
       while(nextProgress >= 0 && nextProgress < 100){
         // request synchronously to check progress
-        await request.post("/check").send(topic_id).then((res) => check_status(res))
+        await request.post("/check").send(topicId).then((res) => check_status(res))
         // await sleep(pollingInterval)
       }
 
       // TODO: send user to topic breakdown page
-      setDropMsg("Topic processing ended")
+      setDropMsg("Topic processed successfully")
       // showLoading(false)
       setLogoAnimation(false)
       // setDisableDrop(true)
+      // this.props.history.push('/topic/' + userId + "/" + topicId)
     }
     
     function uploadSuccess(res){
@@ -85,9 +90,11 @@ function LandingPage() {
         setLogoAnimation(true)
 
         // create request to process content
-        var req = request.post("/process")
-        req.send(newFiles)
-        req.then(waitTopicProcess, topicProcessError);
+        request.post("/process")
+          .send({files: newFiles})
+          .send({topicId: topicId})
+          .send({userId: userId})
+          .then(waitTopicProcess, topicProcessError);
       }
       setFiles(newFiles);    
     }
@@ -146,17 +153,30 @@ function LandingPage() {
       console.log("Signed request failed: " + res.status + " (" + res.message + ")")
     }
 
-    // get signed request to S3 service
-    const fileArgs = []
-    acceptedFiles.forEach(file => {
-      fileArgs.push({"file": file.name, "type": file.type})
-    })
-    
+    function getSignedRequest(res){
+      topicId = res.body.topicId
+
+      // get signed request to S3 service
+      const fileArgs = []
+      acceptedFiles.forEach(file => {
+        fileArgs.push({"file": file.name, "type": file.type})
+      })
+      
+      request
+        .post('/sign_s3')
+        .send(fileArgs)
+        .send({"topic_id": topicId})
+        .set('Accept', 'application/json')
+        .then(reqSuccess, reqError)
+    }
+
+
+    // create new topic for the content
     request
-      .post('/sign_s3')
-      .send(fileArgs)
-      .set('Accept', 'application/json')
-      .then(reqSuccess, reqError)
+      .put('/topic/' + userId)
+      .send({'title': 'Topic template'})
+      .send({'description': 'This is a new topic'})
+      .then(getSignedRequest, () => showError("Oops, failed to create topic."))
   }
 
   return (
