@@ -17,11 +17,13 @@ function LandingPage() {
   const [files, setFiles] = useState([])
   const [disableDrop, setDisableDrop] = useState(false)
   const [progress, setProgress] = useState(10)
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
 
 
   const handleLoginSuccess = useCallback(userData => {
     setUser(userData);
+    window.sessionStorage.setItem("userData", JSON.stringify(userData));
+
     //TODO: check if we want to fetch user-specific data
   }, [setUser]);
 
@@ -40,8 +42,9 @@ function LandingPage() {
 
     async function waitTopicProcess(res){
       var nextProgress = progress
-      // const sleep = ms => new Promise(r => setTimeout(r, ms));
-      const topicId = res.body
+      const topic = res.body
+      const topicId = Object.keys(res.body)[0]
+      const topicURL = res.body['topic_url']
       const check_status = (res) => {
         try {
           var p = Number(res.text)
@@ -63,15 +66,13 @@ function LandingPage() {
       // request progress and wait for topic to be processed
       while(nextProgress >= 0 && nextProgress < 100){
         // request synchronously to check progress
-        await request.post("/check").send(topicId).then((res) => check_status(res))
-        // await sleep(pollingInterval)
+        await request.post("/check").send(topic).then((res) => check_status(res))
       }
 
       // send user to topic breakdown page
       setDropMsg("Topic processed successfully")
       setLogoAnimation(false)
-      // return redirect('/topic/' + user.id + "/" + topicId)
-      // this.props.history.push('/topic/' + user.id + "/" + topicId)
+      window.location.href = topicURL
     }
     
     function uploadSuccess(res){
@@ -175,7 +176,6 @@ function LandingPage() {
         .then(reqSuccess, reqError)
     }
 
-
     // create new topic for the content
     request
       .put('/topic/' + user.id)
@@ -192,8 +192,6 @@ function LandingPage() {
         
         <header className="Landing-header">
           {logoAnimation ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
-
-          {/* <GoogleAuth onLoginSuccess={handleLoginSuccess} /> */}
 
           {user && (
             <div className="Landing-drop">
