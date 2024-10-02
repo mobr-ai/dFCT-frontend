@@ -1,9 +1,10 @@
-import logo from './logo.svg';
 import './LandingPage.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import logo from './logo.svg';
 import StyledDropzone from './StyledDropzone.js'
+import NavBar from './NavBar.js';
 import request from 'superagent';
-import React, { useState } from 'react';
-import GoogleAuth from './GoogleAuth';
+import React, { useState, useCallback } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function LandingPage() {
@@ -16,13 +17,13 @@ function LandingPage() {
   const [files, setFiles] = useState([])
   const [disableDrop, setDisableDrop] = useState(false)
   const [progress, setProgress] = useState(10)
-  
   const [user, setUser] = useState(null);
 
-  const handleLoginSuccess = (userData) => {
+
+  const handleLoginSuccess = useCallback(userData => {
     setUser(userData);
     //TODO: check if we want to fetch user-specific data
-  };
+  }, [setUser]);
 
   function onDropAccepted(acceptedFiles){
     setFiles(acceptedFiles)
@@ -66,11 +67,10 @@ function LandingPage() {
         // await sleep(pollingInterval)
       }
 
-      // TODO: send user to topic breakdown page
+      // send user to topic breakdown page
       setDropMsg("Topic processed successfully")
-      // showLoading(false)
       setLogoAnimation(false)
-      // setDisableDrop(true)
+      // return redirect('/topic/' + user.id + "/" + topicId)
       // this.props.history.push('/topic/' + user.id + "/" + topicId)
     }
     
@@ -187,10 +187,13 @@ function LandingPage() {
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <div className="Landing">
+        
+        <NavBar userData={user} setUser={handleLoginSuccess}/>
+        
         <header className="Landing-header">
           {logoAnimation ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
 
-          <GoogleAuth onLoginSuccess={handleLoginSuccess} />
+          {/* <GoogleAuth onLoginSuccess={handleLoginSuccess} /> */}
 
           {user && (
             <div className="Landing-drop">
