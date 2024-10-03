@@ -21,18 +21,21 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  width: 100%;
 }
 
 .Landing-drop-message {
   margin-top: 10px;
   margin-bottom: 15px;
+  font-family: monospace;
+  font-size: medium;
 }
 
 .Landing-drop-item {
   text-decoration: underline;
-  display: flex;
-  align-items: center;
-  padding-top: 10px;
+  display: inline-flex;
+  /* align-items: center; */
+  padding: 10px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -51,6 +54,7 @@
   font-size: calc(10px + 2vmin);
   font-family: "Anton";
   color: white;
+  padding: 5%;
 }
 
 .Landing-link {
@@ -87,4 +91,28 @@
   0% {
     background-position: right;
   }
+}
+
+.Landing-input {
+  width: 100%;
+  padding-top: 15px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+#input-context {
+  resize: none;
+  background-color: #37474fff;
+  color: #bdbdbd;
+  border-color: cadetblue;
+}
+#input-context::placeholder {
+  color: #6e6e6e;
+}
+
+#input-process-button {
+  margin-top: 15px;
+  font-family: monospace;
 }

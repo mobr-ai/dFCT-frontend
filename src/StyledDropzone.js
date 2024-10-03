@@ -3,6 +3,7 @@ import {useDropzone} from 'react-dropzone';
 import styled from 'styled-components';
 import './LandingPage.css';
 
+
 const getBackgroundColor = (props) => {
   if(props.background) {
     return props.background
@@ -31,7 +32,6 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: baseline;
   font-size: 15px;
   padding: 15px 40px 20px 40px;
   border-width: 2px;
@@ -54,7 +54,6 @@ function StyledDropzone(props) {
     isFocused,
     isDragAccept,
     isDragReject,
-    acceptedFiles,
     } = useDropzone({
         accept: {
         'video/mp4': ['.mp4'],
@@ -70,7 +69,7 @@ function StyledDropzone(props) {
         noKeyboard: props.noKeyboard
     });
 
-    const files = acceptedFiles.map((file) => (
+    const files = props.files.map((file) => (
       <div className="Landing-drop-item" key={file.path}>
         {file.path} ({(file.size/1024/1024).toFixed(2)} MB)
         <div className={file.completed?'done':'loader'}></div>
@@ -85,7 +84,7 @@ function StyledDropzone(props) {
         <div>{files}</div>
         {/* <div className='loader'></div> */}
       </aside>:""}
-      {(props.showLoading && !props.showFiles) ? <div className='loader' style={{width: props.progress + "%", marginLeft : 0}}></div>:""}
+      {(props.showProgress && !props.showFiles) ? <div className='loader' style={{width: props.progress + "%", marginLeft : 0}}></div>:""}
     </Container>
   );
 }
