@@ -21,7 +21,7 @@ function LandingPage() {
   const [progress, setProgress] = useState(10)
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [topicId, setTopicId] = useState()
-  const [providedContext, setProvidedContext] = useState()
+  const [providedContext, setProvidedContext] = useState("")
 
   const handleLoginSuccess = useCallback(userData => {
     setUser(userData);
@@ -89,7 +89,7 @@ function LandingPage() {
       }
 
       // send user to topic breakdown page
-      if(nextProgress == 100){
+      if(nextProgress === 100){
         setDropMsg("Topic processed successfully")
         setLoading(false)
         window.location.href = topicURL 

@@ -1,4 +1,5 @@
 import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -54,7 +55,17 @@ function NavBar(props) {
             handleGoogleResponse(tokenResponse)
         },
     });
-
+    const userMenu = props.userData && (
+        <Container id="navbar-user-dropdown-container">
+            <Image
+                src={props.userData.avatar}
+                alt="Profile avatar"
+                roundedCircle
+                style={{ width: '30px', marginRight: '5px' }}
+            />
+            {' ' + props.userData.username}
+        </Container>
+    )
     return (
         <Navbar data-bs-theme="dark" expand="lg" className="bg-body-tertiary justify-content-end" sticky="top">
         <Container>
@@ -78,7 +89,7 @@ function NavBar(props) {
                 }
                 {
                     props.userData && (
-                        <NavDropdown title={props.userData.username} id="basic-nav-dropdown">
+                        <NavDropdown title={userMenu} id="navbar-dropdown">
                         <NavDropdown.Item onClick={() => props.setUser(null)}>Logout</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item>
