@@ -44,6 +44,11 @@
   }
 }
 
+.Landing-header-top {
+  top: 25%;
+  position: relative;
+}
+
 .Landing-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -91,6 +96,10 @@
   0% {
     background-position: right;
   }
+}
+
+.Landing-input-group {
+  margin-top: 1rem;
 }
 
 .Landing-input {

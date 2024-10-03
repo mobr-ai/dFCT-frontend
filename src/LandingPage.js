@@ -89,9 +89,11 @@ function LandingPage() {
       }
 
       // send user to topic breakdown page
-      setDropMsg("Topic processed successfully")
-      setLoading(false)
-      window.location.href = topicURL
+      if(nextProgress == 100){
+        setDropMsg("Topic processed successfully")
+        setLoading(false)
+        window.location.href = topicURL 
+      }
     }
 
     // all files completed
@@ -216,10 +218,10 @@ function LandingPage() {
         <NavBar userData={user} setUser={handleLoginSuccess}/>
         
         <header className="Landing-header">
-          <div>
+          <div className="Landing-header-top">
             {loading ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
           </div>
-          <Form.Group className="mb-3" controlId="input-context">
+          <Form.Group className="Landing-input-group mb-3" controlId="input-context">
 
           {user && (
             <div className="Landing-drop">
@@ -240,7 +242,7 @@ function LandingPage() {
           )}
           {(showFiles && files.length > 0) && (
             <div className="Landing-input">
-                <Form.Label><b><i>Optional</i></b>: Claims or other information you may have about the content</Form.Label>
+                <Form.Label><b><i>Optional</i></b>: Claims or information you may want to fact-check</Form.Label>
                 <Form.Control as="textarea" onChange={handleTextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
                 <Button 
                   id="input-process-button" 
