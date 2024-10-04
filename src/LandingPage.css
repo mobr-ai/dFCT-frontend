@@ -18,10 +18,9 @@
 
 .Landing-drop {
   display: inline-table;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
   width: 100%;
+  padding-bottom: 1rem;
 }
 
 .Landing-drop-message {
@@ -49,13 +48,13 @@
   position: relative;
 }
 
-.Landing-header {
+.Landing-body {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   font-size: calc(10px + 2vmin);
   font-family: "Anton";
   color: white;
@@ -109,6 +108,75 @@
   border-radius: 4px;
   font-size: 12px;
   font-family: monospace;
+}
+
+.Landing-input-url {
+  width: 100%;
+  padding-top: 1rem;
+}
+
+.Landing-url-card {
+  font-size: 12px;
+  font-family: monospace;
+  width: 15rem;
+  text-align: left;
+  margin: 1rem;
+  cursor: pointer;
+}
+
+.Landing-url-card-img {
+  width: fit-content !important;
+  max-height: 15vh;
+  align-self: center;
+  max-width: 100%;
+}
+
+.Landing-url-card-button {
+  font-size: 12px !important;
+}
+
+.Landing-url-card-title {
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
+.Landing-url-card-container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: space-evenly;
+}
+
+#input-url-button {
+  font-family: monospace;
+  font-size: small;
+}
+
+#input-url-label {
+  background-color: #343a40;
+  font-family: monospace;
+  color: #bdbdbd;
+  font-size: small;
+}
+
+#input-url-text {
+  font-family: monospace;
+  font-size: medium;
+}
+
+#input-url-help-msg {
+  color: red !important;
+  font-family: monospace;
+  font-size: small;
+  display: flex;
+}
+
+#landing-input-or-label {
+  padding-top: 1rem;
+  color: white !important;
+  font-family: monospace;
+  font-size: large;
 }
 
 #input-context {

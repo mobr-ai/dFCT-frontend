@@ -1,22 +1,35 @@
 import './LandingPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import logo from './logo.svg';
-import StyledDropzone from './StyledDropzone.js'
-import NavBar from './NavBar.js';
+import InputGroup from 'react-bootstrap/InputGroup';
+
 import request from 'superagent';
 import React, { useState, useCallback } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+import logo from './logo.svg';
+// import placeholder from './placeholder.svg'
+import StyledDropzone from './StyledDropzone.js'
+import NavBar from './NavBar.js';
+
 function LandingPage() {
-  const [dropMsg, setDropMsg] = useState("Drop files to analyze, or click to select.")
+  const welcomeMsg = "Drop files to analyze, or click to select."
+  const [dropMsg, setDropMsg] = useState(welcomeMsg)
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
   const [loading, setLoading] = useState(false)
   const [showFiles, setShowFiles] = useState(false)
+  const [showURLs, setShowURLs] = useState(false)
   const [showProgress, setShowProgress] = useState(false)
   const [files, setFiles] = useState([])
+  const [urls, setURLs] = useState([])
+  const [fetching, setFetching] = useState(false)
   const [disableDrop, setDisableDrop] = useState(false)
   const [progress, setProgress] = useState(10)
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
@@ -30,7 +43,13 @@ function LandingPage() {
     //TODO: check if we want to fetch user-specific data
   }, [setUser]);
 
-  function showError(msg=null){
+  function showError(msg=null, clear=false){
+    if(clear){
+      setDropBackground("#37474fff")
+      setDropBorder("#eeeeee")
+      setDropMsg(welcomeMsg)
+      return
+    }
     if(msg){
       setDropMsg(msg)
       setFiles([])
@@ -58,8 +77,6 @@ function LandingPage() {
     }
 
     async function waitTopicProcess(res){
-      setLoading(true)
-
       var nextProgress = progress
       const topic = res.body
       // const topicId = Object.keys(res.body)[0]
@@ -91,7 +108,7 @@ function LandingPage() {
       // send user to topic breakdown page
       if(nextProgress === 100){
         setDropMsg("Topic processed successfully")
-        setLoading(false)
+        // setLoading(false)
         window.location.href = topicURL 
       }
     }
@@ -100,10 +117,12 @@ function LandingPage() {
     if(files.filter((f) => f.completed).length === files.length){
       console.log("Upload complete, processing files...")
 
-      setDropMsg("Processing files...")
+      setDropMsg("Processing content...")
       setShowFiles(false)
+      setShowURLs(false)
       setShowProgress(true)
       setDisableDrop(true)
+      setLoading(true)
 
       // create request to process content
       request.post("/process")
@@ -118,6 +137,7 @@ function LandingPage() {
   function onDropAccepted(acceptedFiles){
     console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length) 
 
+    showError("", true)
     setFiles(files.concat(acceptedFiles))
     setLoading(true)
     
@@ -207,55 +227,141 @@ function LandingPage() {
     }
   }
 
-  const handleTextInput = (event) => {
+  const handleContextInput = (event) => {
     setProvidedContext(event.target.value);
   };
 
-  return (
-    <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-      <div className="Landing">
-        
-        <NavBar userData={user} setUser={handleLoginSuccess}/>
-        
-        <header className="Landing-header">
-          <div className="Landing-header-top">
-            {loading ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
-          </div>
-          <Form.Group className="Landing-input-group mb-3" controlId="input-context">
+  const handleURLInput = (event) => {
+    if(document.getElementById('input-url-text').value){
+      const url = {"url": document.getElementById('input-url-text').value, "metadata": ""}
 
-          {user && (
-            <div className="Landing-drop">
-              <StyledDropzone
-                noKeyboard={disableDrop}
-                noClick={disableDrop}
-                noDrag={disableDrop}
-                onDropAccepted={onDropAccepted}
-                msg={dropMsg}
-                showFiles={showFiles}
-                showProgress={showProgress}
-                background={dropBackground}
-                border={dropBorder}
-                progress={progress}
-                files={files}
-              />
-            </div>
-          )}
-          {(showFiles && files.length > 0) && (
-            <div className="Landing-input">
-                <Form.Label><b><i>Optional</i></b>: Claims or information you may want to fact-check</Form.Label>
-                <Form.Control as="textarea" onChange={handleTextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
-                <Button 
-                  id="input-process-button" 
-                  variant="dark" 
-                  onClick={!loading ? processTopic : null}
-                  disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                >ANALYZE</Button>
-            </div>
-          )}
-          </Form.Group>
-        </header>
+      const metaSuccess = (res) => {
+        url['metadata'] = res.body
+        setURLs(urls.concat([url]))
+        setShowURLs(true)
+        setFetching(false)
+      }
+
+      const metaError = (res) => {
+        // display error msg
+        console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
+        document.getElementById('input-url-help-msg').innerText = "Oops, error fetching URL"
+        setFetching(false)
+      }
+
+      request
+      .post('/fetch_url')
+      .send({"url": document.getElementById('input-url-text').value})
+      .set('Accept', 'application/json')
+      .then(metaSuccess, metaError)
+
+      document.getElementById('input-url-text').value = ""
+      document.getElementById('input-url-help-msg').innerText = ""
+      setFetching(true)
+    }
+  };
+
+  const openInNewTab = (url) => {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
+
+  const removeCard = (url) => {
+    let filtered = urls.filter((u) => { return !u.url.includes(url) });
+    setURLs(filtered)
+  }
+
+  const urlCards = urls.map((u) => (
+    <Card variant="dark" className="Landing-url-card">
+      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.metadata['og:url'])} variant="top" src={u.metadata['og:image'] || './placeholder.png'} style={u.metadata['og:image'] ? {opacity: '1'} : {opacity: '0.5'}} alt="Website image or cover" />
+      <Card.Body>
+        <Card.Title className="Landing-url-card-title">{u.metadata['og:site_name']}</Card.Title>
+        <Card.Text>
+          {u.metadata['og:title']}
+        </Card.Text>
+        <Button className="Landing-url-card-button" onClick={() => removeCard(u.metadata['og:url'])} variant="secondary">Remove</Button>
+      </Card.Body>
+      <Card.Footer>
+          <small onClick={() => openInNewTab(u.metadata['og:url'])} className="text-muted"><i>{u.metadata['og:url']}</i></small>
+      </Card.Footer>
+    </Card>
+  ));
+
+  return (
+      <div className="Landing d-flex flex-column">
+        <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
+          <NavBar userData={user} setUser={handleLoginSuccess}/>
+
+          <div className="Landing-body">
+            <main>
+              <div className="Landing-header-top">
+                  {loading ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
+              </div>
+                {user && (
+                  <Form.Group className="Landing-input-group mb-3" id="input-form-group">
+                    <div className="Landing-drop">
+                    <StyledDropzone
+                      noKeyboard={disableDrop}
+                      noClick={disableDrop}
+                      noDrag={disableDrop}
+                      onDropAccepted={onDropAccepted}
+                      msg={dropMsg}
+                      showFiles={showFiles}
+                      showProgress={showProgress}
+                      background={dropBackground}
+                      border={dropBorder}
+                      progress={progress}
+                      files={files}
+                    />
+                    </div>
+                    {!loading && (
+                      <>
+                        <Form.Text id="landing-input-or-label" muted>
+                          AND/OR
+                        </Form.Text>
+                        <div>
+                          <InputGroup className="Landing-input-url mb-3">
+                                <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
+                                <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg"/>
+                                <Button 
+                                  id="input-url-button" 
+                                  variant="dark"
+                                  onClick={!fetching ? handleURLInput : null}
+                                  disabled={fetching}
+
+                                >{fetching ? 'Loading...' : 'Add URL'}</Button>
+                          </InputGroup>
+                          <Form.Text id="input-url-help-msg" muted/>
+                        </div>
+                        <br style={{clear: "both"}} />
+                      </>
+                    )}
+                    
+                    {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
+                      <>
+                        <div className="Landing-url-card-container">{urlCards}</div>
+                        <div className="Landing-input">
+                          <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
+                          <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
+                        </div>
+                        <Button 
+                                id="input-process-button" 
+                                variant="dark" 
+                                onClick={!loading ? processTopic : null}
+                                disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
+                        >ANALYZE</Button>
+                      </>
+                      
+                    )}
+                  </Form.Group>
+                )}
+            </main>
+            <footer>
+
+            </footer>
+          </div>
+        </GoogleOAuthProvider>
       </div>
-    </GoogleOAuthProvider>
   );
 }
 
