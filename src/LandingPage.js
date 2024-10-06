@@ -62,7 +62,35 @@ function LandingPage() {
     // console.log("Error: " + msg)
   }
 
+  const checkTopic = (callback) => {
+    if (!topicId) {
+      request
+        .put('/topic/' + user.id)
+        .send({ 'title': 'Topic template' })
+        .send({ 'description': 'This is a new topic' })
+        .then(callback, () => showError("Oops, failed to create topic."))
+    }
+    else {
+      callback()
+    }
+  }
+
   const processTopic = () => {
+
+    function requestProcessing(res) {
+      if (res && !topicId) {
+        setTopicId(res.body.topicId)
+      }
+
+      // create request to process content
+      request.post("/process")
+        .send({ files: files })
+        .send({ urls: urls })
+        .send({ topicId: topicId })
+        .send({ userId: user.id })
+        .send({ providedContext: providedContext })
+        .then(waitTopicProcess, topicProcessError);
+    }
 
     function topicProcessError(res) {
       // display error msg
@@ -108,8 +136,8 @@ function LandingPage() {
     }
 
     // all files completed
-    if (files.filter((f) => f.completed).length === files.length) {
-      console.log("Upload complete, processing files...")
+    if (urls.length > 0 || files.filter((f) => f.completed).length === files.length) {
+      console.log("All files available, processing content...")
 
       setDropMsg("Processing content...")
       setShowFiles(false)
@@ -118,13 +146,8 @@ function LandingPage() {
       setDisableDrop(true)
       setLoading(true)
 
-      // create request to process content
-      request.post("/process")
-        .send({ files: files })
-        .send({ topicId: topicId })
-        .send({ userId: user.id })
-        .send({ providedContext: providedContext })
-        .then(waitTopicProcess, topicProcessError);
+      // create new topic if necessary (urls-only case)
+      checkTopic(requestProcessing)
     }
   }
 
@@ -189,7 +212,7 @@ function LandingPage() {
     }
 
     function getSignedRequest(res) {
-      if (!topicId) {
+      if (res && !topicId) {
         setTopicId(res.body.topicId)
       }
 
@@ -208,17 +231,8 @@ function LandingPage() {
         .then(reqSuccess, reqError)
     }
 
-    // create new topic for the content
-    if (!topicId) {
-      request
-        .put('/topic/' + user.id)
-        .send({ 'title': 'Topic template' })
-        .send({ 'description': 'This is a new topic' })
-        .then(getSignedRequest, () => showError("Oops, failed to create topic."))
-    }
-    else {
-      getSignedRequest()
-    }
+    // create new topic for the content if necessary
+    checkTopic(getSignedRequest)
   }
 
   const handleContextInput = (event) => {
