@@ -276,6 +276,11 @@ function LandingPage() {
     if (newWindow) newWindow.opener = null
   }
 
+  const truncateString = (string = '', maxLength = 100) =>
+    string.length > maxLength
+      ? `${string.substring(0, maxLength)}…`
+      : string
+
   const removeCard = (url) => {
     let filtered = urls.filter((u) => { return !u.url.includes(url) });
     setURLs(filtered)
@@ -292,7 +297,7 @@ function LandingPage() {
       <Card.Body>
         <Card.Title className="Landing-url-card-title">{getHostname(u.url)}</Card.Title>
         <Card.Text>
-          {u.metadata['og:title']}
+          {truncateString(u.metadata['og:title'])}
         </Card.Text>
         <Button className="Landing-url-card-button" onClick={() => removeCard(u.url)} variant="secondary">Remove</Button>
       </Card.Body>
