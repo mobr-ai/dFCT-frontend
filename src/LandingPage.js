@@ -281,18 +281,23 @@ function LandingPage() {
     setURLs(filtered)
   }
 
+  const getHostname = (url) => {
+    // use URL constructor and return hostname
+    return new URL(url).hostname;
+  }
+
   const urlCards = urls.map((u) => (
     <Card variant="dark" className="Landing-url-card">
-      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.metadata['og:url'])} variant="top" src={u.metadata['og:image'] || './placeholder.png'} style={u.metadata['og:image'] ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
+      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.url)} variant="top" src={u.metadata['og:image'] || './placeholder.png'} style={u.metadata['og:image'] ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
       <Card.Body>
-        <Card.Title className="Landing-url-card-title">{u.metadata['og:site_name']}</Card.Title>
+        <Card.Title className="Landing-url-card-title">{getHostname(u.url)}</Card.Title>
         <Card.Text>
           {u.metadata['og:title']}
         </Card.Text>
-        <Button className="Landing-url-card-button" onClick={() => removeCard(u.metadata['og:url'])} variant="secondary">Remove</Button>
+        <Button className="Landing-url-card-button" onClick={() => removeCard(u.url)} variant="secondary">Remove</Button>
       </Card.Body>
       <Card.Footer>
-        <small onClick={() => openInNewTab(u.metadata['og:url'])} className="text-muted"><i>{u.metadata['og:url']}</i></small>
+        <small onClick={() => openInNewTab(u.url)} className="text-muted"><i>{u.url}</i></small>
       </Card.Footer>
     </Card>
   ));
