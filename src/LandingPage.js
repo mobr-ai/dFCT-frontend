@@ -78,7 +78,9 @@ function LandingPage() {
   const processTopic = () => {
 
     function requestProcessing(res) {
+      var nextTopic = topicId
       if (res && !topicId) {
+        nextTopic = res.body.topicId
         setTopicId(res.body.topicId)
       }
 
@@ -86,7 +88,7 @@ function LandingPage() {
       request.post("/process")
         .send({ files: files })
         .send({ urls: urls })
-        .send({ topicId: topicId })
+        .send({ topicId: nextTopic })
         .send({ userId: user.id })
         .send({ providedContext: providedContext })
         .then(waitTopicProcess, topicProcessError);
