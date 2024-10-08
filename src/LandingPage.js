@@ -33,6 +33,7 @@ function LandingPage() {
   const handleLoginSuccess = useCallback(userData => {
     setUser(userData);
     window.sessionStorage.setItem("userData", JSON.stringify(userData));
+    setLoading(false)
 
     //TODO: check if we want to fetch user-specific data
   }, [setUser]);
@@ -310,7 +311,7 @@ function LandingPage() {
   return (
     <div className="Landing d-flex flex-column">
       <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-        <NavBar userData={user} setUser={handleLoginSuccess} />
+        <NavBar userData={user} setUser={handleLoginSuccess} setLoading={setLoading} />
 
         <div className="Landing-body">
           <main>
