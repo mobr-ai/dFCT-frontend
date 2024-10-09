@@ -1,13 +1,25 @@
+import TextTransition, { presets } from 'react-text-transition';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
+const brandText = ['d-FCT', 'd-FaCTo', 'd-F4CT0'];
 
 function NavBar(props) {
+    const [brandIndex, setBrandIndex] = useState(0);
+
+    useEffect(() => {
+        const intervalId = setInterval(
+            () => setBrandIndex((index) => index < brandText.length ? index + 1 : index),
+            600, // every ms
+        );
+        return () => clearTimeout(intervalId);
+    }, []);
+
     const handleApiRequest = useCallback(async (url, options = {}) => {
         const defaultOptions = {
             headers: {
@@ -69,15 +81,15 @@ function NavBar(props) {
     return (
         <Navbar data-bs-theme="dark" expand="lg" className="bg-body-tertiary justify-content-end" sticky="top">
             <Container>
-                <Navbar.Brand href="#home">
+                <Navbar.Brand className="Navbar-brand-container" href="#home">
                     <img
                         alt=""
                         src="/favicon.png"
                         width="30"
                         height="30"
-                        className="d-inline-block align-top"
+                        className="d-inline-block align-top Navbar-brand-img"
                     />{' '}
-                    d-FCT
+                    <TextTransition springConfig={presets.wobbly}>{brandText[brandIndex % brandText.length]}</TextTransition>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">

@@ -222,3 +222,11 @@
   display: contents;
   vertical-align: middle;
 }
+
+.Navbar-brand-container {
+  display: inline-flex;
+}
+
+.Navbar-brand-img {
+  margin-right: 10px;
+}

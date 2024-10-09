@@ -29,6 +29,10 @@ function LandingPage() {
   const [urls, setURLs] = useState([])
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
 
+  // sleep time expects milliseconds
+  function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
 
   const handleLoginSuccess = useCallback(userData => {
     setUser(userData);
@@ -128,6 +132,7 @@ function LandingPage() {
       while (nextProgress >= 0 && nextProgress < 100) {
         // request synchronously to check progress
         await request.post("/check").send(topic).then((res) => checkStatus(res))
+        await sleep(2000);
       }
 
       // send user to topic breakdown page
@@ -245,6 +250,13 @@ function LandingPage() {
   const handleURLInput = (event) => {
     if (document.getElementById('input-url-text').value) {
       const url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
+
+      if (!URL.canParse(url.url)) {
+        console.log("Oops, invalid URL: " + url.url)
+        document.getElementById('input-url-help-msg').innerText = "Oops, invalid URL"
+        setFetching(false)
+        return
+      }
 
       const metaSuccess = (res) => {
         url['metadata'] = res.body
