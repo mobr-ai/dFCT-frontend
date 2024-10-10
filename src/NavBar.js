@@ -1,4 +1,4 @@
-import TextTransition, { presets } from 'react-text-transition';
+import ReactTextTransition, { presets } from 'react-text-transition';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
 import Nav from 'react-bootstrap/Nav';
@@ -7,16 +7,24 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useCallback, useState, useEffect } from 'react';
 
-const brandText = ['d-FCT', 'd-FaCTo', 'd-F4CT0'];
+// const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
+// const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];
+const brandText = ['d-', 'de', 'fact', 'tool'];
+const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
 
 function NavBar(props) {
-    const [brandIndex, setBrandIndex] = useState(0);
+    const [brandIndex, setBrandIndex] = useState(1);
+    const [suffixIndex, setSuffixBrandIndex] = useState(1);
 
     useEffect(() => {
         const intervalId = setInterval(
-            () => setBrandIndex((index) => index < brandText.length ? index + 1 : index),
+            () => {
+                setBrandIndex((index) => index < brandText.length ? index + 1 : index)
+                setSuffixBrandIndex((index) => index < suffixText.length ? index + 1 : index)
+            },
             600, // every ms
         );
+
         return () => clearTimeout(intervalId);
     }, []);
 
@@ -89,11 +97,22 @@ function NavBar(props) {
                         height="30"
                         className="d-inline-block align-top Navbar-brand-img"
                     />{' '}
-                    <TextTransition springConfig={presets.wobbly}>{brandText[brandIndex % brandText.length]}</TextTransition>
+                    <section className="inline">
+                        <ReactTextTransition
+                            springConfig={presets.gentle}
+                            inline
+                        >
+                            {brandText[brandIndex % brandText.length]}
+                        </ReactTextTransition>
+                        {suffixText[suffixIndex % suffixText.length]}
+                    </section>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <Nav className="ml-auto">
+                        <Nav.Link onClick={() => {
+                            window.open('https://drive.google.com/file/d/1_i5sOz7Uxer_Jkd7zBouV1o7iQwHhHxq/view', '_blank')
+                        }}>Whitepaper</Nav.Link>
                         {
                             !props.userData && (
                                 <Nav.Link onClick={() => {
