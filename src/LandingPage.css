@@ -157,10 +157,9 @@
 }
 
 .Landing-url-card-img {
-  width: fit-content !important;
   max-height: 15vh;
   align-self: center;
-  max-width: 100%;
+  object-fit: cover;
 }
 
 .Landing-url-card-button {
