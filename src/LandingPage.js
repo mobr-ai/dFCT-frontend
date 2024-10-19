@@ -347,8 +347,8 @@ function LandingPage() {
 
         <div className="Landing-body">
           <main>
-            <div className="Landing-header-top">
-              {loading ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
+            <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
+              {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
               {!user && !loading && (
                 <section className="inline Landing-logo-text">
                   <ReactTextTransition springConfig={presets.gentle} inline>

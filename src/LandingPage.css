@@ -11,19 +11,17 @@
   pointer-events: none;
   padding: 3vh;
   height: 28vh;
-  object-fit: cover;
 }
 
 .Landing-logo-static {
   pointer-events: none;
   padding: 3vh;
   height: 28vh;
-  object-fit: cover;
 }
 
 .Landing-logo-text {
   font-family: monospace;
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 600;
   color: rgb(204, 204, 204);
   opacity: 0.3;
@@ -85,7 +83,8 @@
   right: 0;
   left: 0;
   overflow: hidden;
-  display: contents;
+  display: flex;
+  flex-direction: column;
 }
 
 .Landing-body {
