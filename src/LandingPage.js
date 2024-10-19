@@ -5,7 +5,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import request from 'superagent';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import ReactTextTransition, { presets } from 'react-text-transition';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import logo from './logo.svg';
 import StyledDropzone from './StyledDropzone.js'
@@ -29,43 +30,23 @@ function LandingPage() {
   const [urls, setURLs] = useState([])
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
 
-  // sleep time expects milliseconds
-  function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-  }
+  const brandText = ['d-', 'de', 'fact', 'tool'];
+  const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
+  const [brandIndex, setBrandIndex] = useState(1);
+  const [suffixIndex, setSuffixBrandIndex] = useState(1);
 
-  const handleLoginSuccess = useCallback(userData => {
-    setUser(userData);
-    window.sessionStorage.setItem("userData", JSON.stringify(userData));
-    setLoading(false)
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => {
+        setBrandIndex((index) => index < brandText.length ? index + 1 : index)
+        setSuffixBrandIndex((index) => index < suffixText.length ? index + 1 : index)
+      },
+      500, // every ms
+    );
 
-    //TODO: check if we want to fetch user-specific data
-  }, [setUser]);
+    return () => clearTimeout(intervalId);
+  }, [brandText.length, suffixText.length]);
 
-  const showError = (msg = null, clear = false) => {
-    if (clear) {
-      setDropBackground("#37474fff")
-      setDropBorder()
-      setDropMsg(welcomeMsg)
-      return
-    }
-    if (msg) {
-      setDropMsg(msg)
-      setFiles([])
-    }
-    else {
-      msg = dropMsg
-    }
-
-    setShowFiles(false)
-    setShowProgress(false)
-    setDropBackground("#ff000045")
-    setDropBorder("#eeeeee")
-    setDisableDrop(false)
-    setLoading(false)
-
-    // console.log("Error: " + msg)
-  }
 
   const checkTopic = (callback) => {
     if (!topicId) {
@@ -78,6 +59,149 @@ function LandingPage() {
     else {
       callback()
     }
+  }
+
+  const getHostname = (url) => {
+    // use URL constructor and return hostname
+    return new URL(url).hostname;
+  }
+
+  const handleContextInput = (event) => {
+    setProvidedContext(event.target.value);
+  }
+
+  const handleLoginSuccess = useCallback(userData => {
+    setUser(userData);
+    window.sessionStorage.setItem("userData", JSON.stringify(userData));
+    setLoading(false)
+
+    //TODO: check if we want to fetch user-specific data
+  }, [setUser]);
+
+  const handleURLInput = () => {
+    if (document.getElementById('input-url-text').value) {
+      const url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
+
+      if (!URL.canParse(url.url)) {
+        console.log("Oops, invalid URL: " + url.url)
+        document.getElementById('input-url-help-msg').innerText = "Oops, invalid URL"
+        setFetching(false)
+        return
+      }
+
+      const metaSuccess = (res) => {
+        url['metadata'] = res.body
+        setURLs(urls.concat([url]))
+        setShowURLs(true)
+        setFetching(false)
+      }
+
+      const metaError = (res) => {
+        // display error msg
+        console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
+        document.getElementById('input-url-help-msg').innerText = "Oops, error fetching URL"
+        setFetching(false)
+      }
+
+      request
+        .post('/fetch_url')
+        .send({ "url": document.getElementById('input-url-text').value })
+        .set('Accept', 'application/json')
+        .then(metaSuccess, metaError)
+
+      document.getElementById('input-url-text').value = ""
+      document.getElementById('input-url-help-msg').innerText = ""
+      setFetching(true)
+    }
+  }
+
+  const onDropAccepted = (acceptedFiles) => {
+    console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
+
+    showError("", true)
+    setFiles(files.concat(acceptedFiles))
+    // setLoading(true)
+
+    function uploadSuccess(res) {
+      console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
+
+      const newFiles = acceptedFiles.map((f) => {
+        if (f.name === res.req._data.get('key')) {
+          f.completed = true
+        }
+        return f
+      });
+
+      if (newFiles.filter((f) => f.completed).length === newFiles.length) {
+        // all current files uploaded
+        setLoading(false)
+        setDropMsg("Add more files or hit 'ANALYZE'")
+      }
+    }
+
+    function uploadError(res) {
+      // display error msg
+      showError("Oops, upload failed. Please try again later.")
+      console.log("Upload failed: " + res.req._data.get('key') + " [" + res.status + "] (" + res.message + ")")
+    }
+
+    function reqSuccess(res) {
+      setDropMsg("Signed request success, uploading files...")
+      setShowFiles(true)
+      setShowProgress(true)
+      // setDisableDrop(true)
+      console.log(dropMsg)
+
+      // upload files directly to s3
+      JSON.parse(res.text).forEach(file => {
+        console.log("Uploading " + file.data.fields.key)
+
+        // post it as form data
+        var postData = new FormData();
+        for (var key in file.data.fields) {
+          postData.append(key, file.data.fields[key]);
+        }
+        postData.append('file', acceptedFiles.filter((f) => f.name === file.data.fields.key)[0])
+
+        var req = request.post(file.data.url)
+        req.send(postData)
+        req.then(uploadSuccess, uploadError);
+      })
+    }
+
+    function reqError(res) {
+      // display error msg
+      showError("Oops, upload failed. Please try again later.")
+      console.log("Signed request failed: " + res.status + " (" + res.message + ")")
+    }
+
+    function getSignedRequest(res) {
+      if (res && !topicId) {
+        setTopicId(res.body.topicId)
+      }
+
+      // get signed request to S3 service
+      const fileArgs = []
+      acceptedFiles.forEach(file => {
+        if (!file.completed)
+          fileArgs.push({ "file": file.name, "type": file.type })
+      })
+
+      request
+        .post('/sign_s3')
+        .send(fileArgs)
+        .send({ "topic_id": topicId || res.body.topicId })
+        .set('Accept', 'application/json')
+        .then(reqSuccess, reqError)
+    }
+
+    // create new topic for the content if necessary
+    checkTopic(getSignedRequest)
+  }
+
+  const openInNewTab = (url) => {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
   }
 
   const processTopic = () => {
@@ -159,149 +283,45 @@ function LandingPage() {
     }
   }
 
-  const onDropAccepted = (acceptedFiles) => {
-    console.log("User dropped accepted files = " + acceptedFiles.length + " state.files = " + files.length)
-
-    showError("", true)
-    setFiles(files.concat(acceptedFiles))
-    // setLoading(true)
-
-    function uploadSuccess(res) {
-      console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
-
-      const newFiles = acceptedFiles.map((f, i) => {
-        if (f.name === res.req._data.get('key')) {
-          f.completed = true
-        }
-        return f
-      });
-
-      if (newFiles.filter((f) => f.completed).length === newFiles.length) {
-        // all current files uploaded
-        setLoading(false)
-        setDropMsg("Add more files or hit 'ANALYZE'")
-      }
-    }
-
-    function uploadError(res) {
-      // display error msg
-      showError("Oops, upload failed. Please try again later.")
-      console.log("Upload failed: " + res.req._data.get('key') + " [" + res.status + "] (" + res.message + ")")
-    }
-
-    function reqSuccess(res) {
-      setDropMsg("Signed request success, uploading files...")
-      setShowFiles(true)
-      setShowProgress(true)
-      // setDisableDrop(true)
-      console.log(dropMsg)
-
-      // upload files directly to s3
-      JSON.parse(res.text).forEach(file => {
-        console.log("Uploading " + file.data.fields.key)
-
-        // post it as form data
-        var postData = new FormData();
-        for (var key in file.data.fields) {
-          postData.append(key, file.data.fields[key]);
-        }
-        postData.append('file', acceptedFiles.filter((f) => f.name === file.data.fields.key)[0])
-
-        var req = request.post(file.data.url)
-        req.send(postData)
-        req.then(uploadSuccess, uploadError);
-      })
-    }
-
-    function reqError(res) {
-      // display error msg
-      showError("Oops, upload failed. Please try again later.")
-      console.log("Signed request failed: " + res.status + " (" + res.message + ")")
-    }
-
-    function getSignedRequest(res) {
-      if (res && !topicId) {
-        setTopicId(res.body.topicId)
-      }
-
-      // get signed request to S3 service
-      const fileArgs = []
-      acceptedFiles.forEach(file => {
-        if (!file.completed)
-          fileArgs.push({ "file": file.name, "type": file.type })
-      })
-
-      request
-        .post('/sign_s3')
-        .send(fileArgs)
-        .send({ "topic_id": topicId || res.body.topicId })
-        .set('Accept', 'application/json')
-        .then(reqSuccess, reqError)
-    }
-
-    // create new topic for the content if necessary
-    checkTopic(getSignedRequest)
-  }
-
-  const handleContextInput = (event) => {
-    setProvidedContext(event.target.value);
-  }
-
-  const handleURLInput = (event) => {
-    if (document.getElementById('input-url-text').value) {
-      const url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
-
-      if (!URL.canParse(url.url)) {
-        console.log("Oops, invalid URL: " + url.url)
-        document.getElementById('input-url-help-msg').innerText = "Oops, invalid URL"
-        setFetching(false)
-        return
-      }
-
-      const metaSuccess = (res) => {
-        url['metadata'] = res.body
-        setURLs(urls.concat([url]))
-        setShowURLs(true)
-        setFetching(false)
-      }
-
-      const metaError = (res) => {
-        // display error msg
-        console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
-        document.getElementById('input-url-help-msg').innerText = "Oops, error fetching URL"
-        setFetching(false)
-      }
-
-      request
-        .post('/fetch_url')
-        .send({ "url": document.getElementById('input-url-text').value })
-        .set('Accept', 'application/json')
-        .then(metaSuccess, metaError)
-
-      document.getElementById('input-url-text').value = ""
-      document.getElementById('input-url-help-msg').innerText = ""
-      setFetching(true)
-    }
-  }
-
-  const openInNewTab = (url) => {
-    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
-    if (newWindow) newWindow.opener = null
-  }
-
-  const truncateString = (string = '', maxLength = 100) =>
-    string.length > maxLength
-      ? `${string.substring(0, maxLength)}…`
-      : string
-
   const removeCard = (url) => {
     let filtered = urls.filter((u) => { return !u.url.includes(url) });
     setURLs(filtered)
   }
 
-  const getHostname = (url) => {
-    // use URL constructor and return hostname
-    return new URL(url).hostname;
+  // sleep time expects milliseconds
+  function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
+  const showError = (msg = null, clear = false) => {
+    if (clear) {
+      setDropBackground("#37474fff")
+      setDropBorder()
+      setDropMsg(welcomeMsg)
+      return
+    }
+    if (msg) {
+      setDropMsg(msg)
+      setFiles([])
+    }
+    else {
+      msg = dropMsg
+    }
+
+    setShowFiles(false)
+    setShowProgress(false)
+    setDropBackground("#ff000045")
+    setDropBorder("#eeeeee")
+    setDisableDrop(false)
+    setLoading(false)
+
+    // console.log("Error: " + msg)
+  }
+
+  const truncateString = (string = '', maxLength = 100) => {
+    return string.length > maxLength
+      ? `${string.substring(0, maxLength)}…`
+      : string
   }
 
   const urlCards = urls.map((u) => (
@@ -329,6 +349,15 @@ function LandingPage() {
           <main>
             <div className="Landing-header-top">
               {loading ? <img src={logo} className="Landing-logo" alt="logo" /> : <img src={logo} className="Landing-logo-static" alt="logo" />}
+              {!user && !loading && (
+                <section className="inline Landing-logo-text">
+                  <ReactTextTransition springConfig={presets.gentle} inline>
+                    {brandText[brandIndex % brandText.length]}
+                  </ReactTextTransition>
+                  {suffixText[suffixIndex % suffixText.length]}
+                </section>
+              )
+              }
             </div>
             {user && (
               <Form.Group className="Landing-input-group mb-3" id="input-form-group">

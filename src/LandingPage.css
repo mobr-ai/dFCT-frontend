@@ -21,6 +21,14 @@
   object-fit: cover;
 }
 
+.Landing-logo-text {
+  font-family: monospace;
+  font-size: 4rem;
+  font-weight: 600;
+  color: rgb(204, 204, 204);
+  opacity: 0.3;
+}
+
 .Landing-drop {
   display: inline-table;
   cursor: pointer;

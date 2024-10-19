@@ -44,7 +44,6 @@ const Container = styled.div`
   transition: border .24s ease-in-out;
   cursor: pointer;
   min-width: 310px;
-}
 `;
 
 function StyledDropzone(props) {

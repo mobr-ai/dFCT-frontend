@@ -97,15 +97,15 @@ function NavBar(props) {
                         height="30"
                         className="d-inline-block align-top Navbar-brand-img"
                     />{' '}
-                    <section className="inline">
-                        <ReactTextTransition
-                            springConfig={presets.gentle}
-                            inline
-                        >
-                            {brandText[brandIndex % brandText.length]}
-                        </ReactTextTransition>
-                        {suffixText[suffixIndex % suffixText.length]}
-                    </section>
+                    {props.userData && (
+                        <section className="inline">
+                            <ReactTextTransition springConfig={presets.gentle} inline>
+                                {brandText[brandIndex % brandText.length]}
+                            </ReactTextTransition>
+                            {suffixText[suffixIndex % suffixText.length]}
+                        </section>
+                    )
+                    }
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
