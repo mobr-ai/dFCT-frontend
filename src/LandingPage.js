@@ -220,16 +220,16 @@ function LandingPage() {
         .send({ topicId: nextTopic })
         .send({ userId: user.id })
         .send({ providedContext: providedContext })
-        .then(waitTopicProcess, topicProcessError);
+        .then(waitProcessing, handleError);
     }
 
-    function topicProcessError(res) {
+    function handleError(res) {
       // display error msg
       showError("Topic (id = " + topicId + ") processing failed. Please try again later.")
       console.log("Topic processing failed: [" + res.status + "] (" + res.message + ")")
     }
 
-    async function waitTopicProcess(res) {
+    async function waitProcessing(res) {
       var nextProgress = progress
       const topic = res.body
       // const topicId = Object.keys(res.body)[0]

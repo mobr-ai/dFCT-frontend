@@ -244,3 +244,16 @@
 .Navbar-brand-img {
   margin-right: 10px;
 }
+
+.Error-page {
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.Error-page-logo {
+  pointer-events: none;
+  padding: 3vh;
+  height: 28vh;
+  filter: grayscale(100%);
+}
