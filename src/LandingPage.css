@@ -72,7 +72,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .Landing-logo {
-    animation: Landing-logo-spin infinite 20s ease-in-out;
+    animation: Landing-logo-spin infinite 10s ease-in-out;
   }
 }
 
@@ -230,19 +230,6 @@
 #input-process-button {
   margin-top: 15px;
   font-family: monospace;
-}
-
-#navbar-user-dropdown-container {
-  display: contents;
-  vertical-align: middle;
-}
-
-.Navbar-brand-container {
-  display: inline-flex;
-}
-
-.Navbar-brand-img {
-  margin-right: 10px;
 }
 
 .Error-page {

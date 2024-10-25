@@ -1,26 +1,28 @@
-import './LandingPage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './LandingPage.css';
+import logo from './logo.svg';
+import StyledDropzone from './StyledDropzone.js'
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import request from 'superagent';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useOutletContext, useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import ReactTextTransition, { presets } from 'react-text-transition';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import logo from './logo.svg';
-import StyledDropzone from './StyledDropzone.js'
-import NavBar from './NavBar.js';
 
 function LandingPage() {
   const welcomeMsg = "Drop files here and/or enter URLs to fact-check"
+  const brandText = ['d-', 'de', 'fact', 'tool']
+  const suffixText = ['FCT', 'centralized', '-checking', 'kit']
+  const [brandIndex, setBrandIndex] = useState(1)
+  const [suffixIndex, setSuffixBrandIndex] = useState(1)
   const [disableDrop, setDisableDrop] = useState(false)
   const [dropMsg, setDropMsg] = useState(welcomeMsg)
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
   const [fetching, setFetching] = useState(false)
   const [files, setFiles] = useState([])
-  const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(10)
   const [providedContext, setProvidedContext] = useState("")
   const [showFiles, setShowFiles] = useState(false)
@@ -28,12 +30,8 @@ function LandingPage() {
   const [showURLs, setShowURLs] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
-  const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
-
-  const brandText = ['d-', 'de', 'fact', 'tool'];
-  const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
-  const [brandIndex, setBrandIndex] = useState(1);
-  const [suffixIndex, setSuffixBrandIndex] = useState(1);
+  const [user, loading, setLoading] = useOutletContext();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const intervalId = setInterval(
@@ -69,14 +67,6 @@ function LandingPage() {
   const handleContextInput = (event) => {
     setProvidedContext(event.target.value);
   }
-
-  const handleLoginSuccess = useCallback(userData => {
-    setUser(userData);
-    window.sessionStorage.setItem("userData", JSON.stringify(userData));
-    setLoading(false)
-
-    //TODO: check if we want to fetch user-specific data
-  }, [setUser]);
 
   const handleURLInput = () => {
     if (document.getElementById('input-url-text').value) {
@@ -263,7 +253,8 @@ function LandingPage() {
       if (nextProgress === 100) {
         setDropMsg("Topic processed successfully")
         // setLoading(false)
-        window.location.href = topicURL
+        // window.location.href = topicURL
+        navigate(topicURL)
       }
     }
 
@@ -314,8 +305,6 @@ function LandingPage() {
     setDropBorder("#eeeeee")
     setDisableDrop(false)
     setLoading(false)
-
-    // console.log("Error: " + msg)
   }
 
   const truncateString = (string = '', maxLength = 100) => {
@@ -342,87 +331,77 @@ function LandingPage() {
 
   return (
     <div className="Landing d-flex flex-column">
-      <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-        <NavBar userData={user} setUser={handleLoginSuccess} setLoading={setLoading} />
+      <div className="Landing-body">
+        <main>
+          <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
+            {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
+            {!user && !loading && (
+              <section className="inline Landing-logo-text">
+                <ReactTextTransition springConfig={presets.gentle} inline>
+                  {brandText[brandIndex % brandText.length]}
+                </ReactTextTransition>
+                {suffixText[suffixIndex % suffixText.length]}
+              </section>
+            )
+            }
+          </div>
+          {user && (
+            <Form.Group className="Landing-input-group mb-3" id="input-form-group">
+              <div className="Landing-drop">
+                <StyledDropzone
+                  noKeyboard={disableDrop}
+                  noClick={disableDrop}
+                  noDrag={disableDrop}
+                  onDropAccepted={onDropAccepted}
+                  msg={dropMsg}
+                  showFiles={showFiles}
+                  showProgress={showProgress}
+                  background={dropBackground}
+                  border={dropBorder}
+                  progress={progress}
+                  files={files}
+                />
+              </div>
+              {!loading && (
+                <>
+                  <div>
+                    <InputGroup className="Landing-input-url mb-3">
+                      <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
+                      <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
+                      <Button
+                        id="input-url-button"
+                        variant="dark"
+                        onClick={!fetching ? handleURLInput : null}
+                        disabled={fetching}
 
-        <div className="Landing-body">
-          <main>
-            <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
-              {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
-              {!user && !loading && (
-                <section className="inline Landing-logo-text">
-                  <ReactTextTransition springConfig={presets.gentle} inline>
-                    {brandText[brandIndex % brandText.length]}
-                  </ReactTextTransition>
-                  {suffixText[suffixIndex % suffixText.length]}
-                </section>
-              )
-              }
-            </div>
-            {user && (
-              <Form.Group className="Landing-input-group mb-3" id="input-form-group">
-                <div className="Landing-drop">
-                  <StyledDropzone
-                    noKeyboard={disableDrop}
-                    noClick={disableDrop}
-                    noDrag={disableDrop}
-                    onDropAccepted={onDropAccepted}
-                    msg={dropMsg}
-                    showFiles={showFiles}
-                    showProgress={showProgress}
-                    background={dropBackground}
-                    border={dropBorder}
-                    progress={progress}
-                    files={files}
-                  />
-                </div>
-                {!loading && (
-                  <>
-                    {/* <Form.Text id="landing-input-or-label" muted>
-                      AND/OR
-                    </Form.Text> */}
-                    <div>
-                      <InputGroup className="Landing-input-url mb-3">
-                        <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
-                        <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
-                        <Button
-                          id="input-url-button"
-                          variant="dark"
-                          onClick={!fetching ? handleURLInput : null}
-                          disabled={fetching}
+                      >{fetching ? 'Loading...' : 'Add URL'}</Button>
+                    </InputGroup>
+                    <Form.Text id="input-url-help-msg" muted />
+                  </div>
+                  <br style={{ clear: "both" }} />
+                </>
+              )}
 
-                        >{fetching ? 'Loading...' : 'Add URL'}</Button>
-                      </InputGroup>
-                      <Form.Text id="input-url-help-msg" muted />
-                    </div>
-                    <br style={{ clear: "both" }} />
-                  </>
-                )}
+              {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
+                <>
+                  <div className="Landing-url-card-container">{urlCards}</div>
+                  <div className="Landing-input">
+                    <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
+                    <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
+                  </div>
+                  <Button
+                    id="input-process-button"
+                    variant="dark"
+                    onClick={!loading ? processTopic : null}
+                    disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
+                  >ANALYZE</Button>
+                </>
 
-                {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
-                  <>
-                    <div className="Landing-url-card-container">{urlCards}</div>
-                    <div className="Landing-input">
-                      <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
-                      <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
-                    </div>
-                    <Button
-                      id="input-process-button"
-                      variant="dark"
-                      onClick={!loading ? processTopic : null}
-                      disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                    >ANALYZE</Button>
-                  </>
-
-                )}
-              </Form.Group>
-            )}
-          </main>
-          <footer>
-
-          </footer>
-        </div>
-      </GoogleOAuthProvider>
+              )}
+            </Form.Group>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

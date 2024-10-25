@@ -1,3 +1,4 @@
+import './NavBar.css'
 import ReactTextTransition, { presets } from 'react-text-transition';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
@@ -6,6 +7,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useCallback, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 // const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
 // const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];
@@ -15,6 +17,7 @@ const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
 function NavBar(props) {
     const [brandIndex, setBrandIndex] = useState(1);
     const [suffixIndex, setSuffixBrandIndex] = useState(1);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const intervalId = setInterval(
@@ -75,6 +78,7 @@ function NavBar(props) {
             handleGoogleResponse(tokenResponse)
         },
     });
+
     const userMenu = props.userData && (
         <Container id="navbar-user-dropdown-container">
             <Image
@@ -89,7 +93,7 @@ function NavBar(props) {
     return (
         <Navbar data-bs-theme="dark" expand="lg" className="bg-body-tertiary justify-content-end" sticky="top">
             <Container>
-                <Navbar.Brand className="Navbar-brand-container" href="#home">
+                <Navbar.Brand className="Navbar-brand-container" onClick={() => { navigate("/") }}>
                     <img
                         alt=""
                         src="/favicon.png"

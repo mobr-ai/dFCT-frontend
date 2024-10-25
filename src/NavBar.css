@@ -1,0 +1,13 @@
+#navbar-user-dropdown-container {
+  display: contents;
+  vertical-align: middle;
+}
+
+.Navbar-brand-container {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.Navbar-brand-img {
+  margin-right: 10px;
+}

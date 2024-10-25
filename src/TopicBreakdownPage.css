@@ -1,0 +1,15 @@
+.Breakdown-body {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-family: "Anton";
+  color: white;
+  padding: 5%;
+}
+
+.Breakdown-topic-container {
+  max-width: 50vw;
+}
