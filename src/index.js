@@ -6,7 +6,7 @@ import LandingPage from './LandingPage';
 import Header from './Header'
 import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, defer } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
 
 
@@ -31,6 +31,18 @@ function Layout() {
   );
 }
 
+const fetchTopic = async (userId, topicId, signal) => {
+  const response = await fetch(
+    `/topic/full/${userId}/${topicId}`, { signal: signal }
+  )
+  return await response.json();
+}
+
+const topicLoader = async (dynData) => {
+  const topicPromise = fetchTopic(dynData.params.userId, dynData.params.topicId, dynData.request.signal);
+  return defer({ topicPromise });
+};
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -43,9 +55,11 @@ const router = createBrowserRouter([
       {
         path: '/t/:userId/:topicId',
         element: <TopicBreakdownPage />,
-        loader: async (dynData) => {
-          return fetch(`/topic/full/${dynData.params.userId}/${dynData.params.topicId}`, { signal: dynData.request.signal }).then((response) => { return response.json() })
-        }
+        loader: topicLoader,
+        // loader: async (dynData) => {
+        //   // return fetch(`/topic/full/${dynData.params.userId}/${dynData.params.topicId}`, { signal: dynData.request.signal }).then((response) => { return response.json() })
+        //   return fetchTopic(dynData.params.userId}/${dynData.params.topicId}`, { signal: dynData.request.signal })
+        // }
       }
     ]
   }

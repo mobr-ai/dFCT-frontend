@@ -252,8 +252,8 @@ function LandingPage() {
       // send user to topic breakdown page
       if (nextProgress === 100) {
         setDropMsg("Topic processed successfully")
-        // setLoading(false)
-        // window.location.href = topicURL
+        setLoading(false)
+        // react soft navigation
         navigate(topicURL)
       }
     }

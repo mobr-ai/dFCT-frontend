@@ -79,6 +79,11 @@ function NavBar(props) {
         },
     });
 
+    const logout = () => {
+        props.setUser(null)
+        navigate("/")
+    }
+
     const userMenu = props.userData && (
         <Container id="navbar-user-dropdown-container">
             <Image
@@ -128,7 +133,7 @@ function NavBar(props) {
                         {
                             props.userData && (
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
-                                    <NavDropdown.Item onClick={() => props.setUser(null)}>Logout</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item>
                                         Preferences

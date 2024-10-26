@@ -13,3 +13,39 @@
 .Breakdown-topic-container {
   max-width: 50vw;
 }
+
+.loader {
+  width: 120px;
+  height: 20px;
+  background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%)
+    lightslategrey;
+  background-size: 300% 100%;
+  animation: l1 1s infinite linear;
+  margin-left: 10px;
+}
+@keyframes l1 {
+  0% {
+    background-position: right;
+  }
+}
+
+.Landing-logo {
+  pointer-events: none;
+  padding: 3vh;
+  height: 28vh;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .Landing-logo {
+    animation: Landing-logo-spin infinite 10s ease-in-out;
+  }
+}
+
+@keyframes Landing-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,5 +1,7 @@
 import './TopicBreakdownPage.css'
-import { useOutletContext, useLoaderData, useNavigation } from "react-router-dom";
+import logo from './logo.svg';
+import { useLoaderData, Await } from "react-router-dom";
+import { Suspense } from 'react';
 
 // Topic Component
 const Topic = ({ title, description, claimList, contentList }) => {
@@ -22,6 +24,7 @@ const Topic = ({ title, description, claimList, contentList }) => {
 const ContentList = ({ content }) => {
     return (
         <div className="Breakdown-content-list">
+            <h3>Supporting Evidence</h3>
             {content.map((item, index) => (
                 <ContentCard key={index} item={item} />
             ))}
@@ -49,8 +52,8 @@ const ContentList = ({ content }) => {
 const ContentCard = ({ item }) => {
     return (
         <div className="Breakdown-content-card">
-            <h4>{item.content_title}</h4>
-            <p>{item.description}</p>
+            {/* <h4>{item.content_title}</h4> */}
+
             <p>Type: {item.content_type}</p>
             {item.content_type === 'image' && (
                 <img src={item.content_id} alt={item.content_title} style={{ width: '100%' }} />
@@ -61,27 +64,37 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the video tag.
                 </video>
             )}
+            <p>{item.description}</p>
         </div>
     );
 };
 
 // Main component
 function TopicBreakdownPage() {
-    const topicData = JSON.parse(useLoaderData())
-    const navigation = useNavigation()
+    const { topicPromise } = useLoaderData()
+    // const topicData = JSON.parse(topic)
+    // const navigation = useNavigation()
+    // const [user, loading, setLoading] = useOutletContext();
 
-    if (navigation.state === "loading" || !topicData) {
-        return <h1>Loading!</h1>;
-    }
+    // if (loading || navigation.state === "loading" || !topicData) {
+    //     return <div className='loader'>Loading!</h1>;
+    // }
 
     return (
         <div className="Breakdown-body">
-            <Topic
-                title={topicData.title}
-                description={topicData.description}
-                claimList={topicData.claim_list.replace("{\"", "").replace("\"}", "").split('","')}
-                contentList={topicData.content}
-            />
+            <Suspense fallback={<img src={logo} className="Landing-logo" alt="logo"></img>}>
+                <Await resolve={topicPromise}>
+                    {
+                        (topicData) =>
+                            <Topic
+                                title={JSON.parse(topicData).title}
+                                description={JSON.parse(topicData).description}
+                                claimList={JSON.parse(topicData).claim_list.replace("{\"", "").replace("\"}", "").split('","')}
+                                contentList={JSON.parse(topicData).content}
+                            />
+                    }
+                </Await>
+            </Suspense>
         </div>
     );
 };
