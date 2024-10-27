@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 const Topic = ({ title, description, claimList, contentList }) => {
     return (
         <div className="Breakdown-topic-container">
-            <h1>{title}</h1>
+            <h1 className='Breakdown-topic-title'>{title}</h1>
             <p>{description}</p>
             <h3>Claims</h3>
             <ul>
@@ -24,7 +24,7 @@ const Topic = ({ title, description, claimList, contentList }) => {
 const ContentList = ({ content }) => {
     return (
         <div className="Breakdown-content-list">
-            <h3>Content</h3>
+            {/* <h3>Content</h3> */}
             {content.map((item, index) => (
                 <ContentCard key={index} item={item} />
             ))}
@@ -87,7 +87,7 @@ function TopicBreakdownPage() {
     // }
 
     return (
-        <div className="Breakdown-body">
+        <div className="Breakdown-body" >
             <Suspense fallback={<img src={logo} className="Breakdown-loading" alt="loading sign"></img>}>
                 <Await resolve={topicPromise}>
                     {

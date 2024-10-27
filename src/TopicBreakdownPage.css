@@ -7,7 +7,7 @@
   justify-content: space-evenly;
   font-family: "Anton";
   color: white;
-  padding: 5%;
+  padding-top: 5%;
 }
 
 .Breakdown-topic-container {
@@ -15,18 +15,21 @@
 }
 
 .Breakdown-content-container {
-  width: auto;
-  height: 30vh;
-  margin-left: auto;
-  margin-right: auto;
   display: block;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
+  max-height: 30vh;
+  margin: 1rem auto 2rem;
+  width: auto;
+  max-width: 100%;
 }
 
 .Breakdown-audio-container {
   display: block;
   margin: 4rem auto 4rem;
+  max-width: 100%;
+}
+
+.Breakdown-topic-title {
+  margin-bottom: 2rem;
 }
 
 .loader {
