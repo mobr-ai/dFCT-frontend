@@ -14,6 +14,21 @@
   max-width: 50vw;
 }
 
+.Breakdown-content-container {
+  width: auto;
+  height: 30vh;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.Breakdown-audio-container {
+  display: block;
+  margin: 4rem auto 4rem;
+}
+
 .loader {
   width: 120px;
   height: 20px;
@@ -29,19 +44,19 @@
   }
 }
 
-.Landing-logo {
+.Breakdown-loading {
   pointer-events: none;
   padding: 3vh;
   height: 28vh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .Landing-logo {
-    animation: Landing-logo-spin infinite 10s ease-in-out;
+  .Breakdown-loading {
+    animation: Breakdown-loading-spin infinite 10s ease-in-out;
   }
 }
 
-@keyframes Landing-logo-spin {
+@keyframes Breakdown-loading-spin {
   from {
     transform: rotate(0deg);
   }

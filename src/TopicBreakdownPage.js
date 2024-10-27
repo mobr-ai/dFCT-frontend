@@ -24,7 +24,7 @@ const Topic = ({ title, description, claimList, contentList }) => {
 const ContentList = ({ content }) => {
     return (
         <div className="Breakdown-content-list">
-            <h3>Supporting Evidence</h3>
+            <h3>Content</h3>
             {content.map((item, index) => (
                 <ContentCard key={index} item={item} />
             ))}
@@ -54,15 +54,21 @@ const ContentCard = ({ item }) => {
         <div className="Breakdown-content-card">
             {/* <h4>{item.content_title}</h4> */}
 
-            <p>Type: {item.content_type}</p>
+            {/* <p>Type: {item.content_type}</p> */}
             {item.content_type === 'image' && (
-                <img src={item.content_id} alt={item.content_title} style={{ width: '100%' }} />
+                <a href={item.src_url}><img src={item.src_url} alt={item.content_title} className='Breakdown-content-container' /></a>
             )}
             {item.content_type === 'video' && (
-                <video controls>
-                    <source src={item.content_id} type="video/mp4" />
+                <video className='Breakdown-content-container' controls>
+                    <source src={item.src_url} type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
+            )}
+            {item.content_type === 'audio' && (
+                <audio className='Breakdown-audio-container' controls>
+                    <source src={item.src_url} type="audio/mpeg" />
+                    Your browser does not support the audio tag.
+                </audio>
             )}
             <p>{item.description}</p>
         </div>
@@ -82,7 +88,7 @@ function TopicBreakdownPage() {
 
     return (
         <div className="Breakdown-body">
-            <Suspense fallback={<img src={logo} className="Landing-logo" alt="logo"></img>}>
+            <Suspense fallback={<img src={logo} className="Breakdown-loading" alt="loading sign"></img>}>
                 <Await resolve={topicPromise}>
                     {
                         (topicData) =>
