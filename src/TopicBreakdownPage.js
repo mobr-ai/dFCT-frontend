@@ -70,6 +70,7 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the audio tag.
                 </audio>
             )}
+            {<p><u>Source</u>: {item.origins}</p>}
             <p>{item.description}</p>
         </div>
     );
