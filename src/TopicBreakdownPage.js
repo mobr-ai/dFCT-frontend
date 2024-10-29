@@ -56,17 +56,17 @@ const ContentCard = ({ item }) => {
 
             {/* <p>Type: {item.content_type}</p> */}
             {item.content_type === 'image' && (
-                <a href={item.src_url}><img src={item.src_url} alt={item.content_title} className='Breakdown-content-container' /></a>
+                <a href={item.src_url}><img src={item.local_url} alt={item.content_title} className='Breakdown-content-container' /></a>
             )}
             {item.content_type === 'video' && (
                 <video className='Breakdown-content-container' controls>
-                    <source src={item.src_url} type="video/mp4" />
+                    <source src={item.local_url} type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
             )}
             {item.content_type === 'audio' && (
                 <audio className='Breakdown-audio-container' controls>
-                    <source src={item.src_url} type="audio/mpeg" />
+                    <source src={item.local_url} type="audio/mpeg" />
                     Your browser does not support the audio tag.
                 </audio>
             )}
