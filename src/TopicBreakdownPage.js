@@ -56,7 +56,7 @@ const ContentCard = ({ item }) => {
 
             {/* <p>Type: {item.content_type}</p> */}
             {item.content_type === 'image' && (
-                <a href={item.src_url}><img src={item.local_url} alt={item.content_title} className='Breakdown-content-container' /></a>
+                <a href={item.src_url} target="_blank" rel="noreferrer"><img src={item.local_url} alt={item.content_title} className='Breakdown-content-container' /></a>
             )}
             {item.content_type === 'video' && (
                 <video className='Breakdown-content-container' controls>

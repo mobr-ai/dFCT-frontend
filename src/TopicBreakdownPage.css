@@ -1,26 +1,28 @@
 .Breakdown-body {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  background-color: #282c34;
+  color: #fff;
+  display: flex !important;
+  flex-direction: column;
+  font-family: Anton;
+  min-height: 100vh;
+  margin-left: auto;
+  overflow-wrap: anywhere;
   justify-content: space-evenly;
-  font-family: "Anton";
-  color: white;
-  padding-top: 5%;
 }
 
 .Breakdown-topic-container {
   max-width: 45rem;
   margin-right: 2rem;
   margin-left: 2rem;
+  padding-top: 2rem;
 }
 
 .Breakdown-content-container {
   display: block;
   margin: 3rem auto 3rem;
   max-height: 40vh;
-  max-width: 100%;
+  max-width: 80vw;
   width: auto;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
