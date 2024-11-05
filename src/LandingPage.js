@@ -315,7 +315,7 @@ function LandingPage() {
 
   const urlCards = urls.map((u) => (
     <Card variant="dark" className="Landing-url-card">
-      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.url)} variant="top" src={u.metadata['og:image'] || './placeholder.png'} style={u.metadata['og:image'] ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
+      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.url)} variant="top" src={u.metadata['og:image'] || (u.metadata['image-array'] ? "data:image/png;base64,".concat(u.metadata['image-array']) : "") || './placeholder.png'} style={(u.metadata['og:image'] || u.metadata['image-array']) ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
       <Card.Body>
         <Card.Title className="Landing-url-card-title">{getHostname(u.url)}</Card.Title>
         <Card.Text>
