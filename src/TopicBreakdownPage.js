@@ -1,4 +1,8 @@
 import './TopicBreakdownPage.css'
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Accordion from 'react-bootstrap/Accordion';
 import logo from './logo.svg';
 import { useLoaderData, Await } from "react-router-dom";
 import { Suspense } from 'react';
@@ -10,15 +14,46 @@ const Topic = ({ title, description, claimList, contentList }) => {
             <h1 className='Breakdown-topic-title'>{title}</h1>
             <p>{description}</p>
             <h3>Claims</h3>
-            <ul>
-                {claimList.map((claim, index) => (
-                    <li key={index}>{claim}</li>
-                ))}
-            </ul>
+            <ClaimList content={claimList} />
             <ContentList content={contentList} />
         </div>
     );
 };
+
+// ClaimList Component
+const ClaimList = ({ content }) => {
+    return (
+        <Accordion className='Breakdown-topic-claims' flush>
+            {content.map((item, index) => (
+                <ClaimItem index={index} claim={item} />
+            ))}
+        </Accordion>
+    );
+};
+
+const ClaimItem = ({ index, claim }) => {
+    return (
+        <Accordion.Item eventKey={index}>
+            <Accordion.Header className='Breakdown-topic-claims-header'><b>{claim.statement}</b></Accordion.Header>
+            <Accordion.Body>
+                <div className='Breakdown-topic-claims-body'>
+                    {claim.pro_evidence ? claim.pro_evidence + " " : ""}
+                    {claim.con_evidence ? claim.con_evidence : ""}
+                    {
+                        claim.output_tags ? claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>)) : ""
+                    }
+                    <div className='Breakdown-topic-claims-toolbar'>
+                        <ButtonGroup size="sm">
+                            <Button variant="dark">▲ Up vote</Button>
+                            <Button variant="dark">▼ Down vote</Button>
+                            <Button variant="dark">☸ Review</Button>
+                        </ButtonGroup>
+                    </div>
+                </div>
+            </Accordion.Body>
+        </Accordion.Item>
+    )
+}
 
 // ContentList Component
 const ContentList = ({ content }) => {
@@ -31,22 +66,6 @@ const ContentList = ({ content }) => {
         </div>
     );
 };
-
-// const urlCards = urls.map((u) => (
-//     <Card variant="dark" className="Landing-url-card">
-//         <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.url)} variant="top" src={u.metadata['og:image'] || './placeholder.png'} style={u.metadata['og:image'] ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
-//         <Card.Body>
-//             <Card.Title className="Landing-url-card-title">{getHostname(u.url)}</Card.Title>
-//             <Card.Text>
-//                 {truncateString(u.metadata['og:title'])}
-//             </Card.Text>
-//             <Button className="Landing-url-card-button" onClick={() => removeCard(u.url)} variant="secondary">Remove</Button>
-//         </Card.Body>
-//         <Card.Footer>
-//             <small onClick={() => openInNewTab(u.url)} className="text-muted"><i>{u.url}</i></small>
-//         </Card.Footer>
-//     </Card>
-// ));
 
 // ContentCard Component
 const ContentCard = ({ item }) => {
@@ -70,8 +89,11 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the audio tag.
                 </audio>
             )}
-            {<p><u>Source</u>: {item.origins}</p>}
+            <p><u>Source</u>: {item.origins}</p>
             <p>{item.description}</p>
+            {
+                item.output_tags ? (<div className="Breakdown-content-tag-container">{item.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>))}</div>) : ""
+            }
         </div>
     );
 };
@@ -79,13 +101,6 @@ const ContentCard = ({ item }) => {
 // Main component
 function TopicBreakdownPage() {
     const { topicPromise } = useLoaderData()
-    // const topicData = JSON.parse(topic)
-    // const navigation = useNavigation()
-    // const [user, loading, setLoading] = useOutletContext();
-
-    // if (loading || navigation.state === "loading" || !topicData) {
-    //     return <div className='loader'>Loading!</h1>;
-    // }
 
     return (
         <div className="Breakdown-body" >
@@ -96,7 +111,7 @@ function TopicBreakdownPage() {
                             <Topic
                                 title={JSON.parse(topicData).title}
                                 description={JSON.parse(topicData).description}
-                                claimList={JSON.parse(topicData).claim_list.replace("{\"", "").replace("\"}", "").split('","')}
+                                claimList={JSON.parse(topicData).claims}
                                 contentList={JSON.parse(topicData).content}
                             />
                     }

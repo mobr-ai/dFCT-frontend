@@ -29,6 +29,10 @@
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
+.Breakdown-content-tag-container {
+  display: inline-flex;
+}
+
 .Breakdown-audio-container {
   display: block;
   margin: 4rem auto 4rem;
@@ -37,6 +41,25 @@
 
 .Breakdown-topic-title {
   margin-bottom: 2rem;
+}
+
+.Breakdown-topic-claims {
+  cursor: pointer;
+}
+
+.Breakdown-topic-claims-toolbar {
+  display: flex;
+}
+
+.Breakdown-topic-claims-button {
+  background-color: #282c34;
+  border-color: black;
+}
+
+.Breakdown-topic-claims-tag {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-right: 0.5rem;
 }
 
 .loader {
