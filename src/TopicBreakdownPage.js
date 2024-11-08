@@ -40,7 +40,7 @@ const ClaimItem = ({ index, claim }) => {
                     {claim.pro_evidence ? claim.pro_evidence + " " : ""}
                     {claim.con_evidence ? claim.con_evidence : ""}
                     {
-                        claim.output_tags ? claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>)) : ""
+                        claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>))}</div>) : ""
                     }
                     <div className='Breakdown-topic-claims-toolbar'>
                         <ButtonGroup size="sm">

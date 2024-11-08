@@ -31,6 +31,7 @@
 
 .Breakdown-content-tag-container {
   display: inline-flex;
+  flex-wrap: wrap;
 }
 
 .Breakdown-audio-container {
