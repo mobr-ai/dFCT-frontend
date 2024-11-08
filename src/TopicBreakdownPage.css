@@ -48,6 +48,11 @@
   cursor: pointer;
 }
 
+.Breakdown-topic-claims-body {
+  display: inline-flex;
+  flex-direction: column;
+}
+
 .Breakdown-topic-claims-toolbar {
   display: flex;
 }
