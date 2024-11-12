@@ -1,9 +1,10 @@
 import './TopicBreakdownPage.css'
+import TopicList from './TopicList'
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Accordion from 'react-bootstrap/Accordion';
-import logo from './logo.svg';
+import LoadingPage from './LoadingPage';
 import { useLoaderData, Await } from "react-router-dom";
 import { Suspense } from 'react';
 
@@ -100,22 +101,38 @@ const ContentCard = ({ item }) => {
 
 // Main component
 function TopicBreakdownPage() {
-    const { topicPromise } = useLoaderData()
+    const { topicPromise, userTopicsPromise } = useLoaderData()
 
     return (
-        <div className="Breakdown-body" >
-            <Suspense fallback={<img src={logo} className="Breakdown-loading" alt="loading sign"></img>}>
-                <Await resolve={topicPromise}>
-                    {
-                        (topicData) =>
-                            <Topic
-                                title={JSON.parse(topicData).title}
-                                description={JSON.parse(topicData).description}
-                                claimList={JSON.parse(topicData).claims}
-                                contentList={JSON.parse(topicData).content}
-                            />
-                    }
-                </Await>
+        <div className="Breakdown-body">
+            <Suspense fallback={<LoadingPage />}>
+                <div className='Breakdown-left-column'>
+                    <Await resolve={userTopicsPromise}>
+                        {
+                            (userTopics) =>
+                                <TopicList
+                                    content={userTopics}
+                                />
+                        }
+                    </Await>
+                </div>
+                <div className='Breakdown-middle-column'>
+                    <Await resolve={topicPromise}>
+                        {
+                            (topicData) =>
+                                <Topic
+                                    title={JSON.parse(topicData).title}
+                                    description={JSON.parse(topicData).description}
+                                    claimList={JSON.parse(topicData).claims}
+                                    contentList={JSON.parse(topicData).content}
+                                />
+                        }
+                    </Await>
+                </div>
+                {/* <div className='Breakdown-right-column'>
+
+                </div> */}
+
             </Suspense>
         </div>
     );

@@ -1,6 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
+// import TopicList from './TopicList'
 import logo from './logo.svg';
+// import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
@@ -10,6 +12,8 @@ import request from 'superagent';
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import ReactTextTransition, { presets } from 'react-text-transition';
+// import { useLoaderData, Await } from "react-router-dom";
+// import { Suspense } from 'react';
 
 function LandingPage() {
   const welcomeMsg = "Drop files here and/or enter URLs to fact-check"
@@ -32,6 +36,8 @@ function LandingPage() {
   const [urls, setURLs] = useState([])
   const [user, loading, setLoading] = useOutletContext();
   const navigate = useNavigate()
+  // const { userTopicsPromise } = useLoaderData()
+
 
   useEffect(() => {
     const intervalId = setInterval(
@@ -401,6 +407,16 @@ function LandingPage() {
             </Form.Group>
           )}
         </main>
+        {/* <Suspense fallback={<LoadingPage />}>
+          <Await resolve={userTopicsPromise}>
+            {
+              (userTopics) =>
+                <TopicList
+                  content={userTopics}
+                />
+            }
+          </Await>
+        </Suspense> */}
       </div>
     </div>
   );
