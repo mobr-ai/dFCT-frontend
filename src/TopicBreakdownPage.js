@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Accordion from 'react-bootstrap/Accordion';
 import LoadingPage from './LoadingPage';
-import { useLoaderData, Await } from "react-router-dom";
+import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 
 // Topic Component
@@ -102,11 +102,12 @@ const ContentCard = ({ item }) => {
 // Main component
 function TopicBreakdownPage() {
     const { topicPromise, userTopicsPromise } = useLoaderData()
+    const [user] = useOutletContext();
 
     return (
         <div className="Breakdown-body">
             <Suspense fallback={<LoadingPage />}>
-                <div className='Breakdown-left-column'>
+                {user && (<div className='Breakdown-left-column'>
                     <Await resolve={userTopicsPromise}>
                         {
                             (userTopics) =>
@@ -115,7 +116,7 @@ function TopicBreakdownPage() {
                                 />
                         }
                     </Await>
-                </div>
+                </div>)}
                 <div className='Breakdown-middle-column'>
                     <Await resolve={topicPromise}>
                         {

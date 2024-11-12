@@ -50,7 +50,7 @@ function TopicList({ content }) {
     }
 
     const TopicCard = ({ topic }) => {
-        if (topic.title === "Topic template")
+        if (!user || topic.title === "Topic template")
             return null
 
         return (
