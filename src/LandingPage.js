@@ -1,10 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
+import URLCardList from './URLCardList.js';
 // import TopicList from './TopicList'
 import logo from './logo.svg';
 // import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
-import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -63,11 +63,6 @@ function LandingPage() {
     else {
       callback()
     }
-  }
-
-  const getHostname = (url) => {
-    // use URL constructor and return hostname
-    return new URL(url).hostname;
   }
 
   const handleContextInput = (event) => {
@@ -195,11 +190,6 @@ function LandingPage() {
     checkTopic(getSignedRequest)
   }
 
-  const openInNewTab = (url) => {
-    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
-    if (newWindow) newWindow.opener = null
-  }
-
   const processTopic = () => {
 
     function requestProcessing(res) {
@@ -280,11 +270,6 @@ function LandingPage() {
     }
   }
 
-  const removeCard = (url) => {
-    let filtered = urls.filter((u) => { return !u.url.includes(url) });
-    setURLs(filtered)
-  }
-
   // sleep time expects milliseconds
   function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
@@ -312,28 +297,6 @@ function LandingPage() {
     setDisableDrop(false)
     setLoading(false)
   }
-
-  const truncateString = (string = '', maxLength = 100) => {
-    return string.length > maxLength
-      ? `${string.substring(0, maxLength)}…`
-      : string
-  }
-
-  const urlCards = urls.map((u) => (
-    <Card variant="dark" className="Landing-url-card">
-      <Card.Img className="Landing-url-card-img" onClick={() => openInNewTab(u.url)} variant="top" src={u.metadata['og:image'] || (u.metadata['image-array'] ? "data:image/png;base64,".concat(u.metadata['image-array']) : "") || './placeholder.png'} style={(u.metadata['og:image'] || u.metadata['image-array']) ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
-      <Card.Body>
-        <Card.Title className="Landing-url-card-title">{getHostname(u.url)}</Card.Title>
-        <Card.Text>
-          {truncateString(u.metadata['og:title'])}
-        </Card.Text>
-        <Button className="Landing-url-card-button" onClick={() => removeCard(u.url)} variant="secondary">Remove</Button>
-      </Card.Body>
-      <Card.Footer>
-        <small onClick={() => openInNewTab(u.url)} className="text-muted"><i>{u.url}</i></small>
-      </Card.Footer>
-    </Card>
-  ));
 
   return (
     <div className="Landing d-flex flex-column">
@@ -390,7 +353,7 @@ function LandingPage() {
 
               {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
                 <>
-                  <div className="Landing-url-card-container">{urlCards}</div>
+                  <URLCardList setURLs={setURLs} urls={urls} />
                   <div className="Landing-input">
                     <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
                     <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />

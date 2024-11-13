@@ -1,0 +1,31 @@
+.Url-card {
+  font-size: 12px;
+  font-family: monospace;
+  width: 15rem;
+  text-align: left;
+  margin: 1rem;
+  cursor: pointer;
+}
+
+.Url-card-img {
+  max-height: 15vh;
+  align-self: center;
+  object-fit: cover;
+}
+
+.Url-card-button {
+  font-size: 12px !important;
+}
+
+.Url-card-title {
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
+.Url-card-container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: space-evenly;
+}

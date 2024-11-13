@@ -1,6 +1,6 @@
 import './TopicList.css'
 import Card from 'react-bootstrap/Card';
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
 function TopicList({ content }) {
     const [user] = useOutletContext();
