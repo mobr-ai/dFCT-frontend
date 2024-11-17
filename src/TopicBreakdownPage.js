@@ -108,12 +108,10 @@ function TopicBreakdownPage() {
         <div className="Breakdown-body">
             <Suspense fallback={<LoadingPage />}>
                 {user && (<div className='Breakdown-left-column'>
+                    <h3>Recent topics</h3>
                     <Await resolve={userTopicsPromise}>
                         {
-                            (userTopics) =>
-                                <TopicList
-                                    content={userTopics}
-                                />
+                            (userTopics) => <TopicList content={userTopics} />
                         }
                     </Await>
                 </div>)}
@@ -130,9 +128,9 @@ function TopicBreakdownPage() {
                         }
                     </Await>
                 </div>
-                {/* <div className='Breakdown-right-column'>
+                <div className='Breakdown-right-column'>
 
-                </div> */}
+                </div>
 
             </Suspense>
         </div>

@@ -1,9 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
 import URLCardList from './URLCardList.js';
-// import TopicList from './TopicList'
+import TopicList from './TopicList'
 import logo from './logo.svg';
-// import LoadingPage from './LoadingPage';
+import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -12,8 +12,8 @@ import request from 'superagent';
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import ReactTextTransition, { presets } from 'react-text-transition';
-// import { useLoaderData, Await } from "react-router-dom";
-// import { Suspense } from 'react';
+import { useLoaderData, Await } from "react-router-dom";
+import { Suspense } from 'react';
 
 function LandingPage() {
   const welcomeMsg = "Drop files here and/or enter URLs to fact-check"
@@ -34,9 +34,9 @@ function LandingPage() {
   const [showURLs, setShowURLs] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
-  const [user, loading, setLoading] = useOutletContext();
+  const [user, loading, userTopics, setLoading] = useOutletContext();
   const navigate = useNavigate()
-  // const { userTopicsPromise } = useLoaderData()
+  const { userTopicsPromise } = useLoaderData()
 
 
   useEffect(() => {
@@ -299,88 +299,91 @@ function LandingPage() {
   }
 
   return (
-    <div className="Landing d-flex flex-column">
-      <div className="Landing-body">
-        <main>
-          <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
-            {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
-            {!user && !loading && (
-              <section className="inline Landing-logo-text">
-                <ReactTextTransition springConfig={presets.gentle} inline>
-                  {brandText[brandIndex % brandText.length]}
-                </ReactTextTransition>
-                {suffixText[suffixIndex % suffixText.length]}
-              </section>
-            )
-            }
-          </div>
-          {user && (
-            <Form.Group className="Landing-input-group mb-3" id="input-form-group">
-              <div className="Landing-drop">
-                <StyledDropzone
-                  noKeyboard={disableDrop}
-                  noClick={disableDrop}
-                  noDrag={disableDrop}
-                  onDropAccepted={onDropAccepted}
-                  msg={dropMsg}
-                  showFiles={showFiles}
-                  showProgress={showProgress}
-                  background={dropBackground}
-                  border={dropBorder}
-                  progress={progress}
-                  files={files}
-                />
-              </div>
-              {!loading && (
-                <>
-                  <div>
-                    <InputGroup className="Landing-input-url mb-3">
-                      <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
-                      <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
-                      <Button
-                        id="input-url-button"
-                        variant="dark"
-                        onClick={!fetching ? handleURLInput : null}
-                        disabled={fetching}
+    <div className="Landing-body" >
+      <div className='Landing-middle-column'>
+        <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
+          {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
+          {!user && !loading && (
+            <section className="inline Landing-logo-text">
+              <ReactTextTransition springConfig={presets.gentle} inline>
+                {brandText[brandIndex % brandText.length]}
+              </ReactTextTransition>
+              {suffixText[suffixIndex % suffixText.length]}
+            </section>
+          )
+          }
+        </div>
+        {user && (
+          <Form.Group className="Landing-input-group mb-3" id="input-form-group">
+            <div className="Landing-drop">
+              <StyledDropzone
+                noKeyboard={disableDrop}
+                noClick={disableDrop}
+                noDrag={disableDrop}
+                onDropAccepted={onDropAccepted}
+                msg={dropMsg}
+                showFiles={showFiles}
+                showProgress={showProgress}
+                background={dropBackground}
+                border={dropBorder}
+                progress={progress}
+                files={files}
+              />
+            </div>
+            {!loading && (
+              <>
+                <div>
+                  <InputGroup className="Landing-input-url mb-3">
+                    <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
+                    <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
+                    <Button
+                      id="input-url-button"
+                      variant="dark"
+                      onClick={!fetching ? handleURLInput : null}
+                      disabled={fetching}
 
-                      >{fetching ? 'Loading...' : 'Add URL'}</Button>
-                    </InputGroup>
-                    <Form.Text id="input-url-help-msg" muted />
-                  </div>
-                  <br style={{ clear: "both" }} />
-                </>
-              )}
+                    >{fetching ? 'Loading...' : 'Add URL'}</Button>
+                  </InputGroup>
+                  <Form.Text id="input-url-help-msg" muted />
+                </div>
+                <br style={{ clear: "both" }} />
+              </>
+            )}
 
-              {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
-                <>
-                  <URLCardList setURLs={setURLs} urls={urls} />
-                  <div className="Landing-input">
-                    <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
-                    <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
-                  </div>
-                  <Button
-                    id="input-process-button"
-                    variant="dark"
-                    onClick={!loading ? processTopic : null}
-                    disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                  >ANALYZE</Button>
-                </>
+            {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
+              <>
+                <URLCardList setURLs={setURLs} urls={urls} />
+                <div className="Landing-input">
+                  <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
+                  <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
+                </div>
+                <Button
+                  id="input-process-button"
+                  variant="dark"
+                  onClick={!loading ? processTopic : null}
+                  disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
+                >ANALYZE</Button>
+              </>
 
-              )}
-            </Form.Group>
-          )}
-        </main>
-        {/* <Suspense fallback={<LoadingPage />}>
-          <Await resolve={userTopicsPromise}>
-            {
-              (userTopics) =>
-                <TopicList
-                  content={userTopics}
-                />
-            }
-          </Await>
-        </Suspense> */}
+            )}
+          </Form.Group>
+        )}
       </div>
+      {user && (
+        <Suspense fallback={<LoadingPage type="ring" />}>
+          <div className='Landing-left-column'>
+            <Await resolve={userTopicsPromise}>
+              {
+                (userTopics) =>
+                  userTopics && (<>
+                    <h3>Recent topics</h3>
+                    <TopicList content={userTopics} />
+                  </>)
+              }
+            </Await>
+          </div>
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -1,4 +1,18 @@
 .Topic-card {
   margin-bottom: 1rem;
+  margin-top: 2rem;
   max-width: 20rem;
+}
+
+.Topic-list-container {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar handle on hover */
+.Topic-list-container:active::-webkit-scrollbar-thumb,
+.Topic-list-container:focus::-webkit-scrollbar-thumb,
+.Topic-list-container:hover::-webkit-scrollbar-thumb {
+  visibility: visible !important;
+  background: #888 !important;
 }

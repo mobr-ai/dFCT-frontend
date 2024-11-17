@@ -13,36 +13,50 @@ import TopicBreakdownPage from './TopicBreakdownPage';
 function Layout() {
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [loading, setLoading] = useState(false)
+  const [userTopics, setUserTopics] = useState({})
 
   const handleLoginSuccess = useCallback(userData => {
-    setUser(userData);
-    window.sessionStorage.setItem("userData", JSON.stringify(userData));
-    setLoading(false)
-
-    //TODO: check if we want to fetch user-specific data
-  }, [setLoading, setUser]);
+    if (userData) {
+      setUser(userData);
+      window.sessionStorage.setItem("userData", JSON.stringify(userData));
+      fetchUserTopics(userData.id).then((response) => {
+        setUserTopics(response)
+        setLoading(false)
+      })
+    }
+    else {
+      setUser(null)
+      window.sessionStorage.removeItem('userData')
+    }
+  }, [setLoading, setUser, setUserTopics]);
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setUser={handleLoginSuccess} setLoading={setLoading} />
-      <Outlet context={[user, loading, setLoading]} />
+      <Outlet context={[user, loading, userTopics, setLoading]} />
       {/* <Footer /> */}
     </GoogleOAuthProvider>
   );
 }
 
 
-const fetchUserTopics = async (userId, signal) => {
-  const response = await fetch(
-    `/api/user/${userId}/topics`, { signal: signal }
-  )
+const fetchUserTopics = async (userId) => {
+  const response = await fetch(`/api/user/${userId}/topics`)
   return await response.json();
 }
 
-// const userTopicsLoader = async (dynData) => {
-//   const userTopicsPromise = fetchUserTopics(dynData.params.userId, dynData.request.signal);
-//   return defer({ userTopicsPromise });
-// };
+const userTopicsLoader = async () => {
+  if (!window.sessionStorage.userData)
+    return {}
+
+  let userData = JSON.parse(window.sessionStorage.userData)
+  if (userData && userData.id) {
+    const userTopicsPromise = fetchUserTopics(userData.id);
+    return defer({ userTopicsPromise });
+  }
+
+  return {}
+};
 
 const fetchTopic = async (userId, topicId, signal) => {
   const response = await fetch(
@@ -65,7 +79,7 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <LandingPage />,
-        // loader: userTopicsLoader,
+        loader: userTopicsLoader,
       },
       {
         path: '/t/:userId/:topicId',

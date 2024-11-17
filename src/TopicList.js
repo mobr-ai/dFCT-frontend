@@ -68,12 +68,13 @@ function TopicList({ content }) {
     };
 
     return (
-        <div className="Topic-list-container">
-            <h3>Recent topics</h3>
-            {content.sort(function (x, y) { return new Date(y.timestamp) - new Date(x.timestamp) }).map((item, _) => (
-                <TopicCard topic={item} />
-            ))}
-        </div>
+        content && (
+            <div className="Topic-list-container">
+                {content.sort(function (x, y) { return new Date(y.timestamp) - new Date(x.timestamp) }).map((item, _) => (
+                    <TopicCard topic={item} />
+                ))}
+            </div>
+        )
     )
 }
 
