@@ -371,17 +371,17 @@ function LandingPage() {
       </div>
       {user && (
         <Suspense fallback={<LoadingPage type="ring" />}>
-          <div className='Landing-left-column'>
-            <Await resolve={userTopicsPromise}>
-              {
-                (userTopics) =>
-                  userTopics && (<>
+          <Await resolve={userTopicsPromise}>
+            {
+              (userTopics) =>
+                userTopics && Object.keys(userTopics).length > 0 && (
+                  <div className='Landing-left-column'>
                     <h3>Recent topics</h3>
                     <TopicList content={userTopics} />
-                  </>)
-              }
-            </Await>
-          </div>
+                  </div>
+                )
+            }
+          </Await>
         </Suspense>
       )}
     </div>

@@ -26,7 +26,7 @@ function Layout() {
     }
     else {
       setUser(null)
-      window.sessionStorage.removeItem('userData')
+      // window.sessionStorage.removeItem('userData')
     }
   }, [setLoading, setUser, setUserTopics]);
 
