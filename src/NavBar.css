@@ -11,3 +11,13 @@
 .Navbar-brand-img {
   margin-right: 10px;
 }
+
+.Navbar-checkmark {
+  display: inline-flex;
+  transform: rotate(45deg);
+  height: 25px;
+  width: 12px;
+  margin-left: 1rem;
+  border-bottom: 7px solid #83867f;
+  border-right: 7px solid #4a5c52;
+}

@@ -28,6 +28,7 @@
     order: 1 !important;
     min-height: 100vh;
     padding: 0 10% 0 10%;
+    margin-right: 5vw;
   }
   .Breakdown-right-column {
     order: 2 !important;

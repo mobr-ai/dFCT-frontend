@@ -1,10 +1,9 @@
 import './URLCardList.css'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button'
-
+import { useTranslation } from "react-i18next";
 
 function URLCardList(props) {
-
     const openInNewTab = (url) => {
         const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
         if (newWindow) newWindow.opener = null
@@ -27,6 +26,8 @@ function URLCardList(props) {
     }
 
     const URLCard = ({ item }) => {
+        const { t } = useTranslation();
+
         return (
             <Card variant="dark" className="Url-card">
                 <Card.Img className="Url-card-img" onClick={() => openInNewTab(item.url)} variant="top" src={item.metadata['og:image'] || (item.metadata['image-array'] ? "data:image/png;base64,".concat(item.metadata['image-array']) : "") || './placeholder.png'} style={(item.metadata['og:image'] || item.metadata['image-array']) ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
@@ -35,7 +36,7 @@ function URLCardList(props) {
                     <Card.Text>
                         {truncateString(item.metadata['og:title'])}
                     </Card.Text>
-                    <Button className="Url-card-button" onClick={() => removeCard(item.url)} variant="secondary">Remove</Button>
+                    <Button className="Url-card-button" onClick={() => removeCard(item.url)} variant="secondary">{t('removeButton')}</Button>
                 </Card.Body>
                 <Card.Footer>
                     <small onClick={() => openInNewTab(item.url)} className="text-muted"><i>{item.url}</i></small>

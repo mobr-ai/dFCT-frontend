@@ -1,6 +1,8 @@
 import './TopicList.css'
 import Card from 'react-bootstrap/Card';
 import { useOutletContext } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 
 function TopicList({ content }) {
     const [user] = useOutletContext();
@@ -50,6 +52,8 @@ function TopicList({ content }) {
     }
 
     const TopicCard = ({ topic }) => {
+        const { t } = useTranslation();
+
         if (!user || topic.title === "Topic template")
             return null
 
@@ -57,11 +61,11 @@ function TopicList({ content }) {
             <Card variant="dark" className="Topic-card">
                 <Card.Body>
                     <Card.Title className="Topic-card-title">{topic.title}</Card.Title>
-                    <Card.Subtitle className="text-muted">Updated {getElapsedTime(topic.timestamp)} ago</Card.Subtitle>
+                    <Card.Subtitle className="text-muted">{t('Updated') + " " + (getElapsedTime(topic.timestamp) === "1s" ? t('moments ago') : getElapsedTime(topic.timestamp) + " " + t('ago'))}</Card.Subtitle>
                     <Card.Text>
                         {truncateString(topic.description)}
                     </Card.Text>
-                    <Card.Link href={"/t/" + user.id + "/" + topic.id} >Read topic</Card.Link>
+                    <Card.Link href={"/t/" + user.id + "/" + topic.id} >{t('readTopic')}</Card.Link>
                 </Card.Body>
             </Card>
         )

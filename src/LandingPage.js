@@ -14,15 +14,40 @@ import { useState, useEffect } from 'react';
 import ReactTextTransition, { presets } from 'react-text-transition';
 import { useLoaderData, Await } from "react-router-dom";
 import { Suspense } from 'react';
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+import detector from "i18next-browser-languagedetector";
+import translationEN from './locales/en/translation.json';
+import translationPT from './locales/pt/translation.json';
+
+i18n
+  .use(detector)
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      en: {
+        translation: translationEN
+      },
+      pt: {
+        translation: translationPT
+      }
+    },
+    // lng: "pt", // do not define the lng option if using language detector
+    fallbackLng: "en",
+
+    interpolation: {
+      escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+    }
+  });
 
 function LandingPage() {
-  const welcomeMsg = "Drop files here and/or enter URLs to fact-check"
+  const { t } = useTranslation();
   const brandText = ['d-', 'de', 'fact', 'tool']
   const suffixText = ['FCT', 'centralized', '-checking', 'kit']
   const [brandIndex, setBrandIndex] = useState(1)
   const [suffixIndex, setSuffixBrandIndex] = useState(1)
   const [disableDrop, setDisableDrop] = useState(false)
-  const [dropMsg, setDropMsg] = useState(welcomeMsg)
+  const [dropMsg, setDropMsg] = useState(t('welcomeMsg'))
   const [dropBackground, setDropBackground] = useState("#37474fff")
   const [dropBorder, setDropBorder] = useState()
   const [fetching, setFetching] = useState(false)
@@ -40,6 +65,8 @@ function LandingPage() {
 
 
   useEffect(() => {
+    setDropMsg(t('welcomeMsg'))
+
     const intervalId = setInterval(
       () => {
         setBrandIndex((index) => index < brandText.length ? index + 1 : index)
@@ -49,7 +76,7 @@ function LandingPage() {
     );
 
     return () => clearTimeout(intervalId);
-  }, [brandText.length, suffixText.length]);
+  }, [brandText.length, suffixText.length, setDropMsg, t]);
 
 
   const checkTopic = (callback) => {
@@ -126,7 +153,7 @@ function LandingPage() {
       if (newFiles.filter((f) => f.completed).length === newFiles.length) {
         // all current files uploaded
         setLoading(false)
-        setDropMsg("Add more files or hit 'ANALYZE'")
+        setDropMsg(t('addMoreFiles'))
       }
     }
 
@@ -137,7 +164,7 @@ function LandingPage() {
     }
 
     function reqSuccess(res) {
-      setDropMsg("Signed request success, uploading files...")
+      setDropMsg(t('uploadingFiles'))
       setShowFiles(true)
       setShowProgress(true)
       // setDisableDrop(true)
@@ -206,6 +233,7 @@ function LandingPage() {
         .send({ topicId: nextTopic })
         .send({ userId: user.id })
         .send({ providedContext: providedContext })
+        .send({ language: i18n.language || window.localStorage.i18nextLng })
         .then(waitProcessing, handleError);
     }
 
@@ -247,7 +275,7 @@ function LandingPage() {
 
       // send user to topic breakdown page
       if (nextProgress === 100) {
-        setDropMsg("Topic processed successfully")
+        setDropMsg(t('topicProcessed'))
         setLoading(false)
         // react soft navigation
         navigate(topicURL)
@@ -258,7 +286,8 @@ function LandingPage() {
     if (urls.length > 0 || files.filter((f) => f.completed).length === files.length) {
       console.log("All files available, processing content...")
 
-      setDropMsg("Processing content...")
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      setDropMsg(t('processingContent'))
       setShowFiles(false)
       setShowURLs(false)
       setShowProgress(true)
@@ -279,7 +308,7 @@ function LandingPage() {
     if (clear) {
       setDropBackground("#37474fff")
       setDropBorder()
-      setDropMsg(welcomeMsg)
+      setDropMsg(t('welcomeMsg'))
       return
     }
     if (msg) {
@@ -322,6 +351,7 @@ function LandingPage() {
                 noDrag={disableDrop}
                 onDropAccepted={onDropAccepted}
                 msg={dropMsg}
+                key={dropMsg}
                 showFiles={showFiles}
                 showProgress={showProgress}
                 background={dropBackground}
@@ -342,7 +372,7 @@ function LandingPage() {
                       onClick={!fetching ? handleURLInput : null}
                       disabled={fetching}
 
-                    >{fetching ? 'Loading...' : 'Add URL'}</Button>
+                    >{fetching ? t('loadingURL') : t('addURL')}</Button>
                   </InputGroup>
                   <Form.Text id="input-url-help-msg" muted />
                 </div>
@@ -354,15 +384,15 @@ function LandingPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <div className="Landing-input">
-                  <Form.Label><b><i>Optional</i></b>: Claims or additional information about the files and URLs you want to fact-check</Form.Label>
-                  <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder='e.g. I came across this viral video claiming a new "turbo diet"' rows={3} />
+                  <Form.Label><b><i>{t('optional')}</i></b>{t('additionalContext')}</Form.Label>
+                  <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t('claimExample')} rows={3} />
                 </div>
                 <Button
                   id="input-process-button"
                   variant="dark"
                   onClick={!loading ? processTopic : null}
                   disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                >ANALYZE</Button>
+                >{t('analyzeButton')}</Button>
               </>
 
             )}
@@ -376,7 +406,7 @@ function LandingPage() {
               (userTopics) =>
                 userTopics && Object.keys(userTopics).length > 0 && (
                   <div className='Landing-left-column'>
-                    <h3>Recent topics</h3>
+                    <h3>{t('recentTopics')}</h3>
                     <TopicList content={userTopics} />
                   </div>
                 )

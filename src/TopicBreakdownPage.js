@@ -7,14 +7,18 @@ import Accordion from 'react-bootstrap/Accordion';
 import LoadingPage from './LoadingPage';
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
+import { useTranslation } from "react-i18next";
+
 
 // Topic Component
 const Topic = ({ title, description, claimList, contentList }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
             <p>{description}</p>
-            <h3>Claims</h3>
+            <h3>{t('claims')}</h3>
             <ClaimList content={claimList} />
             <ContentList content={contentList} />
         </div>
@@ -33,6 +37,8 @@ const ClaimList = ({ content }) => {
 };
 
 const ClaimItem = ({ index, claim }) => {
+    const { t } = useTranslation();
+
     return (
         <Accordion.Item eventKey={index}>
             <Accordion.Header className='Breakdown-topic-claims-header'><b>{claim.statement}</b></Accordion.Header>
@@ -41,13 +47,13 @@ const ClaimItem = ({ index, claim }) => {
                     {claim.pro_evidence ? claim.pro_evidence + " " : ""}
                     {claim.con_evidence ? claim.con_evidence : ""}
                     {
-                        claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>))}</div>) : ""
+                        claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
                     }
                     <div className='Breakdown-topic-claims-toolbar'>
                         <ButtonGroup size="sm">
-                            <Button variant="dark">▲ Up vote</Button>
-                            <Button variant="dark">▼ Down vote</Button>
-                            <Button variant="dark">☸ Review</Button>
+                            <Button variant="dark">{t('upVote')}</Button>
+                            <Button variant="dark">{t('downVote')}</Button>
+                            <Button variant="dark">{t('reviewClaim')}</Button>
                         </ButtonGroup>
                     </div>
                 </div>
@@ -70,6 +76,8 @@ const ContentList = ({ content }) => {
 
 // ContentCard Component
 const ContentCard = ({ item }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="Breakdown-content-card">
             {/* <h4>{item.content_title}</h4> */}
@@ -90,10 +98,10 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the audio tag.
                 </audio>
             )}
-            <p><u>Source</u>: {item.origins}</p>
+            <p><u>{t('source')}</u>: {t(item.origins)}</p>
             <p>{item.description}</p>
             {
-                item.output_tags ? (<div className="Breakdown-content-tag-container">{item.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{tag}</Badge></div>))}</div>) : ""
+                item.output_tags ? (<div className="Breakdown-content-tag-container">{item.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
             }
         </div>
     );
@@ -101,6 +109,7 @@ const ContentCard = ({ item }) => {
 
 // Main component
 function TopicBreakdownPage() {
+    const { t } = useTranslation();
     const { topicPromise, userTopicsPromise } = useLoaderData()
     const [user] = useOutletContext();
 
@@ -108,7 +117,7 @@ function TopicBreakdownPage() {
         <div className="Breakdown-body">
             <Suspense fallback={<LoadingPage />}>
                 {user && (<div className='Breakdown-left-column'>
-                    <h3>Recent topics</h3>
+                    <h3>{t('recentTopics')}</h3>
                     <Await resolve={userTopicsPromise}>
                         {
                             (userTopics) => <TopicList content={userTopics} />

@@ -8,6 +8,8 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 // const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
 // const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];
@@ -18,6 +20,7 @@ function NavBar(props) {
     const [brandIndex, setBrandIndex] = useState(1);
     const [suffixIndex, setSuffixBrandIndex] = useState(1);
     const navigate = useNavigate()
+    const { t } = useTranslation();
 
     useEffect(() => {
         const intervalId = setInterval(
@@ -84,6 +87,10 @@ function NavBar(props) {
         navigate("/")
     }
 
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+    }
+
     const userMenu = props.userData && (
         <Container id="navbar-user-dropdown-container">
             <Image
@@ -127,20 +134,29 @@ function NavBar(props) {
                                 <Nav.Link onClick={() => {
                                     props.setLoading(true)
                                     login()
-                                }}>Sign in</Nav.Link>
+                                }}>{t('logIn')}</Nav.Link>
                             )
                         }
                         {
                             props.userData && (
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
-                                    <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={logout}>{t('logOut')}</NavDropdown.Item>
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item>
-                                        Preferences
+                                        {t('settings')}
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             )
                         }
+                        <NavDropdown title={t('language')} id="navbar-dropdown">
+                            <NavDropdown.Item onClick={() => changeLanguage('pt')}>
+                                🇧🇷 Português (BR) {i18n.language === 'pt' ? <div className="Navbar-checkmark" /> : ''}
+                            </NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item onClick={() => changeLanguage('en')}>
+                                🇺🇸 English (US) {i18n.language === 'en' ? <div className="Navbar-checkmark" /> : ''}
+                            </NavDropdown.Item>
+                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
