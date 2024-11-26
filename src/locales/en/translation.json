@@ -21,5 +21,7 @@
     "downVote": "▼ Down vote",
     "reviewClaim": "☸ Review",
     "source": "Source",
-    "readTopic": "Read topic"
+    "readTopic": "Read topic",
+    "topicCreationFailed": "Oops, failed to create topic. Try again later.",
+    "errorMsg": "Oops! Something is wrong"
 }

@@ -35,5 +35,7 @@
     "Updated": "Atualizado",
     "ago": "atrás",
     "moments ago": "agora",
-    "readTopic": "Ler tópico"
+    "readTopic": "Ler tópico",
+    "topicCreationFailed": "Oops, falha ao criar tópico. Tente novamente mais tarde.",
+    "errorMsg": "Oops! Algo deu errado."
 }

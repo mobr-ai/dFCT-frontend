@@ -1,8 +1,10 @@
 import './LandingPage.css';
 import { useRouteError } from "react-router-dom";
 import logo from './logo.svg';
+import { useTranslation } from "react-i18next";
 
 export default function ErrorPage() {
+    const { t } = useTranslation();
     const error = useRouteError();
     console.error(error);
 
@@ -10,7 +12,7 @@ export default function ErrorPage() {
         <div className="Landing Landing-body Error-page d-flex flex-column" id="error-page">
             <div>
                 <img src={logo} className="Error-page-logo" alt="logo"></img>
-                <p>Oops! Something is wrong</p>
+                <p>{t('errorMsg')}</p>
                 <i>{error.statusText || error.message} ({error.status})</i>
             </div>
         </div>

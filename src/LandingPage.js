@@ -85,7 +85,8 @@ function LandingPage() {
         .put('/topic/' + user.id)
         .send({ 'title': 'Topic template' })
         .send({ 'description': 'This is a new topic' })
-        .then(callback, () => showError("Oops, failed to create topic."))
+        .send({ language: i18n.language || window.localStorage.i18nextLng })
+        .then(callback, () => showError(t("topicCreationFailed")))
     }
     else {
       callback()
