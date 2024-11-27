@@ -137,6 +137,15 @@ function NavBar(props) {
                                 }}>{t('logIn')}</Nav.Link>
                             )
                         }
+                        <NavDropdown title={t('language')} id="navbar-dropdown">
+                            <NavDropdown.Item onClick={() => changeLanguage('pt')}>
+                                🇧🇷 Português (BR) {i18n.language === 'pt' ? <div className="Navbar-checkmark" /> : ''}
+                            </NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item onClick={() => changeLanguage('en')}>
+                                🇺🇸 English (US) {i18n.language === 'en' ? <div className="Navbar-checkmark" /> : ''}
+                            </NavDropdown.Item>
+                        </NavDropdown>
                         {
                             props.userData && (
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
@@ -148,15 +157,6 @@ function NavBar(props) {
                                 </NavDropdown>
                             )
                         }
-                        <NavDropdown title={t('language')} id="navbar-dropdown">
-                            <NavDropdown.Item onClick={() => changeLanguage('pt')}>
-                                🇧🇷 Português (BR) {i18n.language === 'pt' ? <div className="Navbar-checkmark" /> : ''}
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item onClick={() => changeLanguage('en')}>
-                                🇺🇸 English (US) {i18n.language === 'en' ? <div className="Navbar-checkmark" /> : ''}
-                            </NavDropdown.Item>
-                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
