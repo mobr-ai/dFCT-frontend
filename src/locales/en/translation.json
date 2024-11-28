@@ -9,6 +9,7 @@
     "addMoreFiles": "Add more files or hit 'ANALYZE'",
     "analyzeButton": "ANALYZE",
     "uploadingFiles": "Uploading file(s)...",
+    "uploadFailed": "Oops, upload failed. Please try again later.",
     "topicProcessed": "Topic processed successfully",
     "processingContent": "Processing content...",
     "removeButton": "Remove",
@@ -23,5 +24,7 @@
     "source": "Source",
     "readTopic": "Read topic",
     "topicCreationFailed": "Oops, failed to create topic. Try again later.",
+    "fetchURLError": "Oops, error fetching URL. Hint: submit screenshots and/or text content for context.",
+    "invalidURL": "Oops, invalid URL",
     "errorMsg": "Oops! Something is wrong"
 }

@@ -66,6 +66,7 @@ function LandingPage() {
 
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
+    document.getElementById('input-url-help-msg').innerText = ""
 
     const intervalId = setInterval(
       () => {
@@ -99,27 +100,34 @@ function LandingPage() {
 
   const handleURLInput = () => {
     if (document.getElementById('input-url-text').value) {
-      const url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
 
-      if (!URL.canParse(url.url)) {
-        console.log("Oops, invalid URL: " + url.url)
-        document.getElementById('input-url-help-msg').innerText = "Oops, invalid URL"
+      if (!URL.canParse(document.getElementById('input-url-text').value)) {
+        console.log("Oops, invalid URL: " + document.getElementById('input-url-text').value)
+        document.getElementById('input-url-help-msg').innerText = t('invalidURL')
         setFetching(false)
         return
       }
 
       const metaSuccess = (res) => {
-        url['metadata'] = res.body
+        let url = { "url": document.getElementById('input-url-text').value, "metadata": res.body }
+
         setURLs(urls.concat([url]))
         setShowURLs(true)
         setFetching(false)
+
+        if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
+        document.getElementById('input-url-text').value = ""
       }
 
       const metaError = (res) => {
+        // let url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
         // display error msg
         console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
-        document.getElementById('input-url-help-msg').innerText = "Oops, error fetching URL"
+        document.getElementById('input-url-help-msg').innerText = t('fetchURLError')
+        // setURLs(urls.concat([url]))
+        // setShowURLs(true)
         setFetching(false)
+        document.getElementById('input-url-text').value = ""
       }
 
       request
@@ -128,7 +136,6 @@ function LandingPage() {
         .set('Accept', 'application/json')
         .then(metaSuccess, metaError)
 
-      document.getElementById('input-url-text').value = ""
       document.getElementById('input-url-help-msg').innerText = ""
       setFetching(true)
     }
@@ -155,12 +162,13 @@ function LandingPage() {
         // all current files uploaded
         setLoading(false)
         setDropMsg(t('addMoreFiles'))
+        document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
 
     function uploadError(res) {
       // display error msg
-      showError("Oops, upload failed. Please try again later.")
+      showError(t('uploadFailed'))
       console.log("Upload failed: " + res.req._data.get('key') + " [" + res.status + "] (" + res.message + ")")
     }
 
@@ -190,7 +198,7 @@ function LandingPage() {
 
     function reqError(res) {
       // display error msg
-      showError("Oops, upload failed. Please try again later.")
+      showError(t('uploadFailed'))
       console.log("Signed request failed: " + res.status + " (" + res.message + ")")
     }
 
@@ -263,7 +271,7 @@ function LandingPage() {
           console.log("Error retrieving processing progress: " + e.message)
           setProgress(0)
           nextProgress = -1
-          showError("Error retrieving processing progress: " + e.message)
+          showError(t('topicCreationFailed'))
         }
       }
 

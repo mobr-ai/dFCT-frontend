@@ -87,11 +87,16 @@
   display: block;
   margin: 3rem auto 3rem;
   max-height: 40vh;
-  max-width: 80vw;
+  max-width: 100%;
   width: auto;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.Breakdown-content-source {
+  display: inline-flex;
+  margin-bottom: 1rem;
 }
 
 .Breakdown-content-tag-container {
@@ -116,6 +121,10 @@
 .Breakdown-topic-claims-body {
   display: inline-flex;
   flex-direction: column;
+}
+
+.Breakdown-topic-claims-text {
+  display: inline-flex;
 }
 
 .Breakdown-topic-claims-toolbar {

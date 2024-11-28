@@ -8,7 +8,12 @@ import LoadingPage from './LoadingPage';
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
+import Linkify from "linkify-react";
 
+const linkifyOpts = {
+    defaultProtocol: "https",
+    target: "_blank"
+};
 
 // Topic Component
 const Topic = ({ title, description, claimList, contentList }) => {
@@ -44,8 +49,11 @@ const ClaimItem = ({ index, claim }) => {
             <Accordion.Header className='Breakdown-topic-claims-header'><b>{claim.statement}</b></Accordion.Header>
             <Accordion.Body>
                 <div className='Breakdown-topic-claims-body'>
-                    {claim.pro_evidence ? claim.pro_evidence + " " : ""}
-                    {claim.con_evidence ? claim.con_evidence : ""}
+                    <div className='Breakdown-topic-claims-text'>
+                        <Linkify as="p" options={linkifyOpts}>{claim.pro_evidence + " " + claim.con_evidence}</Linkify>
+                        {/* {claim.pro_evidence ? <Linkify as="p" options={linkifyOpts}>{claim.pro_evidence + " "}</Linkify> : ""}
+                        {claim.con_evidence ? <Linkify as="p" options={linkifyOpts}>{claim.con_evidence}</Linkify> : ""} */}
+                    </div>
                     {
                         claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
                     }
@@ -98,8 +106,9 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the audio tag.
                 </audio>
             )}
-            <p><u>{t('source')}</u>: {t(item.origins)}</p>
-            <p>{item.description}</p>
+            <div className='Breakdown-content-source'><Linkify as="div" options={linkifyOpts}><u>{t('source')}</u>:&nbsp;&nbsp;{t(item.origins)}</Linkify></div>
+
+            <p><Linkify as="div" options={linkifyOpts}>{item.description}</Linkify></p>
             {
                 item.output_tags ? (<div className="Breakdown-content-tag-container">{item.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
             }

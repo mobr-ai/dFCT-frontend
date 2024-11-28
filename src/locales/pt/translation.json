@@ -9,6 +9,7 @@
     "addMoreFiles": "Adicione mais arquivos ou clique em 'ANALISAR'",
     "analyzeButton": "ANALISAR",
     "uploadingFiles": "Enviando arquivo(s)...",
+    "uploadFailed": "Oops, falha no upload. Tente novamente mais tarde.",
     "topicProcessed": "Tópico processado com sucesso",
     "processingContent": "Processando dados...",
     "removeButton": "Remover",
@@ -37,5 +38,7 @@
     "moments ago": "há pouco",
     "readTopic": "Ler tópico",
     "topicCreationFailed": "Oops, falha ao criar tópico. Tente novamente mais tarde.",
+    "fetchURLError": "Oops, erro ao buscar URL. Dica: envie capturas de tela e/ou texto como contexto.",
+    "invalidURL": "Oops, URL inválida",
     "errorMsg": "Oops! Algo deu errado."
 }
