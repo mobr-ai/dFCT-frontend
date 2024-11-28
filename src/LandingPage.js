@@ -66,7 +66,9 @@ function LandingPage() {
 
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
-    document.getElementById('input-url-help-msg').innerText = ""
+
+    if (document.getElementById('input-url-help-msg'))
+      document.getElementById('input-url-help-msg').innerText = ""
 
     const intervalId = setInterval(
       () => {
