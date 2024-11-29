@@ -250,8 +250,8 @@ function LandingPage() {
 
     function handleError(res) {
       // display error msg
-      showError("Topic (id = " + topicId + ") processing failed. Please try again later.")
-      console.log("Topic processing failed: [" + res.status + "] (" + res.message + ")")
+      showError(t('topicCreationFailed'))
+      console.log("Topic (id = " + topicId + ") processing failed: [" + res.status + "] (" + res.message + ")")
     }
 
     async function waitProcessing(res) {
