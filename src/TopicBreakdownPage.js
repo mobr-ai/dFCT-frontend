@@ -1,5 +1,6 @@
 import './TopicBreakdownPage.css'
 import TopicList from './TopicList'
+import TopicToolbar from './TopicToolbar';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -22,6 +23,7 @@ const Topic = ({ title, description, claimList, contentList }) => {
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
+            <TopicToolbar />
             <p>{description}</p>
             <h3>{t('claims')}</h3>
             <ClaimList content={claimList} />
@@ -49,10 +51,8 @@ const ClaimItem = ({ index, claim }) => {
             <Accordion.Header className='Breakdown-topic-claims-header'><b>{claim.statement}</b></Accordion.Header>
             <Accordion.Body>
                 <div className='Breakdown-topic-claims-body'>
-                    <div className='Breakdown-topic-claims-text'>
+                    <div className='Breakdown-claim-evidence'>
                         <Linkify as="p" options={linkifyOpts}>{claim.pro_evidence + " " + claim.con_evidence}</Linkify>
-                        {/* {claim.pro_evidence ? <Linkify as="p" options={linkifyOpts}>{claim.pro_evidence + " "}</Linkify> : ""}
-                        {claim.con_evidence ? <Linkify as="p" options={linkifyOpts}>{claim.con_evidence}</Linkify> : ""} */}
                     </div>
                     {
                         claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""

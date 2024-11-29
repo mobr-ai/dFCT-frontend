@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
 import URLCardList from './URLCardList.js';
 import TopicList from './TopicList'
-import logo from './logo.svg';
+import logo from './icons/logo.svg';
 import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
 import Form from 'react-bootstrap/Form';

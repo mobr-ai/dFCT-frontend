@@ -22,7 +22,7 @@
   }
   .Breakdown-left-column {
     order: 0 !important;
-    width: 25%;
+    width: 20%;
   }
   .Breakdown-middle-column {
     order: 1 !important;
@@ -114,6 +114,21 @@
   margin-bottom: 2rem;
 }
 
+.Breakdown-toolbar {
+  display: flex;
+  margin-bottom: 2rem;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.Breakdown-toolbar-icon {
+  height: 25px;
+}
+
+.Breakdown-toolbar-icon:hover {
+  box-shadow: inset 0 0 15px 15px transparent;
+}
+
 .Breakdown-topic-claims {
   cursor: pointer;
 }
@@ -123,7 +138,7 @@
   flex-direction: column;
 }
 
-.Breakdown-topic-claims-text {
+.Breakdown-claim-evidence {
   display: inline-flex;
 }
 

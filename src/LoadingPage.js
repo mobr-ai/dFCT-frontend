@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+import logo from './icons/logo.svg';
 import "./LoadingPage.css"
 
 function LoadingPage(props) {

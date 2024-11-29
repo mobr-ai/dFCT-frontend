@@ -94,7 +94,7 @@ function NavBar(props) {
     const userMenu = props.userData && (
         <Container id="navbar-user-dropdown-container">
             <Image
-                src={props.userData.avatar ? props.userData.avatar : "./avatar.png"}
+                src={props.userData.avatar ? props.userData.avatar : "./icons/avatar.png"}
                 alt="Profile avatar"
                 roundedCircle
                 style={{ width: '30px', marginRight: '5px' }}
