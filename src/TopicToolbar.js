@@ -16,7 +16,7 @@ function TopicToolbar() {
     return (
         <Container className='Breakdown-toolbar' fluid>
             <Row>
-                <Col xs={6} md={4}>
+                <Col>
                     <OverlayTrigger
                         key='publish'
                         placement='top'
@@ -29,7 +29,7 @@ function TopicToolbar() {
                         <Image className='Breakdown-toolbar-icon' src={publishIcon} />
                     </OverlayTrigger>
                 </Col>
-                <Col xs={6} md={4}>
+                <Col>
                     <OverlayTrigger
                         key='publish'
                         placement='top'
@@ -42,7 +42,7 @@ function TopicToolbar() {
                         <Image className='Breakdown-toolbar-icon' src={deleteIcon} />
                     </OverlayTrigger>
                 </Col>
-                <Col xs={6} md={4}>
+                <Col>
                     <OverlayTrigger
                         key='publish'
                         placement='top'
