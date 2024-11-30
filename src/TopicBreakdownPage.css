@@ -129,6 +129,17 @@
   box-shadow: inset 0 0 15px 15px transparent;
 }
 
+.Breakdown-share-icon {
+  padding: 2%;
+  margin-top: 1rem;
+  text-align: center;
+  width: 1rem;
+}
+
+.Breakdown-share-icon:hover {
+  background-color: darkgray;
+}
+
 .Breakdown-topic-claims {
   cursor: pointer;
 }

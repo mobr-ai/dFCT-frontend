@@ -10,20 +10,27 @@ import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import Linkify from "linkify-react";
+import { useState } from 'react';
 
 const linkifyOpts = {
     defaultProtocol: "https",
     target: "_blank"
 };
 
+function getHashtags(contentList) {
+    let hashList = []
+    hashList = hashList.concat(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word, index) => index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }))
+    return hashList
+}
+
 // Topic Component
-const Topic = ({ title, description, claimList, contentList }) => {
+const Topic = ({ title, description, claimList, contentList, user, modalShow, setModalShow }) => {
     const { t } = useTranslation();
 
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
-            <TopicToolbar />
+            <TopicToolbar user={user} modalShow={modalShow} setModalShow={setModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
             <h3>{t('claims')}</h3>
             <ClaimList content={claimList} />
@@ -121,6 +128,7 @@ function TopicBreakdownPage() {
     const { t } = useTranslation();
     const { topicPromise, userTopicsPromise } = useLoaderData()
     const [user] = useOutletContext();
+    const [modalShow, setModalShow] = useState(false);
 
     return (
         <div className="Breakdown-body">
@@ -142,6 +150,9 @@ function TopicBreakdownPage() {
                                     description={JSON.parse(topicData).description}
                                     claimList={JSON.parse(topicData).claims}
                                     contentList={JSON.parse(topicData).content}
+                                    user={user}
+                                    modalShow={modalShow}
+                                    setModalShow={setModalShow}
                                 />
                         }
                     </Await>
