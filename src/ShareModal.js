@@ -28,7 +28,7 @@ import {
 
 function ShareModal(props) {
     const { t } = useTranslation();
-    const commonProps = {
+    const buttonProps = {
         url: window.location.href,
         windowWidth: 640,
         windowHeight: 360,
@@ -38,7 +38,10 @@ function ShareModal(props) {
         subject: props.title,
         body: t('shareMessage').replace("{}", props.title)
     }
-    const iconSize = 50
+    const iconProps = {
+        size: 50,
+        borderRadius: 15
+    }
 
     return (
         <Modal
@@ -56,32 +59,32 @@ function ShareModal(props) {
                 <Row>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <EmailShareButton {...commonProps}>
-                                <EmailIcon size={iconSize} borderRadius={15} />
+                            <EmailShareButton {...buttonProps}>
+                                <EmailIcon {...iconProps} />
                                 <p>E-mail</p>
                             </EmailShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <TwitterShareButton {...commonProps}>
-                                <XIcon size={iconSize} borderRadius={15} />
+                            <TwitterShareButton {...buttonProps}>
+                                <XIcon {...iconProps} />
                                 <p>X/Twitter</p>
                             </TwitterShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <WhatsappShareButton {...commonProps}>
-                                <WhatsappIcon size={iconSize} borderRadius={15} />
+                            <WhatsappShareButton {...buttonProps}>
+                                <WhatsappIcon {...iconProps} />
                                 <p>WhatsApp</p>
                             </WhatsappShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <TelegramShareButton {...commonProps}>
-                                <TelegramIcon size={iconSize} borderRadius={15} />
+                            <TelegramShareButton {...buttonProps}>
+                                <TelegramIcon {...iconProps} />
                                 <p>Telegram</p>
                             </TelegramShareButton>
                         </Container>
@@ -90,32 +93,32 @@ function ShareModal(props) {
                 <Row>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <FacebookShareButton {...commonProps}>
-                                <FacebookIcon size={iconSize} borderRadius={15} />
+                            <FacebookShareButton {...buttonProps}>
+                                <FacebookIcon {...iconProps} />
                                 <p>Facebook</p>
                             </FacebookShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container >
-                            <FacebookMessengerShareButton {...commonProps}>
-                                <FacebookMessengerIcon size={iconSize} borderRadius={15} />
+                            <FacebookMessengerShareButton {...buttonProps}>
+                                <FacebookMessengerIcon {...iconProps} />
                                 <p>Facebook Messenger</p>
                             </FacebookMessengerShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container>
-                            <RedditShareButton {...commonProps}>
-                                <RedditIcon size={iconSize} borderRadius={15} />
+                            <RedditShareButton {...buttonProps}>
+                                <RedditIcon {...iconProps} />
                                 <p>Reddit</p>
                             </RedditShareButton>
                         </Container>
                     </Col>
                     <Col className='Breakdown-share-icon' >
                         <Container>
-                            <LineShareButton {...commonProps}>
-                                <LineIcon size={iconSize} borderRadius={15} />
+                            <LineShareButton {...buttonProps}>
+                                <LineIcon {...iconProps} />
                                 <p>Line</p>
                             </LineShareButton>
                         </Container>

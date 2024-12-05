@@ -17,10 +17,13 @@ const linkifyOpts = {
     target: "_blank"
 };
 
-function getHashtags(contentList) {
-    let hashList = []
-    hashList = hashList.concat(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word, index) => index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }))
-    return hashList
+function getHashtags(contentList, jsx = false) {
+    if (jsx) {
+        let tags = contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) })[0]
+        return tags.map((tag) => { return (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">#{tag}</Badge></div>) })
+    }
+
+    return contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) })
 }
 
 // Topic Component
@@ -32,6 +35,7 @@ const Topic = ({ title, description, claimList, contentList, user, modalShow, se
             <h1 className='Breakdown-topic-title'>{title}</h1>
             <TopicToolbar user={user} modalShow={modalShow} setModalShow={setModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
+            <p>{getHashtags(contentList, true)}</p>
             <h3>{t('claims')}</h3>
             <ClaimList content={claimList} />
             <ContentList content={contentList} />
@@ -65,11 +69,19 @@ const ClaimItem = ({ index, claim }) => {
                         claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
                     }
                     <div className='Breakdown-topic-claims-toolbar'>
-                        <ButtonGroup size="sm">
-                            <Button variant="dark">{t('upVote')}</Button>
-                            <Button variant="dark">{t('downVote')}</Button>
-                            <Button variant="dark">{t('reviewClaim')}</Button>
-                        </ButtonGroup>
+                        <p>
+                            <ButtonGroup size="sm">
+                                <Button variant="dark">{t('upVote')}</Button>
+                                <Button variant="dark">{t('downVote')}</Button>
+                                <Button variant="dark">{t('reviewClaim')}</Button>
+                            </ButtonGroup>
+                        </p>
+                        <p>
+                            <ButtonGroup size="sm">
+                                <Button variant="success">{t('addProEvidence')}</Button>
+                                <Button variant="danger">{t('addConEvidence')}</Button>
+                            </ButtonGroup>
+                        </p>
                     </div>
                 </div>
             </Accordion.Body>
