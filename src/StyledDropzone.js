@@ -11,6 +11,13 @@ const getBackgroundColor = (props) => {
   return '#37474fff'
 }
 
+const getFontColor = (props) => {
+  if (props.fontColor) {
+    return props.fontColor
+  }
+  return '#bdbdbd'
+}
+
 const getColor = (props) => {
   if (props.border) {
     return props.border;
@@ -39,7 +46,7 @@ const Container = styled.div`
   border-color: ${props => getColor(props)};
   border-style: dashed;
   background-color: ${props => getBackgroundColor(props)};
-  color: #bdbdbd;
+  color: ${props => getFontColor(props)};
   outline: none;
   transition: border .24s ease-in-out;
   cursor: pointer;
@@ -85,7 +92,7 @@ function StyledDropzone(props) {
   ));
 
   return (
-    <Container border={props.border} background={props.background} {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
+    <Container border={props.border} fontColor={props.fontColor} background={props.background} {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
       <input {...getInputProps()} />
       <div className="Landing-drop-message">{props.msg}</div>
       {(props.showFiles && !props.showLoading) ?

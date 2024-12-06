@@ -153,6 +153,10 @@
   display: inline-flex;
 }
 
+.Breakdown-claim-evidence-modal {
+  text-align: center;
+}
+
 .Breakdown-topic-claims-toolbar {
   display: inline-flex;
   justify-content: space-between;

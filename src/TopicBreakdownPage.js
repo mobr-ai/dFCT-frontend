@@ -10,7 +10,8 @@ import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import Linkify from "linkify-react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import EvidenceModal from './EvidenceModal';
 
 const linkifyOpts = {
     defaultProtocol: "https",
@@ -27,34 +28,48 @@ function getHashtags(contentList, jsx = false) {
 }
 
 // Topic Component
-const Topic = ({ title, description, claimList, contentList, user, modalShow, setModalShow }) => {
+const Topic = ({ title, description, claimList, contentList, user, shareModalShow, setShareModalShow, evidenceModalShow, setEvidenceModalShow }) => {
     const { t } = useTranslation();
+    const [evidenceModalTitle, setEvidenceModalTitle] = useState("")
+    const [evidenceType, setEvidenceType] = useState()
+
+    const showEvidenceModal = (title, evidenceType) => {
+        setEvidenceType(evidenceType)
+        setEvidenceModalTitle(title)
+        setEvidenceModalShow(true)
+    }
 
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
-            <TopicToolbar user={user} modalShow={modalShow} setModalShow={setModalShow} title={title} hashtags={getHashtags(contentList)} />
+            <TopicToolbar user={user} shareModalShow={shareModalShow} setShareModalShow={setShareModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
             <p>{getHashtags(contentList, true)}</p>
             <h3>{t('claims')}</h3>
-            <ClaimList content={claimList} />
+            <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} />
             <ContentList content={contentList} />
+            <EvidenceModal
+                show={evidenceModalShow}
+                title={evidenceModalTitle}
+                onHide={() => setEvidenceModalShow(false)}
+                type={evidenceType}
+            />
         </div>
     );
 };
 
 // ClaimList Component
-const ClaimList = ({ content }) => {
+const ClaimList = ({ content, showEvidenceModal }) => {
     return (
         <Accordion className='Breakdown-topic-claims' flush>
             {content.map((item, index) => (
-                <ClaimItem index={index} claim={item} />
+                <ClaimItem index={index} claim={item} showEvidenceModal={showEvidenceModal} />
             ))}
         </Accordion>
     );
 };
 
-const ClaimItem = ({ index, claim }) => {
+const ClaimItem = ({ index, claim, showEvidenceModal }) => {
     const { t } = useTranslation();
 
     return (
@@ -78,14 +93,15 @@ const ClaimItem = ({ index, claim }) => {
                         </p>
                         <p>
                             <ButtonGroup size="sm">
-                                <Button variant="success">{t('addProEvidence')}</Button>
-                                <Button variant="danger">{t('addConEvidence')}</Button>
+                                <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), t('proEvidence'))}>{t('addProEvidence')}</Button>
+                                <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), t('conEvidence'))}>{t('addConEvidence')}</Button>
                             </ButtonGroup>
                         </p>
                     </div>
                 </div>
             </Accordion.Body>
         </Accordion.Item>
+
     )
 }
 
@@ -140,7 +156,9 @@ function TopicBreakdownPage() {
     const { t } = useTranslation();
     const { topicPromise, userTopicsPromise } = useLoaderData()
     const [user] = useOutletContext();
-    const [modalShow, setModalShow] = useState(false);
+
+    const [shareModalShow, setShareModalShow] = useState(false);
+    const [evidenceModalShow, setEvidenceModalShow] = useState(false);
 
     return (
         <div className="Breakdown-body">
@@ -163,8 +181,10 @@ function TopicBreakdownPage() {
                                     claimList={JSON.parse(topicData).claims}
                                     contentList={JSON.parse(topicData).content}
                                     user={user}
-                                    modalShow={modalShow}
-                                    setModalShow={setModalShow}
+                                    shareModalShow={shareModalShow}
+                                    setShareModalShow={setShareModalShow}
+                                    evidenceModalShow={evidenceModalShow}
+                                    setEvidenceModalShow={setEvidenceModalShow}
                                 />
                         }
                     </Await>

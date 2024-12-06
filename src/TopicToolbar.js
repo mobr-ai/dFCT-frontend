@@ -54,15 +54,15 @@ function TopicToolbar(props) {
                             </Tooltip>
                         }
                     >
-                        <Image className='Breakdown-toolbar-icon' src={shareIcon} onClick={() => props.setModalShow(true)} />
+                        <Image className='Breakdown-toolbar-icon' src={shareIcon} onClick={() => props.setShareModalShow(true)} />
                     </OverlayTrigger>
                 </Col>
             </Row>
             <ShareModal
-                show={props.modalShow}
+                show={props.shareModalShow}
                 title={props.title}
                 hashtags={props.hashtags}
-                onHide={() => props.setModalShow(false)}
+                onHide={() => props.setShareModalShow(false)}
             />
         </Container>
 
