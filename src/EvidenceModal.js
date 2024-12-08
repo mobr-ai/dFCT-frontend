@@ -3,8 +3,10 @@ import StyledDropzone from './StyledDropzone.js'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from 'react';
+import { useOutletContext } from "react-router-dom";
 import request from 'superagent';
 
 
@@ -14,17 +16,27 @@ function EvidenceModal(props) {
     const [dropBackground, setDropBackground] = useState("#54646C")
     const [dropBorder, setDropBorder] = useState()
     const [files, setFiles] = useState([])
+    const [topicId, setTopicId] = useState()
+    const [urls, setURLs] = useState([])
     const [progress, setProgress] = useState(10)
     const [showFiles, setShowFiles] = useState(false)
     const [showProgress, setShowProgress] = useState(false)
     const [loading, setLoading] = useState(false)
     const [disableDrop, setDisableDrop] = useState(false)
-    const [providedContext, setProvidedContext] = useState()
+    const [providedContext, setProvidedContext] = useState("")
+    const [showURLs, setShowURLs] = useState(false)
+    const [user] = useOutletContext();
+
 
     useEffect(() => {
         setDropMsg(t('dropEvidenceMsg').replace("{}", props.type))
     }, [setDropMsg, t, props.type]);
 
+
+    // sleep time expects milliseconds
+    function sleep(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
 
     const handleContextInput = (event) => {
         setProvidedContext(event.target.value);
@@ -126,7 +138,6 @@ function EvidenceModal(props) {
             request
                 .post('/sign_s3')
                 .send(fileArgs)
-                .send({ "topic_id": props.topicId })
                 .set('Accept', 'application/json')
                 .then(reqSuccess, reqError)
         }
@@ -137,6 +148,82 @@ function EvidenceModal(props) {
 
     const processEvidence = () => {
 
+        function requestProcessing(res) {
+
+            // create request to process content
+            request.post("/process_evidence")
+                .send({ files: files })
+                .send({ urls: urls })
+                .send({ topicId: props.topicId })
+                .send({ userId: user.id })
+                .send({ evidenceType: props.type })
+                .send({ claimId: props.claimId })
+                .send({ providedContext: providedContext })
+                .send({ language: i18n.language || window.localStorage.i18nextLng })
+                .then(waitProcessing, handleError);
+        }
+
+        function handleError(res) {
+            // display error msg
+            showError(t('topicCreationFailed'))
+            console.log("Topic (id = " + topicId + ") processing failed: [" + res.status + "] (" + res.message + ")")
+        }
+
+        async function waitProcessing(res) {
+            var nextProgress = progress
+            const topic = res.body
+            // const topicId = Object.keys(res.body)[0]
+            const topicURL = res.body['topic_url']
+            const checkStatus = (res) => {
+                try {
+                    var p = Number(res.text)
+                    if (p === -1) {
+                        throw new Error("Could not read metadata")
+                    }
+                    setProgress(p)
+                    nextProgress = p
+                    console.log("Topic processing progress=" + p)
+                }
+                catch (e) {
+                    console.log("Error retrieving processing progress: " + e.message)
+                    setProgress(0)
+                    nextProgress = -1
+                    showError(t('topicCreationFailed'))
+                }
+            }
+
+            // request progress and wait for topic to be processed
+            while (nextProgress >= 0 && nextProgress < 100) {
+                // request synchronously to check progress
+                await request.post("/check").send(topic).then((res) => checkStatus(res))
+                await sleep(2000);
+            }
+
+            // send user to topic breakdown page
+            if (nextProgress === 100) {
+                setDropMsg(t('topicProcessed'))
+                setLoading(false)
+
+                // refresh page
+                window.location.reload();
+            }
+        }
+
+        // all files completed
+        if (urls.length > 0 || files.filter((f) => f.completed).length === files.length) {
+            console.log("All files available, processing content...")
+
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            setDropMsg(t('processingContent'))
+            setShowFiles(false)
+            setShowURLs(false)
+            setShowProgress(true)
+            setDisableDrop(true)
+            setLoading(true)
+
+
+            requestProcessing()
+        }
     }
 
     return (

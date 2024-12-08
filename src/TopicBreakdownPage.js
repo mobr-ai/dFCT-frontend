@@ -28,14 +28,17 @@ function getHashtags(contentList, jsx = false) {
 }
 
 // Topic Component
-const Topic = ({ title, description, claimList, contentList, user, shareModalShow, setShareModalShow, evidenceModalShow, setEvidenceModalShow }) => {
+const Topic = ({ topicId, title, description, claimList, article, contentList, user, shareModalShow, setShareModalShow, evidenceModalShow, setEvidenceModalShow }) => {
     const { t } = useTranslation();
-    const [evidenceModalTitle, setEvidenceModalTitle] = useState("")
+    const [evidenceModalTitle, setEvidenceModalTitle] = useState(title)
     const [evidenceType, setEvidenceType] = useState()
+    const [claimId, setClaimId] = useState()
+    // const [topicId, setTopicId] = useState()
 
-    const showEvidenceModal = (title, evidenceType) => {
+    const showEvidenceModal = (title, evidenceType, claimId) => {
         setEvidenceType(evidenceType)
         setEvidenceModalTitle(title)
+        setClaimId(claimId)
         setEvidenceModalShow(true)
     }
 
@@ -46,30 +49,33 @@ const Topic = ({ title, description, claimList, contentList, user, shareModalSho
             <p>{description}</p>
             <p>{getHashtags(contentList, true)}</p>
             <h3>{t('claims')}</h3>
-            <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} />
+            <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
+            <p>{article}</p>
             <ContentList content={contentList} />
             <EvidenceModal
                 show={evidenceModalShow}
                 title={evidenceModalTitle}
                 onHide={() => setEvidenceModalShow(false)}
                 type={evidenceType}
+                claimId={claimId}
+                topicId={topicId}
             />
         </div>
     );
 };
 
 // ClaimList Component
-const ClaimList = ({ content, showEvidenceModal }) => {
+const ClaimList = ({ content, showEvidenceModal, topicId }) => {
     return (
         <Accordion className='Breakdown-topic-claims' flush>
             {content.map((item, index) => (
-                <ClaimItem index={index} claim={item} showEvidenceModal={showEvidenceModal} />
+                <ClaimItem index={index} claim={item} showEvidenceModal={showEvidenceModal} topicId={topicId} />
             ))}
         </Accordion>
     );
 };
 
-const ClaimItem = ({ index, claim, showEvidenceModal }) => {
+const ClaimItem = ({ index, claim, showEvidenceModal, topicId }) => {
     const { t } = useTranslation();
 
     return (
@@ -93,8 +99,8 @@ const ClaimItem = ({ index, claim, showEvidenceModal }) => {
                         </p>
                         <p>
                             <ButtonGroup size="sm">
-                                <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), t('proEvidence'))}>{t('addProEvidence')}</Button>
-                                <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), t('conEvidence'))}>{t('addConEvidence')}</Button>
+                                <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), t('proEvidence'), claim.claim_id)}>{t('addProEvidence')}</Button>
+                                <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), t('conEvidence'), claim.claim_id)}>{t('addConEvidence')}</Button>
                             </ButtonGroup>
                         </p>
                     </div>
@@ -176,9 +182,11 @@ function TopicBreakdownPage() {
                         {
                             (topicData) =>
                                 <Topic
+                                    topicId={JSON.parse(topicData).topic_id}
                                     title={JSON.parse(topicData).title}
                                     description={JSON.parse(topicData).description}
                                     claimList={JSON.parse(topicData).claims}
+                                    article={JSON.parse(topicData).article}
                                     contentList={JSON.parse(topicData).content}
                                     user={user}
                                     shareModalShow={shareModalShow}
