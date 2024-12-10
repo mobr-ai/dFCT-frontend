@@ -3,11 +3,13 @@ import StyledDropzone from './StyledDropzone.js'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from 'react';
 import { useOutletContext } from "react-router-dom";
 import request from 'superagent';
+import URLCardList from './URLCardList.js';
 
 
 function EvidenceModal(props) {
@@ -25,6 +27,7 @@ function EvidenceModal(props) {
     const [disableDrop, setDisableDrop] = useState(false)
     const [providedContext, setProvidedContext] = useState("")
     const [showURLs, setShowURLs] = useState(false)
+    const [fetching, setFetching] = useState(false)
     const [user] = useOutletContext();
 
 
@@ -146,6 +149,49 @@ function EvidenceModal(props) {
         getSignedRequest()
     }
 
+    const handleURLInput = () => {
+        if (document.getElementById('input-url-text').value) {
+
+            if (!URL.canParse(document.getElementById('input-url-text').value)) {
+                console.log("Oops, invalid URL: " + document.getElementById('input-url-text').value)
+                document.getElementById('input-url-help-msg').innerText = t('invalidURL')
+                setFetching(false)
+                return
+            }
+
+            const metaSuccess = (res) => {
+                let url = { "url": document.getElementById('input-url-text').value, "metadata": res.body }
+
+                setURLs(urls.concat([url]))
+                setShowURLs(true)
+                setFetching(false)
+
+                if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
+                document.getElementById('input-url-text').value = ""
+            }
+
+            const metaError = (res) => {
+                // let url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
+                // display error msg
+                console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
+                document.getElementById('input-url-help-msg').innerText = t('fetchURLError')
+                // setURLs(urls.concat([url]))
+                // setShowURLs(true)
+                setFetching(false)
+                document.getElementById('input-url-text').value = ""
+            }
+
+            request
+                .post('/fetch_url')
+                .send({ "url": document.getElementById('input-url-text').value })
+                .set('Accept', 'application/json')
+                .then(metaSuccess, metaError)
+
+            document.getElementById('input-url-help-msg').innerText = ""
+            setFetching(true)
+        }
+    }
+
     const processEvidence = () => {
 
         function requestProcessing(res) {
@@ -255,16 +301,40 @@ function EvidenceModal(props) {
                     progress={progress}
                     files={files}
                 />
-                <div className="Landing-input">
-                    <Form.Label><b><i>{t('optional')}</i></b>{t('additionalEvidenceContext').replace("{}", props.type)}</Form.Label>
-                    <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t('evidenceExample')} rows={3} />
-                </div>
-                <Button
-                    id="input-process-button"
-                    variant="dark"
-                    onClick={!loading ? processEvidence : null}
-                    disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                >{t('analyzeButton')}</Button>
+                {!loading
+                    &&
+                    (
+                        <>
+                            <div>
+                                <InputGroup className="Landing-input-url mb-3">
+                                    <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
+                                    <Form.Control id="input-url-text" className='Breakdown-claim-evidence-modal-url-input' aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
+                                    <Button
+                                        id="input-url-button"
+                                        variant="dark"
+                                        onClick={!fetching ? handleURLInput : null}
+                                        disabled={fetching}
+
+                                    >{fetching ? t('loadingURL') : t('addURL')}</Button>
+                                </InputGroup>
+                                <Form.Text id="input-url-help-msg" muted />
+                            </div>
+
+                            <URLCardList setURLs={setURLs} urls={urls} />
+
+                            <div className="Landing-input">
+                                <Form.Label><b><i>{t('optional')}</i></b>{t('additionalEvidenceContext').replace("{}", props.type)}</Form.Label>
+                                <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t('evidenceExample')} rows={3} />
+                            </div>
+
+                            <Button
+                                id="input-process-button"
+                                variant="dark"
+                                onClick={!loading ? processEvidence : null}
+                                disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
+                            >{t('analyzeButton')}</Button>
+                        </>)
+                }
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.onHide}>{t('closeButton')}</Button>

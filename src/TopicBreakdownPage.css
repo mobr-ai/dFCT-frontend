@@ -158,6 +158,13 @@
   text-align: center;
 }
 
+.Breakdown-claim-evidence-modal-url-input {
+  font-family: monospace;
+  font-size: medium;
+  background-color: rgb(84, 100, 108);
+  color: white;
+}
+
 .Breakdown-topic-claims-toolbar {
   display: inline-flex;
   justify-content: space-between;

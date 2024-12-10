@@ -10,7 +10,7 @@ import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import Linkify from "linkify-react";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import EvidenceModal from './EvidenceModal';
 
 const linkifyOpts = {
@@ -18,13 +18,12 @@ const linkifyOpts = {
     target: "_blank"
 };
 
-function getHashtags(contentList, jsx = false) {
+function getHashtags(contentList, jsx = false, limit = 5) {
+    let tags = [...new Set(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }).flat())].slice(0, limit)
     if (jsx) {
-        let tags = contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) })[0]
         return tags.map((tag) => { return (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">#{tag}</Badge></div>) })
     }
-
-    return contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) })
+    return tags
 }
 
 // Topic Component
@@ -47,7 +46,7 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
             <h1 className='Breakdown-topic-title'>{title}</h1>
             <TopicToolbar user={user} shareModalShow={shareModalShow} setShareModalShow={setShareModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
-            <p>{getHashtags(contentList, true)}</p>
+            <p>{getHashtags(contentList, true, 8)}</p>
             <h3>{t('claims')}</h3>
             <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
             <p>{article}</p>
@@ -147,7 +146,12 @@ const ContentCard = ({ item }) => {
                     Your browser does not support the audio tag.
                 </audio>
             )}
-            <div className='Breakdown-content-source'><Linkify as="div" options={linkifyOpts}><u>{t('source')}</u>:&nbsp;&nbsp;{t(item.origins)}</Linkify></div>
+            <div className='Breakdown-content-source'>
+                <Linkify as="div" options={linkifyOpts}><u>{t('source')}</u>:&nbsp;&nbsp;
+                    {
+                        item.src_url !== item.local_url ? item.src_url : (item.origins === "Unknown" ? t(item.origins) : item.origins)
+                    }
+                </Linkify></div>
 
             <p><Linkify as="div" options={linkifyOpts}>{item.description}</Linkify></p>
             {
