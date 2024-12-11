@@ -83,6 +83,12 @@
   flex-direction: column;
 }
 
+.Breakdown-topic-article {
+  margin-bottom: 1rem;
+  margin-top: 0;
+  white-space: pre-line;
+}
+
 .Breakdown-content-container {
   display: block;
   margin: 3rem auto 3rem;

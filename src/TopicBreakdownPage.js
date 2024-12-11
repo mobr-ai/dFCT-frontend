@@ -46,10 +46,10 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
             <h1 className='Breakdown-topic-title'>{title}</h1>
             <TopicToolbar user={user} shareModalShow={shareModalShow} setShareModalShow={setShareModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
-            <p>{getHashtags(contentList, true, 8)}</p>
+            <p>{getHashtags(contentList, true, 6)}</p>
             <h3>{t('claims')}</h3>
             <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
-            <p>{article}</p>
+            <div className='Breakdown-topic-article'>{article}</div>
             <ContentList content={contentList} />
             <EvidenceModal
                 show={evidenceModalShow}
