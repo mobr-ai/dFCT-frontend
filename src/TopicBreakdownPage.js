@@ -98,8 +98,8 @@ const ClaimItem = ({ index, claim, showEvidenceModal, topicId }) => {
                         </p>
                         <p>
                             <ButtonGroup size="sm">
-                                <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), t('proEvidence'), claim.claim_id)}>{t('addProEvidence')}</Button>
-                                <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), t('conEvidence'), claim.claim_id)}>{t('addConEvidence')}</Button>
+                                <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), 'proEvidence', claim.claim_id)}>{t('addProEvidence')}</Button>
+                                <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), 'conEvidence', claim.claim_id)}>{t('addConEvidence')}</Button>
                             </ButtonGroup>
                         </p>
                     </div>

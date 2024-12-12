@@ -61,7 +61,6 @@ function LandingPage() {
   const navigate = useNavigate()
   const { userTopicsPromise } = useLoaderData()
 
-
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
 
@@ -79,6 +78,10 @@ function LandingPage() {
     return () => clearTimeout(intervalId);
   }, [brandText.length, suffixText.length, setDropMsg, t]);
 
+  useEffect(() => {
+    if (document.querySelector("#input-process-button"))
+      document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "end" })
+  }, [urls.length])
 
   const checkTopic = (callback) => {
     if (!topicId) {
@@ -115,7 +118,7 @@ function LandingPage() {
         setShowURLs(true)
         setFetching(false)
 
-        if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
+        // if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
         document.getElementById('input-url-text').value = ""
       }
 

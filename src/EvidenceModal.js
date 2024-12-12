@@ -32,7 +32,7 @@ function EvidenceModal(props) {
 
 
     useEffect(() => {
-        setDropMsg(t('dropEvidenceMsg').replace("{}", props.type))
+        setDropMsg(t('dropEvidenceMsg').replace("{}", t(props.type)))
     }, [setDropMsg, t, props.type]);
 
 
@@ -291,7 +291,7 @@ function EvidenceModal(props) {
                     noClick={disableDrop}
                     noDrag={disableDrop}
                     onDropAccepted={onDropAccepted}
-                    msg={dropMsg.replace("{}", props.type)}
+                    msg={dropMsg.replace("{}", t(props.type))}
                     key={dropMsg}
                     showFiles={showFiles}
                     showProgress={showProgress}
@@ -323,8 +323,8 @@ function EvidenceModal(props) {
                             <URLCardList setURLs={setURLs} urls={urls} />
 
                             <div className="Landing-input">
-                                <Form.Label><b><i>{t('optional')}</i></b>{t('additionalEvidenceContext').replace("{}", props.type)}</Form.Label>
-                                <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t('evidenceExample')} rows={3} />
+                                <Form.Label><b><i>{t('optional')}</i></b>{t('additionalEvidenceContext').replace("{}", t(props.type))}</Form.Label>
+                                <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t(props.type + 'Example')} rows={3} />
                             </div>
 
                             <Button
