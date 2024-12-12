@@ -18,7 +18,7 @@ function EvidenceModal(props) {
     const [dropBackground, setDropBackground] = useState("#54646C")
     const [dropBorder, setDropBorder] = useState()
     const [files, setFiles] = useState([])
-    const [topicId, setTopicId] = useState()
+    const [topicId,] = useState()
     const [urls, setURLs] = useState([])
     const [progress, setProgress] = useState(10)
     const [showFiles, setShowFiles] = useState(false)
@@ -26,7 +26,7 @@ function EvidenceModal(props) {
     const [loading, setLoading] = useState(false)
     const [disableDrop, setDisableDrop] = useState(false)
     const [providedContext, setProvidedContext] = useState("")
-    const [showURLs, setShowURLs] = useState(false)
+    const [, setShowURLs] = useState(false)
     const [fetching, setFetching] = useState(false)
     const [user] = useOutletContext();
 
@@ -219,7 +219,7 @@ function EvidenceModal(props) {
             var nextProgress = progress
             const topic = res.body
             // const topicId = Object.keys(res.body)[0]
-            const topicURL = res.body['topic_url']
+            // const topicURL = res.body['topic_url']
             const checkStatus = (res) => {
                 try {
                     var p = Number(res.text)
