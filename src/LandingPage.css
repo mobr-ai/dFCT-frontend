@@ -98,8 +98,8 @@
 
 .Landing-header-top {
   display: flex;
-  max-width: 80vw;
-  width: 80vw;
+  /* max-width: 80vw; */
+  /* width: 80vw; */
   overflow: hidden;
   top: 20%;
   flex-flow: column;

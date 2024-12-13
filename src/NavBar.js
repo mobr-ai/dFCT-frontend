@@ -10,6 +10,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import avatarImg from "./icons/avatar.png";
 
 // const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
 // const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];
@@ -94,9 +95,9 @@ function NavBar(props) {
     const userMenu = props.userData && (
         <Container id="navbar-user-dropdown-container">
             <Image
-                src={props.userData.avatar ? props.userData.avatar : "./icons/avatar.png"}
+                src={props.userData.avatar ? props.userData.avatar : avatarImg}
                 alt="Profile avatar"
-                onError={(e) => e.target.src = './icons/avatar.png'}
+                onError={(e) => e.target.src = avatarImg}
                 roundedCircle
                 style={{ width: '30px', marginRight: '5px' }}
             />
