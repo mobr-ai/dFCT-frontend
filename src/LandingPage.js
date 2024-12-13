@@ -350,6 +350,20 @@ function LandingPage() {
                 {brandText[brandIndex % brandText.length]}
               </ReactTextTransition>
               {suffixText[suffixIndex % suffixText.length]}
+              <section>
+                <Button
+                  className="SignUp-input-email-button"
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => { navigate('/login') }}
+                >{t('loginButton')}</Button>
+                <Button
+                  className="SignUp-input-email-button"
+                  variant="dark"
+                  size="lg"
+                  onClick={() => { navigate('/signup') }}
+                >{t('signUpButton')}</Button>
+              </section>
             </section>
           )
           }

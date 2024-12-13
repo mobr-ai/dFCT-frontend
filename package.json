@@ -20,6 +20,7 @@
     "react-router-dom": "^6.27.0",
     "react-scripts": "5.0.1",
     "react-share": "^5.1.1",
+    "react-string-replace": "^1.1.1",
     "react-text-transition": "^3.1.0",
     "styled-components": "^6.1.13",
     "superagent": "^10.1.0",

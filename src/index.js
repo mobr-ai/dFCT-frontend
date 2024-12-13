@@ -8,6 +8,7 @@ import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet, defer } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
+import SignUpPage from './SignUpPage';
 
 
 function Layout() {
@@ -80,6 +81,14 @@ const router = createBrowserRouter([
         path: '/',
         element: <LandingPage />,
         loader: userTopicsLoader,
+      },
+      {
+        path: '/signup',
+        element: <SignUpPage type="create" />
+      },
+      {
+        path: '/login',
+        element: <SignUpPage type="login" />
       },
       {
         path: '/t/:userId/:topicId',

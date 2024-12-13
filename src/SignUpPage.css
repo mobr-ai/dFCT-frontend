@@ -1,0 +1,104 @@
+.SignUp-logo {
+  align-self: center;
+  height: 6rem;
+  position: relative;
+  margin-bottom: 5vh;
+}
+
+.SignUp-title {
+  text-align: center;
+  font-size: xxx-large;
+  width: 70%;
+  align-self: center;
+}
+
+.SignUp-container-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-family: monospace;
+  justify-content: center;
+  min-height: 80vh;
+  max-width: fit-content;
+  padding-bottom: 10rem;
+  text-align: center;
+  margin-top: 10vh;
+}
+
+/* If desktop display */
+@media only screen and (min-width: 1024px) {
+  .SignUp-container-wrapper {
+    max-width: 25vw;
+  }
+}
+
+.SignUp-container {
+  background-color: #98a9b1;
+  border-color: #000;
+  border-width: 1rem;
+  border-radius: 10px;
+  min-height: 30vh;
+  min-width: 30vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.SignUp-input-email {
+  margin-top: 5vh;
+  margin-bottom: 3vh;
+}
+
+.SignUp-input-email-button {
+  margin-bottom: 3vh;
+}
+
+.SignUp-input-label {
+  background: lightslategrey;
+  color: white;
+}
+
+.SignUp-alternative-link {
+  cursor: pointer;
+  display: inline-flex;
+  text-decoration: underline;
+}
+
+.SignUp-divider {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  justify-content: center;
+  padding: 1rem 1rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.SignUp-divider:before,
+.SignUp-divider:after {
+  content: "";
+  border-bottom: 1px solid #c2c8d0;
+  flex: 1 0 auto;
+  height: 0.5em;
+  margin: 0;
+}
+
+.SignUp-divider-or {
+  text-align: center;
+  flex: 0.2 0 auto;
+  margin: 0;
+  height: 12px;
+}
+
+#SignUp-oauth-google {
+  background: url(./../public/g.png) no-repeat left center;
+  background-size: 1.5rem;
+  background-position-x: 1.5rem;
+}
+
+#SignUp-oauth-google:hover {
+  background-color: lightslategray;
+}

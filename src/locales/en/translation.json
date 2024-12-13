@@ -40,5 +40,15 @@
     "topicCreationFailed": "Oops, failed to create topic. Try again later.",
     "fetchURLError": "Oops, error fetching URL. Hint: submit screenshots and/or text content for context.",
     "invalidURL": "Oops, invalid URL",
-    "errorMsg": "Oops! Something is wrong"
+    "errorMsg": "Oops! Something is wrong",
+    "signUpMsg": "Create an account",
+    "loginMsg": "Welcome back",
+    "processingMail": "Wait...",
+    "enterEmail": "Continue",
+    "loginAlternativeMsg": "Already have an account? {}",
+    "signUpAlternativeMsg": "Don't have an account? {}",
+    "loginButton": "Log in",
+    "signUpButton": "Sign up",
+    "signUpOR": "OR",
+    "loginWithGoogle": "Login with Google"
 }

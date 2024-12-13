@@ -54,5 +54,15 @@
     "topicCreationFailed": "Oops, falha ao criar tópico. Tente novamente mais tarde.",
     "fetchURLError": "Oops, erro ao buscar URL. Dica: envie capturas de tela e/ou texto como contexto.",
     "invalidURL": "Oops, URL inválida",
-    "errorMsg": "Oops! Algo deu errado."
+    "errorMsg": "Oops! Algo deu errado.",
+    "signUpMsg": "Criar uma conta",
+    "loginMsg": "Bem-vindo de volta",
+    "processingMail": "Aguarde...",
+    "enterEmail": "Continuar",
+    "loginAlternativeMsg": "Já tem uma conta? {}",
+    "signUpAlternativeMsg": "Não tem uma conta? {}",
+    "loginButton": "Entrar",
+    "signUpButton": "Cadastrar",
+    "signUpOR": "OU",
+    "loginWithGoogle": "Fazer login com Google"
 }
