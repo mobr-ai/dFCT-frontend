@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import reactStringReplace from 'react-string-replace';
 import Image from 'react-bootstrap/Image';
 import Container from 'react-bootstrap/Container';
@@ -18,6 +18,10 @@ function SignUpPage(props) {
     const handleEmail = () => {
         setProcessing(true)
     }
+
+    useEffect(() => {
+        document.querySelector(".SignUp-container").scrollIntoView({ behavior: "smooth", block: "center" })
+    }, [])
 
     return (
         <Container className="SignUp-container-wrapper">
