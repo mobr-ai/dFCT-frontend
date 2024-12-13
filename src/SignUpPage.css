@@ -38,7 +38,7 @@
   border-width: 1rem;
   border-radius: 10px;
   min-height: 30vh;
-  min-width: 30vw;
+  min-width: 450px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -93,6 +93,7 @@
   height: 12px;
 }
 
+/* If desktop display */
 #SignUp-oauth-google {
   background: url(./../public/g.png) no-repeat left center;
   background-size: 1.5rem;
