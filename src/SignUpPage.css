@@ -25,26 +25,34 @@
   margin-top: 10vh;
 }
 
-/* If desktop display */
-@media only screen and (min-width: 1024px) {
-  .SignUp-container-wrapper {
-    max-width: 25vw;
-  }
-}
-
 .SignUp-container {
   background-color: #98a9b1;
   border-color: #000;
   border-width: 1rem;
   border-radius: 10px;
   min-height: 30vh;
-  min-width: 450px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+/* If desktop display */
+@media only screen and (min-width: 1024px) {
+  .SignUp-container-wrapper {
+    max-width: 25vw;
+  }
+  .SignUp-container {
+    min-width: 450px;
+    padding: 2rem;
+  }
+  #SignUp-oauth-google {
+    background: url(./../public/g.png) no-repeat left center;
+    background-size: 1.5rem;
+    background-position-x: 1.5rem;
+  }
 }
 
 .SignUp-input-email {
@@ -91,13 +99,6 @@
   flex: 0.2 0 auto;
   margin: 0;
   height: 12px;
-}
-
-/* If desktop display */
-#SignUp-oauth-google {
-  background: url(./../public/g.png) no-repeat left center;
-  background-size: 1.5rem;
-  background-position-x: 1.5rem;
 }
 
 #SignUp-oauth-google:hover {

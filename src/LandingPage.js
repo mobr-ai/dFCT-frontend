@@ -7,6 +7,7 @@ import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 import InputGroup from 'react-bootstrap/InputGroup';
 import request from 'superagent';
 import { useOutletContext, useNavigate, useLoaderData, Await } from "react-router-dom";
@@ -343,14 +344,20 @@ function LandingPage() {
     <div className="Landing-body" >
       <div className='Landing-middle-column'>
         <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
-          {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
+          <section>
+            {loading ? (<img src={logo} className="Landing-logo" alt="logo"></img>) : (<img src={logo} className="Landing-logo-static" alt="logo"></img>)}
+          </section>
+
           {!user && !loading && (
             <section className="inline Landing-logo-text">
-              <ReactTextTransition springConfig={presets.gentle} inline>
-                {brandText[brandIndex % brandText.length]}
-              </ReactTextTransition>
-              {suffixText[suffixIndex % suffixText.length]}
-              <section>
+              <Container className="Landing-logo-text-transition">
+                <ReactTextTransition springConfig={presets.gentle} inline>
+                  {brandText[brandIndex % brandText.length]}
+                </ReactTextTransition>
+                {suffixText[suffixIndex % suffixText.length]}
+              </Container>
+
+              <Container className='Landing-signup-login-buttons'>
                 <Button
                   className="SignUp-input-email-button"
                   variant="secondary"
@@ -363,7 +370,7 @@ function LandingPage() {
                   size="lg"
                   onClick={() => { navigate('/signup') }}
                 >{t('signUpButton')}</Button>
-              </section>
+              </Container>
             </section>
           )
           }

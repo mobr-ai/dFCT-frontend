@@ -40,9 +40,20 @@
   font-weight: 600;
   color: rgb(204, 204, 204);
   opacity: 0.3;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: break-word;
+}
+
+.Landing-logo-text-transition {
+  /* word-wrap: break-word; */
+  white-space: nowrap;
+  /* word-break: break-word; */
+  display: table;
+  overflow: hidden;
+  font-size: 2rem;
+}
+
+.Landing-signup-login-buttons {
+  display: contents;
+  position: absolute;
 }
 
 .Landing-drop {
@@ -86,14 +97,12 @@
 }
 
 .Landing-header-top {
-  top: 25%;
-  /* position: relative; */
-  /* position: absolute; */
-  /* right: 0; */
-  /* left: 0; */
-  /* overflow: hidden; */
   display: flex;
-  flex-direction: column;
+  max-width: 80vw;
+  width: 80vw;
+  overflow: hidden;
+  top: 20%;
+  flex-flow: column;
 }
 
 .Landing-body {
@@ -141,6 +150,9 @@
   }
   .Landing-right-column {
     order: 2 !important;
+  }
+  .Landing-logo-text-transition {
+    font-size: 3.5rem;
   }
 }
 

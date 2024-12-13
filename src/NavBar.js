@@ -96,6 +96,7 @@ function NavBar(props) {
             <Image
                 src={props.userData.avatar ? props.userData.avatar : "./icons/avatar.png"}
                 alt="Profile avatar"
+                onError={(e) => e.target.src = './icons/avatar.png'}
                 roundedCircle
                 style={{ width: '30px', marginRight: '5px' }}
             />
