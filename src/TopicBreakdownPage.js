@@ -165,7 +165,7 @@ const ContentCard = ({ item }) => {
 function TopicBreakdownPage() {
     const { t } = useTranslation();
     const { topicPromise, userTopicsPromise } = useLoaderData()
-    const [user] = useOutletContext();
+    const { user } = useOutletContext();
 
     const [shareModalShow, setShareModalShow] = useState(false);
     const [evidenceModalShow, setEvidenceModalShow] = useState(false);

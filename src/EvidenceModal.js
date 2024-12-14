@@ -28,7 +28,7 @@ function EvidenceModal(props) {
     const [providedContext, setProvidedContext] = useState("")
     const [, setShowURLs] = useState(false)
     const [fetching, setFetching] = useState(false)
-    const [user] = useOutletContext();
+    const { user } = useOutletContext();
 
 
     useEffect(() => {

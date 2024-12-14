@@ -58,7 +58,7 @@ function LandingPage() {
   const [showURLs, setShowURLs] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
-  const [user, loading, userTopics, setLoading] = useOutletContext();
+  const { user, loading, userTopics, setLoading } = useOutletContext();
   const navigate = useNavigate()
   const { userTopicsPromise } = useLoaderData()
 

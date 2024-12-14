@@ -6,35 +6,41 @@ import LandingPage from './LandingPage';
 import Header from './Header'
 import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider, Outlet, defer } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
-import SignUpPage from './SignUpPage';
+import AuthPage from './AuthPage';
 
 
 function Layout() {
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [loading, setLoading] = useState(false)
   const [userTopics, setUserTopics] = useState({})
+  const navigate = useNavigate()
 
-  const handleLoginSuccess = useCallback(userData => {
+
+  const handleLogin = useCallback(userData => {
     if (userData) {
       setUser(userData);
-      window.sessionStorage.setItem("userData", JSON.stringify(userData));
-      fetchUserTopics(userData.id).then((response) => {
-        setUserTopics(response)
-        setLoading(false)
-      })
+      window.sessionStorage.setItem("userData", JSON.stringify(userData))
+      navigate("/")
+      setLoading(false)
+      // fetchUserTopics(userData.id).then((response) => {
+      //   setUserTopics(response)
+      //   setLoading(false)
+      // });
     }
     else {
       setUser(null)
-      // window.sessionStorage.removeItem('userData')
+      window.sessionStorage.removeItem('userData')
+      navigate("/")
+      setLoading(false)
     }
   }, [setLoading, setUser, setUserTopics]);
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-      <Header userData={user} setUser={handleLoginSuccess} setLoading={setLoading} />
-      <Outlet context={[user, loading, userTopics, setLoading]} />
+      <Header userData={user} setUser={handleLogin} />
+      <Outlet context={{ user, loading, userTopics, setLoading, handleLogin }} />
       {/* <Footer /> */}
     </GoogleOAuthProvider>
   );
@@ -84,11 +90,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/signup',
-        element: <SignUpPage type="create" />
+        element: <AuthPage type="create" />
       },
       {
         path: '/login',
-        element: <SignUpPage type="login" />
+        element: <AuthPage type="login" />
       },
       {
         path: '/t/:userId/:topicId',

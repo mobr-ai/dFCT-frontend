@@ -5,8 +5,7 @@ import Image from 'react-bootstrap/Image';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { useGoogleLogin } from '@react-oauth/google';
-import { useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
@@ -35,57 +34,12 @@ function NavBar(props) {
         return () => clearTimeout(intervalId);
     }, []);
 
-    const handleApiRequest = useCallback(async (url, options = {}) => {
-        const defaultOptions = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(props.userData?.token && { 'Authorization': `Bearer ${props.userData.token}` }),
-            },
-        };
-
-        const finalOptions = { ...defaultOptions, ...options };
-        console.log('API Request:', url, finalOptions);
-
-        const response = await fetch(url, finalOptions);
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('API Error Response:', errorData);
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
-    }, [props.userData]);
-
-    const handleGoogleResponse = async (tokenResponse) => {
-
-        try {
-            console.log('Google Response:', tokenResponse);
-            const payload = { token: tokenResponse.access_token };
-            console.log('Payload to server:', payload);
-
-            const apiResponse = await handleApiRequest('/api/auth/google', {
-                method: 'POST',
-                body: JSON.stringify(payload),
-            });
-
-            console.log('Server Response:', apiResponse);
-            props.setUser(apiResponse)
-
-        } catch (err) {
-            console.error('Authentication Error:', err);
-        }
-    };
-
-    const login = useGoogleLogin({
-        onSuccess: tokenResponse => {
-            handleGoogleResponse(tokenResponse)
-        },
-    });
-
     const logout = () => {
         props.setUser(null)
-        navigate("/")
+    }
+
+    const login = () => {
+        navigate("/login")
     }
 
     const changeLanguage = (lng) => {
@@ -134,7 +88,6 @@ function NavBar(props) {
                         {
                             !props.userData && (
                                 <Nav.Link onClick={() => {
-                                    props.setLoading(true)
                                     login()
                                 }}>{t('logIn')}</Nav.Link>
                             )

@@ -1,18 +1,27 @@
-.SignUp-logo {
+.Auth-body-wrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #282c34;
+}
+
+.Auth-logo {
   align-self: center;
   height: 6rem;
   position: relative;
   margin-bottom: 5vh;
 }
 
-.SignUp-title {
+.Auth-title {
   text-align: center;
   font-size: xxx-large;
   width: 70%;
   align-self: center;
 }
 
-.SignUp-container-wrapper {
+.Auth-container-wrapper {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -25,7 +34,7 @@
   margin-top: 10vh;
 }
 
-.SignUp-container {
+.Auth-container {
   background-color: #98a9b1;
   border-color: #000;
   border-width: 1rem;
@@ -41,41 +50,41 @@
 
 /* If desktop display */
 @media only screen and (min-width: 1024px) {
-  .SignUp-container-wrapper {
+  .Auth-container-wrapper {
     max-width: 25vw;
   }
-  .SignUp-container {
+  .Auth-container {
     min-width: 450px;
     padding: 2rem;
   }
-  #SignUp-oauth-google {
+  #Auth-oauth-google {
     background: url(./../public/g.png) no-repeat left center;
     background-size: 1.5rem;
     background-position-x: 1.5rem;
   }
 }
 
-.SignUp-input-email {
+.Auth-input-email {
   margin-top: 5vh;
   margin-bottom: 3vh;
 }
 
-.SignUp-input-email-button {
+.Auth-input-email-button {
   margin-bottom: 3vh;
 }
 
-.SignUp-input-label {
+.Auth-input-label {
   background: lightslategrey;
   color: white;
 }
 
-.SignUp-alternative-link {
+.Auth-alternative-link {
   cursor: pointer;
   display: inline-flex;
   text-decoration: underline;
 }
 
-.SignUp-divider {
+.Auth-divider {
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -85,8 +94,8 @@
   margin-bottom: 1rem;
 }
 
-.SignUp-divider:before,
-.SignUp-divider:after {
+.Auth-divider:before,
+.Auth-divider:after {
   content: "";
   border-bottom: 1px solid #c2c8d0;
   flex: 1 0 auto;
@@ -94,13 +103,17 @@
   margin: 0;
 }
 
-.SignUp-divider-or {
+.Auth-divider-or {
   text-align: center;
   flex: 0.2 0 auto;
   margin: 0;
   height: 12px;
 }
 
-#SignUp-oauth-google:hover {
+.Auth-oauth-button {
+  cursor: pointer;
+}
+
+.Auth-oauth-button:hover {
   background-color: lightslategray;
 }

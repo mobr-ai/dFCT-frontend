@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 
 function TopicList({ content }) {
-    const [user] = useOutletContext();
+    const { user } = useOutletContext();
 
     // Create human-readable elapsed timestamps
     const getElapsedTime = (timeStr) => {
