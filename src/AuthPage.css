@@ -27,7 +27,7 @@
   flex-direction: column;
   font-family: monospace;
   justify-content: center;
-  min-height: 80vh;
+  /* min-height: 80vh; */
   max-width: fit-content;
   padding-bottom: 10rem;
   text-align: center;

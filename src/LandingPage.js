@@ -64,6 +64,9 @@ function LandingPage() {
 
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
+    document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     if (document.getElementById('input-url-help-msg'))
       document.getElementById('input-url-help-msg').innerText = ""
