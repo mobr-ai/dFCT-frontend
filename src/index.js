@@ -24,10 +24,6 @@ function Layout() {
       window.sessionStorage.setItem("userData", JSON.stringify(userData))
       navigate("/")
       setLoading(false)
-      // fetchUserTopics(userData.id).then((response) => {
-      //   setUserTopics(response)
-      //   setLoading(false)
-      // });
     }
     else {
       setUser(null)
@@ -35,7 +31,7 @@ function Layout() {
       navigate("/")
       setLoading(false)
     }
-  }, [setLoading, setUser, setUserTopics]);
+  }, [setLoading, setUser, setUserTopics, navigate]);
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">

@@ -18,16 +18,24 @@ import LoadingPage from "./LoadingPage";
 function AuthPage(props) {
     const { t } = useTranslation();
     const [processing, setProcessing] = useState(false)
+    const [email, setEmail] = useState()
+    const [pass, setPass] = useState()
     const { handleLogin, setLoading, loading } = useOutletContext();
 
 
-    const handleEmail = () => {
-        setProcessing(true)
+    const handleAuthStep = () => {
+        let newEmail = document.querySelector("#Auth-input-text")?.value
+        let newPass = document.querySelector("#Auth-input-password-text")?.value
+
+        if (newEmail && !email)
+            setEmail(newEmail)
+        if (newPass && !pass)
+            setPass(newPass)
     }
 
     useEffect(() => {
         document.querySelector(".Auth-container").scrollIntoView({ behavior: "smooth", block: "center" })
-    }, [])
+    }, [email, setEmail])
 
     const handleApiRequest = useCallback(async (url, options = {}) => {
         const defaultOptions = {
@@ -87,30 +95,63 @@ function AuthPage(props) {
             )
             }
             {!loading && (
-                <Container className="Auth-container-wrapper">
+                <Container className="Auth-container-wrapper" fluid>
                     <Container className="Auth-container">
                         <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
 
                         <h1 className="Auth-title">{props.type === "create" ? t('signUpMsg') : t('loginMsg')}</h1>
 
-                        <InputGroup className="Auth-input-email" size="lg">
-                            <InputGroup.Text className="Auth-input-label">@</InputGroup.Text>
-                            <Form.Control
-                                id="Auth-input-text"
-                                className='Auth-email-input'
-                                aria-label="Enter valid e-mail"
-                                aria-describedby="Auth-help-msg"
-                            />
-                            <Form.Text id="Auth-help-msg" muted />
-                        </InputGroup>
+                        {!email && (
+                            <InputGroup className="Auth-input-email" size="lg">
+                                <InputGroup.Text className="Auth-input-label"></InputGroup.Text>
+                                <Form.Control
+                                    id="Auth-input-text"
+                                    className='Auth-email-input'
+                                    aria-label="Enter valid e-mail"
+                                    aria-describedby="Auth-help-msg"
+                                    placeholder={t('mailPlaceholder')}
+                                    onFocus={() => { document.getElementById('Auth-input-text').placeholder = '' }}
+                                    onBlur={() => document.getElementById('Auth-input-text').placeholder === '' ? document.getElementById('Auth-input-text').placeholder = t('mailPlaceholder') : pass}
+                                />
+                                <Form.Text id="Auth-help-msg" muted />
+                            </InputGroup>
+                        )}
+                        {email && (
+                            <InputGroup className="Auth-input-email-entered" size="lg">
+                                <InputGroup.Text className="Auth-input-label" onClick={() => setEmail(null)}></InputGroup.Text>
+                                <Form.Control
+                                    id="Auth-input-text"
+                                    className='Auth-email-input'
+                                    aria-label="Enter valid e-mail"
+                                    placeholder={email}
+                                    readOnly
+                                />
+                            </InputGroup>
+                        )}
+                        {email && (
+                            <InputGroup className="Auth-input-pass" size="lg">
+                                <InputGroup.Text className="Auth-input-label">*</InputGroup.Text>
+                                <Form.Control
+                                    id="Auth-input-password-text"
+                                    className='Auth-password-input'
+                                    aria-label="Enter password"
+                                    aria-describedby="Auth-help-msg"
+                                    type="password"
+                                    placeholder="Password"
+                                />
+                                <Form.Text id="Auth-help-msg" muted />
+                            </InputGroup>
+                        )}
+                        {email && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
+
 
                         <Button
-                            className="Auth-input-email-button"
+                            className="Auth-input-button"
                             variant="dark"
                             size="lg"
-                            onClick={!processing ? handleEmail : null} disabled={processing}
+                            onClick={!processing ? handleAuthStep : null} disabled={processing}
                         >
-                            {processing ? t('processingMail') : t('enterEmail')}
+                            {processing ? t('processingMail') : t('authNextStep')}
                         </Button>
 
                         <p>

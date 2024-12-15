@@ -50,9 +50,6 @@
 
 /* If desktop display */
 @media only screen and (min-width: 1024px) {
-  .Auth-container-wrapper {
-    max-width: 25vw;
-  }
   .Auth-container {
     min-width: 450px;
     padding: 2rem;
@@ -69,12 +66,41 @@
   }
 }
 
-.Auth-input-email {
+.Auth-input-email,
+.Auth-input-email-entered {
   margin-top: 5vh;
   margin-bottom: 3vh;
 }
 
-.Auth-input-email-button {
+.Auth-input-email-entered {
+  cursor: pointer;
+}
+
+.Auth-input-email-entered:hover span {
+  background-color: rgb(172, 47, 47);
+}
+
+.Auth-input-email-entered span:after {
+  content: "@";
+  /* display: none; */
+}
+
+.Auth-input-email span:after {
+  content: "@";
+  /* display: none; */
+}
+
+.Auth-input-email-entered:hover span:after {
+  content: "X";
+  display: inline; /* show changed text */
+}
+
+.Auth-input-pass {
+  margin-top: -2vh;
+  margin-bottom: 3vh;
+}
+
+.Auth-input-button {
   margin-bottom: 3vh;
 }
 
