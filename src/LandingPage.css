@@ -100,7 +100,7 @@
   display: flex;
   /* max-width: 80vw; */
   /* width: 80vw; */
-  overflow: hidden;
+  /* overflow: hidden; */
   top: 20%;
   flex-flow: column;
 }
@@ -237,6 +237,32 @@
   border-radius: 4px;
   font-size: 12px;
   font-family: monospace;
+}
+
+.Landing-divider {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  justify-content: center;
+  padding: 1rem 1rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.Landing-divider:before,
+.Landing-divider:after {
+  content: "";
+  border-bottom: 1px solid slategray;
+  flex: 1 0 auto;
+  height: 0.5em;
+  margin: 0;
+}
+
+.Landing-divider-or {
+  text-align: center;
+  flex: 0.2 0 auto;
+  margin: 0;
+  height: 12px;
 }
 
 .Landing-input-url {

@@ -17,7 +17,7 @@ import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
     const { t } = useTranslation();
-    const [processing, setProcessing] = useState(false)
+    const [processing,] = useState(false)
     const [email, setEmail] = useState()
     const [pass, setPass] = useState()
     const { handleLogin, setLoading, loading } = useOutletContext();
@@ -87,7 +87,7 @@ function AuthPage(props) {
 
 
     return (
-        <>
+        <Container className="Auth-body-wrapper" fluid>
             {loading && (
                 <Container className="Auth-body-wrapper" fluid>
                     <LoadingPage />
@@ -142,7 +142,7 @@ function AuthPage(props) {
                                 <Form.Text id="Auth-help-msg" muted />
                             </InputGroup>
                         )}
-                        {email && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
+                        {(email && props.type === 'login') && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
 
 
                         <Button
@@ -179,7 +179,7 @@ function AuthPage(props) {
                     </Container>
                 </Container>
             )}
-        </>
+        </Container>
     )
 }
 

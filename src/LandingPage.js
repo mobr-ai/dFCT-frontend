@@ -58,7 +58,7 @@ function LandingPage() {
   const [showURLs, setShowURLs] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
-  const { user, loading, userTopics, setLoading } = useOutletContext();
+  const { user, loading, setLoading } = useOutletContext();
   const navigate = useNavigate()
   const { userTopicsPromise } = useLoaderData()
 
@@ -395,6 +395,7 @@ function LandingPage() {
             </div>
             {!loading && (
               <>
+                <div className="Landing-divider"><span className="Landing-divider-or">{t('landingOR')}</span></div>
                 <div>
                   <InputGroup className="Landing-input-url mb-3">
                     <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
