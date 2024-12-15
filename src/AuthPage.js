@@ -99,10 +99,10 @@ function AuthPage(props) {
                     <Container className="Auth-container">
                         <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
 
-                        <h1 className="Auth-title">{props.type === "create" ? t('signUpMsg') : t('loginMsg')}</h1>
+                        <h2 className="Auth-title">{props.type === "create" ? t('signUpMsg') : t('loginMsg')}</h2>
 
                         {!email && (
-                            <InputGroup className="Auth-input-email" size="lg">
+                            <InputGroup className="Auth-input-email" size="md">
                                 <InputGroup.Text className="Auth-input-label"></InputGroup.Text>
                                 <Form.Control
                                     id="Auth-input-text"
@@ -112,12 +112,13 @@ function AuthPage(props) {
                                     placeholder={t('mailPlaceholder')}
                                     onFocus={() => { document.getElementById('Auth-input-text').placeholder = '' }}
                                     onBlur={() => document.getElementById('Auth-input-text').placeholder === '' ? document.getElementById('Auth-input-text').placeholder = t('mailPlaceholder') : pass}
+                                    size="md"
                                 />
                                 <Form.Text id="Auth-help-msg" muted />
                             </InputGroup>
                         )}
                         {email && (
-                            <InputGroup className="Auth-input-email-entered" size="lg">
+                            <InputGroup className="Auth-input-email-entered" size="md">
                                 <InputGroup.Text className="Auth-input-label" onClick={() => setEmail(null)}></InputGroup.Text>
                                 <Form.Control
                                     id="Auth-input-text"
@@ -125,11 +126,12 @@ function AuthPage(props) {
                                     aria-label="Enter valid e-mail"
                                     placeholder={email}
                                     readOnly
+                                    size="md"
                                 />
                             </InputGroup>
                         )}
                         {email && (
-                            <InputGroup className="Auth-input-pass" size="lg">
+                            <InputGroup className="Auth-input-pass" size="md">
                                 <InputGroup.Text className="Auth-input-label">*</InputGroup.Text>
                                 <Form.Control
                                     id="Auth-input-password-text"
@@ -138,6 +140,7 @@ function AuthPage(props) {
                                     aria-describedby="Auth-help-msg"
                                     type="password"
                                     placeholder="Password"
+                                    size="md"
                                 />
                                 <Form.Text id="Auth-help-msg" muted />
                             </InputGroup>
@@ -148,7 +151,7 @@ function AuthPage(props) {
                         <Button
                             className="Auth-input-button"
                             variant="dark"
-                            size="lg"
+                            size="md"
                             onClick={!processing ? handleAuthStep : null} disabled={processing}
                         >
                             {processing ? t('processingMail') : t('authNextStep')}
@@ -168,7 +171,7 @@ function AuthPage(props) {
                             id="Auth-oauth-google"
                             className="Auth-oauth-button"
                             variant="outline-secondary"
-                            size="lg"
+                            size="md"
                             onClick={() => {
                                 setLoading(true)
                                 loginWithGoogle()

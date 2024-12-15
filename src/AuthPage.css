@@ -7,6 +7,10 @@
   background-color: #282c34;
 }
 
+.Auth-body-wrapper * {
+  font-size: 15px;
+}
+
 .Auth-logo {
   align-self: center;
   height: 6rem;
@@ -16,7 +20,7 @@
 
 .Auth-title {
   text-align: center;
-  font-size: xxx-large;
+  font-size: xx-large;
   width: 70%;
   align-self: center;
 }
