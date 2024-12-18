@@ -14,7 +14,9 @@ import AuthPage from './AuthPage';
 function Layout() {
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [loading, setLoading] = useState(false)
-  const [userTopics, setUserTopics] = useState({})
+  // const [userTopics,] = useState({})
+  // const [showUserTopics, setShowUserTopics] = useState(false);
+
   const navigate = useNavigate()
 
 
@@ -32,12 +34,12 @@ function Layout() {
       navigate("/")
       setLoading(false)
     }
-  }, [setLoading, setUser, setUserTopics, navigate]);
+  }, [setLoading, setUser, navigate]);
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setUser={handleLogin} />
-      <Outlet context={{ user, loading, userTopics, setLoading, handleLogin }} />
+      <Outlet context={{ user, loading, setLoading, handleLogin }} />
       {/* <Footer /> */}
     </GoogleOAuthProvider>
   );

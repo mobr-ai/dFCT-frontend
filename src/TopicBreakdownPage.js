@@ -1,17 +1,18 @@
 import './TopicBreakdownPage.css'
-import TopicList from './TopicList'
+import TopicSidebar from './TopicSidebar'
 import TopicToolbar from './TopicToolbar';
+import EvidenceModal from './EvidenceModal';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Accordion from 'react-bootstrap/Accordion';
 import LoadingPage from './LoadingPage';
+import Linkify from "linkify-react";
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
-import Linkify from "linkify-react";
-import { useState } from 'react';
-import EvidenceModal from './EvidenceModal';
+import { useState, useEffect } from 'react';
+
 
 const linkifyOpts = {
     defaultProtocol: "https",
@@ -32,7 +33,6 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
     const [evidenceModalTitle, setEvidenceModalTitle] = useState(title)
     const [evidenceType, setEvidenceType] = useState()
     const [claimId, setClaimId] = useState()
-    // const [topicId, setTopicId] = useState()
 
     const showEvidenceModal = (title, evidenceType, claimId) => {
         setEvidenceType(evidenceType)
@@ -163,24 +163,42 @@ const ContentCard = ({ item }) => {
 
 // Main component
 function TopicBreakdownPage() {
-    const { t } = useTranslation();
+    const [showUserTopics, setShowUserTopics] = useState(false)
+    const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+    const [shareModalShow, setShareModalShow] = useState(false);
+    const [evidenceModalShow, setEvidenceModalShow] = useState(false);
     const { topicPromise, userTopicsPromise } = useLoaderData()
     const { user } = useOutletContext();
 
-    const [shareModalShow, setShareModalShow] = useState(false);
-    const [evidenceModalShow, setEvidenceModalShow] = useState(false);
+    const handleResize = () => {
+        setDimensions({
+            width: window.innerWidth,
+            height: window.innerHeight,
+        });
+    }
+
+    useEffect(() => {
+        window.addEventListener("resize", handleResize, false);
+    }, [])
 
     return (
         <div className="Breakdown-body">
-            <Suspense fallback={<LoadingPage />}>
-                {user && (<div className='Breakdown-left-column'>
-                    <h3>{t('recentTopics')}</h3>
+            {user && (
+                <Suspense>
                     <Await resolve={userTopicsPromise}>
                         {
-                            (userTopics) => <TopicList content={userTopics} />
+                            (userTopics) =>
+                                <TopicSidebar
+                                    userTopics={userTopics}
+                                    pageWidth={dimensions.width}
+                                    showUserTopics={showUserTopics}
+                                    setShowUserTopics={setShowUserTopics}
+                                />
                         }
                     </Await>
-                </div>)}
+                </Suspense>
+            )}
+            <Suspense fallback={<LoadingPage />}>
                 <div className='Breakdown-middle-column'>
                     <Await resolve={topicPromise}>
                         {

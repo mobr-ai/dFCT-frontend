@@ -26,9 +26,11 @@ function NavBar(props) {
         if (window.location.pathname !== '/')
             navigate("/")
         else {
-            document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+            // document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+            document.getElementsByClassName("bm-menu")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
             document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
             window.scrollTo({ top: 0, behavior: 'smooth' })
+            // props.setShowUserTopics(true)
         }
     }, [navigate])
 

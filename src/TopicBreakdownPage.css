@@ -9,7 +9,7 @@
   min-height: 100vh;
   margin-left: auto;
   overflow-wrap: anywhere;
-  justify-content: space-evenly;
+  justify-content: center;
   position: relative;
   overflow-y: scroll;
 }

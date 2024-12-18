@@ -1,23 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
+import './TopicList.css';
 import URLCardList from './URLCardList.js';
-import TopicList from './TopicList'
 import logo from './icons/logo.svg';
-import LoadingPage from './LoadingPage';
 import StyledDropzone from './StyledDropzone.js'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import InputGroup from 'react-bootstrap/InputGroup';
 import request from 'superagent';
+import i18n from "i18next";
+import ReactTextTransition, { presets } from 'react-text-transition';
 import { useOutletContext, useNavigate, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense } from 'react';
-import ReactTextTransition, { presets } from 'react-text-transition';
-import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
 import detector from "i18next-browser-languagedetector";
 import translationEN from './locales/en/translation.json';
 import translationPT from './locales/pt/translation.json';
+import TopicSidebar from './TopicSidebar.js';
 
 i18n
   .use(detector)
@@ -58,13 +58,27 @@ function LandingPage() {
   const [showURLs, setShowURLs] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
+  const [showUserTopics, setShowUserTopics] = useState(false)
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
   const { user, loading, setLoading } = useOutletContext();
   const navigate = useNavigate()
   const { userTopicsPromise } = useLoaderData()
 
+  const handleResize = () => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize, false);
+  }, [])
+
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
-    document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    // document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    document.getElementsByClassName("bm-menu")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
     document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
@@ -127,12 +141,8 @@ function LandingPage() {
       }
 
       const metaError = (res) => {
-        // let url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
-        // display error msg
         console.log("Oops, error fetching URL: " + res.status + " (" + res.message + ")")
         document.getElementById('input-url-help-msg').innerText = t('fetchURLError')
-        // setURLs(urls.concat([url]))
-        // setShowURLs(true)
         setFetching(false)
         document.getElementById('input-url-text').value = ""
       }
@@ -153,7 +163,6 @@ function LandingPage() {
 
     showError("", true)
     setFiles(files.concat(acceptedFiles))
-    // setLoading(true)
 
     function uploadSuccess(res) {
       console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
@@ -183,7 +192,6 @@ function LandingPage() {
       setDropMsg(t('uploadingFiles'))
       setShowFiles(true)
       setShowProgress(true)
-      // setDisableDrop(true)
       console.log(dropMsg)
 
       // upload files directly to s3
@@ -262,7 +270,6 @@ function LandingPage() {
     async function waitProcessing(res) {
       var nextProgress = progress
       const topic = res.body
-      // const topicId = Object.keys(res.body)[0]
       const topicURL = res.body['topic_url']
       const checkStatus = (res) => {
         try {
@@ -437,16 +444,11 @@ function LandingPage() {
         )}
       </div>
       {user && (
-        <Suspense fallback={<LoadingPage type="ring" />}>
+        <Suspense>
           <Await resolve={userTopicsPromise}>
             {
               (userTopics) =>
-                userTopics && Object.keys(userTopics).length > 0 && (
-                  <div className='Landing-left-column'>
-                    <h3>{t('recentTopics')}</h3>
-                    <TopicList content={userTopics} />
-                  </div>
-                )
+                <TopicSidebar userTopics={userTopics} pageWidth={dimensions.width} showUserTopics={showUserTopics} setShowUserTopics={setShowUserTopics} />
             }
           </Await>
         </Suspense>
