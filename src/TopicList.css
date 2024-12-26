@@ -85,6 +85,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
 /* Individual item */
 .bm-item {
   display: inline-block;
+  padding-bottom: 10vh;
 }
 
 /* Styling of overlay */
@@ -96,7 +97,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
   font-size: x-large;
   text-wrap-mode: nowrap;
   color: lightslategray;
-  animation: bounce-in 1.5s ease 1;
+  animation: bounce-in 0.5s ease 1;
 }
 
 .bm-icon-bounce {
