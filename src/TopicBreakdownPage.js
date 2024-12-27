@@ -6,6 +6,7 @@ import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Accordion from 'react-bootstrap/Accordion';
+import Image from 'react-bootstrap/Image';
 import LoadingPage from './LoadingPage';
 import Linkify from "linkify-react";
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
@@ -134,7 +135,14 @@ const ContentCard = ({ item }) => {
 
             {/* <p>Type: {item.content_type}</p> */}
             {item.content_type === 'image' && (
-                <a href={item.src_url} target="_blank" rel="noreferrer"><img src={item.local_url} alt={item.content_title} className='Breakdown-content-container' /></a>
+                <a href={item.src_url} target="_blank" rel="noreferrer">
+                    <Image
+                        src={item.local_url}
+                        alt={item.content_title}
+                        onError={(e) => e.target.style.display = "none"}
+                        className='Breakdown-content-container'
+                    />
+                </a>
             )}
             {item.content_type === 'video' && (
                 <video className='Breakdown-content-container' controls>

@@ -89,6 +89,10 @@
   white-space: pre-line;
 }
 
+.Breakdown-content-card {
+  margin-bottom: 2rem;
+}
+
 .Breakdown-content-container {
   display: block;
   margin: 2rem auto 3rem;
