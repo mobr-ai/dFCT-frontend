@@ -112,9 +112,11 @@ const ClaimItem = ({ index, claim, showEvidenceModal, topicId }) => {
 
 // ContentList Component
 const ContentList = ({ content }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="Breakdown-content-list">
-            {/* <h3>Content</h3> */}
+            <h3>{t('references')}</h3>
             {content.map((item, index) => (
                 <ContentCard key={index} item={item} />
             ))}

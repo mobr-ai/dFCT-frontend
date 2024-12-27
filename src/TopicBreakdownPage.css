@@ -84,14 +84,14 @@
 }
 
 .Breakdown-topic-article {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   margin-top: 0;
   white-space: pre-line;
 }
 
 .Breakdown-content-container {
   display: block;
-  margin: 3rem auto 3rem;
+  margin: 2rem auto 3rem;
   max-height: 40vh;
   max-width: 100%;
   width: auto;
@@ -148,6 +148,7 @@
 
 .Breakdown-topic-claims {
   cursor: pointer;
+  margin-top: 1rem;
   margin-bottom: 2rem;
 }
 

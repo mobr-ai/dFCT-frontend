@@ -163,6 +163,7 @@
   font-family: monospace;
   color: #bdbdbd;
   font-size: xx-large;
+  padding-bottom: 0 !important;
 }
 
 .Landing-topics-sidebar,
