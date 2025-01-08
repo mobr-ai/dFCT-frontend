@@ -48,10 +48,10 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
             <TopicToolbar user={user} shareModalShow={shareModalShow} setShareModalShow={setShareModalShow} title={title} hashtags={getHashtags(contentList)} />
             <p>{description}</p>
             <p>{getHashtags(contentList, true, 6)}</p>
-            <h3>{t('claims')}</h3>
+            {claimList && claimList.length > 0 && (<h3>{t('claims')}</h3>)}
             <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
             <div className='Breakdown-topic-article'>{article}</div>
-            <ContentList content={contentList} />
+            {contentList && contentList.length > 0 && (<ContentList content={contentList} />)}
             <EvidenceModal
                 show={evidenceModalShow}
                 title={evidenceModalTitle}
@@ -217,7 +217,7 @@ function TopicBreakdownPage() {
                                     topicId={JSON.parse(topicData).topic_id}
                                     title={JSON.parse(topicData).title}
                                     description={JSON.parse(topicData).description}
-                                    claimList={JSON.parse(topicData).claims}
+                                    claimList={JSON.parse(topicData).claims || []}
                                     article={JSON.parse(topicData).article}
                                     contentList={JSON.parse(topicData).content}
                                     user={user}
