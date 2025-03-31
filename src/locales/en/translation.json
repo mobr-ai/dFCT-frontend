@@ -54,5 +54,10 @@
     "loginButton": "Log in",
     "signUpButton": "Sign up",
     "signUpOR": "OR",
-    "loginWithGoogle": "Login with Google"
+    "loginWithGoogle": "Login with Google",
+    "enterEmailPlaceholder": "Enter your e-mail",
+    "joinWaitList": "Join the Waiting List",
+    "joinWaitListSubtitle": "Be among the first to get access to d-FCT!",
+    "successWaitListMsg": "Thank you for signing up! We'll notify you soon.",
+    "alreadyOnWaitListMsg": "Your e-mail is already on our list. Stay tuned, we'll notify you soon."
 }

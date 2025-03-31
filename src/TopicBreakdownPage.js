@@ -56,7 +56,7 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
     );
 };
 
-// Main component
+// Main page component
 function TopicBreakdownPage() {
     const [showUserTopics, setShowUserTopics] = useState(false)
     const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });

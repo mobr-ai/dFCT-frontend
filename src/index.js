@@ -9,6 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
 import AuthPage from './AuthPage';
+import WaitingList from './WaitingListPage';
 
 
 function Layout() {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       },
       {
         path: '/signup',
+        element: <WaitingList />
+      },
+      {
+        path: '/signup_disabled',
         element: <AuthPage type="create" />
       },
       {
