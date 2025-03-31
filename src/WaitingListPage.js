@@ -11,7 +11,7 @@ const WaitingList = () => {
     const [submitted, setSubmitted] = useState(false);
     const [success, setSuccess] = useState();
     const [searchParams] = useSearchParams();
-    const [ref, setRef] = useState(searchParams.get("ref") || "");
+    const [ref] = useState(searchParams.get("ref") || "");
     const { t } = useTranslation();
 
     const reqSuccess = () => {
