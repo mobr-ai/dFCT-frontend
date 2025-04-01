@@ -4,6 +4,7 @@ import './WaitingListPage.css';
 import { useTranslation } from "react-i18next";
 import request from "superagent"
 import { useSearchParams } from 'react-router-dom'
+import i18n from "i18next";
 
 
 const WaitingList = () => {
@@ -30,7 +31,7 @@ const WaitingList = () => {
         // Handle form submission (send to backend or mailing list API)
         request
             .post('/wait_list')
-            .send({ "email": email, "ref": ref })
+            .send({ "email": email, "ref": ref, "language": i18n.language })
             .set('accept', 'json')
             .then(reqSuccess, reqError)
     };
