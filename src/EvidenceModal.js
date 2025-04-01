@@ -205,7 +205,7 @@ function EvidenceModal(props) {
                 .send({ evidenceType: props.type })
                 .send({ claimId: props.claimId })
                 .send({ providedContext: providedContext })
-                .send({ language: i18n.language || window.localStorage.i18nextLng })
+                .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
                 .then(waitProcessing, handleError);
         }
 

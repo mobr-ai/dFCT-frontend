@@ -106,11 +106,11 @@ function NavBar(props) {
                         }
                         <NavDropdown title={t('language')} id="navbar-dropdown">
                             <NavDropdown.Item onClick={() => changeLanguage('pt')}>
-                                🇧🇷 Português (BR) {i18n.language === 'pt' ? <div className="Navbar-checkmark" /> : ''}
+                                🇧🇷 Português (BR) {i18n.language.split('-')[0] === 'pt' ? <div className="Navbar-checkmark" /> : ''}
                             </NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item onClick={() => changeLanguage('en')}>
-                                🇺🇸 English (US) {i18n.language === 'en' ? <div className="Navbar-checkmark" /> : ''}
+                                🇺🇸 English (US) {i18n.language.split('-')[0] === 'en' ? <div className="Navbar-checkmark" /> : ''}
                             </NavDropdown.Item>
                         </NavDropdown>
                         {

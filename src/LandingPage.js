@@ -107,7 +107,7 @@ function LandingPage() {
         .put('/topic/' + user.id)
         .send({ 'title': 'Topic template' })
         .send({ 'description': 'This is a new topic' })
-        .send({ language: i18n.language || window.localStorage.i18nextLng })
+        .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
         .then(callback, () => showError(t("topicCreationFailed")))
     }
     else {
@@ -257,7 +257,7 @@ function LandingPage() {
         .send({ topicId: nextTopic })
         .send({ userId: user.id })
         .send({ providedContext: providedContext })
-        .send({ language: i18n.language || window.localStorage.i18nextLng })
+        .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
         .then(waitProcessing, handleError);
     }
 
