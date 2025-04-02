@@ -96,7 +96,7 @@ function NavBar(props) {
                     <Nav className="ml-auto">
                         <Nav.Link onClick={() => {
                             window.open('https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true')
-                        }}>Learn more</Nav.Link>
+                        }}>{t('learnMore')}</Nav.Link>
                         {
                             !props.userData && (
                                 <Nav.Link onClick={() => {
