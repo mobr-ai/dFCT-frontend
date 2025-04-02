@@ -95,8 +95,8 @@ function NavBar(props) {
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <Nav className="ml-auto">
                         <Nav.Link onClick={() => {
-                            window.open('https://drive.google.com/file/d/1_i5sOz7Uxer_Jkd7zBouV1o7iQwHhHxq/view', '_blank')
-                        }}>Whitepaper</Nav.Link>
+                            window.open('https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true')
+                        }}>Learn more</Nav.Link>
                         {
                             !props.userData && (
                                 <Nav.Link onClick={() => {

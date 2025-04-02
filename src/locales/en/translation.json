@@ -59,5 +59,6 @@
     "joinWaitList": "Join the Waiting List",
     "joinWaitListSubtitle": "Be among the first to get access to d-FCT!",
     "successWaitListMsg": "Thank you for signing up! We'll notify you soon.",
-    "alreadyOnWaitListMsg": "Your e-mail is already on our list. Stay tuned, we'll notify you soon."
+    "alreadyOnWaitListMsg": "Your e-mail is already on our list. Stay tuned, we'll notify you soon.",
+    "errorWaitListMsg": "Oops, our waitlist is experiencing temporary issues. Please, try again later."
 }

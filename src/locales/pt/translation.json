@@ -73,5 +73,6 @@
     "joinWaitList": "Entre na Lista de Espera",
     "joinWaitListSubtitle": "Esteja entre os primeiros a ter acesso ao d-FCT!",
     "successWaitListMsg": "Obrigado por se cadastrar! Nós o notificaremos em breve.",
-    "alreadyOnWaitListMsg": "Seu e-mail já está cadastrado em nossa lista. Fique atento, nós o notificaremos em breve."
+    "alreadyOnWaitListMsg": "Seu e-mail já está cadastrado em nossa lista. Fique atento, nós o notificaremos em breve.",
+    "errorWaitListMsg": "Oops, nossa lista de espera parece estar com problemas. Por favor, tente novamente mais tarde."
 }

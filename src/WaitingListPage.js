@@ -15,14 +15,22 @@ const WaitingList = () => {
     const [ref] = useState(searchParams.get("ref") || "");
     const { t } = useTranslation();
 
-    const reqSuccess = () => {
+    const reqSuccess = (res) => {
         setSubmitted(true)
         setSuccess(true)
     }
 
-    const reqError = () => {
-        setSubmitted(true)
-        setSuccess(false)
+    const reqError = (res) => {
+        // Email already on list
+        if (res.status === 418) {
+            setSubmitted(true)
+            setSuccess(null)
+        }
+        // Other error
+        else {
+            setSubmitted(true)
+            setSuccess(false)
+        }
     }
 
     const handleSubmit = (e) => {
@@ -61,11 +69,11 @@ const WaitingList = () => {
                             {t('signUpButton')}
                         </button>
                     </form>
-                ) : success ? (
-                    <p className="mt-4 text-green-400">{t('successWaitListMsg')}</p>
-                ) : (
-                    <p className="mt-4 text-orange-400">{t('alreadyOnWaitListMsg')}</p>
-                )}
+                ) : success === true ? (
+                    <p className="mt-4">{t('successWaitListMsg')}</p>
+                ) : success === false ? (
+                    <p className="mt-4">{t('errorWaitListMsg')}</p>
+                ) : <p className="mt-4">{t('alreadyOnWaitListMsg')}</p>}
             </div>
         </div>
     );
