@@ -6,7 +6,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faUpload, faFolderOpen, faCog } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import avatarImg from "./icons/avatar.png";
@@ -20,6 +22,7 @@ function NavBar(props) {
     const [brandIndex, setBrandIndex] = useState(1);
     const [suffixIndex, setSuffixBrandIndex] = useState(1);
     const navigate = useNavigate()
+    const location = useLocation();
     const { t } = useTranslation();
 
     const topClick = useCallback(() => {
@@ -55,7 +58,10 @@ function NavBar(props) {
     }
 
     const changeLanguage = (lng) => {
-        i18n.changeLanguage(lng);
+        // props.setLoading(true)
+        // i18n.changeLanguage(lng);
+        localStorage.setItem('i18nextLng', lng); // i18next checks this on init
+        navigate(0);
     }
 
     const userMenu = props.userData && (
@@ -93,7 +99,23 @@ function NavBar(props) {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                    <Nav className="ml-auto">
+                    <Nav className="me-auto d-lg-none"> {/* Visible only in mobile */}
+                        <Nav.Link onClick={() => navigate('/')} active={location.pathname === '/'}>
+                            <FontAwesomeIcon icon={faHome} /> {t('home')}
+                        </Nav.Link>
+                        <Nav.Link onClick={() => navigate('/submit')} active={location.pathname === '/submit'}>
+                            <FontAwesomeIcon icon={faUpload} /> {t('verifyContent')}
+                        </Nav.Link>
+                        <Nav.Link onClick={() => navigate('/')} active={location.pathname.includes('/mytopics')}>
+                            <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
+                        </Nav.Link>
+                        <Nav.Link onClick={() => navigate('/settings')} active={location.pathname === '/settings'}>
+                            <FontAwesomeIcon icon={faCog} /> {t('settings')}
+                        </Nav.Link>
+                    </Nav>
+                    <NavDropdown.Divider />
+
+                    <Nav className="ml-auto NavBar-top-container">
                         <Nav.Link onClick={() => {
                             window.open('https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true')
                         }}>{t('learnMore')}</Nav.Link>
@@ -118,7 +140,7 @@ function NavBar(props) {
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
                                     <NavDropdown.Item onClick={logout}>{t('logOut')}</NavDropdown.Item>
                                     <NavDropdown.Divider />
-                                    <NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => navigate('/settings')}>
                                         {t('settings')}
                                     </NavDropdown.Item>
                                 </NavDropdown>

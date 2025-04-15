@@ -3,10 +3,10 @@ import "./LoadingPage.css"
 
 function LoadingPage(props) {
 
-    const switchRender = (type) => {
+    const switchRender = (type, style) => {
         switch (type) {
             case 'simple':
-                return (<div style={{ alignItems: 'center', alignSelf: 'center' }} className="loader" alt="loading sign"></div>)
+                return (<div style={style || { alignItems: 'center', alignSelf: 'center' }} className="LoadingPage-simple" alt="loading sign"></div>)
             case 'ring':
                 return (
                     <div className="loading-ring"><div></div><div></div><div></div><div></div></div>
@@ -25,12 +25,12 @@ function LoadingPage(props) {
                     </div>
                 )
             default:
-                return (<img style={{ alignItems: 'center', alignSelf: 'center' }} src={logo} className="Breakdown-loading" alt="loading sign"></img>)
+                return (<img style={style || { alignItems: 'center', alignSelf: 'center' }} src={logo} className="LoadingPage-magnifier" alt="loading sign"></img>)
         }
     }
 
     return (
-        switchRender(props.type)
+        switchRender(props.type, props.style)
     )
 }
 

@@ -8,11 +8,16 @@ import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
+import TopicSubmissionPage from './TopicSubmission';
 import AuthPage from './AuthPage';
 import WaitingList from './WaitingListPage';
+import SettingsPage from './SettingsPage';
+import i18n from "i18next";
+import NavigationSidebar from './NavigationSidebar';
 
 
 function Layout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [loading, setLoading] = useState(false)
   // const [userTopics,] = useState({})
@@ -39,8 +44,9 @@ function Layout() {
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-      <Header userData={user} setUser={handleLogin} />
-      <Outlet context={{ user, loading, setLoading, handleLogin }} />
+      <Header userData={user} setLoading={setLoading} setUser={handleLogin} />
+      {user && (<NavigationSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />)}
+      <Outlet context={{ user, loading, setLoading, handleLogin, sidebarOpen, setSidebarOpen }} />
       {/* <Footer /> */}
     </GoogleOAuthProvider>
   );
@@ -48,7 +54,11 @@ function Layout() {
 
 
 const fetchUserTopics = async (userId) => {
-  const response = await fetch(`/api/user/${userId}/topics`)
+  const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
+  const page = window.sessionStorage.getItem("topicsPage") || 1
+  const perPage = window.sessionStorage.getItem("perPage") || 9
+
+  const response = await fetch(`/api/user/${userId}/topics/${lang}/${page}/${perPage}`)
   return await response.json();
 }
 
@@ -86,7 +96,11 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <LandingPage />,
-        loader: userTopicsLoader,
+        loader: userTopicsLoader
+      },
+      {
+        path: '/settings',
+        element: <SettingsPage />
       },
       {
         path: '/signup',
@@ -101,9 +115,14 @@ const router = createBrowserRouter([
         element: <AuthPage type="login" />
       },
       {
+        path: '/submit',
+        element: <TopicSubmissionPage />,
+        loader: userTopicsLoader
+      },
+      {
         path: '/t/:userId/:topicId',
         element: <TopicBreakdownPage />,
-        loader: topicLoader,
+        loader: topicLoader
       }
     ]
   }

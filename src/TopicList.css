@@ -2,12 +2,48 @@
   margin-bottom: 1rem;
   margin-top: 2rem;
   max-width: 20rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+
+  text-align: start;
 }
 
-.Topic-list-container {
-  /* overflow-y: scroll; */
-  scroll-behavior: smooth;
-  min-width: max-content;
+.Topic-card-img {
+  align-self: auto;
+  max-height: 12rem;
+  min-height: 12rem;
+  object-fit: cover;
+  cursor: pointer;
+  text-align: start;
+}
+
+/* If desktop display flex columns  */
+@media only screen and (min-width: 1024px) {
+  .Topic-list-container-main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .Topic-card-main {
+    flex: 1 1 calc(33.333% - 10px);
+  }
+}
+
+.Topic-card-sidebar {
+  width: 20rem;
+  flex-basis: auto;
+  flex-shrink: 0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0;
+}
+
+.Topic-list-container-main {
+  justify-content: center;
+}
+
+.Topic-list-container-sidebar {
+  display: block !important;
 }
 
 /* Scrollbar handle on hover */

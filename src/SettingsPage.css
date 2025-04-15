@@ -1,0 +1,17 @@
+.Settings-body {
+  background-color: #2b303a;
+  color: #fff;
+  font-family: Anton;
+  min-height: 100vh;
+  overflow-wrap: anywhere;
+  padding: 2rem;
+}
+
+.Settings-container {
+  background: #343a40;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0000001a;
+  margin: auto;
+  max-width: 600px;
+  padding: 2rem;
+}

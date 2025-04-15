@@ -1,7 +1,10 @@
 import { React } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
-import './LandingPage.css';
+import './TopicSubmission.css';
+import LoadingPage from './LoadingPage';
+import { faMagnifyingGlassArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 const getBackgroundColor = (props) => {
@@ -76,17 +79,18 @@ function StyledDropzone(props) {
   });
 
   const files = props.files.map((file) => (
-    <div className="Landing-drop-item" key={file.path}>
-      <div className="Landing-drop-img">
+    <div className="Submission-drop-item" key={file.name}>
+      <div className="Submission-drop-img">
         {file.type.includes("video") ?
           <video width="15%" muted>
             <source src={URL.createObjectURL(file)} type={file.type} />
           </video> : <img src={file.type.includes("image") ? URL.createObjectURL(file) : "./placeholder.png"} style={file.type.includes("image") ? { opacity: '1' } : { opacity: '0.5' }} alt="Content preview"></img>
         }
       </div>
-      <div className="Landing-drop-item-desc">
-        {file.path} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+      <div className="Submission-drop-item-desc">
+        {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
         <div className={file.completed ? 'done' : 'loader'}></div>
+        {!file.completed && (<LoadingPage type="simple" style={{ height: "10px" }} />)}
       </div>
     </div>
   ));
@@ -94,9 +98,10 @@ function StyledDropzone(props) {
   return (
     <Container border={props.border} fontColor={props.fontColor} background={props.background} {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
       <input {...getInputProps()} />
-      <div className="Landing-drop-message">{props.msg}</div>
+      <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} className="Landing-drop-icon" />
+      <div className="Submission-drop-message">{props.msg}</div>
       {(props.showFiles && !props.showLoading) ?
-        <div className="Landing-drop-files">{files}</div> : ""}
+        <div className="Submission-drop-files">{files}</div> : ""}
       {(props.showProgress && !props.showFiles) ? <div className='loader' style={{ width: props.progress + "%", marginLeft: 0 }}></div> : ""}
     </Container>
   );

@@ -21,6 +21,7 @@
     "claims": "Claims",
     "references": "References",
     "language": "English (US)",
+    "languageConf": "Language",
     "upVote": "▲ Agree",
     "downVote": "▼ Disagree",
     "reviewClaim": "☸ Review",
@@ -61,5 +62,10 @@
     "joinWaitListSubtitle": "Be among the first to get access to d-FCT!",
     "successWaitListMsg": "Thank you for signing up! We'll notify you soon.",
     "alreadyOnWaitListMsg": "Your e-mail is already on our list. Stay tuned, we'll notify you soon.",
-    "errorWaitListMsg": "Oops, our waitlist is experiencing temporary issues. Please, try again later."
+    "errorWaitListMsg": "Oops, our waitlist is experiencing temporary issues. Please, try again later.",
+    "dragAndDropMsg": "Drop files to verify them",
+    "navigation": "Navigation",
+    "home": "Home",
+    "verifyContent": "Check Content",
+    "myTopics": "My Topics"
 }

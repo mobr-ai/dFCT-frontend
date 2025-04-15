@@ -247,21 +247,6 @@
   margin-left: 10px;
 }
 
-.loader {
-  width: 120px;
-  height: 20px;
-  background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%)
-    lightslategrey;
-  background-size: 300% 100%;
-  animation: l1 1s infinite linear;
-  margin-left: 10px;
-}
-@keyframes l1 {
-  0% {
-    background-position: right;
-  }
-}
-
 .WaitingList-input-group {
   margin-top: 1rem;
 }

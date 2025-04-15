@@ -1,4 +1,5 @@
 import './TopicBreakdownPage.css'
+import './NavigationSidebar.css'
 import TopicSidebar from './TopicSidebar'
 import TopicToolbar from './TopicToolbar';
 import EvidenceModal from './EvidenceModal';
@@ -10,7 +11,8 @@ import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from 'react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 function getHashtags(contentList, jsx = false, limit = 5) {
     let tags = [...new Set(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }).flat())].slice(0, limit)
@@ -63,7 +65,7 @@ function TopicBreakdownPage() {
     const [shareModalShow, setShareModalShow] = useState(false);
     const [evidenceModalShow, setEvidenceModalShow] = useState(false);
     const { topicPromise, userTopicsPromise } = useLoaderData()
-    const { user } = useOutletContext();
+    const { user, setSidebarOpen } = useOutletContext();
 
     const handleResize = () => {
         setDimensions({
@@ -74,25 +76,16 @@ function TopicBreakdownPage() {
 
     useEffect(() => {
         window.addEventListener("resize", handleResize, false);
+        document.getElementsByClassName("Breakdown-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+        document.getElementsByClassName("Breakdown-body")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }, [])
 
     return (
         <div className="Breakdown-body">
-            {user && (
-                <Suspense>
-                    <Await resolve={userTopicsPromise}>
-                        {
-                            (userTopics) =>
-                                <TopicSidebar
-                                    userTopics={userTopics}
-                                    pageWidth={dimensions.width}
-                                    showUserTopics={showUserTopics}
-                                    setShowUserTopics={setShowUserTopics}
-                                />
-                        }
-                    </Await>
-                </Suspense>
-            )}
+            {user && (<button className="Sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
+                <FontAwesomeIcon icon={faBars} />
+            </button>)}
             <Suspense fallback={<LoadingPage />}>
                 <div className='Breakdown-middle-column'>
                     <Await resolve={topicPromise}>
@@ -119,6 +112,21 @@ function TopicBreakdownPage() {
                 </div>
 
             </Suspense>
+            {user && (
+                <Suspense>
+                    <Await resolve={userTopicsPromise}>
+                        {
+                            (userTopics) =>
+                                <TopicSidebar
+                                    userTopics={userTopics.topics}
+                                    pageWidth={dimensions.width}
+                                    showUserTopics={showUserTopics}
+                                    setShowUserTopics={setShowUserTopics}
+                                />
+                        }
+                    </Await>
+                </Suspense>
+            )}
         </div>
     );
 };

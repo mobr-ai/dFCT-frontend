@@ -1,0 +1,42 @@
+/* If desktop display flex columns  */
+@media only screen and (min-width: 1024px) {
+  .Sidebar-left-column {
+    order: 0 !important;
+    width: 20%;
+    top: 0;
+    position: absolute;
+    left: 0;
+  }
+}
+
+.Sidebar-topics-title {
+  font-family: monospace;
+  color: #bdbdbd;
+  font-size: xx-large;
+  padding-bottom: 0 !important;
+}
+
+.Sidebar-topics-sidebar,
+.offcanvas {
+  background-color: #343a40;
+  font-family: monospace;
+  color: #bdbdbd;
+  font-size: small;
+}
+
+.Sidebar-left-column {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2vh;
+  max-height: 100vh;
+  min-height: 100vh;
+  order: 1;
+}
+
+/* Scrollbar handle on hover */
+.Sidebar-left-column:active::-webkit-scrollbar-thumb,
+.Sidebar-left-column:focus::-webkit-scrollbar-thumb,
+.Sidebar-left-column:hover::-webkit-scrollbar-thumb {
+  visibility: visible !important;
+  background: #888 !important;
+}

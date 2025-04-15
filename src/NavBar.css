@@ -21,3 +21,24 @@
   border-bottom: 7px solid #83867f;
   border-right: 7px solid #4a5c52;
 }
+
+@media only screen and (min-width: 1024px) {
+  .NavBar-top-container {
+    align-items: center;
+  }
+}
+
+.navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-nav .nav-link svg {
+  font-size: 1.1rem;
+}
+
+.dropdown-divider {
+  border-top: 1px solid #ffffff33;
+  margin: 0.5rem 0;
+}

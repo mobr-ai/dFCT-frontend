@@ -194,42 +194,6 @@
   display: inline-flex;
 }
 
-.loader {
-  width: 120px;
-  height: 20px;
-  background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%)
-    lightslategrey;
-  background-size: 300% 100%;
-  animation: l1 1s infinite linear;
-  margin-left: 10px;
-}
-@keyframes l1 {
-  0% {
-    background-position: right;
-  }
-}
-
-.Breakdown-loading {
-  pointer-events: none;
-  padding: 3vh;
-  height: 28vh;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .Breakdown-loading {
-    animation: Breakdown-loading-spin infinite 10s ease-in-out;
-  }
-}
-
-@keyframes Breakdown-loading-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* width */
 ::-webkit-scrollbar {
   width: 5px;

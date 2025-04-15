@@ -3,25 +3,23 @@
   height: 0;
 }
 
-.Landing {
+.Submission {
   text-align: center;
 }
 
-.Landing-logo {
+.Submission-logo {
   pointer-events: none;
   padding: 3vh;
-  height: 15.5rem;
-  width: 15.5rem;
-  min-height: 15.5rem;
+  height: 28vh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .Landing-logo {
-    animation: Landing-logo-spin infinite 10s ease-in-out;
+  .Submission-logo {
+    animation: Submission-logo-spin infinite 10s ease-in-out;
   }
 }
 
-@keyframes Landing-logo-spin {
+@keyframes Submission-logo-spin {
   from {
     transform: rotate(0deg);
   }
@@ -30,15 +28,13 @@
   }
 }
 
-.Landing-logo-static {
+.Submission-logo-static {
   pointer-events: none;
   padding: 3vh;
-  height: 15.5rem;
-  width: 15.5rem;
-  min-height: 15.5rem;
+  height: 28vh;
 }
 
-.Landing-logo-text {
+.Submission-logo-text {
   font-family: monospace;
   font-size: 3rem;
   font-weight: 600;
@@ -46,7 +42,7 @@
   opacity: 0.3;
 }
 
-.Landing-logo-text-transition {
+.Submission-logo-text-transition {
   /* word-wrap: break-word; */
   white-space: nowrap;
   /* word-break: break-word; */
@@ -55,12 +51,53 @@
   font-size: 2rem;
 }
 
-.Landing-signup-login-buttons {
+.Submission-signup-login-buttons {
   display: contents;
   position: absolute;
 }
 
-.Landing-header-top {
+.Submission-drop {
+  display: inline-table;
+  cursor: pointer;
+  width: 33vw;
+  padding-bottom: 1rem;
+}
+
+.Submission-drop-files {
+  display: inline-flex;
+  align-self: center;
+  flex-wrap: wrap;
+}
+
+.Submission-drop-message {
+  margin-top: 10px;
+  margin-bottom: 15px;
+  font-family: monospace;
+  font-size: medium;
+}
+
+.Submission-drop-item {
+  display: inline-flex;
+  padding: 10px;
+  text-decoration: underline;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.Submission-drop-img * {
+  width: fit-content !important;
+  max-height: 10vh;
+  align-self: center;
+  max-width: 100%;
+}
+
+.Submission-drop-item-desc {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Submission-header-top {
   display: flex;
   /* max-width: 80vw; */
   /* width: 80vw; */
@@ -69,7 +106,7 @@
   flex-flow: column;
 }
 
-.Landing-body {
+.Submission-body {
   /* background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -81,7 +118,7 @@
   color: white;
   padding: 5%; */
 
-  background-color: #2b303a;
+  background-color: #282c34;
   margin: auto;
   color: #fff;
   display: grid !important;
@@ -98,39 +135,41 @@
 
 /* If desktop display flex columns  */
 @media only screen and (min-width: 1024px) {
-  .Landing-body {
+  .Submission-body {
     display: flex !important;
     max-height: 100vh !important;
   }
-  .Landing-left-column {
+  .Submission-left-column {
     order: 0 !important;
     width: 20%;
     position: absolute;
     top: 0;
     left: 0;
   }
-  .Landing-middle-column {
+  .Submission-middle-column {
     order: 1 !important;
     min-height: 100vh;
     width: 60%;
     /* margin-right: 5vw; */
+    overflow-y: auto;
+    top: 1rem;
   }
-  .Landing-right-column {
+  .Submission-right-column {
     order: 2 !important;
   }
-  .Landing-logo-text-transition {
+  .Submission-logo-text-transition {
     font-size: 3.5rem;
   }
 }
 
-.Landing-topics-title {
+.Submission-topics-title {
   font-family: monospace;
   color: #bdbdbd;
   font-size: xx-large;
   padding-bottom: 0 !important;
 }
 
-.Landing-topics-sidebar,
+.Submission-topics-sidebar,
 .offcanvas {
   background-color: #343a40;
   font-family: monospace;
@@ -138,7 +177,7 @@
   font-size: small;
 }
 
-.Landing-left-column {
+.Submission-left-column {
   display: flex;
   flex-direction: column;
   margin-top: 2vh;
@@ -148,40 +187,39 @@
 }
 
 /* Scrollbar handle on hover */
-.Landing-left-column:active::-webkit-scrollbar-thumb,
-.Landing-left-column:focus::-webkit-scrollbar-thumb,
-.Landing-left-column:hover::-webkit-scrollbar-thumb {
+.Submission-left-column:active::-webkit-scrollbar-thumb,
+.Submission-left-column:focus::-webkit-scrollbar-thumb,
+.Submission-left-column:hover::-webkit-scrollbar-thumb {
   visibility: visible !important;
   background: #888 !important;
 }
 
-.Landing-middle-column {
+.Submission-middle-column {
   align-items: center;
   align-self: baseline;
   display: flex;
   flex-direction: column;
   max-height: 100vh;
   order: 0;
-  overflow-y: auto;
-  margin-top: 3rem;
+  padding-top: 2rem;
   text-align: center;
 }
 
 /* Scrollbar handle on hover */
-.Landing-middle-column:active::-webkit-scrollbar-thumb,
-.Landing-middle-column:focus::-webkit-scrollbar-thumb,
-.Landing-middle-column:hover::-webkit-scrollbar-thumb {
+.Submission-middle-column:active::-webkit-scrollbar-thumb,
+.Submission-middle-column:focus::-webkit-scrollbar-thumb,
+.Submission-middle-column:hover::-webkit-scrollbar-thumb {
   visibility: visible !important;
   background: #888 !important;
 }
 
-.Landing-right-column {
+.Submission-right-column {
   order: 2;
   display: flex;
   flex-direction: column;
 }
 
-.Landing-link {
+.Submission-link {
   color: #61dafb;
 }
 
@@ -193,11 +231,11 @@
   margin-left: 10px;
 }
 
-.Landing-input-group {
-  margin-top: 1rem;
+.Submission-input-group {
+  margin-top: 5rem;
 }
 
-.Landing-input {
+.Submission-input {
   width: 100%;
   padding-top: 15px;
   box-sizing: border-box;
@@ -206,7 +244,7 @@
   font-family: monospace;
 }
 
-.Landing-divider {
+.Submission-divider {
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -216,8 +254,8 @@
   margin-bottom: 1rem;
 }
 
-.Landing-divider:before,
-.Landing-divider:after {
+.Submission-divider:before,
+.Submission-divider:after {
   content: "";
   border-bottom: 1px solid slategray;
   flex: 1 0 auto;
@@ -225,19 +263,19 @@
   margin: 0;
 }
 
-.Landing-divider-or {
+.Submission-divider-or {
   text-align: center;
   flex: 0.2 0 auto;
   margin: 0;
   height: 12px;
 }
 
-.Landing-input-url {
+.Submission-input-url {
   width: 100%;
   padding-top: 1rem;
 }
 
-.Landing-url-card {
+.Submission-url-card {
   font-size: 12px;
   font-family: monospace;
   width: 15rem;
@@ -246,22 +284,22 @@
   cursor: pointer;
 }
 
-.Landing-url-card-img {
+.Submission-url-card-img {
   max-height: 15vh;
   align-self: center;
   object-fit: cover;
 }
 
-.Landing-url-card-button {
+.Submission-url-card-button {
   font-size: 12px !important;
 }
 
-.Landing-url-card-title {
+.Submission-url-card-title {
   font-size: 12px !important;
   font-weight: bold !important;
 }
 
-.Landing-url-card-container {
+.Submission-url-card-container {
   padding-top: 1rem;
   padding-bottom: 1rem;
   display: flex;
@@ -326,59 +364,4 @@
   padding: 3vh;
   height: 28vh;
   filter: grayscale(100%);
-}
-
-/* Mobile-friendly scroll for Landing-middle-column */
-.Landing-middle-column {
-  height: 100vh; /* ensure full viewport height on mobile */
-  -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
-  overscroll-behavior: contain; /* prevent overscroll chaining */
-}
-
-@media only screen and (max-width: 1023px) {
-  .Landing-body {
-    display: block !important; /* prevent forced flex which can conflict on small screens */
-  }
-}
-
-/* .Landing-drag-active {
-  border: 2px dashed slategray;
-  background-color: rgba(97, 218, 251, 0.05);
-  transition: background-color 0.3s ease;
-} */
-
-.Landing-drag-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(55, 71, 79, 0.6); /* dark transparent overlay */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000; /* Ensures overlay is always on top */
-}
-
-.Landing-drag-overlay-message {
-  flex-direction: column;
-  padding: 20px 40px;
-  background-color: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  color: #37474fff;
-  font-size: 1.2rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.Landing-drop-icon {
-  font-size: 3rem;
-}
-
-.Landing-upload-text {
-  font-family: monospace;
-  font-weight: 600;
 }
