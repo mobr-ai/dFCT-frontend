@@ -38,7 +38,7 @@ function LandingPage() {
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
-  const [totalTopics, setTotalTopics] = useState(0)
+  const [totalTopics, setTotalTopics] = useState()
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -189,6 +189,17 @@ function LandingPage() {
           </Suspense>
         )}
 
+        {(totalTopics === 0) &&
+          (
+            <p className="Landing-no-topics-msg">
+              {t('nothingHere')}
+              <br />
+              <p style={{ marginTop: "1rem" }}><strong>{t('firstSubmission')}</strong></p>
+              <br />
+              <Button className='Landing-first-submission-btn' variant="dark" size="md" onClick={() => navigate('/submit')}><FontAwesomeIcon icon={faMagnifyingGlassArrowRight} />&nbsp;{t('tryNow')}</Button>
+            </p>
+          )
+        }
         {user && !loading && loadingMore && (
           <LoadingPage
             type="simple"

@@ -64,8 +64,11 @@
     "alreadyOnWaitListMsg": "Your e-mail is already on our list. Stay tuned, we'll notify you soon.",
     "errorWaitListMsg": "Oops, our waitlist is experiencing temporary issues. Please, try again later.",
     "dragAndDropMsg": "Drop files to verify them",
-    "navigation": "Navigation",
+    "navigation": "Menu",
     "home": "Home",
     "verifyContent": "Check Content",
-    "myTopics": "My Topics"
+    "myTopics": "My Topics",
+    "tryNow": "Try Now",
+    "nothingHere": "Nothing here yet.",
+    "firstSubmission": "Submit your first topic and and join the search for truth."
 }

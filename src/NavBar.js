@@ -7,7 +7,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUpload, faFolderOpen, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faMagnifyingGlassArrowRight, faFolderOpen, faCog } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
@@ -104,7 +104,7 @@ function NavBar(props) {
                             <FontAwesomeIcon icon={faHome} /> {t('home')}
                         </Nav.Link>
                         <Nav.Link onClick={() => navigate('/submit')} active={location.pathname === '/submit'}>
-                            <FontAwesomeIcon icon={faUpload} /> {t('verifyContent')}
+                            <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
                         </Nav.Link>
                         <Nav.Link onClick={() => navigate('/')} active={location.pathname.includes('/mytopics')}>
                             <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}

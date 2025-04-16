@@ -78,8 +78,11 @@
     "alreadyOnWaitListMsg": "Seu e-mail já está cadastrado em nossa lista. Fique atento, nós o notificaremos em breve.",
     "errorWaitListMsg": "Oops, nossa lista de espera parece estar com problemas. Por favor, tente novamente mais tarde.",
     "dragAndDropMsg": "Solte os arquivos para verificá-los",
-    "navigation": "Navegação",
+    "navigation": "Menu",
     "home": "Início",
     "verifyContent": "Checar Conteúdo",
-    "myTopics": "Meus Tópicos"
+    "myTopics": "Meus Tópicos",
+    "tryNow": "Experimente agora",
+    "nothingHere": "Nada por aqui ainda.",
+    "firstSubmission": "Crie seu primeiro tópico e ajude na busca pela verdade."
 }

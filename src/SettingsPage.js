@@ -1,11 +1,15 @@
 // SettingsPage.js
 import React, { useState } from 'react';
 import './SettingsPage.css';
-import { Container, Form, Button } from 'react-bootstrap';
+import { useOutletContext } from "react-router-dom";
+import { Container, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 function SettingsPage() {
     const { t, i18n } = useTranslation();
+    const { user, setSidebarOpen } = useOutletContext();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
 
     const handleLanguageChange = (e) => {
@@ -17,6 +21,9 @@ function SettingsPage() {
 
     return (
         <div className="Settings-body">
+            {user && (<button className="Sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
+                <FontAwesomeIcon icon={faBars} />
+            </button>)}
             <Container className="Settings-container">
                 <h2>{t('settings')}</h2>
                 <Form>

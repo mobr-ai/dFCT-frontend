@@ -382,3 +382,16 @@
   font-family: monospace;
   font-weight: 600;
 }
+
+.Landing-no-topics-msg {
+  font-family: monospace;
+  font-size: larger;
+  color: rgb(204, 204, 204);
+  opacity: 0.3;
+  position: relative;
+  top: 30vh;
+}
+
+.Landing-first-submission-btn {
+  margin-top: 1rem;
+}

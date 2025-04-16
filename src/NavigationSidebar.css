@@ -43,11 +43,12 @@
 
 .menu-item {
   color: #bdbdbd;
-  display: block;
+  cursor: pointer;
+  display: inline-block;
   padding: 0.8rem;
   text-decoration: none;
-  cursor: pointer;
   transition: background-color 0.3s ease;
+  white-space: nowrap;
 }
 
 .menu-item:hover,
@@ -63,7 +64,7 @@
 }
 
 .Sidebar-toggle-btn {
-  position: fixed;
+  position: absolute;
   top: 1rem;
   left: 1rem;
   background: #343a40;

@@ -1,9 +1,10 @@
 // NavigationSidebar.js
 import React from 'react';
+import Button from 'react-bootstrap/Button';
 import { slide as Menu } from 'react-burger-menu';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faMagnifyingGlassArrowRight, faFolderOpen, faCog, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faMagnifyingGlassArrowRight, faFolderOpen, faCog } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from "react-i18next";
 import './NavigationSidebar.css';
 
@@ -21,19 +22,25 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
 
     return (
         <Menu isOpen={isOpen} customBurgerIcon={false} onStateChange={(state) => setIsOpen(state.isOpen)}>
-            <div className="Sidebar-topics-title">{t('navigation')}</div>
-            <a className={`menu-item ${location.pathname === '/' ? 'active' : ''}`} onClick={() => navigateTo('/')}>
-                <FontAwesomeIcon icon={faHome} /> {t('home')}
-            </a>
-            <a className={`menu-item ${location.pathname === '/submit' ? 'active' : ''}`} onClick={() => navigateTo('/submit')}>
+            <Button
+                variant="dark"
+                size="md"
+                onClick={() => navigateTo('/submit')}
+            >
                 <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
-            </a>
-            <a className={`menu-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`} onClick={() => navigateTo('/')}>
+            </Button>
+            <div className="Sidebar-topics-title">{t('navigation')}</div>
+            <Link to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>
+                <FontAwesomeIcon icon={faHome} /> {t('home')}
+            </Link>
+            <Link to="/"
+                className={`menu-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
-            </a>
-            <a className={`menu-item ${location.pathname === '/settings' ? 'active' : ''}`} onClick={() => navigateTo('/settings')}>
+            </Link>
+            <Link to="/settings"
+                className={`menu-item ${location.pathname === '/settings' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faCog} /> {t('settings')}
-            </a>
+            </Link>
         </Menu>
     );
 }
