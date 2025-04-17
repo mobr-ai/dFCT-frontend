@@ -11,8 +11,6 @@ import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 function getHashtags(contentList, jsx = false, limit = 5) {
     let tags = [...new Set(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }).flat())].slice(0, limit)
@@ -65,7 +63,7 @@ function TopicBreakdownPage() {
     const [shareModalShow, setShareModalShow] = useState(false);
     const [evidenceModalShow, setEvidenceModalShow] = useState(false);
     const { topicPromise, userTopicsPromise } = useLoaderData()
-    const { user, setSidebarOpen } = useOutletContext();
+    const { user } = useOutletContext();
 
     const handleResize = () => {
         setDimensions({
@@ -83,9 +81,6 @@ function TopicBreakdownPage() {
 
     return (
         <div className="Breakdown-body">
-            {user && (<button className="Sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
-                <FontAwesomeIcon icon={faBars} />
-            </button>)}
             <Suspense fallback={<LoadingPage />}>
                 <div className='Breakdown-middle-column'>
                     <Await resolve={topicPromise}>

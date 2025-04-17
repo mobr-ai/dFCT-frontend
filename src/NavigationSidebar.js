@@ -15,29 +15,27 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
 
     if (window.innerWidth < 1024) return null; // Hide on mobile
 
-    const navigateTo = (route) => {
-        navigate(route);
-        setIsOpen(false);
-    };
-
     return (
         <Menu isOpen={isOpen} customBurgerIcon={false} onStateChange={(state) => setIsOpen(state.isOpen)}>
             <Button
                 variant="dark"
                 size="md"
-                onClick={() => navigateTo('/submit')}
+                onClick={() => {
+                    navigate('/submit');
+                    setIsOpen(false);
+                }}
             >
                 <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
             </Button>
             <div className="Sidebar-topics-title">{t('navigation')}</div>
-            <Link to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>
+            <Link onClick={() => { setIsOpen(false) }} to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faHome} /> {t('home')}
             </Link>
-            <Link to="/"
+            <Link onClick={() => { setIsOpen(false) }} to="/"
                 className={`menu-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
             </Link>
-            <Link to="/settings"
+            <Link onClick={() => { setIsOpen(false) }} to="/settings"
                 className={`menu-item ${location.pathname === '/settings' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faCog} /> {t('settings')}
             </Link>

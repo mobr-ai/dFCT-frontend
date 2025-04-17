@@ -44,7 +44,7 @@ function Layout() {
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-      <Header userData={user} setLoading={setLoading} setUser={handleLogin} />
+      <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} />
       {user && (<NavigationSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />)}
       <Outlet context={{ user, loading, setLoading, handleLogin, sidebarOpen, setSidebarOpen }} />
       {/* <Footer /> */}

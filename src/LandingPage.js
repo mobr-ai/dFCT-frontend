@@ -16,7 +16,6 @@ import TopicList from './TopicList.js';
 import LoadingPage from './LoadingPage.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlassArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 i18n
   .use(detector)
@@ -33,7 +32,7 @@ i18n
 function LandingPage() {
   const { t } = useTranslation();
   const { userTopicsPromise } = useLoaderData()
-  const { user, loading, setSidebarOpen } = useOutletContext();
+  const { user, loading } = useOutletContext();
   const brandText = ['d-', 'de', 'fact', 'tool'];
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
   const navigate = useNavigate();
@@ -130,9 +129,6 @@ function LandingPage() {
 
   return (
     <div className="Landing-body">
-      {user && (<button className="Sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
-        <FontAwesomeIcon icon={faBars} />
-      </button>)}
       <Container
         className='Landing-middle-column' fluid
         onDragOver={handleDragOver}
@@ -189,9 +185,12 @@ function LandingPage() {
           </Suspense>
         )}
 
-        {(totalTopics === 0) &&
+        {user && (totalTopics === 0) &&
           (
             <p className="Landing-no-topics-msg">
+              <section>
+                <img src={logo} className="Landing-logo-static" alt="logo" />
+              </section>
               {t('nothingHere')}
               <br />
               <p style={{ marginTop: "1rem" }}><strong>{t('firstSubmission')}</strong></p>

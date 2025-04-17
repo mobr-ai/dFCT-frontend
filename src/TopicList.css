@@ -106,6 +106,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
   font-size: 1.15em;
   width: min-content;
   font-family: monospace;
+  text-wrap-mode: nowrap;
 }
 
 /* Morph shape necessary with bubble or elastic */

@@ -70,10 +70,13 @@
   background: #343a40;
   color: #ffffff;
   border: none;
-  padding: 0.5rem;
   border-radius: 4px;
   z-index: 1200;
   display: inline-block;
+}
+.Sidebar-toggle-btn:hover {
+  color: lightseagreen;
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 1023px) {

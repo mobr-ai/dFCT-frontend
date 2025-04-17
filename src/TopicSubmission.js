@@ -17,8 +17,6 @@ import translationPT from './locales/pt/translation.json';
 import { useOutletContext, useLocation, useNavigate, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useTranslation, initReactI18next } from "react-i18next";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 i18n
   .use(detector)
@@ -57,7 +55,7 @@ function TopicSubmissionPage() {
   const [urls, setURLs] = useState([])
   const [showUserTopics, setShowUserTopics] = useState(false)
   const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const { user, loading, setLoading, setSidebarOpen } = useOutletContext();
+  const { user, loading, setLoading } = useOutletContext();
   const navigate = useNavigate()
   const location = useLocation()
   const { userTopicsPromise } = useLoaderData()
@@ -376,9 +374,6 @@ function TopicSubmissionPage() {
 
   return (
     <div className="Submission-body" >
-      {user && (<button className="Sidebar-toggle-btn" onClick={() => setSidebarOpen(true)}>
-        <FontAwesomeIcon icon={faBars} />
-      </button>)}
       <div className='Submission-middle-column'>
         <div className="Submission-header-top">
           {loading && files.length < 2 && (<img src={logo} className="Submission-logo" alt="logo"></img>)}
