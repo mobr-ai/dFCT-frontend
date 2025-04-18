@@ -14,4 +14,37 @@
   margin: auto;
   max-width: 600px;
   padding: 2rem;
+  font-family: monospace;
+}
+
+.Settings-title {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.Settings-user-box {
+  margin-bottom: 1.5rem;
+}
+
+.Settings-referral-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.Settings-referral-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: #61dafb;
+  word-break: break-all;
+}
+
+.Settings-referral-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.Settings-icon {
+  margin-right: 0.5rem;
 }

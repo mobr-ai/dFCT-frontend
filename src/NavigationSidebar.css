@@ -64,7 +64,7 @@
 }
 
 .Sidebar-toggle-btn {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   left: 1rem;
   background: #343a40;

@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import { useTranslation } from "react-i18next";
+import { useMatch } from 'react-router-dom';
 
 import {
     EmailIcon,
@@ -42,6 +43,22 @@ function ShareModal(props) {
         size: 50,
         borderRadius: 15
     }
+
+    const isTopicBreakdown = useMatch('/t/:userId/:topicId');
+
+    const copyToClipboard = () => {
+        var msg = props.message || ""
+        if (isTopicBreakdown) {
+            msg = t('shareMessage').replace("{}", props.title) + "\n\n" + window.location.href + "\n" + props.hashtags.map(tag => `#${tag}`).join(' ');
+        }
+
+        navigator.clipboard.writeText(msg).then(() => {
+            alert(t('copiedToClipboard'));
+        }).catch(() => {
+            alert(t('copyFailed'));
+        });
+    };
+
 
     return (
         <Modal
@@ -126,6 +143,9 @@ function ShareModal(props) {
                 </Row>
             </Modal.Body>
             <Modal.Footer>
+                <Button variant="secondary" onClick={copyToClipboard}>
+                    📋 {t('copy')}
+                </Button>
                 <Button onClick={props.onHide}>{t('closeButton')}</Button>
             </Modal.Footer>
         </Modal>

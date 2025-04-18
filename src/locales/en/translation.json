@@ -36,7 +36,7 @@
     "source": "Source",
     "readTopic": "Read topic",
     "shareTopic": "Share topic",
-    "shareTopicTo": "Share this topic via...",
+    "shareTopicTo": "Share via...",
     "shareMessage": "Check out how d-FCT is fact-checking \"{}\":",
     "closeButton": "Close",
     "deleteTopic": "Delete topic",
@@ -71,5 +71,11 @@
     "tryNow": "Try Now",
     "nothingHere": "Nothing here yet.",
     "firstSubmission": "Submit your first topic and and join the search for truth.",
-    "referralLink": "Your referral link"
+    "referralLink": "Your referral link",
+    "share": "Share",
+    "copy": "Copy",
+    "copiedToClipboard": "Link copied to clipboard! Now you can share it with others.",
+    "copyFailed": "Failed to copy.",
+    "shareMessageIntro": "Join me on d-FCT, a reward-driven solution for transparent fact-verification",
+    "shareMessageOutro": "#dFCT #DecentralizedFactChecking #Web3 #InfoFi"
 }

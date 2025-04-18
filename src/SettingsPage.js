@@ -1,16 +1,20 @@
 // SettingsPage.js
 import React, { useState } from 'react';
 import './SettingsPage.css';
+import ShareModal from './ShareModal';
 import { useOutletContext } from "react-router-dom";
 import { Container, Form, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShareAlt, faCopy } from '@fortawesome/free-solid-svg-icons';
 import avatarImg from "./icons/avatar.png";
-
 
 function SettingsPage() {
     const { t, i18n } = useTranslation();
     const { user } = useOutletContext();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
+    const [showShareModal, setShowShareModal] = useState(false);
 
     const handleLanguageChange = (e) => {
         const selectedLang = e.target.value;
@@ -40,31 +44,52 @@ function SettingsPage() {
         return `${baseUrl}${encodeBase62(userId)}`;
     }
 
+    const copyReferralMessage = () => {
+        const link = generateReferralLink(user.id);
+        const message = `${t('shareMessageIntro')}:\n\n${link}\n${t('shareMessageOutro')}`;
+        navigator.clipboard.writeText(message).then(() => {
+            alert(t('copiedToClipboard'));
+        }).catch(() => {
+            alert(t('copyFailed'));
+        });
+    };
+
     return (
         <div className="Settings-body">
             <Container className="Settings-container">
-                <h2 style={{ marginBottom: "1.5rem", marginTop: "1rem" }}>{t('settings')}</h2>
+                <h2 className="Settings-title">{t('settings')}</h2>
 
                 {user && (
-                    <div className="Settings-user-box mb-4">
+                    <div className="Settings-user-box">
                         <Row className="align-items-center">
                             <Col xs={4}>
-                                <Image src={user.avatar ? user.avatar : avatarImg} onError={(e) => e.target.src = avatarImg}
-                                    roundedCircle fluid />
+                                <Image src={user.avatar ? user.avatar : avatarImg} onError={(e) => e.target.src = avatarImg} roundedCircle fluid />
                             </Col>
                             <Col xs={8}>
                                 <h5>{user.username}</h5>
                                 <p className="mb-1">{user.email}</p>
-                                <small>
-                                    {t('referralLink')}:<br />
-                                    <a
-                                        href={generateReferralLink(user.id)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: '#61dafb', wordBreak: 'break-all' }}
-                                    >
-                                        {generateReferralLink(user.id)}
-                                    </a>
+                                <small className='Settings-referral-row'>
+                                    {t('referralLink')}:
+                                    <div>
+                                        <a
+                                            href={generateReferralLink(user.id)}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="Settings-referral-link"
+                                        >
+                                            {generateReferralLink(user.id)}
+                                        </a>
+                                    </div>
+                                    <div className="Settings-referral-buttons">
+                                        <Button size="sm" variant="outline-light" onClick={copyReferralMessage}>
+                                            <FontAwesomeIcon icon={faCopy} className="Settings-icon" />
+                                            {t('copy')}
+                                        </Button>
+                                        <Button size="sm" variant="outline-light" onClick={() => setShowShareModal(true)}>
+                                            <FontAwesomeIcon icon={faShareAlt} className="Settings-icon" />
+                                            {t('share')}
+                                        </Button>
+                                    </div>
                                 </small>
                             </Col>
                         </Row>
@@ -80,6 +105,14 @@ function SettingsPage() {
                     </Form.Group>
                 </Form>
             </Container>
+            <ShareModal
+                show={showShareModal}
+                onHide={() => setShowShareModal(false)}
+                title={t('shareMessageIntro')}
+                hashtags={t('shareMessageOutro').split(/\s+/).map(tag => tag.replace(/^#/, ''))}
+                link={generateReferralLink(user.id)}
+                message={`${t('shareMessageIntro')}:\n\n${generateReferralLink(user.id)}\n${t('shareMessageOutro')}`}
+            />
         </div>
     );
 }

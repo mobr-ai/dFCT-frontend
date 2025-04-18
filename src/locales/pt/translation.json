@@ -85,5 +85,11 @@
     "tryNow": "Experimente Agora",
     "nothingHere": "Nada por aqui ainda.",
     "firstSubmission": "Crie seu primeiro tópico e ajude na busca pela verdade.",
-    "referralLink": "Seu link de indicação"
+    "referralLink": "Seu link de indicação",
+    "share": "Compartilhar",
+    "copy": "Copiar",
+    "copiedToClipboard": "Link copiado para a área de transferência! Agora você pode compartilhá-lo com outras pessoas.",
+    "copyFailed": "Falha ao copiar.",
+    "shareMessageIntro": "Junte-se a mim no d-FCT, uma solução descentralizada com recompensas para verificação transparente de fatos",
+    "shareMessageOutro": "#dFCT #Web3 #VerificaçãoDescentralizadaDeFatos #DecentralizedFactChecking #InfoFi"
 }
