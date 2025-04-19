@@ -12,7 +12,7 @@ import avatarImg from "./icons/avatar.png";
 
 function SettingsPage() {
     const { t, i18n } = useTranslation();
-    const { user } = useOutletContext();
+    const { user, showToast } = useOutletContext();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
 
@@ -46,12 +46,10 @@ function SettingsPage() {
 
     const copyReferralMessage = () => {
         const link = generateReferralLink(user.id);
-        const message = `${t('shareMessageIntro')}:\n\n${link}\n${t('shareMessageOutro')}`;
-        navigator.clipboard.writeText(message).then(() => {
-            alert(t('copiedToClipboard'));
-        }).catch(() => {
-            alert(t('copyFailed'));
-        });
+        const message = `${t('shareMessageIntro')}:\n\n${link}\n\n${t('shareMessageOutro')}`;
+        navigator.clipboard.writeText(message)
+            .then(() => showToast(t('copiedToClipboard'), 'success'))
+            .catch(() => showToast(t('copyFailed'), 'danger'));
     };
 
     return (
@@ -111,7 +109,7 @@ function SettingsPage() {
                 title={t('shareMessageIntro')}
                 hashtags={t('shareMessageOutro').split(/\s+/).map(tag => tag.replace(/^#/, ''))}
                 link={generateReferralLink(user.id)}
-                message={`${t('shareMessageIntro')}:\n\n${generateReferralLink(user.id)}\n${t('shareMessageOutro')}`}
+                message={`${t('shareMessageIntro')}:\n\n${generateReferralLink(user.id)}\n\n${t('shareMessageOutro')}`}
             />
         </div>
     );

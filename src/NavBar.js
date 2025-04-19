@@ -21,6 +21,7 @@ const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
 function NavBar(props) {
     const [brandIndex, setBrandIndex] = useState(1);
     const [suffixIndex, setSuffixBrandIndex] = useState(1);
+    const [expanded, setExpanded] = useState(false);
     const navigate = useNavigate()
     const location = useLocation();
     const { t } = useTranslation();
@@ -29,11 +30,9 @@ function NavBar(props) {
         if (window.location.pathname !== '/')
             navigate("/")
         else {
-            // document.getElementsByClassName("Topic-list-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
             document.getElementsByClassName("bm-menu")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
             document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
             window.scrollTo({ top: 0, behavior: 'smooth' })
-            // props.setShowUserTopics(true)
         }
     }, [navigate])
 
@@ -77,7 +76,14 @@ function NavBar(props) {
         </Container>
     )
     return (
-        <Navbar data-bs-theme="dark" expand="lg" className="bg-body-tertiary justify-content-end" sticky="top">
+        <Navbar
+            data-bs-theme="dark"
+            expand="lg"
+            expanded={expanded}
+            onToggle={() => setExpanded(!expanded)}
+            className="bg-body-tertiary justify-content-end"
+            sticky="top"
+        >
             <Container>
                 <Navbar.Brand className="Navbar-brand-container" onClick={topClick}>
                     <img
@@ -100,16 +106,16 @@ function NavBar(props) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <Nav className="me-auto d-lg-none"> {/* Visible only in mobile */}
-                        <Nav.Link onClick={() => navigate('/')} active={location.pathname === '/'}>
+                        <Nav.Link onClick={() => { navigate('/'); setExpanded(false); }} active={location.pathname === '/'}>
                             <FontAwesomeIcon icon={faHome} /> {t('home')}
                         </Nav.Link>
-                        <Nav.Link onClick={() => navigate('/submit')} active={location.pathname === '/submit'}>
+                        <Nav.Link onClick={() => { navigate('/submit'); setExpanded(false); }} active={location.pathname === '/submit'}>
                             <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
                         </Nav.Link>
-                        <Nav.Link onClick={() => navigate('/')} active={location.pathname.includes('/mytopics')}>
+                        <Nav.Link onClick={() => { navigate('/'); setExpanded(false); }} active={location.pathname.includes('/mytopics')}>
                             <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
                         </Nav.Link>
-                        <Nav.Link onClick={() => navigate('/settings')} active={location.pathname === '/settings'}>
+                        <Nav.Link onClick={() => { navigate('/settings'); setExpanded(false); }} active={location.pathname === '/settings'}>
                             <FontAwesomeIcon icon={faCog} /> {t('settings')}
                         </Nav.Link>
                     </Nav>
@@ -127,20 +133,20 @@ function NavBar(props) {
                             )
                         }
                         <NavDropdown title={t('language')} id="navbar-dropdown">
-                            <NavDropdown.Item onClick={() => changeLanguage('pt')}>
+                            <NavDropdown.Item onClick={() => { changeLanguage('pt'); setExpanded(false) }}>
                                 🇧🇷 Português (BR) {i18n.language.split('-')[0] === 'pt' ? <div className="Navbar-checkmark" /> : ''}
                             </NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item onClick={() => changeLanguage('en')}>
+                            <NavDropdown.Item onClick={() => { changeLanguage('en'); setExpanded(false) }}>
                                 🇺🇸 English (US) {i18n.language.split('-')[0] === 'en' ? <div className="Navbar-checkmark" /> : ''}
                             </NavDropdown.Item>
                         </NavDropdown>
                         {
                             props.userData && (
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
-                                    <NavDropdown.Item onClick={logout}>{t('logOut')}</NavDropdown.Item>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item onClick={() => navigate('/settings')}>
+                                    <NavDropdown.Item onClick={() => { logout(); setExpanded(false); }}>{t('logOut')}</NavDropdown.Item>
+                                    <NavDropdown.Divider className="d-none d-lg-block" />
+                                    <NavDropdown.Item className="d-none d-lg-block" onClick={() => { navigate('/settings'); setExpanded(false); }}>
                                         {t('settings')}
                                     </NavDropdown.Item>
                                 </NavDropdown>
@@ -149,7 +155,7 @@ function NavBar(props) {
                     </Nav>
                 </Navbar.Collapse>
             </Container>
-        </Navbar>
+        </Navbar >
     );
 }
 

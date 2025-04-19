@@ -48,3 +48,33 @@
 .Settings-icon {
   margin-right: 0.5rem;
 }
+
+/* Ensure avatar and info stack on small screens */
+@media (max-width: 768px) {
+  .Settings-user-box .row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .Settings-user-box .col-4,
+  .Settings-user-box .col-8 {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .Settings-user-box img {
+    max-width: 120px;
+    margin-bottom: 1rem;
+  }
+
+  .Settings-referral-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .Settings-referral-buttons {
+    justify-content: center;
+  }
+}

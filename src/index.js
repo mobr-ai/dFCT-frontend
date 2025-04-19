@@ -1,5 +1,6 @@
 import './index.css';
 import React, { useState, useCallback } from 'react';
+import { Toast, ToastContainer } from 'react-bootstrap';
 import ReactDOM from 'react-dom/client';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LandingPage from './LandingPage';
@@ -20,11 +21,12 @@ function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
   const [loading, setLoading] = useState(false)
-  // const [userTopics,] = useState({})
-  // const [showUserTopics, setShowUserTopics] = useState(false);
-
+  const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const navigate = useNavigate()
 
+  const showToast = (message, variant = 'success') => {
+    setToast({ show: true, message, variant });
+  };
 
   const handleLogin = useCallback(userData => {
     if (userData) {
@@ -46,8 +48,22 @@ function Layout() {
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} />
       {user && (<NavigationSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />)}
-      <Outlet context={{ user, loading, setLoading, handleLogin, sidebarOpen, setSidebarOpen }} />
-      {/* <Footer /> */}
+      <Outlet context={{ user, loading, setLoading, handleLogin, sidebarOpen, setSidebarOpen, showToast }} />
+      <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>
+        <Toast
+          bg={toast.variant}
+          onClose={() => setToast({ ...toast, show: false })}
+          show={toast.show}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body className="text-white">
+            {toast.message.split('\n').map((line, idx) => (
+              <div key={idx}>{line}</div>
+            ))}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </GoogleOAuthProvider>
   );
 }
