@@ -47,7 +47,7 @@ function Layout() {
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} sidebarIsOpen={sidebarOpen} />
       <Outlet context={{ user, loading, setLoading, handleLogin, showToast }} />
-      <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>
+      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
         <Toast
           bg={toast.variant}
           onClose={() => setToast({ ...toast, show: false })}
