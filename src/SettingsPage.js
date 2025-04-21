@@ -1,8 +1,8 @@
 // SettingsPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SettingsPage.css';
 import ShareModal from './ShareModal';
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
@@ -15,6 +15,12 @@ function SettingsPage() {
     const { user, showToast } = useOutletContext();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
+    const navigate = useNavigate()
+
+    // Redirect when not logged
+    useEffect(() => {
+        if (!user) navigate('/')
+    }, [user, navigate])
 
     const handleLanguageChange = (e) => {
         const selectedLang = e.target.value;
@@ -53,11 +59,10 @@ function SettingsPage() {
     };
 
     return (
-        <div className="Settings-body">
-            <Container className="Settings-container">
-                <h2 className="Settings-title">{t('settings')}</h2>
-
-                {user && (
+        user && (
+            <div className="Settings-body">
+                <Container className="Settings-container">
+                    <h2 className="Settings-title">{t('settings')}</h2>
                     <div className="Settings-user-box">
                         <Row className="align-items-center">
                             <Col xs={4}>
@@ -92,27 +97,26 @@ function SettingsPage() {
                             </Col>
                         </Row>
                     </div>
-                )}
-                <Form>
-                    <Form.Group controlId="languageSelect" className="mb-3">
-                        <Form.Label>{t('languageConf')}</Form.Label>
-                        <Form.Select value={language} onChange={handleLanguageChange}>
-                            <option value="en">🇺🇸 English (US)</option>
-                            <option value="pt">🇧🇷 Português (BR)</option>
-                        </Form.Select>
-                    </Form.Group>
-                </Form>
-            </Container>
-            <ShareModal
-                show={showShareModal}
-                onHide={() => setShowShareModal(false)}
-                title={t('shareMessageIntro')}
-                hashtags={t('shareMessageOutro').split(/\s+/).map(tag => tag.replace(/^#/, ''))}
-                link={generateReferralLink(user.id)}
-                message={`${t('shareMessageIntro')}:\n\n${generateReferralLink(user.id)}\n\n${t('shareMessageOutro')}`}
-            />
-        </div>
-    );
+                    <Form>
+                        <Form.Group controlId="languageSelect" className="mb-3">
+                            <Form.Label>{t('languageConf')}</Form.Label>
+                            <Form.Select value={language} onChange={handleLanguageChange}>
+                                <option value="en">🇺🇸 English (US)</option>
+                                <option value="pt">🇧🇷 Português (BR)</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Form>
+                </Container>
+                <ShareModal
+                    show={showShareModal}
+                    onHide={() => setShowShareModal(false)}
+                    title={t('shareMessageIntro')}
+                    hashtags={t('shareMessageOutro').split(/\s+/).map(tag => tag.replace(/^#/, ''))}
+                    link={generateReferralLink(user.id)}
+                    message={`${t('shareMessageIntro')}:\n\n${generateReferralLink(user.id)}\n\n${t('shareMessageOutro')}`}
+                />
+            </div>
+        ));
 }
 
 export default SettingsPage;

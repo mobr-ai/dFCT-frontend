@@ -14,7 +14,6 @@ import AuthPage from './AuthPage';
 import WaitingList from './WaitingListPage';
 import SettingsPage from './SettingsPage';
 import i18n from "i18next";
-import NavigationSidebar from './NavigationSidebar';
 
 
 function Layout() {
@@ -46,9 +45,8 @@ function Layout() {
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
-      <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} />
-      {user && (<NavigationSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />)}
-      <Outlet context={{ user, loading, setLoading, handleLogin, sidebarOpen, setSidebarOpen, showToast }} />
+      <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} sidebarIsOpen={sidebarOpen} />
+      <Outlet context={{ user, loading, setLoading, handleLogin, showToast }} />
       <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>
         <Toast
           bg={toast.variant}

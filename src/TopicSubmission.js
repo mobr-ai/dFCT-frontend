@@ -441,8 +441,10 @@ function TopicSubmissionPage() {
         <Suspense>
           <Await resolve={userTopicsPromise}>
             {
-              (userTopics) =>
-                <TopicSidebar userTopics={userTopics.topics} pageWidth={dimensions.width} showUserTopics={showUserTopics} setShowUserTopics={setShowUserTopics} />
+              (userTopics) => {
+                setLoading(false);
+                return <TopicSidebar userTopics={userTopics.topics} pageWidth={dimensions.width} showUserTopics={showUserTopics} setShowUserTopics={setShowUserTopics} />
+              }
             }
           </Await>
         </Suspense>

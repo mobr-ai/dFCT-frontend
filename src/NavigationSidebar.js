@@ -16,7 +16,7 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
     if (window.innerWidth < 1024) return null; // Hide on mobile
 
     return (
-        <Menu isOpen={isOpen} customBurgerIcon={false} onStateChange={(state) => setIsOpen(state.isOpen)}>
+        <Menu className="" isOpen={isOpen} customBurgerIcon={false} onStateChange={(state) => setIsOpen(state.isOpen)}>
             <Button
                 variant="dark"
                 size="md"
@@ -27,16 +27,16 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
             >
                 <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
             </Button>
-            <div className="Sidebar-topics-title">{t('navigation')}</div>
-            <Link onClick={() => { setIsOpen(false) }} to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>
+            <div className="Navbar-topics-title">{t('navigation')}</div>
+            <Link onClick={() => { setIsOpen(false) }} to="/" className={`Navbar-item ${location.pathname === '/' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faHome} /> {t('home')}
             </Link>
             <Link onClick={() => { setIsOpen(false) }} to="/"
-                className={`menu-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`}>
+                className={`Navbar-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
             </Link>
             <Link onClick={() => { setIsOpen(false) }} to="/settings"
-                className={`menu-item ${location.pathname === '/settings' ? 'active' : ''}`}>
+                className={`Navbar-item ${location.pathname === '/settings' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faCog} /> {t('settings')}
             </Link>
         </Menu>

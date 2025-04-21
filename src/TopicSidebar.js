@@ -21,6 +21,7 @@ function TopicSidebar(props) {
             {props.pageWidth >= 1024 ? (
                 <div className='Sidebar-left-column'>
                     <Menu
+                        className={"Sidebar-menu"}
                         styles={{ bmMenuWrap: { zIndex: !props.showUserTopics ? -1 : 1001 } }}
                         isOpen={props.showUserTopics}
                         customBurgerIcon={<FontAwesomeIcon icon={faFolderOpen} />}
