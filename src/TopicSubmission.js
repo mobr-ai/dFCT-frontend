@@ -17,6 +17,8 @@ import translationPT from './locales/pt/translation.json';
 import { useOutletContext, useLocation, useNavigate, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useTranslation, initReactI18next } from "react-i18next";
+import { useS3Upload } from './useS3Upload';
+
 
 i18n
   .use(detector)
@@ -40,6 +42,10 @@ i18n
 
 function TopicSubmissionPage() {
   const { t } = useTranslation();
+  const { user, loading, setLoading } = useOutletContext();
+  const { userTopicsPromise } = useLoaderData()
+  const { uploadProgress, errors, handleUploads, hash } = useS3Upload();
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [disableDrop, setDisableDrop] = useState(false)
   const [dropMsg, setDropMsg] = useState(t('welcomeMsg'))
   const [dropBackground, setDropBackground] = useState("#37474fff")
@@ -51,14 +57,11 @@ function TopicSubmissionPage() {
   const [showFiles, setShowFiles] = useState(false)
   const [showProgress, setShowProgress] = useState(false)
   const [showURLs, setShowURLs] = useState(false)
+  const [showUserTopics, setShowUserTopics] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
-  const [showUserTopics, setShowUserTopics] = useState(false)
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const { user, loading, setLoading } = useOutletContext();
   const navigate = useNavigate()
   const location = useLocation()
-  const { userTopicsPromise } = useLoaderData()
 
   const handleResize = () => {
     setDimensions({
@@ -119,87 +122,44 @@ function TopicSubmissionPage() {
 
     showError("", true)
     setFiles(files.concat(acceptedFiles))
-    setLoading(true)
 
-    function uploadSuccess(res) {
-      console.log("Upload success: " + res.req._data.get('key') + " [" + res.status + "]")
-
-      const newFiles = acceptedFiles.map((f) => {
-        if (f.name === res.req._data.get('key')) {
-          f.completed = true
-        }
-        return f
-      });
-
-      if (newFiles.filter((f) => f.completed).length === newFiles.length) {
-        // all current files uploaded
-        setLoading(false)
-        setDropMsg(t('addMoreFiles'))
-        // document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-
-    function uploadError(res) {
-      // display error msg
-      showError(t('uploadFailed'))
-      console.log("Upload failed: " + res.req._data.get('key') + " [" + res.status + "] (" + res.message + ")")
-    }
-
-    function reqSuccess(res) {
-      setLoading(true)
-      setDropMsg(t('uploadingFiles'))
-      setShowFiles(true)
-      setShowProgress(true)
-      console.log(dropMsg)
-
-      // upload files directly to s3
-      JSON.parse(res.text).forEach(file => {
-        console.log("Uploading " + file.data.fields.key)
-
-        // post it as form data
-        var postData = new FormData();
-        for (var key in file.data.fields) {
-          postData.append(key, file.data.fields[key]);
-        }
-        postData.append('file', acceptedFiles.filter((f) => f.name === file.data.fields.key)[0])
-
-        request
-          .post(file.data.url)
-          .send(postData)
-          .then(uploadSuccess, uploadError);
-      })
-    }
-
-    function reqError(res) {
-      // display error msg
-      showError(t('uploadFailed'))
-      console.log("Signed request failed: " + res.status + " (" + res.message + ")")
-    }
-
-    function getSignedRequest(res) {
+    async function submitFiles(res) {
       if (res && !topicId) {
-        setTopicId(res.body.topicId)
+        setTopicId(res.body.topicId);
       }
 
-      // get signed request to S3 service
-      const fileArgs = []
-      acceptedFiles.forEach(file => {
-        if (file.name && file.type && !file.completed)
-          fileArgs.push({ "file": file.name, "type": file.type })
-      })
+      const filesToUpload = acceptedFiles.filter(file => file instanceof File && !file.completed);
 
-      if (fileArgs.length > 0)
-        request
-          .post('/sign_s3')
-          .send(fileArgs)
-          .send({ "topic_id": topicId || res.body.topicId })
-          .set('Accept', 'application/json')
-          .then(reqSuccess, reqError)
+      if (filesToUpload.length > 0) {
+        try {
+          setLoading(true);
+          setDropMsg(t('uploadingFiles'));
+          setShowFiles(true);
+          setShowProgress(true);
+          await handleUploads(filesToUpload, topicId || res.body.topicId);
+        } catch (error) {
+          console.error("Upload error:", error);
+          setDropMsg(t('uploadFailed'));
+          setLoading(false);
+        }
+      }
     }
 
     // create new topic for the content if necessary
-    checkTopic(getSignedRequest)
-  }, [checkTopic, dropMsg, files, setLoading, showError, t, topicId])
+    checkTopic(submitFiles)
+  }, [checkTopic, files, setLoading, showError, t, topicId, handleUploads])
+
+  // Handle upload completion
+  useEffect(() => {
+    const allUploaded = files.every(file => uploadProgress[file.name] === 100);
+
+    if (allUploaded && files.length > 0) {
+      files.forEach((f) => f.completed = true)
+      setDropMsg(t('addMoreFiles'));
+      setLoading(false);
+      setShowProgress(false);
+    }
+  }, [uploadProgress, files, setLoading, t]);
 
   // Handle files passed via navigate()
   useEffect(() => {
@@ -290,12 +250,13 @@ function TopicSubmissionPage() {
       // create request to process content
       request.post("/process")
         .send({
-          files: files.map(file => ({
+          files: hash.map(file => ({
             name: file.name,
             path: file.name,
             size: file.size,
             type: file.type,
             lastModified: file.lastModified,
+            hash: file.hash
           }))
         })
         .send({ urls: urls })
@@ -354,7 +315,6 @@ function TopicSubmissionPage() {
     if (urls.length > 0 || files.filter((f) => f.completed).length === files.length) {
       console.log("All files available, processing content...")
 
-      // window.scrollTo({ top: 0, behavior: 'auto' });
       setDropMsg(t('processingContent'))
       setShowFiles(false)
       setShowURLs(false)
@@ -377,7 +337,7 @@ function TopicSubmissionPage() {
       <div className='Submission-middle-column'>
         <div className="Submission-header-top">
           {loading && files.length < 2 && (<img src={logo} className="Submission-logo" alt="logo"></img>)}
-          {!loading && files.length === 0 && (<img src={logo} className="Submission-logo-static" alt="logo"></img>)}
+          {!loading && (<img src={logo} className="Submission-logo-static" alt="logo"></img>)}
         </div>
         {user && (
           <Form.Group className="Submission-input-group mb-3" id="input-form-group">
@@ -432,7 +392,6 @@ function TopicSubmissionPage() {
                   disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
                 >{t('analyzeButton')}</Button>
               </>
-
             )}
           </Form.Group>
         )}
@@ -442,7 +401,6 @@ function TopicSubmissionPage() {
           <Await resolve={userTopicsPromise}>
             {
               (userTopics) => {
-                setLoading(false);
                 return <TopicSidebar userTopics={userTopics.topics} pageWidth={dimensions.width} showUserTopics={showUserTopics} setShowUserTopics={setShowUserTopics} />
               }
             }

@@ -89,8 +89,7 @@ function StyledDropzone(props) {
       </div>
       <div className="Submission-drop-item-desc">
         {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-        <div className={file.completed ? 'done' : 'loader'}></div>
-        {!file.completed && (<LoadingPage type="simple" style={{ height: "10px" }} />)}
+        {!file.completed && (<LoadingPage type="simple" style={{ height: "1.15rem" }} />)}
       </div>
     </div>
   ));
@@ -100,9 +99,8 @@ function StyledDropzone(props) {
       <input {...getInputProps()} />
       <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} className="Landing-drop-icon" />
       <div className="Submission-drop-message">{props.msg}</div>
-      {(props.showFiles && !props.showLoading) ?
-        <div className="Submission-drop-files">{files}</div> : ""}
-      {(props.showProgress && !props.showFiles) ? <div className='loader' style={{ width: props.progress + "%", marginLeft: 0 }}></div> : ""}
+      {(props.showFiles && !props.showLoading) && (<div className="Submission-drop-files">{files}</div>)}
+      {(props.showProgress && !props.showFiles) && (<LoadingPage type="simple" style={{ width: props.progress + "%", marginLeft: 0, height: "1.15rem" }} />)}
     </Container>
   );
 }
