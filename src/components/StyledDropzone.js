@@ -1,8 +1,8 @@
 import { React } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
-import './TopicSubmission.css';
-import LoadingPage from './LoadingPage';
+import '../TopicBreakdownPage.css'
+import LoadingPage from '../LoadingPage';
 import { faMagnifyingGlassArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

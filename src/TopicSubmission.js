@@ -4,11 +4,8 @@ import './TopicList.css';
 import './NavigationSidebar.css';
 import TopicSidebar from './TopicSidebar.js';
 import URLCardList from './URLCardList.js';
-import StyledDropzone from './StyledDropzone.js';
 import logo from './icons/logo.svg';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import InputGroup from 'react-bootstrap/InputGroup';
 import request from 'superagent';
 import i18n from "i18next";
 import detector from "i18next-browser-languagedetector";
@@ -17,8 +14,11 @@ import translationPT from './locales/pt/translation.json';
 import { useOutletContext, useLocation, useNavigate, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useTranslation, initReactI18next } from "react-i18next";
-import { useS3Upload } from './useS3Upload';
-
+import { useS3Upload } from './hooks/useS3Upload.js';
+import FileUploadArea from './components/FileUploadArea.js';
+import URLInputField from './components/URLInputField.js';
+import ContextInputField from './components/ContextInputField.js';
+import SubmissionControls from './components/SubmissionControls.js';
 
 i18n
   .use(detector)
@@ -342,58 +342,33 @@ function TopicSubmissionPage() {
         </div>
         {user && (
           <Form.Group className="Submission-input-group mb-3" id="input-form-group">
-            <div className="Submission-drop">
-              <StyledDropzone
-                noKeyboard={disableDrop}
-                noClick={disableDrop}
-                noDrag={disableDrop}
-                onDropAccepted={onDropAccepted}
-                msg={dropMsg}
-                key={dropMsg}
-                showFiles={showFiles}
-                showProgress={showProgress}
-                background={dropBackground}
-                border={dropBorder}
-                progress={progress}
-                files={files}
-              />
-            </div>
+            <FileUploadArea
+              disableDrop={disableDrop}
+              dropMsg={dropMsg}
+              dropBackground={dropBackground}
+              dropBorder={dropBorder}
+              showFiles={showFiles}
+              showProgress={showProgress}
+              progress={progress}
+              files={files}
+              onDropAccepted={onDropAccepted}
+            />
+
             {!loading && (
               <>
                 <div className="Submission-divider"><span className="Submission-divider-or">{t('landingOR')}</span></div>
-                <div>
-                  <InputGroup className="Submission-input-url mb-3">
-                    <InputGroup.Text id="input-url-label">WWW</InputGroup.Text>
-                    <Form.Control id="input-url-text" aria-label="Add an URL to be verified" aria-describedby="input-url-help-msg" />
-                    <Button
-                      id="input-url-button"
-                      variant="dark"
-                      onClick={!fetching ? handleURLInput : null}
-                      disabled={fetching}
-
-                    >{fetching ? t('loadingURL') : t('addURL')}</Button>
-                  </InputGroup>
-                  <Form.Text id="input-url-help-msg" muted />
-                </div>
-                <br style={{ clear: "both" }} />
+                <URLInputField fetching={fetching} handleURLInput={handleURLInput} t={t} />
               </>
             )}
 
             {((showFiles && files.length > 0) || (showURLs && urls.length > 0)) && (
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
-                <div className="Submission-input">
-                  <Form.Label><b><i>{t('optional')}</i></b>{t('additionalContext')}</Form.Label>
-                  <Form.Control id="input-context" as="textarea" onChange={handleContextInput} placeholder={t('claimExample')} rows={3} />
-                </div>
-                <Button
-                  id="input-process-button"
-                  variant="dark"
-                  onClick={!loading ? processTopic : null}
-                  disabled={(loading || !(files && files.filter((f) => f.completed).length === files.length))}
-                >{t('analyzeButton')}</Button>
+                <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
+                <SubmissionControls loading={loading} processContent={processTopic} files={files} t={t} />
               </>
             )}
+
           </Form.Group>
         )}
       </div>

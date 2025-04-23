@@ -1,4 +1,4 @@
-import './TopicBreakdownPage.css'
+import '../TopicBreakdownPage.css'
 import { useTranslation } from "react-i18next";
 import Image from 'react-bootstrap/Image';
 import Linkify from "linkify-react";

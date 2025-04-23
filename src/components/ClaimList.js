@@ -1,11 +1,10 @@
-import './TopicBreakdownPage.css'
+import '../TopicBreakdownPage.css'
 import { useTranslation } from "react-i18next";
 import Linkify from "linkify-react";
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Accordion from 'react-bootstrap/Accordion';
-
 
 const linkifyOpts = {
     defaultProtocol: "https",

@@ -35,6 +35,8 @@ function LandingPage() {
   const { user, loading } = useOutletContext();
   const brandText = ['d-', 'de', 'fact', 'tool'];
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
+  const [brandIndex, setBrandIndex] = useState(1);
+  const [suffixIndex, setSuffixBrandIndex] = useState(1);
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [totalTopics, setTotalTopics] = useState()
@@ -91,6 +93,18 @@ function LandingPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [page, topics, totalTopics, loadingMore, loadTopics]);
+
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => {
+        setBrandIndex((index) => index < brandText.length ? index + 1 : index)
+        setSuffixBrandIndex((index) => index < suffixText.length ? index + 1 : index)
+      },
+      600, // every ms
+    );
+
+    return () => clearTimeout(intervalId);
+  }, [brandText.length, suffixText.length]);
 
   const handleDrop = async (event) => {
     event.preventDefault();
@@ -154,11 +168,10 @@ function LandingPage() {
               <section className="inline Landing-logo-text">
                 <Container className="Landing-logo-text-transition">
                   <ReactTextTransition springConfig={presets.gentle} inline>
-                    {brandText[0]}
+                    {brandText[brandIndex % brandText.length]}
                   </ReactTextTransition>
-                  {suffixText[0]}
+                  {suffixText[suffixIndex % suffixText.length]}
                 </Container>
-
                 <Container className='Landing-signup-login-buttons'>
                   <Button variant="secondary" size="lg" onClick={() => navigate('/login')}>{t('loginButton')}</Button>
                   <Button variant="dark" size="lg" onClick={() => navigate('/signup')}>{t('signUpButton')}</Button>
