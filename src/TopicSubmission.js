@@ -189,11 +189,12 @@ function TopicSubmissionPage() {
   useEffect(() => {
     setDropMsg(t('welcomeMsg'))
     rollUp()
+    setLoading(false)
 
     if (document.getElementById('input-url-help-msg'))
       document.getElementById('input-url-help-msg').innerText = ""
 
-  }, [rollUp, setDropMsg, t]);
+  }, [rollUp, setDropMsg, t, setLoading]);
 
   const handleContextInput = (event) => {
     setProvidedContext(event.target.value);
