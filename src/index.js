@@ -9,7 +9,7 @@ import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
-import TopicSubmissionPage from './TopicSubmission';
+import TopicSubmissionPage from './TopicSubmissionPage';
 import AuthPage from './AuthPage';
 import WaitingList from './WaitingListPage';
 import SettingsPage from './SettingsPage';

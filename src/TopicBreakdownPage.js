@@ -2,7 +2,7 @@ import './styles/TopicBreakdownPage.css'
 import './styles/NavigationSidebar.css'
 import TopicSidebar from './TopicSidebar'
 import TopicToolbar from './TopicToolbar';
-import EvidenceModal from './EvidenceModal';
+import EvidenceModal from './components/EvidenceModal';
 import Badge from 'react-bootstrap/Badge';
 import LoadingPage from './LoadingPage';
 import ContentList from './components/ContentList';

@@ -1,17 +1,17 @@
-import './styles/TopicBreakdownPage.css'
+import './../styles/TopicBreakdownPage.css'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from 'react';
 import { useOutletContext } from "react-router-dom";
-import { useS3Upload } from './hooks/useS3Upload.js';
+import { useS3Upload } from '../hooks/useS3Upload.js';
 import request from 'superagent';
-import URLCardList from './URLCardList.js';
-import FileUploadArea from './components/FileUploadArea.js';
-import URLInputField from './components/URLInputField.js';
-import ContextInputField from './components/ContextInputField.js';
-import SubmissionControls from './components/SubmissionControls.js';
+import URLCardList from '../URLCardList.js';
+import FileUploadArea from './FileUploadArea.js';
+import URLInputField from './URLInputField.js';
+import ContextInputField from './ContextInputField.js';
+import SubmissionControls from './SubmissionControls.js';
 
 
 function EvidenceModal(props) {

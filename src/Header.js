@@ -1,6 +1,6 @@
 import './styles/NavigationSidebar.css'
-import NavigationSidebar from './NavigationSidebar.js';
-import NavBar from './NavBar.js';
+import NavigationSidebar from './components/NavigationSidebar.js';
+import NavBar from './components/NavBar.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 

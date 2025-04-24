@@ -1,7 +1,7 @@
 
 
 import Container from 'react-bootstrap/Container';
-import TopicList from './TopicList'
+import TopicList from './components/TopicList'
 import { stack as Menu } from 'react-burger-menu'
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

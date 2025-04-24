@@ -1,4 +1,4 @@
-import './styles/TopicList.css'
+import './../styles/TopicList.css'
 import Card from 'react-bootstrap/Card';
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";

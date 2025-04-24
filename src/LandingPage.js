@@ -12,7 +12,7 @@ import logo from './icons/logo.svg';
 import detector from "i18next-browser-languagedetector";
 import translationEN from './locales/en/translation.json';
 import translationPT from './locales/pt/translation.json';
-import TopicList from './TopicList.js';
+import TopicList from './components/TopicList.js';
 import LoadingPage from './LoadingPage.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlassArrowRight } from '@fortawesome/free-solid-svg-icons';

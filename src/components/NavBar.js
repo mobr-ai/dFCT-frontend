@@ -1,4 +1,4 @@
-import './styles/NavBar.css'
+import './../styles/NavBar.css'
 import ReactTextTransition, { presets } from 'react-text-transition';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
@@ -11,7 +11,7 @@ import { faHome, faMagnifyingGlassArrowRight, faFolderOpen, faCog } from '@forta
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import avatarImg from "./icons/avatar.png";
+import avatarImg from "./../icons/avatar.png";
 
 // const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
 // const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];

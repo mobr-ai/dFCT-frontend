@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import shareIcon from './icons/share.svg';
 import deleteIcon from './icons/delete.svg';
 import publishIcon from './icons/publish.svg';
-import ShareModal from './ShareModal'
+import ShareModal from './components/ShareModal'
 
 function TopicToolbar(props) {
     const { t } = useTranslation();
