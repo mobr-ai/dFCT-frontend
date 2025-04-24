@@ -59,12 +59,12 @@
     padding: 2rem;
   }
   #Auth-oauth-google {
-    background: url(./../public/g.png) no-repeat left center;
+    background: url(./../../public/g.png) no-repeat left center;
     background-size: 1.5rem;
     background-position-x: 1.5rem;
   }
   #Auth-oauth-google:hover {
-    background: url(./../public/g.png) no-repeat left center, lightslategray;
+    background: url(./../../public/g.png) no-repeat left center, lightslategray;
     background-size: 1.5rem;
     background-position-x: 1.5rem;
   }

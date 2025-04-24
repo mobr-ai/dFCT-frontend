@@ -1,4 +1,4 @@
-import './NavigationSidebar.css'
+import './styles/NavigationSidebar.css'
 import NavigationSidebar from './NavigationSidebar.js';
 import NavBar from './NavBar.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

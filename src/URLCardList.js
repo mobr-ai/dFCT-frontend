@@ -1,4 +1,4 @@
-import './URLCardList.css'
+import './styles/URLCardList.css'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button'
 import { useTranslation } from "react-i18next";

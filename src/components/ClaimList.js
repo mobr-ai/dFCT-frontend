@@ -1,4 +1,4 @@
-import '../TopicBreakdownPage.css'
+import '../styles/TopicBreakdownPage.css'
 import { useTranslation } from "react-i18next";
 import Linkify from "linkify-react";
 import Badge from 'react-bootstrap/Badge';

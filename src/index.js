@@ -1,4 +1,4 @@
-import './index.css';
+import './styles/index.css';
 import React, { useState, useCallback } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 import ReactDOM from 'react-dom/client';

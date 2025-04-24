@@ -6,7 +6,7 @@ import { stack as Menu } from 'react-burger-menu'
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
-import './TopicSidebar.css'
+import './styles/TopicSidebar.css'
 
 function TopicSidebar(props) {
     const { t } = useTranslation();

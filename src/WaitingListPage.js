@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logo from './icons/logo.svg';
-import './WaitingListPage.css';
+import './styles/WaitingListPage.css';
 import { useTranslation } from "react-i18next";
 import request from "superagent"
 import { useSearchParams } from 'react-router-dom'

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './LandingPage.css';
-import './TopicList.css';
-import './NavigationSidebar.css';
+import './styles/LandingPage.css';
+import './styles/TopicList.css';
+import './styles/NavigationSidebar.css';
 import i18n from "i18next";
 import { Button, Container } from 'react-bootstrap';
 import { useOutletContext, useNavigate, useLoaderData, Await } from "react-router-dom";

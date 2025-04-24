@@ -11,7 +11,7 @@ import { NavLink, useOutletContext } from "react-router-dom";
 import { useGoogleLogin } from '@react-oauth/google';
 
 
-import "./AuthPage.css"
+import "./styles/AuthPage.css"
 import LoadingPage from "./LoadingPage";
 
 

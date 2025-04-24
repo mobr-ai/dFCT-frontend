@@ -6,7 +6,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faMagnifyingGlassArrowRight, faFolderOpen, faCog } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from "react-i18next";
-import './NavigationSidebar.css';
+import './styles/NavigationSidebar.css'
 
 function NavigationSidebar({ isOpen, setIsOpen }) {
     const navigate = useNavigate();

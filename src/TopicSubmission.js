@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './TopicSubmission.css';
-import './TopicList.css';
-import './NavigationSidebar.css';
+import './styles/TopicSubmission.css';
+import './styles/TopicList.css';
+import './styles/NavigationSidebar.css';
 import TopicSidebar from './TopicSidebar.js';
 import URLCardList from './URLCardList.js';
 import logo from './icons/logo.svg';
@@ -44,7 +44,7 @@ function TopicSubmissionPage() {
   const { t } = useTranslation();
   const { user, loading, setLoading } = useOutletContext();
   const { userTopicsPromise } = useLoaderData()
-  const { uploadProgress, errors, handleUploads, hash } = useS3Upload();
+  const { uploadProgress, handleUploads, hash } = useS3Upload();
   const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
   const [disableDrop, setDisableDrop] = useState(false)
   const [dropMsg, setDropMsg] = useState(t('welcomeMsg'))

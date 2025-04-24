@@ -1,5 +1,5 @@
-import './TopicBreakdownPage.css'
-import './NavigationSidebar.css'
+import './styles/TopicBreakdownPage.css'
+import './styles/NavigationSidebar.css'
 import TopicSidebar from './TopicSidebar'
 import TopicToolbar from './TopicToolbar';
 import EvidenceModal from './EvidenceModal';
@@ -7,6 +7,7 @@ import Badge from 'react-bootstrap/Badge';
 import LoadingPage from './LoadingPage';
 import ContentList from './components/ContentList';
 import ClaimList from './components/ClaimList';
+import ContentCarousel from './components/ContentCarousel';
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
@@ -37,7 +38,18 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
-            <TopicToolbar user={user} shareModalShow={shareModalShow} setShareModalShow={setShareModalShow} title={title} hashtags={getHashtags(contentList)} />
+            <TopicToolbar
+                user={user}
+                shareModalShow={shareModalShow}
+                setShareModalShow={setShareModalShow}
+                title={title}
+                hashtags={getHashtags(contentList)}
+            />
+            {contentList && contentList.length > 0 && (
+                <div style={{ marginBottom: '2rem' }}>
+                    <ContentCarousel contentList={contentList} />
+                </div>
+            )}
             <p>{description}</p>
             <p>{getHashtags(contentList, true, 6)}</p>
             {claimList && claimList.length > 0 && (<h3>{t('claims')}</h3>)}

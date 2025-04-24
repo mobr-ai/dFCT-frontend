@@ -1,0 +1,57 @@
+@keyframes zoomIn {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes panLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-10px);
+  }
+}
+
+@keyframes panRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(10px);
+  }
+}
+
+.zoom-in {
+  animation: zoomIn 1s ease-in-out forwards;
+}
+
+.zoom-out {
+  animation: zoomOut 1s ease-in-out forwards;
+}
+
+.pan-left {
+  animation: panLeft 1s ease-in-out forwards;
+}
+
+.pan-right {
+  animation: panRight 1s ease-in-out forwards;
+}
+
+.carousel-item img,
+.carousel-item video {
+  max-height: 400px;
+  object-fit: contain;
+}

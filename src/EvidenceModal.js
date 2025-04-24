@@ -1,4 +1,4 @@
-import './TopicBreakdownPage.css'
+import './styles/TopicBreakdownPage.css'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import i18n from "i18next";

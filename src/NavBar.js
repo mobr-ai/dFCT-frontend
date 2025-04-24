@@ -1,4 +1,4 @@
-import './NavBar.css'
+import './styles/NavBar.css'
 import ReactTextTransition, { presets } from 'react-text-transition';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
