@@ -50,8 +50,34 @@
   animation: panRight 1s ease-in-out forwards;
 }
 
-.carousel-item img,
+/* .carousel-container {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+} */
+.carousel-item img {
+  max-height: 400px;
+  object-fit: contain;
+}
 .carousel-item video {
   max-height: 400px;
   object-fit: contain;
+}
+
+.audio-carousel-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.audio-carousel-item audio {
+  width: 80%;
+}
+
+@media only screen and (max-width: 900px) {
+  .carousel-item img,
+  .carousel-item video {
+    object-fit: cover;
+    height: 12rem;
+  }
 }

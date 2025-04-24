@@ -11,6 +11,7 @@ function ContentCarousel({ contentList }) {
 
     return (
         <Carousel
+            className='carousel-container'
             fade
             indicators={mediaItems.length > 1}
             controls={mediaItems.length > 1}
@@ -18,12 +19,14 @@ function ContentCarousel({ contentList }) {
         >
             {mediaItems.map((item, index) => {
                 const isVideo = item.content_type === 'video';
+                const isImage = item.content_type === 'image';
+                const isAudio = item.content_type === 'audio';
                 // const interval = isVideo ? 1000 : 500;
                 const effect = isVideo ? '' : getRandomEffect();
 
                 return (
                     <Carousel.Item key={index}>
-                        {isVideo ? (
+                        {isVideo && (
                             <video
                                 src={item.local_url}
                                 className="d-block w-100"
@@ -32,12 +35,21 @@ function ContentCarousel({ contentList }) {
                                 loop
                                 playsInline
                             />
-                        ) : (
+                        )}
+                        {isImage && (
                             <img
                                 src={item.local_url}
                                 className={`d-block w-100 ${effect}`}
                                 alt={`media-${index}`}
                             />
+                        )}
+                        {isAudio && (
+                            <div className="audio-carousel-item">
+                                <audio controls>
+                                    <source src={item.local_url} />
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
                         )}
                     </Carousel.Item>
                 );
