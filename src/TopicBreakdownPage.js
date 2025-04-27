@@ -11,7 +11,8 @@ import ContentCarousel from './components/ContentCarousel';
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
 
 function getHashtags(contentList, jsx = false, limit = 5) {
     let tags = [...new Set(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }).flat())].slice(0, limit)
@@ -35,6 +36,21 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
         setEvidenceModalShow(true)
     }
 
+    // Map refs for each content item
+    const contentRefs = useRef({});
+    contentList.forEach(item => {
+        contentRefs.current[item.local_url] = contentRefs.current[item.local_url] || React.createRef();
+    });
+
+    // Scroll handler
+    const handleCarouselClick = (localUrl) => {
+        const targetRef = contentRefs.current[localUrl];
+        if (targetRef && targetRef.current) {
+            targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
+
     return (
         <div className="Breakdown-topic-container">
             <h1 className='Breakdown-topic-title'>{title}</h1>
@@ -47,7 +63,7 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
             />
             {contentList && contentList.length > 0 && (
                 <div style={{ marginBottom: '2rem' }}>
-                    <ContentCarousel contentList={contentList} />
+                    <ContentCarousel contentList={contentList} onItemClick={handleCarouselClick} />
                 </div>
             )}
             <p>{description}</p>
@@ -55,7 +71,7 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
             {claimList && claimList.length > 0 && (<h3>{t('claims')}</h3>)}
             <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
             <div className='Breakdown-topic-article'>{article}</div>
-            {contentList && contentList.length > 0 && (<ContentList content={contentList} />)}
+            {contentList && contentList.length > 0 && (<ContentList content={contentList} refsMap={contentRefs.current} />)}
             <EvidenceModal
                 show={evidenceModalShow}
                 title={evidenceModalTitle}
@@ -84,11 +100,15 @@ function TopicBreakdownPage() {
         });
     }
 
-    useEffect(() => {
-        window.addEventListener("resize", handleResize, false);
+    const scrollUp = () => {
         document.getElementsByClassName("Breakdown-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
         document.getElementsByClassName("Breakdown-body")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
         window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    useEffect(() => {
+        window.addEventListener("resize", handleResize, false);
+        scrollUp()
     }, [])
 
     return (
@@ -97,8 +117,9 @@ function TopicBreakdownPage() {
                 <div className='Breakdown-middle-column'>
                     <Await resolve={topicPromise}>
                         {
-                            (topicData) =>
-                                <Topic
+                            (topicData) => {
+                                scrollUp();
+                                return <Topic
                                     topicId={JSON.parse(topicData).topic_id}
                                     title={JSON.parse(topicData).title}
                                     description={JSON.parse(topicData).description}
@@ -111,6 +132,7 @@ function TopicBreakdownPage() {
                                     evidenceModalShow={evidenceModalShow}
                                     setEvidenceModalShow={setEvidenceModalShow}
                                 />
+                            }
                         }
                     </Await>
                 </div>

@@ -1,7 +1,7 @@
 import Carousel from 'react-bootstrap/Carousel';
 import '../styles/ContentCarousel.css';
 
-function ContentCarousel({ contentList }) {
+function ContentCarousel({ contentList, onItemClick }) {
     const mediaItems = contentList.slice(0, 4);
 
     const getRandomEffect = () => {
@@ -10,44 +10,25 @@ function ContentCarousel({ contentList }) {
     };
 
     return (
-        <Carousel
-            className='carousel-container'
-            fade
-            indicators={mediaItems.length > 1}
-            controls={mediaItems.length > 1}
-            interval={4000}
-        >
+        <Carousel fade indicators={mediaItems.length > 1} controls={mediaItems.length > 1} interval={4000}>
             {mediaItems.map((item, index) => {
                 const isVideo = item.content_type === 'video';
                 const isImage = item.content_type === 'image';
                 const isAudio = item.content_type === 'audio';
-                // const interval = isVideo ? 1000 : 500;
-                const effect = isVideo ? '' : getRandomEffect();
+                const effect = isVideo || isAudio ? '' : getRandomEffect();
 
                 return (
-                    <Carousel.Item key={index}>
+                    <Carousel.Item key={index} onClick={() => onItemClick(item.local_url)}>
                         {isVideo && (
-                            <video
-                                src={item.local_url}
-                                className="d-block w-100"
-                                muted
-                                autoPlay
-                                loop
-                                playsInline
-                            />
+                            <video src={item.local_url} className="d-block w-100" muted autoPlay loop playsInline />
                         )}
                         {isImage && (
-                            <img
-                                src={item.local_url}
-                                className={`d-block w-100 ${effect}`}
-                                alt={`media-${index}`}
-                            />
+                            <img src={item.local_url} className={`d-block w-100 ${effect}`} alt={`media-${index}`} />
                         )}
                         {isAudio && (
                             <div className="audio-carousel-item">
                                 <audio controls>
                                     <source src={item.local_url} />
-                                    Your browser does not support the audio element.
                                 </audio>
                             </div>
                         )}
