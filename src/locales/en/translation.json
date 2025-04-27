@@ -77,5 +77,7 @@
     "copiedToClipboard": "Link copied to clipboard!\nNow you can share it with others.",
     "copyFailed": "Failed to copy.",
     "shareMessageIntro": "Join me on d-FCT, a reward-driven solution for transparent fact-verification",
-    "shareMessageOutro": "#dFCT #DecentralizedFactChecking #Web3 #InfoFi"
+    "shareMessageOutro": "#dFCT #DecentralizedFactChecking #Web3 #InfoFi",
+    "searchPlaceholder": "Search topics, claims, content...",
+    "noResultsFound": "No topics found for your search."
 }

@@ -395,3 +395,18 @@
 .Landing-first-submission-btn {
   margin-top: 1rem;
 }
+
+.Landing-search-bar {
+  max-width: 500px;
+  margin: 1rem auto;
+  font-family: monospace;
+}
+
+.Landing-no-results-msg {
+  font-family: monospace;
+  color: #bdbdbd;
+  opacity: 0.7;
+  text-align: center;
+  top: 50%;
+  position: fixed;
+}

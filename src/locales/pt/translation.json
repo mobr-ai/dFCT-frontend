@@ -91,5 +91,7 @@
     "copiedToClipboard": "Link copiado para a área de transferência!\nAgora você pode compartilhá-lo com outras pessoas.",
     "copyFailed": "Falha ao copiar.",
     "shareMessageIntro": "Junte-se a mim no d-FCT, uma solução descentralizada com recompensas para verificação transparente de fatos",
-    "shareMessageOutro": "#dFCT #Web3 #VerificaçãoDescentralizadaDeFatos #DecentralizedFactChecking #InfoFi"
+    "shareMessageOutro": "#dFCT #Web3 #VerificaçãoDescentralizadaDeFatos #DecentralizedFactChecking #InfoFi",
+    "searchPlaceholder": "Pesquisar tópicos, alegações, conteúdo...",
+    "noResultsFound": "Nenhum tópico encontrado para sua pesquisa."
 }

@@ -19,14 +19,14 @@ const ContentCard = ({ item, innerRef }) => {
     const [showMuteIcon, setShowMuteIcon] = useState(true); // Control mute icon visibility
     const videoRef = useRef(null);
 
-    const toggleVideo = () => {
-        const video = videoRef.current;
-        if (video.paused) {
-            video.play();
-        } else {
-            video.pause();
-        }
-    };
+    // const toggleVideo = () => {
+    //     const video = videoRef.current;
+    //     if (video.paused) {
+    //         video.play();
+    //     } else {
+    //         video.pause();
+    //     }
+    // };
 
     const toggleMute = (e) => {
         e.stopPropagation(); // Prevent play/pause toggle
@@ -57,6 +57,23 @@ const ContentCard = ({ item, innerRef }) => {
         setShowMuteIcon(true); // Always show icon when paused
     };
 
+    const enterFullscreen = () => {
+        if (
+            !document.fullscreenElement &&
+            !document.webkitFullscreenElement &&
+            !document.msFullscreenElement
+        ) {
+            const video = videoRef.current;
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) { // Safari
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { // IE/Edge
+                video.msRequestFullscreen();
+            }
+        }
+    };
+
 
     return (
         <div className="Breakdown-content-card" ref={innerRef}>
@@ -66,10 +83,14 @@ const ContentCard = ({ item, innerRef }) => {
                 </a>
             )}
             {item.content_type === 'video' && (
-                <div className="Breakdown-video-wrapper" onClick={toggleVideo}>
+                <div
+                    className="Breakdown-video-wrapper"
+                    onDoubleClick={enterFullscreen}
+                >
                     <video
                         className="Breakdown-content-container"
                         ref={videoRef}
+                        controls
                         onPlay={handlePlay}
                         onPause={handlePause}
                         playsInline
@@ -78,7 +99,16 @@ const ContentCard = ({ item, innerRef }) => {
                         <source src={item.local_url} type="video/mp4" />
                     </video>
                     {overlayVisible && (
-                        <div className="Breakdown-video-overlay">
+                        <div
+                            className="Breakdown-video-overlay"
+                            onClick={(e) => {
+                                e.stopPropagation(); // Prevent event bubbling to the video controls
+                                const video = videoRef.current;
+                                if (video.paused) {
+                                    video.play();
+                                }
+                            }}
+                        >
                             <FontAwesomeIcon icon={faPlayCircle} size="3x" />
                         </div>
                     )}

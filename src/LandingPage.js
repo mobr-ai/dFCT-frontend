@@ -15,7 +15,8 @@ import translationPT from './locales/pt/translation.json';
 import TopicList from './components/TopicList.js';
 import LoadingPage from './LoadingPage.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlassArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlassArrowRight, faMagnifyingGlass, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { InputGroup, FormControl } from 'react-bootstrap';
 
 i18n
   .use(detector)
@@ -43,6 +44,10 @@ function LandingPage() {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const displayedTopics = searching ? searchResults : topics;
   const dragCounter = useRef(0);
 
   const loadTopics = useCallback(async (newPage) => {
@@ -75,13 +80,9 @@ function LandingPage() {
     const scrollElement = document.querySelector('.Landing-middle-column');
 
     const handleScroll = () => {
-      const el = scrollElement || document.documentElement;
-      const scrollTop = el.scrollTop || window.scrollY;
-      const scrollHeight = el.scrollHeight || document.body.scrollHeight;
-      const clientHeight = el.clientHeight || window.innerHeight;
-
-      if (!loadingMore && topics.length < totalTopics && scrollTop + clientHeight >= scrollHeight - 100) {
-        loadTopics(page + 1);
+      if (scrollElement && !loadingMore && (topics.length < totalTopics) && !searching && (scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 50)) {
+        const nextPage = page + 1;
+        loadTopics(nextPage);
       }
     };
 
@@ -92,7 +93,7 @@ function LandingPage() {
       scrollElement?.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [page, topics, totalTopics, loadingMore, loadTopics]);
+  }, [page, topics, totalTopics, loadingMore, loadTopics, searching]);
 
   useEffect(() => {
     const intervalId = setInterval(
@@ -141,6 +142,30 @@ function LandingPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchTopics = async () => {
+      const lang = i18n.language.split('-')[0];
+      const query = searchQuery.trim();
+
+      if (query) {
+        setSearching(true);
+        const response = await fetch(`/api/search/${user.id}?q=${encodeURIComponent(query)}&lang=${lang}`);
+        const data = await response.json();
+        setSearchResults(data.topics); // Store search results
+      } else {
+        setSearching(false);
+        setSearchResults([]); // Clear search results
+      }
+    };
+
+    const debounceTimeout = setTimeout(() => {
+      if (user) fetchTopics();
+    }, 300);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchQuery, user]);
+
+
   return (
     <div className="Landing-body">
       <Container
@@ -181,8 +206,31 @@ function LandingPage() {
           )}
         </div>
 
+        {user && topics.length > 0 && (
+          <InputGroup className="Landing-search-bar mb-3">
+            <FormControl
+              placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery ? (
+              <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
+                <FontAwesomeIcon icon={faTimes} />
+              </Button>
+            ) : (
+              <Button variant="outline-secondary" disabled>
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+              </Button>
+            )}
+          </InputGroup>
+        )}
+
+        {user && searching && searchQuery && searchResults.length === 0 && (
+          <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
+        )}
+
         {user && (
-          <TopicList content={topics} type="main" />
+          <TopicList content={displayedTopics} type="main" />
         )}
 
         {user && (
@@ -192,6 +240,7 @@ function LandingPage() {
                 if (!topics || topics.length === 0) {
                   setTopics(userTopics.topics);
                   setTotalTopics(userTopics.total);
+                  setSearchResults(userTopics.topics)
                 }
               }}
             </Await>
