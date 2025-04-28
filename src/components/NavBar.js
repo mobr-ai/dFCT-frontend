@@ -111,7 +111,7 @@ function NavBar(props) {
                         <Nav.Link onClick={() => { navigate('/submit'); setExpanded(false); }} active={location.pathname === '/submit'}>
                             <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t('verifyContent')}
                         </Nav.Link>
-                        <Nav.Link onClick={() => { navigate('/'); setExpanded(false); }} active={location.pathname.includes('/mytopics')}>
+                        <Nav.Link onClick={() => { navigate('/mytopics'); setExpanded(false); }} active={location.pathname.includes('/mytopics')}>
                             <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
                         </Nav.Link>
                         <Nav.Link onClick={() => { navigate('/settings'); setExpanded(false); }} active={location.pathname === '/settings'}>

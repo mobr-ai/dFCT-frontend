@@ -66,6 +66,19 @@ function Layout() {
   );
 }
 
+const fetchAllTopics = async () => {
+  const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0];
+  const page = window.sessionStorage.getItem("topicsPage") || 1;
+  const perPage = window.sessionStorage.getItem("perPage") || 9;
+
+  const response = await fetch(`/api/topics/${lang}/${page}/${perPage}`);
+  return await response.json();
+};
+
+const allTopicsLoader = async () => {
+  const allTopicsPromise = fetchAllTopics();
+  return defer({ allTopicsPromise });
+};
 
 const fetchUserTopics = async (userId) => {
   const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
@@ -109,7 +122,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <LandingPage />,
+        element: <LandingPage type="all" />,
+        loader: allTopicsLoader
+      },
+      {
+        path: '/mytopics',
+        element: <LandingPage type="user" />,
         loader: userTopicsLoader
       },
       {

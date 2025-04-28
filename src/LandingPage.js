@@ -15,7 +15,7 @@ import translationPT from './locales/pt/translation.json';
 import TopicList from './components/TopicList.js';
 import LoadingPage from './LoadingPage.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlassArrowRight, faMagnifyingGlass, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlassArrowRight, faMagnifyingGlass, faTimes, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup, FormControl } from 'react-bootstrap';
 
 i18n
@@ -30,9 +30,9 @@ i18n
     interpolation: { escapeValue: false }
   });
 
-function LandingPage() {
+function LandingPage(props) {
   const { t } = useTranslation();
-  const { userTopicsPromise } = useLoaderData()
+  const { userTopicsPromise, allTopicsPromise } = useLoaderData()
   const { user, loading, setLoading } = useOutletContext();
   const brandText = ['d-', 'de', 'fact', 'tool'];
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
@@ -76,7 +76,14 @@ function LandingPage() {
     try {
       const perPage = window.sessionStorage.getItem("perPage") || 9
       const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
-      const response = await fetch(`/api/user/${user.id}/topics/${lang}/${newPage}/${perPage}`);
+      var request = ''
+      if (props.type === 'user') {
+        request = `/api/user/${user.id}/topics/${lang}/${newPage}/${perPage}`
+      }
+      else if (props.type === 'all') {
+        request = `/api/topics/${lang}/${newPage}/${perPage}`
+      }
+      const response = await fetch(request);
       const data = await response.json();
 
       if (data.topics.length === 0) {
@@ -93,7 +100,7 @@ function LandingPage() {
     finally {
       setLoadingMore(false);
     }
-  }, [setTopics, setPage, user, page, topics]);
+  }, [setTopics, setPage, user, page, topics, props.type]);
 
   useEffect(() => {
     const scrollElement = document.querySelector('.Landing-middle-column');
@@ -197,6 +204,17 @@ function LandingPage() {
   }, [searchQuery, user, setLoading]);
 
 
+  useEffect(() => {
+    // Reset when switching between / and /mytopics
+    setTopics([]);
+    setTotalTopics(0);
+    setPage(1);
+    setSearching(false);
+    // setSearchQuery('');
+    setSearchResults([]);
+    setLoading(true)
+  }, [location.pathname, setLoading]);
+
   return (
     <div className="Landing-body">
       <Container
@@ -272,14 +290,23 @@ function LandingPage() {
 
         {user && (
           <Suspense fallback={<LoadingPage />}>
-            <Await resolve={searchResults?.length > 0 || userTopicsPromise}>
-              {(userTopics) => {
-                if (!topics || topics.length === 0) {
-                  setTopics(userTopics.topics);
-                  setTotalTopics(userTopics.total);
+            <Await resolve={searchResults?.length > 0 || props.type === 'user' ? userTopicsPromise : allTopicsPromise}>
+              {(loadedTopics) => {
+                if (loadedTopics && (!topics || topics.length === 0)) {
+                  setTopics(loadedTopics.topics);
+                  setTotalTopics(loadedTopics.total);
+                  setLoading(false)
                 }
               }}
             </Await>
+            {!loadingMore && (searchResults.length > 9 || totalTopics > 9) && (
+              <Button
+                variant="secondary"
+                className="Landing-scroll-up"
+                onClick={scrollUp}
+              >
+                <FontAwesomeIcon icon={faArrowUp} />
+              </Button>)}
           </Suspense>
         )}
 
@@ -288,7 +315,7 @@ function LandingPage() {
           <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
         )}
 
-        {user && (totalTopics === 0) &&
+        {user && !loading && !searching && !searchQuery && (searchResults.length === 0) && (totalTopics === 0) &&
           (
             <p className="Landing-no-topics-msg">
               <section>

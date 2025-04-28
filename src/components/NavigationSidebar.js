@@ -31,7 +31,7 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
             <Link onClick={() => { setIsOpen(false) }} to="/" className={`Navbar-item ${location.pathname === '/' ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faHome} /> {t('home')}
             </Link>
-            <Link onClick={() => { setIsOpen(false) }} to="/"
+            <Link onClick={() => { setIsOpen(false) }} to="/mytopics"
                 className={`Navbar-item ${location.pathname.includes('/mytopics') ? 'active' : ''}`}>
                 <FontAwesomeIcon icon={faFolderOpen} /> {t('myTopics')}
             </Link>
