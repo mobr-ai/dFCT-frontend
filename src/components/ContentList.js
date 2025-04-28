@@ -16,11 +16,11 @@ const ContentCard = ({ item, innerRef }) => {
     const { t } = useTranslation();
     const [overlayVisible, setOverlayVisible] = useState(true);
     const [isMuted, setIsMuted] = useState(true); // Track mute state
-    const [showMuteIcon, setShowMuteIcon] = useState(true); // Control mute icon visibility
+    const [showMuteIcon, setShowMuteIcon] = useState(false); // Control mute icon visibility
     const [videoLoaded, setVideoLoaded] = useState(false);
     const videoRef = useRef(null);
-    const muteButtonRef = useRef(null);
-    const muteOffsetRef = useRef('10px'); // Default offset
+    // const muteButtonRef = useRef(null);
+    const muteOffsetRef = useRef(null); // Default offset
 
     const toggleMute = (e) => {
         e.stopPropagation(); // Prevent play/pause toggle
@@ -43,6 +43,9 @@ const ContentCard = ({ item, innerRef }) => {
         if (!isMuted) {
             // Start fade out when playing unmuted
             setTimeout(() => setShowMuteIcon(false), 3000);
+        }
+        else {
+            setShowMuteIcon(true);
         }
     };
 
@@ -141,9 +144,9 @@ const ContentCard = ({ item, innerRef }) => {
                             <FontAwesomeIcon icon={faPlayCircle} size="3x" />
                         </div>
                     )}
-                    {showMuteIcon && (
+                    {videoLoaded && showMuteIcon && (
                         <div
-                            ref={muteButtonRef}
+                            // ref={muteButtonRef}
                             className="Breakdown-mute-button"
                             style={{
                                 right: muteOffsetRef.current, // Always apply saved offset
