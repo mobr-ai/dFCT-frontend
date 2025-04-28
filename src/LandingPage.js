@@ -51,6 +51,12 @@ function LandingPage() {
   const displayedTopics = searching ? searchResults : topics;
   const dragCounter = useRef(0);
 
+  const scrollUp = () => {
+    document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    document.getElementsByClassName("Landing-body")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const loadTopics = useCallback(async (newPage) => {
     if (typeof newPage === 'undefined') return;
     setLoadingMore(true)
@@ -222,18 +228,20 @@ function LandingPage() {
               />
               {searchQuery ? (
                 searchLoading ? (
-                  <Button variant="outline-secondary" disabled>
+                  <Button className='Landing-search-button' variant="outline-secondary" disabled>
                     <Spinner animation="border" size="sm" />
                   </Button>
                 ) : (
-                  <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
+                  <Button className='Landing-search-button' variant="outline-secondary" onClick={() => { setSearchQuery(''); setTimeout(scrollUp, 500) }}>
                     <FontAwesomeIcon icon={faTimes} />
                   </Button>
                 )
               ) : (
-                <Button variant="outline-secondary" disabled>
-                  <FontAwesomeIcon icon={faMagnifyingGlass} />
-                </Button>
+                <div className="Landing-search-dummy-button">
+                  <Button className='Landing-search-button' variant="outline-secondary" disabled>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} />
+                  </Button>
+                </div>
               )}
             </InputGroup>
           </div>

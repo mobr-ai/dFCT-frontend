@@ -401,6 +401,17 @@
   font-family: monospace;
 }
 
+.Landing-search-bar:hover input:not(:focus) {
+  background-color: #bfd3d5;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.Landing-search-bar input:focus {
+  box-shadow: none;
+  border-color: transparent;
+  outline: none;
+}
+
 .Landing-no-results-msg {
   font-family: monospace;
   color: #bdbdbd;
@@ -418,4 +429,22 @@
   padding: 0.5rem 0;
   border-bottom: 1px solid #dee2e68c;
   width: 90vw;
+}
+
+.Landing-search-button {
+  cursor: pointer !important;
+}
+
+.Landing-search-dummy-button {
+  cursor: pointer; /* Apply pointer cursor here */
+}
+
+.Landing-search-dummy-button button:disabled {
+  pointer-events: none; /* Prevent button from blocking cursor */
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.Landing-search-dummy-button:hover {
+  opacity: 0.8; /* Subtle visual feedback on hover */
 }
