@@ -113,7 +113,7 @@
     order: 1 !important;
     min-height: 100vh;
     max-width: 60vw;
-    /* margin-right: 5vw; */
+    margin-top: 3rem;
   }
   .Landing-right-column {
     order: 2 !important;
@@ -163,7 +163,6 @@
   max-height: 100vh;
   order: 0;
   overflow-y: auto;
-  margin-top: 3rem;
   text-align: center;
 }
 

@@ -250,11 +250,12 @@
   border-radius: 50%;
   cursor: pointer;
   z-index: 2; /* Ensure it stays above the video */
-  opacity: 0.8;
+  opacity: 0;
   line-height: normal;
   pointer-events: auto; /* Ensure mute button can receive clicks */
+  transition: opacity 0.3s ease-in-out;
 }
 
-.Breakdown-mute-button:hover {
+.Breakdown-video-wrapper:hover .Breakdown-mute-button {
   opacity: 1;
 }

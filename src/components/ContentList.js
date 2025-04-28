@@ -20,6 +20,7 @@ const ContentCard = ({ item, innerRef }) => {
     const [videoLoaded, setVideoLoaded] = useState(false);
     const videoRef = useRef(null);
     const muteButtonRef = useRef(null);
+    const muteOffsetRef = useRef('10px'); // Default offset
 
     const toggleMute = (e) => {
         e.stopPropagation(); // Prevent play/pause toggle
@@ -69,11 +70,11 @@ const ContentCard = ({ item, innerRef }) => {
 
     useEffect(() => {
         const updateMuteButtonPosition = () => {
-            if (videoRef.current && muteButtonRef.current) {
+            if (videoRef.current) {
                 const videoWidth = videoRef.current.offsetWidth;
                 const containerWidth = videoRef.current.parentElement.offsetWidth;
                 const offset = containerWidth - videoWidth;
-                muteButtonRef.current.style.right = `${offset / 2 + 10}px`; // Adjust padding as needed
+                muteOffsetRef.current = `${offset / 2 + 10}px`; // Save the offset
             }
         };
 
@@ -83,8 +84,23 @@ const ContentCard = ({ item, innerRef }) => {
         }
 
         return () => window.removeEventListener('resize', updateMuteButtonPosition);
-    }, [videoLoaded]); // Depend on videoLoaded
+    }, [videoLoaded]);
 
+    useEffect(() => {
+        const video = videoRef.current;
+
+        const handleVolumeChange = () => {
+            if (video) setIsMuted(video.muted); // Sync with native controls
+        };
+
+        if (video) {
+            video.addEventListener('volumechange', handleVolumeChange);
+        }
+
+        return () => {
+            if (video) video.removeEventListener('volumechange', handleVolumeChange);
+        };
+    }, [videoLoaded]);
 
     return (
         <div className="Breakdown-content-card" ref={innerRef}>
@@ -125,7 +141,15 @@ const ContentCard = ({ item, innerRef }) => {
                         </div>
                     )}
                     {showMuteIcon && (
-                        <div ref={muteButtonRef} className="Breakdown-mute-button" onClick={toggleMute}>
+                        <div
+                            ref={muteButtonRef}
+                            className="Breakdown-mute-button"
+                            style={{
+                                right: muteOffsetRef.current, // Always apply saved offset
+                                opacity: (isMuted && !videoRef.current?.paused) ? 1 : undefined // Always show when playing & muted
+                            }}
+                            onClick={toggleMute}
+                        >
                             <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
                         </div>
                     )}
