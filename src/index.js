@@ -19,7 +19,7 @@ import i18n from "i18next";
 function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const navigate = useNavigate()
 

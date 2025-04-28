@@ -57,10 +57,9 @@ function NavBar(props) {
     }
 
     const changeLanguage = (lng) => {
-        // props.setLoading(true)
-        // i18n.changeLanguage(lng);
         localStorage.setItem('i18nextLng', lng); // i18next checks this on init
-        navigate(0);
+        window.history.replaceState(null, '', window.location.pathname);
+        navigate(0); // Reload the page to trigger language change
     }
 
     const userMenu = props.userData && (

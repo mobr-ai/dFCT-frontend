@@ -11,18 +11,38 @@ import ContentCarousel from './components/ContentCarousel';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { useLoaderData, Await, useOutletContext } from "react-router-dom";
+import { useLoaderData, Await, useOutletContext, useNavigate } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef } from 'react';
 
 
-function getHashtags(contentList, jsx = false, limit = 5) {
-    let tags = [...new Set(contentList.map((c) => { return c.concept_list.replaceAll("'", "").replaceAll("\"", "").replaceAll("}", "").replaceAll("{", "").replaceAll("-", "").split(",").map((s) => { return s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('') }) }).flat())].slice(0, limit)
+function getHashtags(contentList, jsx = false, limit = 5, onClickTag = () => { }) {
+    let tags = [...new Set(contentList.map((c) => {
+        return c.concept_list
+            .replaceAll("'", "")
+            .replaceAll("\"", "")
+            .replaceAll("}", "")
+            .replaceAll("{", "")
+            .replaceAll("-", "")
+            .split(",")
+            .map((s) => s.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(''))
+    }).flat())].slice(0, limit)
+
     if (jsx) {
-        return tags.map((tag) => { return (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">#{tag}</Badge></div>) })
+        return tags.map((tag) => (
+            <div key={tag} className='Breakdown-topic-claims-tag'>
+                <Badge
+                    bg="secondary"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => onClickTag(tag)}
+                >
+                    #{tag}
+                </Badge>
+            </div>
+        ));
     }
-    return tags
+    return tags;
 }
 
 // Topic Component
@@ -31,6 +51,12 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
     const [evidenceModalTitle, setEvidenceModalTitle] = useState(title)
     const [evidenceType, setEvidenceType] = useState()
     const [claimId, setClaimId] = useState()
+    const navigate = useNavigate();
+
+    const handleTagClick = (tag) => {
+        // Navigate to LandingPage with search query
+        navigate(`/?q=${encodeURIComponent(tag)}`);
+    };
 
     const showEvidenceModal = (title, evidenceType, claimId) => {
         setEvidenceType(evidenceType)
@@ -70,7 +96,7 @@ const Topic = ({ topicId, title, description, claimList, article, contentList, u
                 </div>
             )}
             <p>{description}</p>
-            <p>{getHashtags(contentList, true, 6)}</p>
+            <p>{getHashtags(contentList, true, 6, handleTagClick)}</p>
             {claimList && claimList.length > 0 && (<h3>{t('claims')}</h3>)}
             <ClaimList content={claimList} showEvidenceModal={showEvidenceModal} topicId={topicId} />
             <div className='Breakdown-topic-article'>{article}</div>

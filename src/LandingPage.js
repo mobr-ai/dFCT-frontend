@@ -4,7 +4,7 @@ import './styles/TopicList.css';
 import './styles/NavigationSidebar.css';
 import i18n from "i18next";
 import { Button, Container, Spinner } from 'react-bootstrap';
-import { useOutletContext, useNavigate, useLoaderData, Await } from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import { useTranslation, initReactI18next } from "react-i18next";
 import ReactTextTransition, { presets } from 'react-text-transition';
@@ -33,7 +33,7 @@ i18n
 function LandingPage() {
   const { t } = useTranslation();
   const { userTopicsPromise } = useLoaderData()
-  const { user, loading } = useOutletContext();
+  const { user, loading, setLoading } = useOutletContext();
   const brandText = ['d-', 'de', 'fact', 'tool'];
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
   const [brandIndex, setBrandIndex] = useState(1);
@@ -44,12 +44,24 @@ function LandingPage() {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const displayedTopics = searching ? searchResults : topics;
   const dragCounter = useRef(0);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const initialQuery = params.get('q') ? "#" + params.get('q') : '';
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+
+
+  // Trigger search when initialQuery changes
+  useEffect(() => {
+    if (initialQuery) {
+      setSearchQuery(initialQuery);
+      setSearching(true);
+    }
+  }, [initialQuery]);
 
   const scrollUp = () => {
     document.getElementsByClassName("Landing-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -149,6 +161,12 @@ function LandingPage() {
     }
   };
 
+  const clearSearch = () => {
+    setSearchQuery('')
+    setSearchResults([])
+    setTimeout(scrollUp, 500)
+  }
+
   useEffect(() => {
     const fetchTopics = async () => {
       const lang = i18n.language.split('-')[0];
@@ -163,6 +181,7 @@ function LandingPage() {
 
         setSearchResults(data.topics);
         setSearchLoading(false); // End loading after fetch
+        setLoading(false)
       } else {
         setSearching(false);
         setSearchResults([]);
@@ -175,7 +194,7 @@ function LandingPage() {
     }, 300);
 
     return () => clearTimeout(debounceTimeout);
-  }, [searchQuery, user]);
+  }, [searchQuery, user, setLoading]);
 
 
   return (
@@ -218,7 +237,7 @@ function LandingPage() {
           )}
         </div>
 
-        {user && topics.length > 0 && (
+        {user && (searchResults?.length > 0 || topics?.length > 0) && (
           <div className="Landing-search-sticky">
             <InputGroup className="Landing-search-bar mb-3">
               <FormControl
@@ -232,7 +251,7 @@ function LandingPage() {
                     <Spinner animation="border" size="sm" />
                   </Button>
                 ) : (
-                  <Button className='Landing-search-button' variant="outline-secondary" onClick={() => { setSearchQuery(''); setTimeout(scrollUp, 500) }}>
+                  <Button className='Landing-search-button' variant="outline-secondary" onClick={() => clearSearch()}>
                     <FontAwesomeIcon icon={faTimes} />
                   </Button>
                 )
@@ -247,27 +266,26 @@ function LandingPage() {
           </div>
         )}
 
-
-        {user && searching && !searchLoading && searchQuery && searchResults.length === 0 && (
-          <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
-        )}
-
         {user && (
           <TopicList content={displayedTopics} type="main" />
         )}
 
         {user && (
           <Suspense fallback={<LoadingPage />}>
-            <Await resolve={userTopicsPromise}>
+            <Await resolve={searchResults?.length > 0 || userTopicsPromise}>
               {(userTopics) => {
                 if (!topics || topics.length === 0) {
                   setTopics(userTopics.topics);
                   setTotalTopics(userTopics.total);
-                  setSearchResults(userTopics.topics)
                 }
               }}
             </Await>
           </Suspense>
+        )}
+
+
+        {!loading && user && searching && !searchLoading && searchQuery && searchResults.length === 0 && (
+          <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
         )}
 
         {user && (totalTopics === 0) &&
