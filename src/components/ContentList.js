@@ -124,7 +124,6 @@ const ContentCard = ({ item, innerRef }) => {
                         playsInline
                         muted={isMuted}
                         preload="metadata"
-                        poster={item.cover_image || "/placeholder.png"} // Provide a still image
                     >
                         <source src={item.local_url} type="video/mp4" />
                     </video>
