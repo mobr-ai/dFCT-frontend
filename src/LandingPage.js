@@ -207,23 +207,26 @@ function LandingPage() {
         </div>
 
         {user && topics.length > 0 && (
-          <InputGroup className="Landing-search-bar mb-3">
-            <FormControl
-              placeholder={t('searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery ? (
-              <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
-                <FontAwesomeIcon icon={faTimes} />
-              </Button>
-            ) : (
-              <Button variant="outline-secondary" disabled>
-                <FontAwesomeIcon icon={faMagnifyingGlass} />
-              </Button>
-            )}
-          </InputGroup>
+          <div className="Landing-search-sticky">
+            <InputGroup className="Landing-search-bar mb-3">
+              <FormControl
+                placeholder={t('searchPlaceholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery ? (
+                <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </Button>
+              ) : (
+                <Button variant="outline-secondary" disabled>
+                  <FontAwesomeIcon icon={faMagnifyingGlass} />
+                </Button>
+              )}
+            </InputGroup>
+          </div>
         )}
+
 
         {user && searching && searchQuery && searchResults.length === 0 && (
           <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
