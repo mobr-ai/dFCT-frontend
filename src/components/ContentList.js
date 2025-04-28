@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
 import './../styles/TopicBreakdownPage.css'
@@ -17,16 +17,9 @@ const ContentCard = ({ item, innerRef }) => {
     const [overlayVisible, setOverlayVisible] = useState(true);
     const [isMuted, setIsMuted] = useState(true); // Track mute state
     const [showMuteIcon, setShowMuteIcon] = useState(true); // Control mute icon visibility
+    const [videoLoaded, setVideoLoaded] = useState(false);
     const videoRef = useRef(null);
-
-    // const toggleVideo = () => {
-    //     const video = videoRef.current;
-    //     if (video.paused) {
-    //         video.play();
-    //     } else {
-    //         video.pause();
-    //     }
-    // };
+    const muteButtonRef = useRef(null);
 
     const toggleMute = (e) => {
         e.stopPropagation(); // Prevent play/pause toggle
@@ -74,6 +67,24 @@ const ContentCard = ({ item, innerRef }) => {
         }
     };
 
+    useEffect(() => {
+        const updateMuteButtonPosition = () => {
+            if (videoRef.current && muteButtonRef.current) {
+                const videoWidth = videoRef.current.offsetWidth;
+                const containerWidth = videoRef.current.parentElement.offsetWidth;
+                const offset = containerWidth - videoWidth;
+                muteButtonRef.current.style.right = `${offset / 2 + 10}px`; // Adjust padding as needed
+            }
+        };
+
+        if (videoLoaded) {
+            updateMuteButtonPosition();
+            window.addEventListener('resize', updateMuteButtonPosition);
+        }
+
+        return () => window.removeEventListener('resize', updateMuteButtonPosition);
+    }, [videoLoaded]); // Depend on videoLoaded
+
 
     return (
         <div className="Breakdown-content-card" ref={innerRef}>
@@ -90,6 +101,7 @@ const ContentCard = ({ item, innerRef }) => {
                     <video
                         className="Breakdown-content-container"
                         ref={videoRef}
+                        onLoadedMetadata={() => setVideoLoaded(true)}
                         controls
                         onPlay={handlePlay}
                         onPause={handlePause}
@@ -113,7 +125,7 @@ const ContentCard = ({ item, innerRef }) => {
                         </div>
                     )}
                     {showMuteIcon && (
-                        <div className="Breakdown-mute-button" onClick={toggleMute}>
+                        <div ref={muteButtonRef} className="Breakdown-mute-button" onClick={toggleMute}>
                             <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
                         </div>
                     )}

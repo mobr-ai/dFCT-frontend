@@ -3,7 +3,7 @@ import './styles/LandingPage.css';
 import './styles/TopicList.css';
 import './styles/NavigationSidebar.css';
 import i18n from "i18next";
-import { Button, Container } from 'react-bootstrap';
+import { Button, Container, Spinner } from 'react-bootstrap';
 import { useOutletContext, useNavigate, useLoaderData, Await } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import { useTranslation, initReactI18next } from "react-i18next";
@@ -46,6 +46,7 @@ function LandingPage() {
   const [dragActive, setDragActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const displayedTopics = searching ? searchResults : topics;
   const dragCounter = useRef(0);
@@ -149,12 +150,17 @@ function LandingPage() {
 
       if (query) {
         setSearching(true);
+        setSearchLoading(true); // Start loading indicator
+
         const response = await fetch(`/api/search/${user.id}?q=${encodeURIComponent(query)}&lang=${lang}`);
         const data = await response.json();
-        setSearchResults(data.topics); // Store search results
+
+        setSearchResults(data.topics);
+        setSearchLoading(false); // End loading after fetch
       } else {
         setSearching(false);
-        setSearchResults([]); // Clear search results
+        setSearchResults([]);
+        setSearchLoading(false); // No loading when cleared
       }
     };
 
@@ -215,9 +221,15 @@ function LandingPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery ? (
-                <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
-                  <FontAwesomeIcon icon={faTimes} />
-                </Button>
+                searchLoading ? (
+                  <Button variant="outline-secondary" disabled>
+                    <Spinner animation="border" size="sm" />
+                  </Button>
+                ) : (
+                  <Button variant="outline-secondary" onClick={() => setSearchQuery('')}>
+                    <FontAwesomeIcon icon={faTimes} />
+                  </Button>
+                )
               ) : (
                 <Button variant="outline-secondary" disabled>
                   <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -228,7 +240,7 @@ function LandingPage() {
         )}
 
 
-        {user && searching && searchQuery && searchResults.length === 0 && (
+        {user && searching && !searchLoading && searchQuery && searchResults.length === 0 && (
           <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
         )}
 
