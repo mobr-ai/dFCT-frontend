@@ -8,6 +8,9 @@ import LoadingPage from './LoadingPage';
 import ContentList from './components/ContentList';
 import ClaimList from './components/ClaimList';
 import ContentCarousel from './components/ContentCarousel';
+import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { useLoaderData, Await, useOutletContext } from "react-router-dom";
 import { Suspense } from 'react';
 import { useTranslation } from "react-i18next";
@@ -135,6 +138,13 @@ function TopicBreakdownPage() {
                             }
                         }
                     </Await>
+                    <Button
+                        variant="secondary"
+                        className="Breakdown-scroll-up"
+                        onClick={scrollUp}
+                    >
+                        <FontAwesomeIcon icon={faArrowUp} />
+                    </Button>
                 </div>
                 <div className='Breakdown-right-column'>
 
