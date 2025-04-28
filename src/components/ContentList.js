@@ -106,7 +106,7 @@ const ContentCard = ({ item, innerRef }) => {
         <div className="Breakdown-content-card" ref={innerRef}>
             {item.content_type === 'image' && (
                 <a href={item.src_url} target="_blank" rel="noreferrer">
-                    <Image src={item.local_url} alt={item.content_title} className='Breakdown-content-container' />
+                    <Image src={item.local_url} alt={item.content_title} className='Breakdown-content-container loaded' />
                 </a>
             )}
             {item.content_type === 'video' && (
@@ -115,7 +115,7 @@ const ContentCard = ({ item, innerRef }) => {
                     onDoubleClick={enterFullscreen}
                 >
                     <video
-                        className="Breakdown-content-container"
+                        className={`Breakdown-content-container ${videoLoaded ? 'loaded' : ''}`}
                         ref={videoRef}
                         onLoadedMetadata={() => setVideoLoaded(true)}
                         controls
@@ -123,6 +123,8 @@ const ContentCard = ({ item, innerRef }) => {
                         onPause={handlePause}
                         playsInline
                         muted={isMuted}
+                        preload="metadata"
+                        poster={item.cover_image || "/placeholder.png"} // Provide a still image
                     >
                         <source src={item.local_url} type="video/mp4" />
                     </video>

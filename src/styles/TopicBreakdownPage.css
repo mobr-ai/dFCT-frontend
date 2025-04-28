@@ -95,6 +95,8 @@
 }
 
 .Breakdown-content-container {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
   display: block;
   margin: 2rem auto 3rem;
   max-height: 40vh;
@@ -104,6 +106,10 @@
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.Breakdown-content-container.loaded {
+  opacity: 1;
 }
 
 .Breakdown-content-source {
