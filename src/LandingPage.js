@@ -204,6 +204,7 @@ function LandingPage(props) {
   };
 
   const clearSearch = () => {
+    window.history.replaceState(null, '', window.location.pathname);
     setSearchQuery('')
     setSearchResults([])
     setTimeout(scrollUp, 500)
