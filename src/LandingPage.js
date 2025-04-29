@@ -43,6 +43,7 @@ function LandingPage(props) {
   const [totalTopics, setTotalTopics] = useState()
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [showScrollUpButton, setShowScrollUpButton] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [searching, setSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -69,6 +70,16 @@ function LandingPage(props) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // const bounceBack = () => {
+  //   const scrollElement = document.querySelector('.Landing-middle-column');
+  //   if (!scrollElement) return;
+
+  //   scrollElement.scrollBy({
+  //     top: -100, // Bounce up 100px
+  //     behavior: 'smooth'
+  //   });
+  // };
+
   const loadTopics = useCallback(async (newPage) => {
     if (typeof newPage === 'undefined') return;
     setLoadingMore(true)
@@ -87,6 +98,7 @@ function LandingPage(props) {
       const data = await response.json();
 
       if (data.topics.length === 0) {
+        setShowScrollUpButton(true);
         return
       }
 
@@ -106,11 +118,34 @@ function LandingPage(props) {
     const scrollElement = document.querySelector('.Landing-middle-column');
 
     const handleScroll = () => {
-      if (scrollElement && !loadingMore && (topics.length < totalTopics) && !searching && (scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 50)) {
-        const nextPage = page + 1;
-        loadTopics(nextPage);
+      const scrollElement = document.querySelector('.Landing-middle-column');
+
+      if (!scrollElement) return;
+
+      const nearBottom = scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 50;
+      const perPage = window.sessionStorage.getItem("perPage") || 9
+
+      if (nearBottom && !loadingMore && !searching) {
+        if (page * perPage < totalTopics) {
+          const nextPage = page + 1;
+          loadTopics(nextPage);
+        } else {
+          if (!showScrollUpButton) {
+            // Only trigger bounce once
+            // bounceBack();
+            setTimeout(() => {
+              setShowScrollUpButton(true);
+            }, 500); // Delay showing the button after bounce finishes
+          }
+        }
       }
+
+      // Show scroll up button if user manually scrolls up
+      // if (scrollElement.scrollTop > 300) {
+      //   setShowScrollUpButton(true);
+      // }
     };
+
 
     scrollElement?.addEventListener('scroll', handleScroll);
     window.addEventListener('scroll', handleScroll);
@@ -119,7 +154,7 @@ function LandingPage(props) {
       scrollElement?.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [page, topics, totalTopics, loadingMore, loadTopics, searching]);
+  }, [page, topics, totalTopics, loadingMore, loadTopics, searching, showScrollUpButton]);
 
   useEffect(() => {
     const intervalId = setInterval(
@@ -299,14 +334,15 @@ function LandingPage(props) {
                 }
               }}
             </Await>
-            {!loadingMore && (displayedTopics.length > 9) && (
+            {user && showScrollUpButton && !loadingMore && !loading && displayedTopics.length > 3 && (
               <Button
                 variant="secondary"
                 className="Landing-scroll-up"
                 onClick={scrollUp}
               >
                 <FontAwesomeIcon icon={faArrowUp} />
-              </Button>)}
+              </Button>
+            )}
           </Suspense>
         )}
 

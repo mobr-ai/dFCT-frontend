@@ -34,7 +34,8 @@ function AuthPage(props) {
     }
 
     useEffect(() => {
-        document.querySelector(".Auth-container")?.scrollIntoView({ behavior: "smooth", block: "center" })
+        document.getElementsByClassName("Auth-container")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         setLoading(false)
     }, [email, setEmail, setLoading])
 
