@@ -482,3 +482,7 @@
 .Landing-scroll-up:hover {
   opacity: 1;
 }
+
+.Landing-section-title {
+  margin-top: 2rem;
+}

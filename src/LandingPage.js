@@ -319,8 +319,11 @@ function LandingPage(props) {
           </div>
         )}
 
-        {user && (
-          <TopicList content={displayedTopics} type="main" />
+        {user && !loading && (
+          <>
+            {!searching && !searchLoading && (<div className='Landing-section-title'><h3>{props.type === 'user' ? t('myTopics') : t('recentTopics')}</h3></div>)}
+            <TopicList content={displayedTopics} type="main" />
+          </>
         )}
 
         {user && (

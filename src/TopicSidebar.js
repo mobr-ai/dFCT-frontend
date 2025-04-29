@@ -31,7 +31,7 @@ function TopicSidebar(props) {
                     >
                         <p className="Sidebar-topics-title">
                             <FontAwesomeIcon icon={faFolderOpen} style={{ marginRight: '0.5rem' }} />
-                            {t('recentTopics')}
+                            {t('myTopics')}
                         </p>
                         <Container>
                             <TopicList content={props.userTopics} type="sidebar" showSideBar={props.setShowUserTopics} />
@@ -41,7 +41,7 @@ function TopicSidebar(props) {
             )
                 : (
                     <div className='Sidebar-left-column'>
-                        <Container><h3>{t('recentTopics')}</h3></Container>
+                        <Container><h3>{t('myTopics')}</h3></Container>
                         <TopicList content={props.userTopics} type="sidebar" />
                     </div>
                 )
