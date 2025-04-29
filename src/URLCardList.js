@@ -30,7 +30,19 @@ function URLCardList(props) {
 
         return (
             <Card variant="dark" className="Url-card">
-                <Card.Img className="Url-card-img" onClick={() => openInNewTab(item.url)} variant="top" src={item.metadata['og:image'] || (item.metadata['image-array'] ? "data:image/png;base64,".concat(item.metadata['image-array']) : "") || '/placeholder.png'} style={(item.metadata['og:image'] || item.metadata['image-array']) ? { opacity: '1' } : { opacity: '0.5' }} alt="Website image or cover" />
+                <Card.Img
+                    className="Url-card-img"
+                    onClick={() => openInNewTab(item.url)}
+                    variant="top"
+                    src={
+                        (item.metadata['og:image'] && item.metadata['og:image'].startsWith('http'))
+                            ? item.metadata['og:image']
+                            : (item.metadata['image-array']
+                                ? "data:image/png;base64,".concat(item.metadata['image-array'])
+                                : '/placeholder.png')
+                    }
+                    style={(item.metadata['og:image'] || item.metadata['image-array']) ? { opacity: '1' } : { opacity: '0.5' }}
+                    alt="Website image or cover" />
                 <Card.Body>
                     <Card.Title className="Url-card-title">{getHostname(item.url)}</Card.Title>
                     <Card.Text>
