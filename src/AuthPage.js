@@ -34,8 +34,9 @@ function AuthPage(props) {
     }
 
     useEffect(() => {
-        document.querySelector(".Auth-container").scrollIntoView({ behavior: "smooth", block: "center" })
-    }, [email, setEmail])
+        document.querySelector(".Auth-container")?.scrollIntoView({ behavior: "smooth", block: "center" })
+        setLoading(false)
+    }, [email, setEmail, setLoading])
 
     const handleApiRequest = useCallback(async (url, options = {}) => {
         const defaultOptions = {

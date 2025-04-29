@@ -234,7 +234,7 @@ function LandingPage(props) {
           </div>
         )}
         <div className="Landing-header-top" style={!user ? { position: 'absolute' } : { position: 'relative' }}>
-          {!user && !loading && (
+          {!user && (
             <>
               <section>
                 <img src={logo} className="Landing-logo-static" alt="logo" />
@@ -299,7 +299,7 @@ function LandingPage(props) {
                 }
               }}
             </Await>
-            {!loadingMore && (searchResults.length > 9 || totalTopics > 9) && (
+            {!loadingMore && (displayedTopics.length > 9) && (
               <Button
                 variant="secondary"
                 className="Landing-scroll-up"
