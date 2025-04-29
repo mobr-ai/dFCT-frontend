@@ -177,3 +177,10 @@ Note: Beware of modifying this element as it can break the animations - you shou
     transform: scale(1);
   }
 }
+
+.Sidebar-section-title {
+  font-family: monospace;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}

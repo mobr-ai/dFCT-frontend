@@ -41,7 +41,7 @@ function TopicSidebar(props) {
             )
                 : (
                     <div className='Sidebar-left-column'>
-                        <Container><h3>{t('myTopics')}</h3></Container>
+                        <Container className='Sidebar-section-title'><h3>{t('myTopics')}</h3></Container>
                         <TopicList content={props.userTopics} type="sidebar" />
                     </div>
                 )
