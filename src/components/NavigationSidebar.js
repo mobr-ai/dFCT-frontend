@@ -20,6 +20,7 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
             <Button
                 variant="dark"
                 size="md"
+                className='Navbar-button'
                 onClick={() => {
                     navigate('/submit');
                     setIsOpen(false);

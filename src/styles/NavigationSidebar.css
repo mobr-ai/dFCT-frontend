@@ -81,3 +81,11 @@
     display: none;
   }
 }
+
+.Navbar-button {
+  width: 100%;
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
