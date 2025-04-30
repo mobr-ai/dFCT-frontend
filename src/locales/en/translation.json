@@ -81,7 +81,7 @@
     "searchPlaceholder": "Search topics, claims, content...",
     "noResultsFound": "No topics found for your search.",
     "relatedTopicsFound": "Related topics found",
-    "relatedTopicsIntro": "We found these topics that may be related to your submission. You may review them before creating a new one.",
+    "relatedTopicsIntro": "We found these topics related to the submitted content. You may review them or create a new one.",
     "cancel": "Cancel",
     "createNewTopicAnyway": "Submit new topic"
 }

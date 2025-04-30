@@ -95,7 +95,7 @@
     "searchPlaceholder": "Pesquisar tópicos, alegações, conteúdo...",
     "noResultsFound": "Nenhum tópico encontrado para sua pesquisa.",
     "relatedTopicsFound": "Tópicos relacionados encontrados",
-    "relatedTopicsIntro": "Encontramos estes tópicos que podem ser relacionados ao seu conteúdo enviado. Você pode revisá-los antes de criar um novo.",
+    "relatedTopicsIntro": "Encontramos estes tópicos que relacionados ao conteúdo enviado. Você pode revisá-los ou criar um novo.",
     "cancel": "Cancelar",
     "createNewTopicAnyway": "Enviar novo tópico"
 }
