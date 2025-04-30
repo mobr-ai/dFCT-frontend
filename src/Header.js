@@ -10,12 +10,16 @@ function Header(props) {
             {props.userData && (
                 <button className="Navbar-toggle-btn" onClick={() => props.setSidebarOpen(!props.sidebarIsOpen)}>
                     <FontAwesomeIcon icon={faBars} />
-                </button>)}
-            {props.userData && (<NavigationSidebar isOpen={props.sidebarIsOpen} setIsOpen={props.setSidebarOpen} />)}
-            {props.userData && (<NavBar userData={props.userData} setUser={props.setUser} setLoading={props.setLoading} />)}
+                </button>
+            )}
+            {props.userData && (
+                <NavigationSidebar isOpen={props.sidebarIsOpen} setIsOpen={props.setSidebarOpen} />
+            )}
+            {/* Always show NavBar, even if not logged in */}
+            <NavBar userData={props.userData} setUser={props.setUser} setLoading={props.setLoading} />
         </>
-
-    )
+    );
 }
+
 
 export default Header;
