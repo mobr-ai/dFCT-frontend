@@ -1,11 +1,29 @@
 import './../styles/TopicList.css'
 import Card from 'react-bootstrap/Card';
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 function TopicList({ content, type, showSideBar }) {
+    const [visibleTopics, setVisibleTopics] = useState(content);
     const { user, setLoading } = useOutletContext();
+
+    useEffect(() => {
+        setVisibleTopics(content);
+        // setTimeout(() => {
+        //     setVisibleTopics(content);
+        // }, 400); // matches animation duration
+    }, [content])
+
+    const handleRemove = (id) => {
+        const el = document.getElementById(`topic-card-${id}`);
+        if (el) {
+            el.classList.add('fade-out');
+            setTimeout(() => {
+                setVisibleTopics(prev => prev.filter(t => t.id !== id));
+            }, 400); // matches animation duration
+        }
+    };
 
     const getElapsedTime = (timeStr) => {
         let pubTime = new Date(timeStr);
@@ -35,10 +53,12 @@ function TopicList({ content, type, showSideBar }) {
         return string.length > maxLength ? `${string.substring(0, maxLength)}…` : string;
     }
 
-    const TopicCard = ({ topic, type }) => {
+    const TopicCard = ({ topic, type, onDelete, key }) => {
         const { t } = useTranslation();
         const navigate = useNavigate();
         const videoRef = useRef(null);
+        const location = useLocation();
+        const isMyTopicsPage = location.pathname === '/mytopics';
 
         const checkContentType = (url) => {
             if (!url) return 'unknown';
@@ -54,6 +74,30 @@ function TopicList({ content, type, showSideBar }) {
             if (showSideBar) showSideBar(false)
             setLoading(true)
             navigate(`/t/${user.id}/${topic.id}`);
+        };
+
+        const handleDelete = async () => {
+            if (!window.confirm(t('confirmDeleteTopic'))) return;
+
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch(`/topic/${user.id}/${topic.id}`, {
+                    method: "DELETE",
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (res.ok) {
+                    onDelete(); // call parent callback to animate removal
+                } else {
+                    const error = await res.json();
+                    alert(error.error || "Error deleting topic");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to delete topic.");
+            }
         };
 
         useEffect(() => {
@@ -81,7 +125,7 @@ function TopicList({ content, type, showSideBar }) {
         if (!user || topic.title === "Topic template") return null;
 
         return (
-            <Card variant="dark" className={"Topic-card Topic-card-" + type}>
+            <Card id={`topic-card-${topic.id}`} variant="dark" className={"Topic-card Topic-card-" + type}>
                 {checkContentType(topic.cover) === 'video' ? (
                     <video
                         ref={videoRef}
@@ -108,6 +152,11 @@ function TopicList({ content, type, showSideBar }) {
                     </Card.Subtitle>
                     <Card.Text>{truncateString(topic.description)}</Card.Text>
                     <Card.Link href={`/t/${user.id}/${topic.id}`}>{t('readTopic')}</Card.Link>
+                    {isMyTopicsPage && (
+                        <Card.Link onClick={handleDelete} style={{ color: 'red', cursor: 'pointer' }}>
+                            {t('deleteTopic')}
+                        </Card.Link>
+                    )}
                 </Card.Body>
             </Card>
         );
@@ -116,8 +165,8 @@ function TopicList({ content, type, showSideBar }) {
     return (
         content && (
             <div className={"Topic-list-container-" + type}>
-                {content.sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).map((item, index) => (
-                    <TopicCard key={index} topic={item} type={type} />
+                {visibleTopics.map((topic) => (
+                    <TopicCard key={topic.id} type={type} topic={topic} onDelete={() => handleRemove(topic.id)} />
                 ))}
             </div>
         )

@@ -40,6 +40,7 @@
     "shareMessage": "Check out how d-FCT is fact-checking \"{}\":",
     "closeButton": "Close",
     "deleteTopic": "Delete topic",
+    "confirmDeleteTopic": "Are you sure you want to delete this topic?",
     "publishTopic": "Publish topic",
     "topicCreationFailed": "Oops, failed to create topic. Try again later.",
     "fetchURLError": "Oops, error fetching URL. Hint: submit screenshots and/or text content for context.",
@@ -81,7 +82,7 @@
     "searchPlaceholder": "Search topics, claims, content...",
     "noResultsFound": "No topics found for your search.",
     "relatedTopicsFound": "Related topics found",
-    "relatedTopicsIntro": "We found these topics related to the submitted content. You may review them or create a new one.",
+    "relatedTopicsIntro": "We found the following topics related to the submitted content, you may review them before creating a new one.",
     "cancel": "Cancel",
     "createNewTopicAnyway": "Submit new topic"
 }

@@ -54,6 +54,7 @@
     "shareMessage": "Veja como o d-FCT está verificando fatos sobre \"{}\":",
     "closeButton": "Fechar",
     "deleteTopic": "Remover tópico",
+    "confirmDeleteTopic": "Tem certeza de que deseja excluir este tópico?",
     "publishTopic": "Publicar tópico",
     "topicCreationFailed": "Oops, falha ao criar tópico. Tente novamente mais tarde.",
     "fetchURLError": "Oops, erro ao buscar URL. Dica: envie capturas de tela e/ou texto como contexto.",
@@ -95,7 +96,7 @@
     "searchPlaceholder": "Pesquisar tópicos, alegações, conteúdo...",
     "noResultsFound": "Nenhum tópico encontrado para sua pesquisa.",
     "relatedTopicsFound": "Tópicos relacionados encontrados",
-    "relatedTopicsIntro": "Encontramos estes tópicos que relacionados ao conteúdo enviado. Você pode revisá-los ou criar um novo.",
+    "relatedTopicsIntro": "Encontramos os seguintes tópicos relacionados ao conteúdo enviado, você pode revisá-los antes de criar um novo.",
     "cancel": "Cancelar",
-    "createNewTopicAnyway": "Enviar novo tópico"
+    "createNewTopicAnyway": "Submeter tópico"
 }

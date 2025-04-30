@@ -435,6 +435,7 @@
   background-color: #2b303a; /* Matching background color */
   padding: 0.5rem 0;
   border-bottom: 1px solid #dee2e68c;
+  width: 95%;
 }
 
 @media only screen and (min-width: 1024px) {
