@@ -74,6 +74,8 @@ function NavBar(props) {
             {' ' + props.userData.username}
         </Container>
     )
+    // hide when on landing and not logged
+    // if (window.location.pathname === '/' && !props.userData) return null;
     return (
         <Navbar
             data-bs-theme="dark"
@@ -93,12 +95,15 @@ function NavBar(props) {
                         className="d-inline-block align-top Navbar-brand-img"
                     />{' '}
 
-                    <section className="inline">
-                        <ReactTextTransition springConfig={presets.gentle} inline>
-                            {brandText[brandIndex % brandText.length]}
-                        </ReactTextTransition>
-                        {suffixText[suffixIndex % suffixText.length]}
-                    </section>
+                    {props.userData && (
+                        <section className="inline">
+                            <ReactTextTransition springConfig={presets.gentle} inline>
+                                {brandText[brandIndex % brandText.length]}
+                            </ReactTextTransition>
+                            {suffixText[suffixIndex % suffixText.length]}
+                        </section>
+                    )}
+                    {!props.userData && ('d-FCT')}
 
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -123,13 +128,7 @@ function NavBar(props) {
                         <Nav.Link onClick={() => {
                             window.open('https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true')
                         }}>{t('learnMore')}</Nav.Link>
-                        {
-                            !props.userData && (
-                                <Nav.Link onClick={() => {
-                                    login()
-                                }}>{t('logIn')}</Nav.Link>
-                            )
-                        }
+
                         <NavDropdown title={t('language')} id="navbar-dropdown">
                             <NavDropdown.Item onClick={() => { changeLanguage('pt'); setExpanded(false) }}>
                                 🇧🇷 Português (BR) {i18n.language.split('-')[0] === 'pt' ? <div className="Navbar-checkmark" /> : ''}
@@ -139,6 +138,15 @@ function NavBar(props) {
                                 🇺🇸 English (US) {i18n.language.split('-')[0] === 'en' ? <div className="Navbar-checkmark" /> : ''}
                             </NavDropdown.Item>
                         </NavDropdown>
+
+                        {
+                            !props.userData && (
+                                <Nav.Link onClick={() => {
+                                    login()
+                                }}>{t('logIn')}</Nav.Link>
+                            )
+                        }
+
                         {
                             props.userData && (
                                 <NavDropdown title={userMenu} id="navbar-dropdown">
