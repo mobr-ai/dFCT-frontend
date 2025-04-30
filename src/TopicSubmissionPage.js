@@ -19,6 +19,7 @@ import FileUploadArea from './components/FileUploadArea.js';
 import URLInputField from './components/URLInputField.js';
 import ContextInputField from './components/ContextInputField.js';
 import SubmissionControls from './components/SubmissionControls.js';
+import RelatedTopicsModal from './components/RelatedTopicsModal.js';
 
 i18n
   .use(detector)
@@ -60,6 +61,8 @@ function TopicSubmissionPage() {
   const [showUserTopics, setShowUserTopics] = useState(false)
   const [topicId, setTopicId] = useState()
   const [urls, setURLs] = useState([])
+  const [relatedTopics, setRelatedTopics] = useState([]);
+  const [showRelatedTopicsModal, setShowRelatedTopicsModal] = useState(false);
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -76,6 +79,26 @@ function TopicSubmissionPage() {
     document.getElementsByClassName("Submission-middle-column")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, []);
+
+  // Checks for related topics (based on files hash) before creating a new one
+  const checkForRelatedTopics = async () => {
+    const hashes = hash.map(file => file.hash);
+
+    const response = await fetch('/api/check_related_topics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hashes }),
+    });
+
+    const result = await response.json();
+    if (result.topics && result.topics.length > 0) {
+      setRelatedTopics(result.topics);
+      setShowRelatedTopicsModal(true);
+      return true;
+    }
+    return false;
+  };
+
 
   // Displays error on drop zone
   const showError = useCallback((msg = null, clear = false) => {
@@ -217,7 +240,7 @@ function TopicSubmissionPage() {
         setShowURLs(true)
         setFetching(false)
 
-        // if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
+        if (document.querySelector("#input-process-button")) document.querySelector("#input-process-button").scrollIntoView({ behavior: "smooth", block: "center" })
         document.getElementById('input-url-text').value = ""
       }
 
@@ -238,6 +261,13 @@ function TopicSubmissionPage() {
       setFetching(true)
     }
   }
+
+  const handleProcessClick = async () => {
+    const hasRelated = await checkForRelatedTopics();
+    if (!hasRelated) {
+      processTopic(); // no related topic found based on hash
+    }
+  };
 
   const processTopic = () => {
 
@@ -365,7 +395,7 @@ function TopicSubmissionPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                <SubmissionControls loading={loading} processContent={processTopic} files={files} t={t} />
+                <SubmissionControls loading={loading} processContent={handleProcessClick} files={files} t={t} />
               </>
             )}
 
@@ -383,6 +413,15 @@ function TopicSubmissionPage() {
           </Await>
         </Suspense>
       )}
+      <RelatedTopicsModal
+        show={showRelatedTopicsModal}
+        onClose={() => setShowRelatedTopicsModal(false)}
+        onProceed={() => {
+          setShowRelatedTopicsModal(false);
+          processTopic(); // user proceeds anyway
+        }}
+        topics={relatedTopics}
+      />
     </div>
   );
 }

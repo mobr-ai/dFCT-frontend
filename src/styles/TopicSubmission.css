@@ -307,6 +307,22 @@
   justify-content: space-evenly;
 }
 
+.Submission-related-modal-header {
+  background-color: #37474fff;
+  color: lightgray;
+  font-family: monospace;
+}
+
+.Submission-related-modal-body {
+  background-color: #343a40;
+  color: lightgray;
+}
+
+.Submission-related-modal-footer {
+  background-color: #343a40;
+  color: lightgray;
+}
+
 #input-url-button {
   font-family: monospace;
   font-size: small;

@@ -79,5 +79,9 @@
     "shareMessageIntro": "Join me on d-FCT, a reward-driven solution for transparent fact-verification",
     "shareMessageOutro": "#dFCT #DecentralizedFactChecking #Web3 #InfoFi",
     "searchPlaceholder": "Search topics, claims, content...",
-    "noResultsFound": "No topics found for your search."
+    "noResultsFound": "No topics found for your search.",
+    "relatedTopicsFound": "Related topics found",
+    "relatedTopicsIntro": "We found these topics that may be related to your submission. You may review them before creating a new one.",
+    "cancel": "Cancel",
+    "createNewTopicAnyway": "Submit new topic"
 }
