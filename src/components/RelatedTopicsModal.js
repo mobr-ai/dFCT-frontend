@@ -33,7 +33,7 @@ const RelatedTopicsModal = ({ show, onClose, onProceed, topics }) => {
             </Modal.Body>
             <Modal.Footer className='Submission-related-modal-footer'>
                 <Button variant="secondary" onClick={onClose}>
-                    {t('cancel')}
+                    {t('addMoreFilesButton')}
                 </Button>
                 <Button variant="primary" onClick={onProceed}>
                     {t('createNewTopicAnyway')}

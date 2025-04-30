@@ -83,6 +83,7 @@
     "noResultsFound": "No topics found for your search.",
     "relatedTopicsFound": "Related topics found",
     "relatedTopicsIntro": "We found the following topics related to the submitted content, you may review them before creating a new one.",
+    "addMoreFilesButton": "Add more files",
     "cancel": "Cancel",
     "createNewTopicAnyway": "Submit new topic"
 }

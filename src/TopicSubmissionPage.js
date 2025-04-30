@@ -81,23 +81,23 @@ function TopicSubmissionPage() {
   }, []);
 
   // Checks for related topics (based on files hash) before creating a new one
-  const checkForRelatedTopics = async () => {
-    const hashes = hash.map(file => file.hash);
+  // const checkForRelatedTopics = async () => {
+  //   const hashes = hash.map(file => file.hash);
 
-    const response = await fetch('/api/check_related_topics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ hashes }),
-    });
+  //   const response = await fetch('/api/check_related_topics', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ hashes }),
+  //   });
 
-    const result = await response.json();
-    if (result.topics && result.topics.length > 0) {
-      setRelatedTopics(result.topics);
-      setShowRelatedTopicsModal(true);
-      return true;
-    }
-    return false;
-  };
+  //   const result = await response.json();
+  //   if (result.topics && result.topics.length > 0) {
+  //     setRelatedTopics(result.topics);
+  //     setShowRelatedTopicsModal(true);
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
 
   // Displays error on drop zone
@@ -177,12 +177,28 @@ function TopicSubmissionPage() {
     const allUploaded = files.every(file => uploadProgress[file.name] === 100);
 
     if (allUploaded && files.length > 0) {
-      files.forEach((f) => f.completed = true)
+      files.forEach((f) => f.completed = true);
       setDropMsg(t('addMoreFiles'));
       setLoading(false);
       setShowProgress(false);
+
+      // 👇 Call related topic check in background
+      (async () => {
+        const hashes = hash.map(file => file.hash);
+        const response = await fetch('/api/check_related_topics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hashes }),
+        });
+
+        const result = await response.json();
+        if (result.topics && result.topics.length > 0) {
+          setRelatedTopics(result.topics);
+          setShowRelatedTopicsModal(true);
+        }
+      })();
     }
-  }, [uploadProgress, files, setLoading, t]);
+  }, [uploadProgress, files, setLoading, t, hash]);
 
   // Handle files passed via navigate()
   useEffect(() => {
@@ -262,12 +278,12 @@ function TopicSubmissionPage() {
     }
   }
 
-  const handleProcessClick = async () => {
-    const hasRelated = await checkForRelatedTopics();
-    if (!hasRelated) {
-      processTopic(); // no related topic found based on hash
-    }
-  };
+  // const handleProcessClick = async () => {
+  //   const hasRelated = await checkForRelatedTopics();
+  //   if (!hasRelated) {
+  //     processTopic(); // no related topic found based on hash
+  //   }
+  // };
 
   const processTopic = () => {
 
@@ -395,7 +411,7 @@ function TopicSubmissionPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                <SubmissionControls loading={loading} processContent={handleProcessClick} files={files} t={t} />
+                <SubmissionControls loading={loading} processContent={processTopic} files={files} t={t} />
               </>
             )}
 
