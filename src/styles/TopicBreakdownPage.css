@@ -191,6 +191,10 @@
   display: inline-flex;
 }
 
+.badge:hover {
+  background-color: darkslategray;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 5px;
@@ -283,4 +287,25 @@
 
 .Breakdown-scroll-up:hover {
   opacity: 1;
+}
+
+.Breakdown-hashtag {
+  display: inline-block;
+  background-color: lightslategray;
+  /* color: #39739d; */
+  padding: 0.35em 0.6em;
+  margin: 0.2em;
+  border-radius: 999px;
+  font-size: 0.8em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.Breakdown-hashtag:hover {
+  background: linear-gradient(90deg, #313b3f 0, #228c91);
+  color: white;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

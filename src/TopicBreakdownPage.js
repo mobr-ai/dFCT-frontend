@@ -33,8 +33,10 @@ function getHashtags(contentList, jsx = false, limit = 5, onClickTag = () => { }
         return tags.map((tag) => (
             <div key={tag} className='Breakdown-topic-claims-tag'>
                 <Badge
+                    key={tag}
+                    className="Breakdown-hashtag"
                     bg="secondary"
-                    style={{ cursor: 'pointer' }}
+                    // style={{ cursor: 'pointer' }}
                     onClick={() => onClickTag(tag)}
                 >
                     #{tag}
