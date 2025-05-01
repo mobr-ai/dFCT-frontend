@@ -68,3 +68,42 @@
     overflow: hidden;
   }
 }
+
+.Topic-card {
+  background: rgb(255, 255, 255);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 16px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.Topic-card:hover {
+  background: rgba(231, 247, 255, 0.938);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: scale(1.015);
+}
+
+.Topic-card:hover .card-title::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    rgba(255, 255, 255, 0.308),
+    transparent
+  );
+  animation: shine 0.8s ease-in-out forwards;
+}
+
+@keyframes shine {
+  100% {
+    left: 100%;
+  }
+}
