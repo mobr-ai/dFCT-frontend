@@ -1,5 +1,7 @@
 import './../styles/TopicList.css'
 import Card from 'react-bootstrap/Card';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRef, useEffect, useState } from 'react';
@@ -125,7 +127,23 @@ function TopicList({ content, type, showSideBar }) {
         if (!user || topic.title === "Topic template") return null;
 
         return (
-            <Card id={`topic-card-${topic.id}`} variant="dark" className={"Topic-card Topic-card-" + type}>
+            <Card
+                id={`topic-card-${topic.id}`}
+                variant="dark"
+                className={"Topic-card Topic-card-" + type}
+                onClick={() => navigate(`/t/${user.id}/${topic.id}`)}
+            >
+                {isMyTopicsPage && (
+                    <button
+                        className="Topic-delete-btn"
+                        onClick={(e) => {
+                            e.stopPropagation(); // prevent triggering card click
+                            handleDelete();
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                )}
                 {checkContentType(topic.cover) === 'video' ? (
                     <video
                         ref={videoRef}
@@ -151,12 +169,6 @@ function TopicList({ content, type, showSideBar }) {
                         {t('Updated') + " " + (getElapsedTime(topic.timestamp) === "1s" ? t('moments ago') : getElapsedTime(topic.timestamp) + " " + t('ago'))}
                     </Card.Subtitle>
                     <Card.Text>{truncateString(topic.description)}</Card.Text>
-                    <Card.Link href={`/t/${user.id}/${topic.id}`}>{t('readTopic')}</Card.Link>
-                    {isMyTopicsPage && (
-                        <Card.Link onClick={handleDelete} style={{ color: 'red', cursor: 'pointer' }}>
-                            {t('deleteTopic')}
-                        </Card.Link>
-                    )}
                 </Card.Body>
             </Card>
         );

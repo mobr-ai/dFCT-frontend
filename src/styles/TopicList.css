@@ -70,6 +70,7 @@
 }
 
 .Topic-card {
+  position: relative;
   background: rgb(255, 255, 255);
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(6px);
@@ -106,4 +107,25 @@
   100% {
     left: 100%;
   }
+}
+
+.Topic-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(119, 136, 153, 0.9);
+  border: none;
+  border-radius: 50%;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  line-height: normal;
+}
+
+.Topic-delete-btn:hover {
+  /* background: rgba(220, 53, 69, 0.9); Bootstrap red */
+  background: rgba(47, 79, 79, 0.8);
+  color: white;
+  transform: scale(1.1);
 }
