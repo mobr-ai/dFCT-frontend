@@ -80,26 +80,6 @@ function TopicSubmissionPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, []);
 
-  // Checks for related topics (based on files hash) before creating a new one
-  // const checkForRelatedTopics = async () => {
-  //   const hashes = hash.map(file => file.hash);
-
-  //   const response = await fetch('/api/check_related_topics', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ hashes }),
-  //   });
-
-  //   const result = await response.json();
-  //   if (result.topics && result.topics.length > 0) {
-  //     setRelatedTopics(result.topics);
-  //     setShowRelatedTopicsModal(true);
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
-
   // Displays error on drop zone
   const showError = useCallback((msg = null, clear = false) => {
     if (clear) {
@@ -124,11 +104,12 @@ function TopicSubmissionPage() {
     setLoading(false)
   }, [dropMsg, setLoading, t])
 
-  // Checks if a topic already exists and creat a template if not
+  // Checks if a topic already exists and create a template if not
   const checkTopic = useCallback(callback => {
     if (!topicId) {
       request
         .put('/topic/' + user.id)
+        .set('Authorization', `Bearer ${user.access_token}`)
         .send({ 'title': 'Topic template' })
         .send({ 'description': 'This is a new topic' })
         .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
@@ -182,12 +163,15 @@ function TopicSubmissionPage() {
       setLoading(false);
       setShowProgress(false);
 
-      // 👇 Call related topic check in background
+      // Call related topic check in background
       (async () => {
         const hashes = hash.map(file => file.hash);
         const response = await fetch('/api/check_related_topics', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.access_token}`
+          },
           body: JSON.stringify({ hashes }),
         });
 
@@ -198,7 +182,7 @@ function TopicSubmissionPage() {
         }
       })();
     }
-  }, [uploadProgress, files, setLoading, t, hash]);
+  }, [uploadProgress, files, setLoading, t, hash, user.access_token]);
 
   // Handle files passed via navigate()
   useEffect(() => {
@@ -269,6 +253,7 @@ function TopicSubmissionPage() {
 
       request
         .post('/fetch_url')
+        .set('Authorization', `Bearer ${user.access_token}`)
         .send({ "url": document.getElementById('input-url-text').value })
         .set('Accept', 'application/json')
         .then(metaSuccess, metaError)
@@ -295,7 +280,9 @@ function TopicSubmissionPage() {
       }
 
       // create request to process content
-      request.post("/process")
+      request
+        .post("/process")
+        .set('Authorization', `Bearer ${user.access_token}`)
         .send({
           files: hash.map(file => ({
             name: file.name,
@@ -345,7 +332,16 @@ function TopicSubmissionPage() {
       // request progress and wait for topic to be processed
       while (nextProgress >= 0 && nextProgress < 100) {
         // request synchronously to check progress
-        await request.post("/check").send(topic).then((res) => checkStatus(res))
+        // await request.post("/check",).send(topic).then((res) => checkStatus(res))
+        await request
+          .post("/check")
+          .set('Authorization', `Bearer ${user.access_token}`)
+          .send(topic)
+          .then((res) => checkStatus(res))
+          .catch((err) => {
+            showError(t('topicCreationFailed'))
+            console.log("Topic (id = " + topicId + ") processing failed: [" + err + "]")
+          });
         await sleep(2000);
       }
 

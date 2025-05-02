@@ -111,6 +111,10 @@
 .Auth-input-label {
   background: lightslategrey;
   color: white;
+  width: 3rem;
+  justify-content: center;
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
 }
 
 .Auth-alternative-link {
@@ -151,4 +155,23 @@
 
 .Auth-oauth-button:hover {
   background-color: lightslategray;
+}
+
+.Auth-password-eye {
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.Auth-password-eye:hover {
+  color: rgba(55, 71, 79, 0.808); /* A subtle dark gray on hover */
+}
+
+.Auth-email-input {
+  border-top-right-radius: 1rem !important;
+  border-bottom-right-radius: 1rem !important;
+}
+
+.Auth-password-input {
+  border-top-right-radius: 1rem !important;
+  border-bottom-right-radius: 1rem !important;
 }

@@ -94,7 +94,13 @@ function LandingPage(props) {
       else if (props.type === 'all') {
         request = `/api/topics/${lang}/${newPage}/${perPage}`
       }
-      const response = await fetch(request);
+      const response = await fetch(request, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.access_token}`
+        }
+      });
       const data = await response.json();
 
       if (data.topics.length === 0) {
@@ -219,7 +225,7 @@ function LandingPage(props) {
         setSearching(true);
         setSearchLoading(true); // Start loading indicator
 
-        const response = await fetch(`/api/search/${user.id}?q=${encodeURIComponent(query)}&lang=${lang}`);
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&lang=${lang}`);
         const data = await response.json();
 
         setSearchResults(data.topics);

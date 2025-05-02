@@ -1,15 +1,16 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { useState, useEffect, useCallback } from 'react';
 import reactStringReplace from 'react-string-replace';
 import Image from 'react-bootstrap/Image';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import { useTranslation } from "react-i18next";
+import { useState, useEffect, useCallback } from 'react';
 import { NavLink, useOutletContext } from "react-router-dom";
 import { useGoogleLogin } from '@react-oauth/google';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 import "./styles/AuthPage.css"
 import LoadingPage from "./LoadingPage";
@@ -17,11 +18,51 @@ import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
     const { t } = useTranslation();
-    const [processing,] = useState(false)
+    const [processing, setProcessing] = useState(false)
     const [email, setEmail] = useState()
     const [pass, setPass] = useState()
-    const { handleLogin, setLoading, loading } = useOutletContext();
+    const { handleLogin, setLoading, loading, showToast } = useOutletContext();
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordInput, setPasswordInput] = useState('');
 
+
+
+    const handleEmailAuth = async () => {
+        const endpoint = props.type === 'create' ? '/api/register' : '/api/login';
+        setProcessing(true)
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    password: pass,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Auth failed: ', errorData.error);
+                showToast(t(errorData.error))
+                setProcessing(false)
+                setPass('')
+                return;
+            }
+            const data = await response.json();
+            console.log('Auth success:', data);
+
+            // Save token to localStorage or context
+            localStorage.setItem('access_token', data.access_token);
+            // set user context here if needed
+            handleLogin(data);  // if context
+
+        } catch (error) {
+            console.error('Auth error:', error);
+            showToast(t('registerError'))
+            setProcessing(false)
+            setPass('')
+        }
+    };
 
     const handleAuthStep = () => {
         let newEmail = document.querySelector("#Auth-input-text")?.value
@@ -43,7 +84,7 @@ function AuthPage(props) {
         const defaultOptions = {
             headers: {
                 'Content-Type': 'application/json',
-                ...(props.userData?.token && { 'Authorization': `Bearer ${props.userData.token}` }),
+                ...(props.userData?.token && { 'Authorization': `Bearer ${props.userData.access_token}` }),
             },
         };
 
@@ -87,6 +128,11 @@ function AuthPage(props) {
         },
     });
 
+    useEffect(() => {
+        if (email && pass && !processing) {
+            handleEmailAuth()
+        }
+    })
 
     return (
         <Container className="Auth-body-wrapper" fluid>
@@ -134,21 +180,33 @@ function AuthPage(props) {
                         )}
                         {email && (
                             <InputGroup className="Auth-input-pass" size="md">
-                                <InputGroup.Text className="Auth-input-label">*</InputGroup.Text>
+                                <InputGroup.Text
+                                    className="Auth-input-label Auth-password-eye"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <FontAwesomeIcon icon={!showPassword ? faEyeSlash : faEye} />
+                                </InputGroup.Text>
                                 <Form.Control
                                     id="Auth-input-password-text"
                                     className='Auth-password-input'
                                     aria-label="Enter password"
                                     aria-describedby="Auth-help-msg"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Password"
                                     size="md"
-                                />
+                                    value={passwordInput}
+                                    onChange={(e) => setPasswordInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();  // prevent default form submission
+                                            setPass(passwordInput);  // commit on Enter
+                                        }
+                                    }} />
                                 <Form.Text id="Auth-help-msg" muted />
                             </InputGroup>
                         )}
                         {(email && props.type === 'login') && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
-
 
                         <Button
                             className="Auth-input-button"

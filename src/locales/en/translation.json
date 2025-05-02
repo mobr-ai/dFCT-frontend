@@ -52,6 +52,9 @@
     "mailPlaceholder": "user@dfc.to",
     "authNextStep": "Continue",
     "forgotPass": "Forgot your password?",
+    "registerError": "Oops! We currently uanble to register your account. Please try again later.",
+    "userExistsError": "It seems your user is already registered. Please try to login or click 'Forgot your password?' to choose a new password.",
+    "loginError": "Invalid e-mail and/or password does not match. Please try again or click 'Forgot your password?' to choose another one.",
     "loginAlternativeMsg": "Already have an account? {}",
     "signUpAlternativeMsg": "Don't have an account? {}",
     "loginButton": "Log in",
@@ -85,5 +88,11 @@
     "relatedTopicsIntro": "We found the following topics related to the submitted content, you may review them before creating a new one.",
     "addMoreFilesButton": "Add more files",
     "cancel": "Cancel",
-    "createNewTopicAnyway": "Submit new topic"
+    "createNewTopicAnyway": "Submit new topic",
+    "llmEngine": "Preferred LLM Engine",
+    "selectAnOption": "Select an option",
+    "allEngines": "All Engines Combined",
+    "premiumOnly": "Premium only",
+    "settingsSaved": "Settings successfully updated",
+    "settingsFailed": "Oops! Error updating settings, please try again later"
 }

@@ -12,14 +12,15 @@ import avatarImg from "./icons/avatar.png";
 
 function SettingsPage() {
     const { t, i18n } = useTranslation();
-    const { user, showToast } = useOutletContext();
+    const { user, setUser, showToast } = useOutletContext();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
+    const parsedSettings = JSON.parse((user && user.settings) ? user.settings : '{}');
     const navigate = useNavigate()
 
     // Redirect when not logged
     useEffect(() => {
-        if (!user) navigate('/')
+        if (!user || !user.id || !user.access_token) navigate('/')
     }, [user, navigate])
 
     const handleLanguageChange = (e) => {
@@ -57,6 +58,31 @@ function SettingsPage() {
             .then(() => showToast(t('copiedToClipboard'), 'success'))
             .catch(() => showToast(t('copyFailed'), 'danger'));
     };
+
+    async function saveSettings(updatedSettings) {
+        try {
+
+            const token = user.access_token;
+            const response = await fetch(`/user/${user.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ settings: updatedSettings })
+            });
+            const data = await response.json();
+            console.log(data);
+            setUser(prev => ({
+                ...prev,
+                settings: JSON.stringify(updatedSettings)
+            }));
+            showToast(t('settingsSaved'), 'success');  // trigger toast when successful
+        } catch (error) {
+            console.error('Error updating settings:', error);
+            showToast(t('settingsFailed'), 'danger')
+        }
+    }
 
     return (
         user && (
@@ -104,6 +130,27 @@ function SettingsPage() {
                                 <option value="en">🇺🇸 English (US)</option>
                                 <option value="pt">🇧🇷 Português (BR)</option>
                             </Form.Select>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>{t('llmEngine')}</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={parsedSettings.llmEngine || ''}
+                                onChange={(e) => {
+                                    const updatedSettings = {
+                                        ...JSON.parse(user.settings || '{}'),
+                                        llmEngine: e.target.value
+                                    };
+                                    saveSettings(updatedSettings);
+                                }}
+                            >
+                                <option value="">{t('selectAnOption')}</option>
+                                <option value="openai">OpenAI</option>
+                                <option value="xai">xAI</option>
+                                <option value="deepseek" disabled>Deepseek</option>
+                                <option value="anthropic" disabled>Anthropic</option>
+                                <option value="all" disabled>{t('allEngines')} ({t('premiumOnly')})</option>
+                            </Form.Control>
                         </Form.Group>
                     </Form>
                 </Container>

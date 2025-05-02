@@ -33,7 +33,6 @@ function Layout() {
       window.sessionStorage.setItem("userData", JSON.stringify(userData))
       navigate("/")
       setLoading(false)
-
     }
     else {
       setUser(null)
@@ -46,7 +45,7 @@ function Layout() {
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} sidebarIsOpen={sidebarOpen} />
-      <Outlet context={{ user, loading, setLoading, handleLogin, showToast }} />
+      <Outlet context={{ user, setUser, loading, setLoading, handleLogin, showToast }} />
       <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
         <Toast
           bg={toast.variant}
@@ -80,12 +79,18 @@ const allTopicsLoader = async () => {
   return defer({ allTopicsPromise });
 };
 
-const fetchUserTopics = async (userId) => {
+const fetchUserTopics = async (userData) => {
   const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
   const page = window.sessionStorage.getItem("topicsPage") || 1
   const perPage = window.sessionStorage.getItem("perPage") || 9
 
-  const response = await fetch(`/api/user/${userId}/topics/${lang}/${page}/${perPage}`)
+  const response = await fetch(`/api/user/${userData.id}/topics/${lang}/${page}/${perPage}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${userData.access_token}`
+    }
+  });
   return await response.json();
 }
 
@@ -95,7 +100,7 @@ const userTopicsLoader = async () => {
 
   let userData = JSON.parse(window.sessionStorage.userData)
   if (userData && userData.id) {
-    const userTopicsPromise = fetchUserTopics(userData.id);
+    const userTopicsPromise = fetchUserTopics(userData);
     return defer({ userTopicsPromise });
   }
 
@@ -110,7 +115,7 @@ const fetchTopic = async (userId, topicId, signal) => {
 }
 
 const topicLoader = async (dynData) => {
-  const userTopicsPromise = fetchUserTopics(dynData.params.userId, dynData.request.signal);
+  const userTopicsPromise = await userTopicsLoader()
   const topicPromise = fetchTopic(dynData.params.userId, dynData.params.topicId, dynData.request.signal);
   return defer({ topicPromise, userTopicsPromise });
 };

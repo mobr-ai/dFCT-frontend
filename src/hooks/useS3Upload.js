@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useOutletContext } from "react-router-dom";
 import SparkMD5 from 'spark-md5';
 
 export function useS3Upload() {
     const [uploadProgress, setUploadProgress] = useState({});
     const [errors, setErrors] = useState({});
     const [files, setFiles] = useState([])
+    const { user } = useOutletContext();
 
     async function calculateHash(file) {
         return new Promise(resolve => {
@@ -28,7 +30,7 @@ export function useS3Upload() {
             body: formData,
         });
 
-        onProgress(100); // You can improve this by implementing real progress tracking
+        onProgress(100); // TODO: improve this with real progress tracking
     }
 
     async function handleUploads(files, topicId) {
@@ -40,7 +42,10 @@ export function useS3Upload() {
 
         const response = await fetch('/sign_s3', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.access_token}`
+            },
             body: JSON.stringify({ files: fileArgs, topic_id: topicId }),
         });
 
