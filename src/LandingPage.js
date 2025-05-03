@@ -17,6 +17,8 @@ import LoadingPage from './LoadingPage.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlassArrowRight, faMagnifyingGlass, faTimes, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup, FormControl } from 'react-bootstrap';
+import { useAuthRequest } from './hooks/useAuthRequest';
+
 
 i18n
   .use(detector)
@@ -34,11 +36,11 @@ function LandingPage(props) {
   const { t } = useTranslation();
   const { userTopicsPromise, allTopicsPromise } = useLoaderData()
   const { user, loading, setLoading } = useOutletContext();
+  const { authFetch } = useAuthRequest(user);
   const brandText = ['d-', 'de', 'fact', 'tool'];
   const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
   const [brandIndex, setBrandIndex] = useState(1);
   const [suffixIndex, setSuffixBrandIndex] = useState(1);
-  const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [totalTopics, setTotalTopics] = useState()
   const [page, setPage] = useState(1);
@@ -54,7 +56,7 @@ function LandingPage(props) {
   const params = new URLSearchParams(location.search);
   const initialQuery = params.get('q') ? "#" + params.get('q') : '';
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-
+  const navigate = useNavigate();
 
   // Trigger search when initialQuery changes
   useEffect(() => {
@@ -88,18 +90,17 @@ function LandingPage(props) {
       const perPage = window.sessionStorage.getItem("perPage") || 9
       const lang = i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
       var request = ''
+
       if (props.type === 'user') {
         request = `/api/user/${user.id}/topics/${lang}/${newPage}/${perPage}`
       }
       else if (props.type === 'all') {
         request = `/api/topics/${lang}/${newPage}/${perPage}`
       }
-      const response = await fetch(request, {
+
+      const response = await authFetch(request, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.access_token}`
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
       const data = await response.json();
 
@@ -118,7 +119,7 @@ function LandingPage(props) {
     finally {
       setLoadingMore(false);
     }
-  }, [setTopics, setPage, user, page, topics, props.type]);
+  }, [setTopics, setPage, user, page, topics, props.type, authFetch]);
 
   useEffect(() => {
     const scrollElement = document.querySelector('.Landing-middle-column');

@@ -12,6 +12,7 @@ import FileUploadArea from './FileUploadArea.js';
 import URLInputField from './URLInputField.js';
 import ContextInputField from './ContextInputField.js';
 import SubmissionControls from './SubmissionControls.js';
+import { useAuthRequest } from '../hooks/useAuthRequest';
 
 
 function EvidenceModal(props) {
@@ -31,6 +32,7 @@ function EvidenceModal(props) {
     const [, setShowURLs] = useState(false)
     const [fetching, setFetching] = useState(false)
     const { user } = useOutletContext();
+    const { authRequest } = useAuthRequest(user);
     const { uploadProgress, handleUploads, hash } = useS3Upload();
 
 
@@ -178,9 +180,8 @@ function EvidenceModal(props) {
             // request progress and wait for topic to be processed
             while (nextProgress >= 0 && nextProgress < 100) {
                 // request synchronously to check progress
-                await request
+                await authRequest
                     .post("/check")
-                    .set('Authorization', `Bearer ${user.access_token}`)
                     .send(topic)
                     .then((res) => checkStatus(res))
                 await sleep(2000);
@@ -204,9 +205,8 @@ function EvidenceModal(props) {
             setDisableDrop(true);
             setLoading(true);
 
-            request
+            authRequest
                 .post("/process_evidence")
-                .set('Authorization', `Bearer ${user.access_token}`)
                 .send({
                     files: hash.map(file => ({
                         name: file.name,

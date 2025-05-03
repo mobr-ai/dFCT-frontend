@@ -69,6 +69,7 @@
     "registerError": "Oops! Estamos com problemas para registrar sua conta. Por favor, tente novamente mais tarde.",
     "userExistsError": "Parece que seu e-mail já está registrado. Tente fazer login ou clique em 'Esqueceu a senha?' para escolher uma nova senha.",
     "loginError": "E-mail inválido e/ou senha não confere. Tente novamente ou clique em 'Esqueceu a senha?' para escolher outra.",
+    "sessionExpired": "Sua sessão expirou. Por favor, realize login novamente.",
     "loginAlternativeMsg": "Já tem uma conta? {}",
     "signUpAlternativeMsg": "Não tem uma conta? {}",
     "loginButton": "Entrar",

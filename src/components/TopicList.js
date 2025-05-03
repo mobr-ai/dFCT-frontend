@@ -5,10 +5,13 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRef, useEffect, useState } from 'react';
+import { useAuthRequest } from '../hooks/useAuthRequest';
+
 
 function TopicList({ content, type, showSideBar }) {
     const [visibleTopics, setVisibleTopics] = useState(content);
     const { user, setLoading } = useOutletContext();
+    const { authFetch } = useAuthRequest(user);
 
     useEffect(() => {
         setVisibleTopics(content);
@@ -82,18 +85,14 @@ function TopicList({ content, type, showSideBar }) {
             if (!window.confirm(t('confirmDeleteTopic'))) return;
 
             try {
-                const token = localStorage.getItem("token");
-                const res = await fetch(`/topic/${user.id}/${topic.id}`, {
-                    method: "DELETE",
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const response = await authFetch(`/topic/${user.id}/${topic.id}`, {
+                    method: 'DELETE'
                 });
 
-                if (res.ok) {
+                if (response.ok) {
                     onDelete(); // call parent callback to animate removal
                 } else {
-                    const error = await res.json();
+                    const error = await response.json();
                     alert(error.error || "Error deleting topic");
                 }
             } catch (err) {

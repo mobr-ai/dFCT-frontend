@@ -1,20 +1,20 @@
 import './styles/index.css';
 import React, { useState, useCallback } from 'react';
-import { Toast, ToastContainer } from 'react-bootstrap';
 import ReactDOM from 'react-dom/client';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import LandingPage from './LandingPage';
 import Header from './Header'
 import ErrorPage from "./ErrorPage";
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
 import TopicBreakdownPage from './TopicBreakdownPage';
 import TopicSubmissionPage from './TopicSubmissionPage';
 import AuthPage from './AuthPage';
 import WaitingList from './WaitingListPage';
 import SettingsPage from './SettingsPage';
 import i18n from "i18next";
-
+import { Toast, ToastContainer } from 'react-bootstrap';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from "react-router-dom";
+// import { redirect } from 'react-router';
 
 function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,7 +46,7 @@ function Layout() {
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
       <Header userData={user} setLoading={setLoading} setUser={handleLogin} setSidebarOpen={setSidebarOpen} sidebarIsOpen={sidebarOpen} />
       <Outlet context={{ user, setUser, loading, setLoading, handleLogin, showToast }} />
-      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+      <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>
         <Toast
           bg={toast.variant}
           onClose={() => setToast({ ...toast, show: false })}
@@ -88,9 +88,18 @@ const fetchUserTopics = async (userData) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${userData.access_token}`
-    }
+      'Authorization': `Bearer ${userData.access_token}`,
+    },
   });
+
+  if (response.status === 401) {
+    console.warn('Unauthorized: redirecting to /login');
+    window.sessionStorage.removeItem('userData')
+    window.location.href = '/login?sessionExpired=1';
+    // return redirect('/login?sessionExpired=1');
+    // return <Navigate to="/login" replace />;
+  }
+
   return await response.json();
 }
 

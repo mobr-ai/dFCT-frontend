@@ -6,7 +6,6 @@ import TopicSidebar from './TopicSidebar.js';
 import URLCardList from './URLCardList.js';
 import logo from './icons/logo.svg';
 import Form from 'react-bootstrap/Form';
-import request from 'superagent';
 import i18n from "i18next";
 import detector from "i18next-browser-languagedetector";
 import translationEN from './locales/en/translation.json';
@@ -20,6 +19,8 @@ import URLInputField from './components/URLInputField.js';
 import ContextInputField from './components/ContextInputField.js';
 import SubmissionControls from './components/SubmissionControls.js';
 import RelatedTopicsModal from './components/RelatedTopicsModal.js';
+import { useAuthRequest } from './hooks/useAuthRequest';
+
 
 i18n
   .use(detector)
@@ -44,6 +45,7 @@ i18n
 function TopicSubmissionPage() {
   const { t } = useTranslation();
   const { user, loading, setLoading } = useOutletContext();
+  const { authFetch, authRequest } = useAuthRequest(user);
   const { userTopicsPromise } = useLoaderData()
   const { uploadProgress, handleUploads, hash } = useS3Upload();
   const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -107,9 +109,8 @@ function TopicSubmissionPage() {
   // Checks if a topic already exists and create a template if not
   const checkTopic = useCallback(callback => {
     if (!topicId) {
-      request
+      authRequest
         .put('/topic/' + user.id)
-        .set('Authorization', `Bearer ${user.access_token}`)
         .send({ 'title': 'Topic template' })
         .send({ 'description': 'This is a new topic' })
         .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
@@ -118,7 +119,7 @@ function TopicSubmissionPage() {
     else {
       callback()
     }
-  }, [showError, t, topicId, user])
+  }, [showError, t, topicId, user, authRequest])
 
   // Called when user drops new files 
   const onDropAccepted = useCallback(acceptedFiles => {
@@ -166,13 +167,10 @@ function TopicSubmissionPage() {
       // Call related topic check in background
       (async () => {
         const hashes = hash.map(file => file.hash);
-        const response = await fetch('/api/check_related_topics', {
+        const response = await authFetch(`/api/check_related_topics`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.access_token}`
-          },
-          body: JSON.stringify({ hashes }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hashes })
         });
 
         const result = await response.json();
@@ -182,7 +180,7 @@ function TopicSubmissionPage() {
         }
       })();
     }
-  }, [uploadProgress, files, setLoading, t, hash, user.access_token]);
+  }, [uploadProgress, files, setLoading, t, hash, user.access_token, authFetch]);
 
   // Handle files passed via navigate()
   useEffect(() => {
@@ -251,9 +249,8 @@ function TopicSubmissionPage() {
         document.getElementById('input-url-text').value = ""
       }
 
-      request
+      authRequest
         .post('/fetch_url')
-        .set('Authorization', `Bearer ${user.access_token}`)
         .send({ "url": document.getElementById('input-url-text').value })
         .set('Accept', 'application/json')
         .then(metaSuccess, metaError)
@@ -280,9 +277,8 @@ function TopicSubmissionPage() {
       }
 
       // create request to process content
-      request
+      authRequest
         .post("/process")
-        .set('Authorization', `Bearer ${user.access_token}`)
         .send({
           files: hash.map(file => ({
             name: file.name,
@@ -331,11 +327,8 @@ function TopicSubmissionPage() {
 
       // request progress and wait for topic to be processed
       while (nextProgress >= 0 && nextProgress < 100) {
-        // request synchronously to check progress
-        // await request.post("/check",).send(topic).then((res) => checkStatus(res))
-        await request
+        await authRequest
           .post("/check")
-          .set('Authorization', `Bearer ${user.access_token}`)
           .send(topic)
           .then((res) => checkStatus(res))
           .catch((err) => {

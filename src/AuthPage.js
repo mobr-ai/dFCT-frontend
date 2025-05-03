@@ -7,7 +7,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from 'react';
-import { NavLink, useOutletContext } from "react-router-dom";
+import { NavLink, useOutletContext, useSearchParams } from "react-router-dom";
 import { useGoogleLogin } from '@react-oauth/google';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -22,6 +22,7 @@ function AuthPage(props) {
     const [email, setEmail] = useState()
     const [pass, setPass] = useState()
     const { handleLogin, setLoading, loading, showToast } = useOutletContext();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [showPassword, setShowPassword] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
 
@@ -43,7 +44,7 @@ function AuthPage(props) {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('Auth failed: ', errorData.error);
-                showToast(t(errorData.error))
+                showToast(t(errorData.error), 'danger')
                 setProcessing(false)
                 setPass('')
                 return;
@@ -58,7 +59,11 @@ function AuthPage(props) {
 
         } catch (error) {
             console.error('Auth error:', error);
-            showToast(t('registerError'))
+            if (props.type === 'create')
+                showToast(t('registerError'), 'danger')
+            else {
+                showToast(t('loginError'), 'danger')
+            }
             setProcessing(false)
             setPass('')
         }
@@ -133,6 +138,15 @@ function AuthPage(props) {
             handleEmailAuth()
         }
     })
+
+    useEffect(() => {
+        if (searchParams.get('sessionExpired') === '1') {
+            showToast(t('sessionExpired'), 'secondary');
+            // Remove the param so it doesn't trigger again on refresh
+            searchParams.delete('sessionExpired');
+            setSearchParams(searchParams, { replace: true });
+        }
+    }, [searchParams, setSearchParams, showToast, t]);
 
     return (
         <Container className="Auth-body-wrapper" fluid>

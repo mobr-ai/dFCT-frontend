@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useOutletContext } from "react-router-dom";
+import { useAuthRequest } from './useAuthRequest';
 import SparkMD5 from 'spark-md5';
 
 export function useS3Upload() {
@@ -7,6 +8,7 @@ export function useS3Upload() {
     const [errors, setErrors] = useState({});
     const [files, setFiles] = useState([])
     const { user } = useOutletContext();
+    const { authFetch } = useAuthRequest(user);
 
     async function calculateHash(file) {
         return new Promise(resolve => {
@@ -40,13 +42,10 @@ export function useS3Upload() {
         }));
         setFiles(files)
 
-        const response = await fetch('/sign_s3', {
+        const response = await authFetch(`/sign_s3`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.access_token}`
-            },
-            body: JSON.stringify({ files: fileArgs, topic_id: topicId }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: fileArgs, topic_id: topicId })
         });
 
         const signedResponses = await response.json();

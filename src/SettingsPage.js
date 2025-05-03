@@ -9,10 +9,12 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faCopy } from '@fortawesome/free-solid-svg-icons';
 import avatarImg from "./icons/avatar.png";
+import { useAuthRequest } from './hooks/useAuthRequest';
 
 function SettingsPage() {
     const { t, i18n } = useTranslation();
     const { user, setUser, showToast } = useOutletContext();
+    const { authFetch } = useAuthRequest(user);
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
     const parsedSettings = JSON.parse((user && user.settings) ? user.settings : '{}');
@@ -61,14 +63,9 @@ function SettingsPage() {
 
     async function saveSettings(updatedSettings) {
         try {
-
-            const token = user.access_token;
-            const response = await fetch(`/user/${user.id}`, {
+            const response = await authFetch(`/user/${user.id}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ settings: updatedSettings })
             });
             const data = await response.json();
