@@ -111,9 +111,11 @@ function TopicSubmissionPage() {
     if (!topicId) {
       authRequest
         .put('/topic/' + user.id)
-        .send({ 'title': 'Topic template' })
-        .send({ 'description': 'This is a new topic' })
-        .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
+        .send({
+          'title': 'Topic template',
+          'description': 'This is a new topic',
+          'language': i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
+        })
         .then(callback, () => showError(t("topicCreationFailed")))
     }
     else {
@@ -287,13 +289,13 @@ function TopicSubmissionPage() {
             type: file.type,
             lastModified: file.lastModified,
             hash: file.hash
-          }))
+          })),
+          urls: urls,
+          topicId: nextTopic,
+          userId: user.id,
+          providedContext: providedContext,
+          language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
         })
-        .send({ urls: urls })
-        .send({ topicId: nextTopic })
-        .send({ userId: user.id })
-        .send({ providedContext: providedContext })
-        .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
         .then(waitProcessing, handleError);
     }
 

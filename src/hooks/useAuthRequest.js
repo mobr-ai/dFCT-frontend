@@ -29,7 +29,7 @@ export function useAuthRequest(user) {
 
         if (response.status === 401) {
             console.warn("Token expired. Redirecting to login.");
-            if (showToast) showToast(t('sessionExpired'), 'warning');
+            if (showToast) showToast(t('sessionExpired'), 'secondary');
             navigate('/login');
         }
 
@@ -50,16 +50,26 @@ export function useAuthRequest(user) {
             return req;
         }
 
-        return req
-            .set('Authorization', `Bearer ${user.access_token}`)
-            .catch(err => {
-                if (err.status === 401) {
-                    console.warn('Token expired. Redirecting to login.');
-                    if (showToast) showToast(t('sessionExpired'), 'warning');
-                    navigate('/login');
-                }
-                throw err;
-            });
+        req.set('Authorization', `Bearer ${user.access_token}`);
+
+        // Return a wrapped request that will handle errors AFTER the request is fired
+        const wrapSend = (body) => {
+            return req.send(body)
+                .catch(err => {
+                    if (err.status === 401) {
+                        console.warn('Token expired. Redirecting to login.');
+                        if (showToast) showToast(t('sessionExpired'), 'secondary');
+                        navigate('/login');
+                    }
+                    throw err;
+                });
+        };
+
+        return {
+            send: wrapSend,
+            attach: req.attach.bind(req),
+            field: req.field.bind(req),
+        };
     };
 
     return { authFetch, authRequest };

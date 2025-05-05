@@ -215,15 +215,15 @@ function EvidenceModal(props) {
                         type: file.type,
                         lastModified: file.lastModified,
                         hash: file.hash
-                    }))
+                    })),
+                    urls: urls,
+                    topicId: props.topicId,
+                    userId: user.id,
+                    evidenceType: props.type,
+                    claimId: props.claimId,
+                    providedContext: providedContext,
+                    language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
                 })
-                .send({ urls: urls })
-                .send({ topicId: props.topicId })
-                .send({ userId: user.id })
-                .send({ evidenceType: props.type })
-                .send({ claimId: props.claimId })
-                .send({ providedContext: providedContext })
-                .send({ language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0] })
                 .then(waitProcessing, handleError);
         }
     };
