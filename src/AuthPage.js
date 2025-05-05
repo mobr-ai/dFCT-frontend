@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from 'react';
 import { NavLink, useOutletContext, useSearchParams } from "react-router-dom";
@@ -25,8 +26,27 @@ function AuthPage(props) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [showPassword, setShowPassword] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
+    const [confirmationError, setConfirmationError] = useState(false);
+    const [resendLoading, setResendLoading] = useState(false);
 
-
+    const handleResendConfirmation = async () => {
+        setResendLoading(true);
+        try {
+            await fetch('/api/resend_confirmation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
+                }),
+            });
+            showToast(t('confirmationEmailResent'), "success");
+        } catch (error) {
+            showToast(t(error.error) || t('errorResendingConfirmation'), "danger");
+        } finally {
+            setResendLoading(false);
+        }
+    };
 
     const handleEmailAuth = async () => {
         const endpoint = props.type === 'create' ? '/api/register' : '/api/login';
@@ -38,32 +58,39 @@ function AuthPage(props) {
                 body: JSON.stringify({
                     email: email,
                     password: pass,
+                    language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
                 }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Auth failed: ', errorData.error);
-                showToast(t(errorData.error), 'danger')
-                setProcessing(false)
-                setPass('')
-                return;
+                // console.error('Auth failed: ', errorData.error);
+                // showToast(t(errorData.error), 'danger')
+                throw new Error(errorData.error);
             }
             const data = await response.json();
             console.log('Auth success:', data);
 
-            // Save token to localStorage or context
-            localStorage.setItem('access_token', data.access_token);
-            // set user context here if needed
-            handleLogin(data);  // if context
+            if (data.access_token) {
+                // Save token to localStorage 
+                localStorage.setItem('access_token', data.access_token);
+                handleLogin(data);
+            }
 
         } catch (error) {
-            console.error('Auth error:', error);
-            if (props.type === 'create')
+            const errorMsg = t(error.message) || error.response?.data?.error;
+            console.error('Auth error:', errorMsg);
+
+            if (errorMsg.includes(t('confirmationError'))) {
+                setConfirmationError(true);  // Show the resend button
+                showToast(t('confirmationError'), 'danger')
+            }
+            else if (props.type === 'create')
                 showToast(t('registerError'), 'danger')
             else {
                 showToast(t('loginError'), 'danger')
             }
+        } finally {
             setProcessing(false)
             setPass('')
         }
@@ -146,6 +173,12 @@ function AuthPage(props) {
             searchParams.delete('sessionExpired');
             setSearchParams(searchParams, { replace: true });
         }
+        else if (searchParams.get('confirmed') === 'true') {
+            showToast(t('emailConfirmed'), 'success');
+            // Remove the param so it doesn't trigger again on refresh
+            searchParams.delete('confirmed');
+            setSearchParams(searchParams, { replace: true });
+        }
     }, [searchParams, setSearchParams, showToast, t]);
 
     return (
@@ -220,17 +253,46 @@ function AuthPage(props) {
                                 <Form.Text id="Auth-help-msg" muted />
                             </InputGroup>
                         )}
-                        {(email && props.type === 'login') && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
+                        {(email && props.type === 'login' && !confirmationError) && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
 
-                        <Button
-                            className="Auth-input-button"
-                            variant="dark"
-                            size="md"
-                            onClick={!processing ? handleAuthStep : null} disabled={processing}
-                        >
-                            {processing ? t('processingMail') : t('authNextStep')}
-                        </Button>
+                        <>
+                            {!confirmationError && (<Button
+                                className="Auth-input-button"
+                                variant="dark"
+                                size="md"
+                                onClick={!processing ? handleAuthStep : null} disabled={processing}
+                            >
+                                {processing ? t('processingMail') : t('authNextStep')}
+                            </Button>)}
+                            {confirmationError && (
+                                <>
+                                    <p className="Auth-confirmation-warning">{t('accountNotConfirmedMessage')}</p>
+                                    <Button
+                                        className="Auth-input-button"
+                                        variant="dark"
+                                        size="md"
+                                        onClick={!resendLoading ? handleResendConfirmation : null} disabled={resendLoading}
 
+                                    >
+                                        {resendLoading ? t('resending') : t('resendConfirmation')}
+                                    </Button>
+                                </>
+                            )}
+
+                        </>
+                        {/* {confirmationError && (
+                            <div className="Auth-confirmation-warning">
+                                <p>{t('accountNotConfirmedMessage')}</p>
+                                <Button
+                                    variant="warning"
+                                    onClick={handleResendConfirmation}
+                                    disabled={resendLoading}
+                                    className="mt-2"
+                                >
+                                    {resendLoading ? t('resending') : t('resendConfirmation')}
+                                </Button>
+                            </div>
+                        )} */}
                         <p>
                             {
                                 props.type === "login" ?

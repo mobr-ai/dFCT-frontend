@@ -1,6 +1,7 @@
 // useAuthRequest.js
 
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 import request from 'superagent';
 
 /**
@@ -9,6 +10,7 @@ import request from 'superagent';
  */
 export function useAuthRequest(user) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const { showToast } = useOutletContext();
 
     const authFetch = async (url, options = {}) => {
@@ -27,7 +29,7 @@ export function useAuthRequest(user) {
 
         if (response.status === 401) {
             console.warn("Token expired. Redirecting to login.");
-            if (showToast) showToast('Session expired. Please log in again.', 'warning');
+            if (showToast) showToast(t('sessionExpired'), 'warning');
             navigate('/login');
         }
 
@@ -53,7 +55,7 @@ export function useAuthRequest(user) {
             .catch(err => {
                 if (err.status === 401) {
                     console.warn('Token expired. Redirecting to login.');
-                    if (showToast) showToast('Session expired. Please log in again.', 'warning');
+                    if (showToast) showToast(t('sessionExpired'), 'warning');
                     navigate('/login');
                 }
                 throw err;

@@ -175,3 +175,8 @@
   border-top-right-radius: 1rem !important;
   border-bottom-right-radius: 1rem !important;
 }
+
+.Auth-confirmation-warning {
+  display: inline-flex;
+  text-decoration: underline;
+}

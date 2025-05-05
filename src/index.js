@@ -51,7 +51,7 @@ function Layout() {
           bg={toast.variant}
           onClose={() => setToast({ ...toast, show: false })}
           show={toast.show}
-          delay={3000}
+          delay={5000}
           autohide
         >
           <Toast.Body className="text-white">
