@@ -23,6 +23,7 @@
   font-size: xx-large;
   width: 70%;
   align-self: center;
+  text-wrap-mode: nowrap;
 }
 
 .Auth-container-wrapper {
@@ -179,4 +180,21 @@
 .Auth-confirmation-warning {
   display: inline-flex;
   text-decoration: underline;
+}
+
+.confirm-message-box {
+  background-color: #f4f6f8;
+  border: 1px solid #ccc;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 8px 16px;
+  text-align: center;
+  max-width: 450px;
+  margin-top: 2rem;
+}
+
+.Auth-confirm-text {
+  font-size: 1rem;
+  margin-top: 1rem;
+  color: #444;
 }

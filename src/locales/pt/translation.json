@@ -66,6 +66,7 @@
     "mailPlaceholder": "usuario@dfc.to",
     "authNextStep": "Continuar",
     "forgotPass": "Esqueceu a senha?",
+    "userRegistered": "Sua conta foi registrada com sucesso. Verifique seu e-mail para confirmar e ativá-la.",
     "registerError": "Oops! Estamos com problemas para registrar sua conta. Por favor, tente novamente mais tarde.",
     "userExistsError": "Parece que seu e-mail já está registrado. Clique em 'Entrar' para fazer login ou clique em 'Esqueceu a senha?' para escolher uma nova senha.",
     "oauthExistsError": "Parece que você se registrou usando uma conta externa. Por favor, faça login com o mesmo método que você usou para se inscrever.",
@@ -118,5 +119,8 @@
     "allEngines": "Todos os motores combinados",
     "premiumOnly": "Somente Premium",
     "settingsSaved": "Configurações atualizadas com sucesso",
-    "settingsFailed": "Oops! Erro ao atualizar as configurações. Tente novamente mais tarde, por favor."
+    "settingsFailed": "Oops! Erro ao atualizar as configurações. Tente novamente mais tarde, por favor.",
+    "confirmYourEmailTitle": "Confirme Seu E-mail",
+    "confirmYourEmailMsg": "Enviamos um link de confirmação para seu e-mail. Verifique sua caixa de entrada e confirme sua conta para prosseguir.",
+    "confirmDidNotReceive": "Não recebeu o e-mail?"
 }

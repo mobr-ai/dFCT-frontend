@@ -52,7 +52,7 @@
     "mailPlaceholder": "user@dfc.to",
     "authNextStep": "Continue",
     "forgotPass": "Forgot your password?",
-    "registerError": "Oops! We are currently unable to register your account. Please try again later.",
+    "userRegistered": "Your account has been registered successfully. Please check your email to confirm and activate it.",
     "userExistsError": "It seems your user is already registered. Please try to login or click 'Forgot your password?' to choose a new password.",
     "oauthExistsError": "It looks like you signed up using an external account. Please log in with the same method you used to sign up.",
     "loginError": "Invalid e-mail and/or password does not match. Please try again or click 'Forgot your password?' to choose another one.",
@@ -104,5 +104,8 @@
     "allEngines": "All Engines Combined",
     "premiumOnly": "Premium only",
     "settingsSaved": "Settings successfully updated",
-    "settingsFailed": "Oops! Error updating settings, please try again later"
+    "settingsFailed": "Oops! Error updating settings, please try again later",
+    "confirmYourEmailTitle": "Confirm Your E-mail",
+    "confirmYourEmailMsg": "We've sent a confirmation link to your email. Please check your inbox and confirm your account to proceed.",
+    "confirmDidNotReceive": "Didn't receive the email?"
 }

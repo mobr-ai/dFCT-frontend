@@ -8,21 +8,20 @@ import Button from 'react-bootstrap/Button';
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from 'react';
-import { NavLink, useOutletContext, useSearchParams } from "react-router-dom";
+import { NavLink, useOutletContext, useSearchParams, useNavigate } from "react-router-dom";
 import { useGoogleLogin } from '@react-oauth/google';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
 import "./styles/AuthPage.css"
 import LoadingPage from "./LoadingPage";
 
-
 function AuthPage(props) {
+    const navigate = useNavigate()
     const { t } = useTranslation();
+    const { handleLogin, setLoading, loading, showToast } = useOutletContext();
     const [processing, setProcessing] = useState(false)
     const [email, setEmail] = useState()
     const [pass, setPass] = useState()
-    const { handleLogin, setLoading, loading, showToast } = useOutletContext();
     const [searchParams, setSearchParams] = useSearchParams();
     const [showPassword, setShowPassword] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
@@ -64,26 +63,29 @@ function AuthPage(props) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                // console.error('Auth failed: ', errorData.error);
-                // showToast(t(errorData.error), 'danger')
                 throw new Error(errorData.error);
             }
-            const data = await response.json();
-            console.log('Auth success:', data);
 
-            if (data.access_token) {
-                // Save token to localStorage 
-                localStorage.setItem('access_token', data.access_token);
-                handleLogin(data);
+            const result = await response.json();
+            if (props.type === 'login') {
+                console.log('Auth success:', result);
+
+                if (result.access_token) {
+                    // Save token to localStorage 
+                    localStorage.setItem('access_token', result.access_token);
+                    handleLogin(result);
+                }
             }
 
+            if (result.redirect) {
+                navigate(result.redirect);
+            }
         } catch (error) {
             const errorMsg = error.message ? t(error.message) : error.response?.data?.error;
             console.error('Auth error:', errorMsg);
 
             if (error.message !== t(error.message)) {
                 showToast(errorMsg, 'danger')
-
             }
             else if (errorMsg.includes(t('confirmationError'))) {
                 setConfirmationError(true);  // Show the resend button
@@ -177,11 +179,13 @@ function AuthPage(props) {
             searchParams.delete('sessionExpired');
             setSearchParams(searchParams, { replace: true });
         }
-        else if (searchParams.get('confirmed') === 'true') {
-            showToast(t('emailConfirmed'), 'success');
-            // Remove the param so it doesn't trigger again on refresh
-            searchParams.delete('confirmed');
-            setSearchParams(searchParams, { replace: true });
+        else {
+            if (searchParams.get('confirmed') === 'true') {
+                showToast(t('emailConfirmed'), 'success');
+                // Remove the param so it doesn't trigger again on refresh
+                searchParams.delete('confirmed');
+                setSearchParams(searchParams, { replace: true });
+            }
         }
     }, [searchParams, setSearchParams, showToast, t]);
 
@@ -193,7 +197,7 @@ function AuthPage(props) {
                 </Container>
             )
             }
-            {!loading && (
+            {!loading && (!searchParams.get('confirmed') || !searchParams.get('confirmed') === 'false') && (
                 <Container className="Auth-container-wrapper" fluid>
                     <Container className="Auth-container">
                         <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
@@ -284,19 +288,6 @@ function AuthPage(props) {
                             )}
 
                         </>
-                        {/* {confirmationError && (
-                            <div className="Auth-confirmation-warning">
-                                <p>{t('accountNotConfirmedMessage')}</p>
-                                <Button
-                                    variant="warning"
-                                    onClick={handleResendConfirmation}
-                                    disabled={resendLoading}
-                                    className="mt-2"
-                                >
-                                    {resendLoading ? t('resending') : t('resendConfirmation')}
-                                </Button>
-                            </div>
-                        )} */}
                         <p>
                             {
                                 props.type === "login" ?
@@ -320,6 +311,25 @@ function AuthPage(props) {
                             {t('loginWithGoogle')}
                         </Button>
                     </Container>
+                </Container>
+            )}
+            {searchParams.get('confirmed') === 'false' && (
+                <Container className="Auth-container confirm-message-box">
+                    <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
+                    <h2 className="Auth-title">{t('confirmYourEmailTitle')}</h2>
+                    <p className="Auth-confirm-text">
+                        {t('confirmYourEmailMsg')}
+                    </p>
+                    <p className="Auth-confirm-text">{t('confirmDidNotReceive')}</p>
+                    <Button
+                        className="Auth-input-button"
+                        variant="dark"
+                        size="md"
+                        onClick={!resendLoading ? handleResendConfirmation : null}
+                        disabled={resendLoading}
+                    >
+                        {resendLoading ? t('resending') : t('resendConfirmation')}
+                    </Button>
                 </Container>
             )}
         </Container>
