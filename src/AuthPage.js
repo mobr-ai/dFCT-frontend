@@ -78,10 +78,14 @@ function AuthPage(props) {
             }
 
         } catch (error) {
-            const errorMsg = t(error.message) || error.response?.data?.error;
+            const errorMsg = error.message ? t(error.message) : error.response?.data?.error;
             console.error('Auth error:', errorMsg);
 
-            if (errorMsg.includes(t('confirmationError'))) {
+            if (error.message !== t(error.message)) {
+                showToast(errorMsg, 'danger')
+
+            }
+            else if (errorMsg.includes(t('confirmationError'))) {
                 setConfirmationError(true);  // Show the resend button
                 showToast(t('confirmationError'), 'danger')
             }

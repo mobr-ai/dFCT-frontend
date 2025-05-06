@@ -54,6 +54,7 @@
     "forgotPass": "Forgot your password?",
     "registerError": "Oops! We are currently unable to register your account. Please try again later.",
     "userExistsError": "It seems your user is already registered. Please try to login or click 'Forgot your password?' to choose a new password.",
+    "oauthExistsError": "It looks like you signed up using an external account. Please log in with the same method you used to sign up.",
     "loginError": "Invalid e-mail and/or password does not match. Please try again or click 'Forgot your password?' to choose another one.",
     "confirmationError": "Your account has not been confirmed yet. Please check your email or send a new confirmation link if you did not receive one.",
     "accountNotConfirmedMessage": "E-mail address not confirmed.",
