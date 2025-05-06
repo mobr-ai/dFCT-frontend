@@ -136,8 +136,8 @@ function EvidenceModal(props) {
 
             request
                 .post('/fetch_url')
-                .send({ "url": document.getElementById('input-url-text').value })
                 .set('Accept', 'application/json')
+                .send({ "url": document.getElementById('input-url-text').value })
                 .then(metaSuccess, metaError)
 
             document.getElementById('input-url-help-msg').innerText = ""

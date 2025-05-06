@@ -65,6 +65,7 @@ function TopicSubmissionPage() {
   const [urls, setURLs] = useState([])
   const [relatedTopics, setRelatedTopics] = useState([]);
   const [showRelatedTopicsModal, setShowRelatedTopicsModal] = useState(false);
+  const [hasDismissedRelatedModal, setHasDismissedRelatedModal] = useState(false);
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -135,7 +136,7 @@ function TopicSubmissionPage() {
         setTopicId(res.body.topicId);
       }
 
-      const filesToUpload = acceptedFiles.filter(file => file instanceof File && !file.completed);
+      const filesToUpload = files.concat(acceptedFiles).filter(file => file instanceof File && !file.completed);
 
       if (filesToUpload.length > 0) {
         try {
@@ -144,6 +145,11 @@ function TopicSubmissionPage() {
           setShowFiles(true);
           setShowProgress(true);
           await handleUploads(filesToUpload, topicId || res.body.topicId);
+
+          // if new files, then show related modal again
+          if (files.concat(acceptedFiles).length > files.length) {
+            setHasDismissedRelatedModal(false);
+          }
         } catch (error) {
           console.error("Upload error:", error);
           setDropMsg(t('uploadFailed'));
@@ -160,15 +166,25 @@ function TopicSubmissionPage() {
   useEffect(() => {
     const allUploaded = files.every(file => uploadProgress[file.name] === 100);
 
-    if (allUploaded && files.length > 0) {
-      files.forEach((f) => f.completed = true);
+    // Check if there's at least one file that is uploaded and NOT checked yet
+    const newFilesToCheck = files.filter(file =>
+      uploadProgress[file.name] === 100 && !file.hasChecked
+    );
+
+    if (allUploaded && newFilesToCheck.length > 0) {
+      // Mark files as completed & prepare hashes
+      newFilesToCheck.forEach(file => {
+        file.completed = true;
+        file.hasChecked = true;  // mark as checked to prevent re-checking
+      });
+
       setDropMsg(t('addMoreFiles'));
       setLoading(false);
       setShowProgress(false);
 
       // Call related topic check in background
       (async () => {
-        const hashes = hash.map(file => file.hash);
+        const hashes = newFilesToCheck.map(file => file.hash);
         const response = await authFetch(`/api/check_related_topics`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -177,12 +193,17 @@ function TopicSubmissionPage() {
 
         const result = await response.json();
         if (result.topics && result.topics.length > 0) {
-          setRelatedTopics(result.topics);
+          setRelatedTopics(prevTopics =>
+            prevTopics.concat(
+              result.topics.filter(item2 => !prevTopics.some(item1 => item1.id === item2.id))
+            )
+          );
           setShowRelatedTopicsModal(true);
         }
       })();
     }
-  }, [uploadProgress, files, setLoading, t, hash, user.access_token, authFetch]);
+  }, [uploadProgress, files, setLoading, loading, setRelatedTopics, t, authFetch]);
+
 
   // Handle files passed via navigate()
   useEffect(() => {
@@ -253,8 +274,8 @@ function TopicSubmissionPage() {
 
       authRequest
         .post('/fetch_url')
-        .send({ "url": document.getElementById('input-url-text').value })
         .set('Accept', 'application/json')
+        .send({ "url": document.getElementById('input-url-text').value })
         .then(metaSuccess, metaError)
 
       document.getElementById('input-url-help-msg').innerText = ""
@@ -375,7 +396,7 @@ function TopicSubmissionPage() {
       <div className='Submission-middle-column'>
         <div className="Submission-header-top">
           {loading && files.length < 2 && (<img src={logo} className="Submission-logo" alt="logo"></img>)}
-          {!loading && (<img src={logo} className="Submission-logo-static" alt="logo"></img>)}
+          {!loading && files.length === 0 && (<img src={logo} className="Submission-logo-static" alt="logo"></img>)}
         </div>
         {user && (
           <Form.Group className="Submission-input-group mb-3" id="input-form-group">
@@ -402,7 +423,7 @@ function TopicSubmissionPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                <SubmissionControls loading={loading} processContent={processTopic} files={files} t={t} />
+                <SubmissionControls loading={loading} processContent={() => { setHasDismissedRelatedModal(false); setShowRelatedTopicsModal(true) }} files={files} t={t} />
               </>
             )}
 
@@ -421,8 +442,11 @@ function TopicSubmissionPage() {
         </Suspense>
       )}
       <RelatedTopicsModal
-        show={showRelatedTopicsModal}
-        onClose={() => setShowRelatedTopicsModal(false)}
+        show={showRelatedTopicsModal && !hasDismissedRelatedModal}
+        onClose={() => {
+          setHasDismissedRelatedModal(true);
+          setShowRelatedTopicsModal(false);
+        }}
         onProceed={() => {
           setShowRelatedTopicsModal(false);
           processTopic(); // user proceeds anyway

@@ -52,25 +52,22 @@ export function useAuthRequest(user) {
 
         req.set('Authorization', `Bearer ${user.access_token}`);
 
-        // Return a wrapped request that will handle errors AFTER the request is fired
-        const wrapSend = (body) => {
-            return req.send(body)
-                .catch(err => {
-                    if (err.status === 401) {
-                        console.warn('Token expired. Redirecting to login.');
-                        if (showToast) showToast(t('sessionExpired'), 'secondary');
-                        navigate('/login');
-                    }
-                    throw err;
-                });
+        // Wrap the original send to catch 401s
+        const originalSend = req.send.bind(req);
+        req.send = (body) => {
+            return originalSend(body).catch(err => {
+                if (err.status === 401) {
+                    console.warn('Token expired. Redirecting to login.');
+                    if (showToast) showToast(t('sessionExpired'), 'secondary');
+                    navigate('/login');
+                }
+                throw err;
+            });
         };
 
-        return {
-            send: wrapSend,
-            attach: req.attach.bind(req),
-            field: req.field.bind(req),
-        };
+        return req;
     };
+
 
     return { authFetch, authRequest };
 }
