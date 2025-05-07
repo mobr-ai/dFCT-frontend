@@ -444,6 +444,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .Landing-search-sticky {
+    width: 100%;
+  }
+}
+
 .Landing-search-button {
   cursor: pointer !important;
 }

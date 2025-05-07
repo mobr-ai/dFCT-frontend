@@ -23,7 +23,6 @@
   font-size: xx-large;
   width: 70%;
   align-self: center;
-  text-wrap-mode: nowrap;
 }
 
 .Auth-container-wrapper {
@@ -183,7 +182,6 @@
 }
 
 .confirm-message-box {
-  background-color: #f4f6f8;
   border: 1px solid #ccc;
   padding: 2rem;
   border-radius: 10px;
