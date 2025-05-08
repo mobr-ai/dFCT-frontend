@@ -107,5 +107,6 @@
     "settingsFailed": "Oops! Error updating settings, please try again later",
     "confirmYourEmailTitle": "Confirm Your Email",
     "confirmYourEmailMsg": "We've sent a confirmation link to your email. Please check your inbox and confirm your account to proceed.",
-    "confirmDidNotReceive": "Didn't receive the email?"
+    "confirmDidNotReceive": "Didn't receive the email?",
+    "keepMeLoggedIn": "Keep me logged in"
 }

@@ -122,5 +122,6 @@
     "settingsFailed": "Oops! Erro ao atualizar as configurações. Tente novamente mais tarde, por favor.",
     "confirmYourEmailTitle": "Confirme Seu E\u2011mail",
     "confirmYourEmailMsg": "Enviamos um link de confirmação para seu e-mail. Verifique sua caixa de entrada e confirme sua conta para prosseguir.",
-    "confirmDidNotReceive": "Não recebeu o e-mail?"
+    "confirmDidNotReceive": "Não recebeu o e-mail?",
+    "keepMeLoggedIn": "Mantenha-me conectado"
 }

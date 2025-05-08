@@ -197,3 +197,13 @@
   margin-top: 1rem;
   color: #444;
 }
+
+.Auth-keep-logged-toggle {
+  margin-bottom: 2rem;
+  text-align: start;
+  cursor: pointer;
+}
+
+.form-check-label {
+  cursor: pointer !important;
+}

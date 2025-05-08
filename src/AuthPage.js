@@ -27,6 +27,7 @@ function AuthPage(props) {
     const [passwordInput, setPasswordInput] = useState('');
     const [confirmationError, setConfirmationError] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false)
 
     const handleResendConfirmation = async () => {
         setResendLoading(true);
@@ -57,6 +58,7 @@ function AuthPage(props) {
                 body: JSON.stringify({
                     email: email,
                     password: pass,
+                    remember_me: rememberMe,
                     language: i18n.language.split('-')[0] || window.localStorage.i18nextLng.split('-')[0]
                 }),
             });
@@ -234,44 +236,58 @@ function AuthPage(props) {
                             </InputGroup>
                         )}
                         {email && (
-                            <InputGroup className="Auth-input-pass" size="md">
-                                <InputGroup.Text
-                                    className="Auth-input-label Auth-password-eye"
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    <FontAwesomeIcon icon={!showPassword ? faEyeSlash : faEye} />
-                                </InputGroup.Text>
-                                <Form.Control
-                                    id="Auth-input-password-text"
-                                    className='Auth-password-input'
-                                    aria-label="Enter password"
-                                    aria-describedby="Auth-help-msg"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Password"
-                                    size="md"
-                                    value={passwordInput}
-                                    onChange={(e) => setPasswordInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();  // prevent default form submission
-                                            setPass(passwordInput);  // commit on Enter
-                                        }
-                                    }} />
-                                <Form.Text id="Auth-help-msg" muted />
-                            </InputGroup>
+                            <>
+                                <InputGroup className="Auth-input-pass" size="md">
+                                    <InputGroup.Text
+                                        className="Auth-input-label Auth-password-eye"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <FontAwesomeIcon icon={!showPassword ? faEyeSlash : faEye} />
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        id="Auth-input-password-text"
+                                        className='Auth-password-input'
+                                        aria-label="Enter password"
+                                        aria-describedby="Auth-help-msg"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Password"
+                                        size="md"
+                                        value={passwordInput}
+                                        onChange={(e) => setPasswordInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();  // prevent default form submission
+                                                setPass(passwordInput);  // commit on Enter
+                                            }
+                                        }} />
+                                    <Form.Text id="Auth-help-msg" muted />
+                                </InputGroup>
+                                <Form.Check
+                                    type="checkbox"
+                                    id="rememberMe"
+                                    label={t('keepMeLoggedIn')}
+                                    className="Auth-keep-logged-toggle"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                            </>
                         )}
                         {(email && props.type === 'login' && !confirmationError) && (<p className="Auth-alternative-link">{t('forgotPass')}</p>)}
 
                         <>
-                            {!confirmationError && (<Button
-                                className="Auth-input-button"
-                                variant="dark"
-                                size="md"
-                                onClick={!processing ? handleAuthStep : null} disabled={processing}
-                            >
-                                {processing ? t('processingMail') : t('authNextStep')}
-                            </Button>)}
+                            {!confirmationError && (
+                                <>
+                                    <Button
+                                        className="Auth-input-button"
+                                        variant="dark"
+                                        size="md"
+                                        onClick={!processing ? handleAuthStep : null} disabled={processing}
+                                    >
+                                        {processing ? t('processingMail') : t('authNextStep')}
+                                    </Button>
+                                </>)
+                            }
                             {confirmationError && (
                                 <>
                                     <p className="Auth-confirmation-warning">{t('accountNotConfirmedMessage')}</p>
