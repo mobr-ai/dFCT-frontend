@@ -28,9 +28,13 @@ export function useAuthRequest(user) {
         const response = await fetch(url, { ...options, headers });
 
         if (response.status === 401) {
-            console.warn("Token expired. Redirecting to login.");
+            const errorMsg = "Token expired. Redirecting to login."
+            console.warn(errorMsg);
             if (showToast) showToast(t('sessionExpired'), 'secondary');
-            navigate('/login');
+            window.localStorage.removeItem('userData')
+            navigate('/login?sessionExpired=1');
+            // navigate(0);
+            throw new Error(errorMsg)
         }
 
         return response;

@@ -1,5 +1,5 @@
 import './styles/index.css';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import LandingPage from './LandingPage';
 import Header from './Header'
@@ -18,7 +18,7 @@ import { createBrowserRouter, RouterProvider, Outlet, defer, useNavigate } from 
 
 function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(window.sessionStorage.userData ? JSON.parse(window.sessionStorage.userData) : null);
+  const [user, setUser] = useState(window.localStorage.userData ? JSON.parse(window.localStorage.userData) : null);
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState({ show: false, message: '', variant: 'success' });
   const navigate = useNavigate()
@@ -30,17 +30,22 @@ function Layout() {
   const handleLogin = useCallback(userData => {
     if (userData) {
       setUser(userData);
-      window.sessionStorage.setItem("userData", JSON.stringify(userData))
+      window.localStorage.setItem("userData", JSON.stringify(userData))
       navigate("/")
       setLoading(false)
     }
     else {
       setUser(null)
-      window.sessionStorage.removeItem('userData')
+      window.localStorage.removeItem('userData')
       navigate("/")
       setLoading(false)
     }
   }, [setLoading, setUser, navigate]);
+
+  // save user data on changes
+  useEffect(() => {
+    window.localStorage.setItem("userData", JSON.stringify(user))
+  }, [user]);
 
   return (
     <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
@@ -94,7 +99,7 @@ const fetchUserTopics = async (userData) => {
 
   if (response.status === 401) {
     console.warn('Unauthorized: redirecting to /login');
-    window.sessionStorage.removeItem('userData')
+    window.localStorage.removeItem('userData')
     window.location.href = '/login?sessionExpired=1';
     // return redirect('/login?sessionExpired=1');
     // return <Navigate to="/login" replace />;
@@ -104,10 +109,10 @@ const fetchUserTopics = async (userData) => {
 }
 
 const userTopicsLoader = async () => {
-  if (!window.sessionStorage.userData)
+  if (!window.localStorage.userData)
     return {}
 
-  let userData = JSON.parse(window.sessionStorage.userData)
+  let userData = JSON.parse(window.localStorage.userData)
   if (userData && userData.id) {
     const userTopicsPromise = fetchUserTopics(userData);
     return defer({ userTopicsPromise });

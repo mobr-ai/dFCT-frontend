@@ -37,7 +37,6 @@
   display: inline-block;
   margin-bottom: 0.5rem;
   color: #61dafb;
-  word-break: break-all;
 }
 
 .Settings-referral-buttons {
@@ -63,11 +62,6 @@
     max-width: 100%;
   }
 
-  .Settings-user-box img {
-    max-width: 120px;
-    margin-bottom: 1rem;
-  }
-
   .Settings-referral-row {
     flex-direction: column;
     align-items: center;
@@ -77,4 +71,40 @@
   .Settings-referral-buttons {
     justify-content: center;
   }
+}
+
+.Settings-avatar-wrapper {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  max-width: 120px !important;
+  max-height: 120px !important;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  margin: auto;
+  padding: 10px;
+}
+
+.Settings-avatar-icon {
+  position: absolute;
+  height: 1.5rem;
+  color: lightseagreen;
+  margin-top: 4vh;
+  cursor: pointer;
+}
+
+.Settings-username-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.Settings-username-wrapper:hover .Settings-username-icon {
+  color: lightseagreen;
+}
+
+.Settings-username-icon {
+  color: gray;
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
 }

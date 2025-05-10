@@ -144,7 +144,7 @@ function TopicSubmissionPage() {
           setDropMsg(t('uploadingFiles'));
           setShowFiles(true);
           setShowProgress(true);
-          await handleUploads(filesToUpload, topicId || res.body.topicId);
+          await handleUploads(filesToUpload);
 
           // if new files, then show related modal again
           if (files.concat(acceptedFiles).length > files.length) {

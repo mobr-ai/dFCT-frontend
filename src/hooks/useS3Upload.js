@@ -35,7 +35,7 @@ export function useS3Upload() {
         onProgress(100); // TODO: improve this with real progress tracking
     }
 
-    async function handleUploads(newFiles, topicId) {
+    async function handleUploads(newFiles) {
         const fileArgs = await Promise.all(newFiles.map(async file => {
             file.hash = await calculateHash(file);
             return { file: file.name, type: file.type, md5_hash: file.hash };
@@ -45,7 +45,7 @@ export function useS3Upload() {
         const response = await authFetch(`/sign_s3`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ files: fileArgs, topic_id: topicId })
+            body: JSON.stringify({ files: fileArgs })
         });
 
         const signedResponses = await response.json();
@@ -67,6 +67,7 @@ export function useS3Upload() {
         });
 
         await Promise.all(uploadPromises);
+        return signedResponses
     }
 
     return { uploadProgress, errors, handleUploads, hash: files };

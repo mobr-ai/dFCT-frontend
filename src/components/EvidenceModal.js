@@ -84,7 +84,7 @@ function EvidenceModal(props) {
         setShowProgress(true);
 
         try {
-            await handleUploads(acceptedFiles, props.topicId);
+            await handleUploads(acceptedFiles);
         } catch (error) {
             console.error("Upload error:", error);
             showError(t('uploadFailed'));

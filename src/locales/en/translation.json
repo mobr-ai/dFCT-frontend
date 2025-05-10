@@ -104,9 +104,13 @@
     "allEngines": "All Engines Combined",
     "premiumOnly": "Premium only",
     "settingsSaved": "Settings successfully updated",
-    "settingsFailed": "Oops! Error updating settings, please try again later",
+    "settingsFailed": "Oops! Error updating settings. Please try again later",
     "confirmYourEmailTitle": "Confirm Your Email",
     "confirmYourEmailMsg": "We've sent a confirmation link to your email. Please check your inbox and confirm your account to proceed.",
     "confirmDidNotReceive": "Didn't receive the email?",
-    "keepMeLoggedIn": "Keep me logged in"
+    "keepMeLoggedIn": "Keep me logged in",
+    "avatarUpdated": "Avatar updated",
+    "avatarUpdateFailed": "Oops! Error updating avatar. Please try again later.",
+    "usernameUpdated": "Username updated",
+    "usernameUpdateFailed": "Oops! Error updating username. Please try again later."
 }
