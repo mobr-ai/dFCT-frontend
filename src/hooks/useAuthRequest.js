@@ -62,8 +62,8 @@ export function useAuthRequest(user) {
             return originalSend(body).catch(err => {
                 if (err.status === 401) {
                     console.warn('Token expired. Redirecting to login.');
-                    if (showToast) showToast(t('sessionExpired'), 'secondary');
-                    navigate('/login');
+                    window.localStorage.removeItem('userData')
+                    navigate('/login?sessionExpired=1');
                 }
                 throw err;
             });
