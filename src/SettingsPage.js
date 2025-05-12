@@ -165,7 +165,7 @@ function SettingsPage() {
                                     {isSavingAvatar ? (
                                         <Spinner animation="border" size="sm" className="Settings-avatar-icon" />
                                     ) : editingAvatar && (
-                                        <FontAwesomeIcon icon={faUpload} className="Settings-avatar-icon" />
+                                        <FontAwesomeIcon icon={faUpload} className="Settings-avatar-icon" onClick={() => avatarInputRef.current && avatarInputRef.current.click()} />
                                     )}
 
                                     <input
