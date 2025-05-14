@@ -108,3 +108,10 @@
   margin-left: 0.5rem;
   font-size: 0.85rem;
 }
+
+.Settings-danger-zone {
+  border-top: 2px dashed #ff4d4f;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+}

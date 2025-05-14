@@ -127,5 +127,12 @@
     "avatarUpdated": "Avatar atualizado",
     "avatarUpdateFailed": "Ops! Erro ao atualizar o avatar. Por favor, tente novamente mais tarde.",
     "usernameUpdated": "Nome de usuário atualizado",
-    "usernameUpdateFailed": "Ops! Erro ao atualizar o nome de usuário. Por favor, tente novamente mais tarde."
+    "usernameUpdateFailed": "Ops! Erro ao atualizar o nome de usuário. Por favor, tente novamente mais tarde.",
+    "invalidUsername": "O nome de usuário deve ter entre 6 e 30 caracteres, começar com uma letra e pode conter letras, números, sublinhados ou pontos.",
+    "usernameTaken": "Este nome de usuário já está em uso. Tente outro.",
+    "dangerZone": "Zona de perigo",
+    "deleteAccount": "Excluir conta",
+    "deleting": "Excluindo...",
+    "confirmAccountDeletion": "Tem certeza que deseja excluir permanentemente sua conta?",
+    "accountDeletionFailed": "Ops! Falha ao excluir a conta. Por favor, tente novamente."
 }

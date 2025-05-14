@@ -112,5 +112,12 @@
     "avatarUpdated": "Avatar updated",
     "avatarUpdateFailed": "Oops! Error updating avatar. Please try again later.",
     "usernameUpdated": "Username updated",
-    "usernameUpdateFailed": "Oops! Error updating username. Please try again later."
+    "usernameUpdateFailed": "Oops! Error updating username. Please try again later.",
+    "invalidUsername": "Usernames must be 6–30 characters, start with a letter, and may include letters, numbers, underscores or dots.",
+    "usernameTaken": "This username is already taken. Please try another.",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleting": "Deleting...",
+    "confirmAccountDeletion": "Are you sure you want to permanently delete your account?",
+    "accountDeletionFailed": "Oops! Account deletion failed. Please try again."
 }

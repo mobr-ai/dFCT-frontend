@@ -67,11 +67,12 @@ function NavBar(props) {
             <Image
                 src={props.userData.avatar ? props.userData.avatar : avatarImg}
                 alt="Profile avatar"
+                title={props.userData.username.length > 16 ? props.userData.username : null}
                 onError={(e) => e.target.src = avatarImg}
                 roundedCircle
                 style={{ width: '30px', marginRight: '5px' }}
             />
-            {' ' + props.userData.username}
+            {' ' + props.userData.username.length > 16 ? props.userData.username.slice(0, 13) + '…' : props.userData.username}
         </Container>
     )
     // hide when on landing and not logged

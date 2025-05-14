@@ -7,7 +7,7 @@ import { Container, Form, Row, Col, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShareAlt, faCopy, faPen, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faShareAlt, faCopy, faPen, faUpload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useAuthRequest } from './hooks/useAuthRequest';
 import { useS3Upload } from './hooks/useS3Upload';
 import { resizeImage } from './helpers/resizeImage'; // helper class
@@ -18,7 +18,7 @@ import avatarImg from "./icons/avatar.png";
 function SettingsPage() {
     const { t, i18n } = useTranslation();
     const { user, setUser, showToast } = useOutletContext();
-    const { authFetch } = useAuthRequest(user);
+    const { authFetch, authRequest } = useAuthRequest(user);
     const { handleUploads } = useS3Upload();
     const [language, setLanguage] = useState(i18n.language.split('-')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -27,6 +27,7 @@ function SettingsPage() {
     const [newUsername, setNewUsername] = useState(user ? user.username : null);
     const [isSavingUsername, setIsSavingUsername] = useState(false);
     const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const avatarInputRef = useRef(null)
     const parsedSettings = JSON.parse((user && user.settings) ? user.settings : '{}');
     const navigate = useNavigate()
@@ -74,6 +75,59 @@ function SettingsPage() {
         setLanguage(selectedLang);
         localStorage.setItem('i18nextLng', selectedLang);
         i18n.changeLanguage(selectedLang);
+    };
+
+    const handleUsernameSubmit = async () => {
+        // 6 to 30 chars; only letters, numbers, underscores, dots 
+        // No spaces, emojis, special symbols; starting with letters
+        const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9._]{5,29}$/;
+
+        if (newUsername === user.username || !newUsername) return;
+
+        const trimmed = newUsername.trim();
+
+        if (!USERNAME_REGEX.test(trimmed)) {
+            showToast(t('invalidUsername'), 'danger');
+            return;
+        }
+
+        try {
+            setIsSavingUsername(true);
+            const res = await authRequest.post('/api/validate_username').send({ username: trimmed });
+            if (!res.body.available) {
+                showToast(t('usernameTaken'), 'danger');
+                return;
+            }
+
+            await saveSettings({ ...JSON.parse(user.settings || '{}'), username: trimmed });
+            setEditingUsername(false);
+        } catch (err) {
+            console.error(err);
+            showToast(t('usernameUpdateFailed'), 'danger');
+        } finally {
+            setIsSavingUsername(false);
+        }
+    };
+
+    const deleteAccount = async () => {
+        if (!window.confirm(t('confirmAccountDeletion'))) return;
+        setIsDeleting(true);
+        try {
+            const res = await authFetch(`/user/${user.id}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                localStorage.clear();
+                setUser(null);
+                navigate('/');
+            } else {
+                showToast(t('accountDeletionFailed'), 'danger');
+            }
+        } catch (err) {
+            showToast(t('accountDeletionFailed'), 'danger');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const encodeBase62 = (num) => {
@@ -194,12 +248,8 @@ function SettingsPage() {
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         if (newUsername !== user.username) {
-                                                            saveSettings({
-                                                                ...JSON.parse(user.settings || '{}'),
-                                                                username: newUsername
-                                                            });
+                                                            handleUsernameSubmit()
                                                         }
-                                                        setEditingUsername(false);
                                                     }
                                                 }}
                                                 autoFocus
@@ -214,35 +264,6 @@ function SettingsPage() {
                                                 )}
                                             </div>
                                         )}
-                                        {/* {editingUsername ? (
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    value={newUsername}
-                                                    onChange={(e) => {
-                                                        if (e.target.value !== newUsername)
-                                                            setNewUsername(e.target.value);
-                                                    }
-                                                    }
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            if (newUsername !== user.username) {
-                                                                saveSettings({
-                                                                    ...JSON.parse(user.settings || '{}'),
-                                                                    username: newUsername
-                                                                });
-                                                            }
-                                                            setEditingUsername(false);
-                                                        }
-                                                    }}
-                                                    autoFocus
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div onClick={() => setEditingUsername(true)} style={{ cursor: 'pointer' }}>
-                                                {user.username || `d-FCT User${user.user_id}`}
-                                                <FontAwesomeIcon icon={faPen} className="Settings-username-icon" />                                            </div>
-                                        )} */}
                                     </div>
                                 </h5>
 
@@ -302,6 +323,13 @@ function SettingsPage() {
                             </Form.Control>
                         </Form.Group>
                     </Form>
+                    <div className="mt-4 p-3" style={{ backgroundColor: '#59454d', borderRadius: '6px' }}>
+                        <h5 className="text-danger">{t('dangerZone')}</h5>
+                        <Button variant="danger" onClick={deleteAccount} disabled={isDeleting}>
+                            <FontAwesomeIcon icon={faTrash} className="me-2" />
+                            {isDeleting ? t('deleting') : t('deleteAccount')}
+                        </Button>
+                    </div>
                 </Container>
                 <ShareModal
                     show={showShareModal}
