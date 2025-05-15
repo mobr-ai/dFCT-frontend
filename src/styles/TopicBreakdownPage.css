@@ -166,6 +166,12 @@
   text-align: center;
 }
 
+.modal-header,
+.modal-body,
+.modal-footer {
+  background-color: #9ea7ad !important;
+}
+
 .Breakdown-claim-evidence-modal-url-input {
   font-family: monospace;
   font-size: medium;

@@ -259,7 +259,7 @@ function EvidenceModal(props) {
                         <URLInputField fetching={fetching} handleURLInput={handleURLInput} t={t} />
                         <URLCardList setURLs={setURLs} urls={urls} />
                         <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                        <SubmissionControls loading={loading} processContent={processEvidence} files={files} t={t} />
+                        <SubmissionControls loading={loading} processContent={processEvidence} files={files} urls={urls} t={t} />
                     </>
                 )}
 

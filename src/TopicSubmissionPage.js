@@ -423,7 +423,7 @@ function TopicSubmissionPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                <SubmissionControls loading={loading} processContent={() => { setHasDismissedRelatedModal(false); setShowRelatedTopicsModal(true) }} files={files} t={t} />
+                <SubmissionControls loading={loading} processContent={() => { setHasDismissedRelatedModal(false); setShowRelatedTopicsModal(true) }} files={files} urls={urls} t={t} />
               </>
             )}
 
