@@ -202,7 +202,7 @@ function AuthPage(props) {
             {!loading && (!searchParams.get('confirmed') || !searchParams.get('confirmed') === 'false') && (
                 <Container className="Auth-container-wrapper" fluid>
                     <Container className="Auth-container">
-                        <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
+                        <Image className='Auth-logo' src="./logo192.png" alt="d-FCT logo" />
 
                         <h2 className="Auth-title">{props.type === "create" ? t('signUpMsg') : t('loginMsg')}</h2>
 
@@ -331,7 +331,7 @@ function AuthPage(props) {
             )}
             {searchParams.get('confirmed') === 'false' && (
                 <Container className="Auth-container confirm-message-box">
-                    <Image className='Auth-logo' src="./logo512.png" alt="d-FCT logo" />
+                    <Image className='Auth-logo' src="./logo192.png" alt="d-FCT logo" />
                     <h2 className="Auth-title">{t('confirmYourEmailTitle')}</h2>
                     <p className="Auth-confirm-text">
                         {t('confirmYourEmailMsg')}
