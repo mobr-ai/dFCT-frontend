@@ -23,13 +23,6 @@ const RelatedTopicsModal = ({ show, onClose, onProceed, topics }) => {
             <Modal.Body className='Submission-related-modal-body'>
                 <p>{t('relatedTopicsIntro')}</p>
                 <TopicList content={topics} type='main' />
-                {/* <Row className="gx-3 gy-4">
-          {topics.map((topic) => (
-            <Col key={topic.id} xs={12} sm={6} md={4}>
-              <TopicCard topic={topic} />
-            </Col>
-          ))}
-        </Row> */}
             </Modal.Body>
             <Modal.Footer className='Submission-related-modal-footer'>
                 <Button variant="secondary" onClick={onClose}>

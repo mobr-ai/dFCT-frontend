@@ -15,9 +15,6 @@ function TopicList({ content, type, showSideBar }) {
 
     useEffect(() => {
         setVisibleTopics(content);
-        // setTimeout(() => {
-        //     setVisibleTopics(content);
-        // }, 400); // matches animation duration
     }, [content])
 
     const handleRemove = (id) => {
@@ -165,7 +162,7 @@ function TopicList({ content, type, showSideBar }) {
                 <Card.Body>
                     <Card.Title className="Topic-card-title">{topic.title}</Card.Title>
                     <Card.Subtitle className="text-muted">
-                        {t('Updated') + " " + (getElapsedTime(topic.timestamp) === "1s" ? t('moments ago') : getElapsedTime(topic.timestamp) + " " + t('ago'))}
+                        {t('Updated') + " " + (getElapsedTime(topic.updatedAt) === "1s" ? t('moments ago') : getElapsedTime(topic.updatedAt) + " " + t('ago'))}
                     </Card.Subtitle>
                     <Card.Text>{truncateString(topic.description)}</Card.Text>
                 </Card.Body>
