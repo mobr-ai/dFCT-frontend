@@ -3,21 +3,21 @@ import './styles/LandingPage.css';
 import './styles/TopicList.css';
 import './styles/NavigationSidebar.css';
 import i18n from "i18next";
-import { Button, Container, Spinner } from 'react-bootstrap';
-import { useOutletContext, useNavigate, useLocation, useLoaderData, Await } from "react-router-dom";
-import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
-import { useTranslation, initReactI18next } from "react-i18next";
-import ReactTextTransition, { presets } from 'react-text-transition';
 import logo from './icons/logo.svg';
 import detector from "i18next-browser-languagedetector";
 import translationEN from './locales/en/translation.json';
 import translationPT from './locales/pt/translation.json';
 import TopicList from './components/TopicList.js';
 import LoadingPage from './LoadingPage.js';
+import { useAuthRequest } from './hooks/useAuthRequest';
+import { Button, Container, Spinner } from 'react-bootstrap';
+import { useOutletContext, useNavigate, useLocation, useLoaderData, Await } from "react-router-dom";
+import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
+import { useTranslation, initReactI18next } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlassArrowRight, faMagnifyingGlass, faTimes, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup, FormControl } from 'react-bootstrap';
-import { useAuthRequest } from './hooks/useAuthRequest';
+import ReactTextTransition, { presets } from 'react-text-transition';
 
 
 i18n
@@ -37,8 +37,6 @@ function LandingPage(props) {
   const { userTopicsPromise, allTopicsPromise } = useLoaderData()
   const { user, loading, setLoading } = useOutletContext();
   const { authFetch } = useAuthRequest(user);
-  const brandText = ['d-', 'de', 'fact', 'tool'];
-  const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
   const [brandIndex, setBrandIndex] = useState(1);
   const [suffixIndex, setSuffixBrandIndex] = useState(1);
   const [topics, setTopics] = useState([]);
@@ -50,13 +48,15 @@ function LandingPage(props) {
   const [searching, setSearching] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const displayedTopics = searching ? searchResults : topics;
-  const dragCounter = useRef(0);
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const initialQuery = params.get('q') ? "#" + params.get('q') : '';
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const brandText = ['d-', 'de', 'fact', 'tool'];
+  const suffixText = ['FCT', 'centralized', '-checking', 'kit'];
+  const displayedTopics = searching ? searchResults : topics;
+  const dragCounter = useRef(0);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   // Trigger search when initialQuery changes
   useEffect(() => {
@@ -71,16 +71,6 @@ function LandingPage(props) {
     document.getElementsByClassName("Landing-body")[0]?.scrollTo({ top: 0, behavior: 'smooth' })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-
-  // const bounceBack = () => {
-  //   const scrollElement = document.querySelector('.Landing-middle-column');
-  //   if (!scrollElement) return;
-
-  //   scrollElement.scrollBy({
-  //     top: -100, // Bounce up 100px
-  //     behavior: 'smooth'
-  //   });
-  // };
 
   const loadTopics = useCallback(async (newPage) => {
     if (typeof newPage === 'undefined') return;
@@ -138,21 +128,13 @@ function LandingPage(props) {
           loadTopics(nextPage);
         } else {
           if (!showScrollUpButton) {
-            // Only trigger bounce once
-            // bounceBack();
             setTimeout(() => {
               setShowScrollUpButton(true);
-            }, 500); // Delay showing the button after bounce finishes
+            }, 500);
           }
         }
       }
-
-      // Show scroll up button if user manually scrolls up
-      // if (scrollElement.scrollTop > 300) {
-      //   setShowScrollUpButton(true);
-      // }
     };
-
 
     scrollElement?.addEventListener('scroll', handleScroll);
     window.addEventListener('scroll', handleScroll);
@@ -253,7 +235,6 @@ function LandingPage(props) {
     setTotalTopics(0);
     setPage(1);
     setSearching(false);
-    // setSearchQuery('');
     setSearchResults([]);
     setLoading(true)
   }, [location.pathname, setLoading]);
@@ -356,7 +337,6 @@ function LandingPage(props) {
             )}
           </Suspense>
         )}
-
 
         {!loading && user && searching && !searchLoading && searchQuery && searchResults.length === 0 && (
           <p className="Landing-no-results-msg">{t('noResultsFound')}</p>
