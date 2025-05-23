@@ -423,7 +423,7 @@ function TopicSubmissionPage() {
               <>
                 <URLCardList setURLs={setURLs} urls={urls} />
                 <ContextInputField providedContext={providedContext} handleContextInput={handleContextInput} t={t} />
-                <SubmissionControls loading={loading} processContent={() => { setHasDismissedRelatedModal(false); setShowRelatedTopicsModal(true) }} files={files} urls={urls} t={t} />
+                <SubmissionControls loading={loading} processContent={() => { if (files.length > 0) { setHasDismissedRelatedModal(false); setShowRelatedTopicsModal(true) } else { processTopic() } }} files={files} urls={urls} t={t} />
               </>
             )}
 
@@ -442,7 +442,7 @@ function TopicSubmissionPage() {
         </Suspense>
       )}
       <RelatedTopicsModal
-        show={showRelatedTopicsModal && !hasDismissedRelatedModal}
+        show={showRelatedTopicsModal && !hasDismissedRelatedModal && files.length > 0}
         onClose={() => {
           setHasDismissedRelatedModal(true);
           setShowRelatedTopicsModal(false);
