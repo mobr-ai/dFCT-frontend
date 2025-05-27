@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react';
 import { useOutletContext } from "react-router-dom";
 import { useS3Upload } from '../hooks/useS3Upload.js';
 import request from 'superagent';
-import URLCardList from '../URLCardList.js';
-import FileUploadArea from './FileUploadArea.js';
-import URLInputField from './URLInputField.js';
-import ContextInputField from './ContextInputField.js';
-import SubmissionControls from './SubmissionControls.js';
+import URLCardList from '../URLCardList.jsx';
+import FileUploadArea from './FileUploadArea.jsx';
+import URLInputField from './URLInputField.jsx';
+import ContextInputField from './ContextInputField.jsx';
+import SubmissionControls from './SubmissionControls.jsx';
 import { useAuthRequest } from '../hooks/useAuthRequest';
 
 

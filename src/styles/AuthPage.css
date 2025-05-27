@@ -58,7 +58,7 @@
     min-width: 450px;
     padding: 2rem;
   }
-  #Auth-oauth-google {
+  /* #Auth-oauth-google {
     background: url(./../../public/g.png) no-repeat left center;
     background-size: 1.5rem;
     background-position-x: 1.5rem;
@@ -67,7 +67,7 @@
     background: url(./../../public/g.png) no-repeat left center, lightslategray;
     background-size: 1.5rem;
     background-position-x: 1.5rem;
-  }
+  } */
 }
 
 .Auth-input-email,
@@ -150,7 +150,15 @@
 }
 
 .Auth-oauth-button {
-  cursor: pointer;
+  width: 100%;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
 }
 
 .Auth-oauth-button:hover {
@@ -206,4 +214,22 @@
 
 .form-check-label {
   cursor: pointer !important;
+}
+
+.Auth-oauth-logo {
+  height: 1.5rem;
+  width: auto;
+  margin-right: 10px;
+}
+
+.Auth-wallet-link {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #e1e1e1;
+}
+
+.Auth-oauth-wallets {
+  text-align: center;
+  color: #e1e1e1;
+  size: small;
 }
