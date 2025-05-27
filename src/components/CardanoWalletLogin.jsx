@@ -75,7 +75,7 @@ function CardanoWalletLogin({ onLogin, showToast }) {
           </Button>
         ))
       ) : (
-        <div style={{fontSize: '0.75rem'}}>
+        <div style={{fontSize: '0.75rem', marginTop: '0.5rem'}}>
             <Trans i18nKey="walletNotFound"
                 components={{
                     nami: <a className="Auth-wallet-link" href="https://namiwallet.io/" target="_blank" rel="noopener noreferrer" />,
