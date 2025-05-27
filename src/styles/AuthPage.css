@@ -16,6 +16,7 @@
   height: 6rem;
   position: relative;
   margin-bottom: 5vh;
+  filter: drop-shadow(5px 9px 2px rgba(0, 0, 0, 0.4));
 }
 
 .Auth-title {
@@ -150,15 +151,16 @@
 }
 
 .Auth-oauth-button {
-  width: 100%;
   text-transform: capitalize;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
   font-size: 0.75rem;
   margin-top: 0.4rem;
+  display: grid;
+  grid-template-columns: 2rem auto;
+  align-items: center;
+  justify-content: normal;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
 }
 
 .Auth-oauth-button:hover {
@@ -219,7 +221,8 @@
 .Auth-oauth-logo {
   height: 1.5rem;
   width: auto;
-  margin-right: 10px;
+  margin-left: 4vw;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
 }
 
 .Auth-wallet-link {

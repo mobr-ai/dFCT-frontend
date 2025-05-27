@@ -108,6 +108,7 @@
   width: 15.5rem;
   min-height: 15.5rem;
   margin: auto;
+  filter: drop-shadow(5px 20px 2px rgba(0, 0, 0, 0.4));
 }
 
 @media (prefers-reduced-motion: no-preference) {
