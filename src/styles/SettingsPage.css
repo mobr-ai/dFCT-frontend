@@ -33,6 +33,10 @@
   margin-top: 1.5rem;
 }
 
+.Settings-username-wallet {
+  font-size: smaller;
+}
+
 .Settings-referral-link {
   display: inline-block;
   margin-bottom: 0.5rem;
