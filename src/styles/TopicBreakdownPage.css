@@ -132,6 +132,14 @@
   margin-bottom: 2rem;
 }
 
+.Breakdown-topic-subheading {
+  display: block;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-size: 0.7rem;
+  font-family: monospace;
+}
+
 .Breakdown-toolbar {
   display: flex;
   margin-bottom: 2rem;

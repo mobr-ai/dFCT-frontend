@@ -123,5 +123,9 @@
     "deleteAccount": "Delete Account",
     "deleting": "Deleting...",
     "confirmAccountDeletion": "Are you sure you want to permanently delete your account?",
-    "accountDeletionFailed": "Oops! Account deletion failed. Please try again."
+    "accountDeletionFailed": "Oops! Account deletion failed. Please try again.",
+    "status": "Current status",
+    "createdAt": "Created",
+    "updatedAt": "Last update",
+    "rewardAmount": "Reward Pool"
 }

@@ -228,7 +228,6 @@ function SettingsPage() {
           <div className="Settings-user-box">
             <Row className="align-items-center">
               <Col xs={4}>
-                {/* <Image src={user.avatar ? user.avatar : avatarImg} onError={(e) => e.target.src = avatarImg} roundedCircle fluid /> */}
                 <div
                   className="Settings-avatar-wrapper"
                   onMouseEnter={() => setEditingAvatar(true)}
@@ -245,7 +244,6 @@ function SettingsPage() {
                     roundedCircle
                     fluid
                   />
-                  {/* {editingAvatar && (<FontAwesomeIcon icon={faUpload} className="Settings-avatar-icon" />)} */}
                   {isSavingAvatar ? (
                     <Spinner
                       animation="border"
