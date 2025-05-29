@@ -85,40 +85,14 @@ function SettingsPage() {
   };
 
   const handleUsernameSubmit = async () => {
-    // 6 to 30 chars; only letters, numbers, underscores, dots
-    // No spaces, emojis, special symbols; starting with letters
-    const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9._]{5,29}$/;
-
     if (newUsername === user.username || !newUsername) return;
 
-    const trimmed = newUsername.trim();
+    await saveSettings({
+      ...JSON.parse(user.settings || "{}"),
+      username: newUsername.trim(),
+    });
 
-    if (!USERNAME_REGEX.test(trimmed)) {
-      showToast(t("invalidUsername"), "danger");
-      return;
-    }
-
-    try {
-      setIsSavingUsername(true);
-      const res = await authRequest
-        .post("/api/validate_username")
-        .send({ username: trimmed });
-      if (!res.body.available) {
-        showToast(t("usernameTaken"), "danger");
-        return;
-      }
-
-      await saveSettings({
-        ...JSON.parse(user.settings || "{}"),
-        username: trimmed,
-      });
-      setEditingUsername(false);
-    } catch (err) {
-      console.error(err);
-      showToast(t("usernameUpdateFailed"), "danger");
-    } finally {
-      setIsSavingUsername(false);
-    }
+    setEditingUsername(false);
   };
 
   const deleteAccount = async () => {
@@ -178,40 +152,70 @@ function SettingsPage() {
       .catch(() => showToast(t("copyFailed"), "danger"));
   };
 
-  async function saveSettings(updatedSettings) {
-    if (
-      updatedSettings.username &&
-      updatedSettings.username !== user.username
-    ) {
-      setIsSavingUsername(true);
-    }
-    if (updatedSettings.avatar && updatedSettings.avatar !== user.avatar) {
+  async function saveSettings(updatedSettings, skipUsernameValidation = false) {
+    const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9._]{5,29}$/;
+
+    const isUsernameChange =
+      updatedSettings.username && updatedSettings.username !== user.username;
+
+    if (isUsernameChange) setIsSavingUsername(true);
+    if (updatedSettings.avatar && updatedSettings.avatar !== user.avatar)
       setIsSavingAvatar(true);
-    }
 
     try {
+      // Inline username validation if not skipped
+      if (isUsernameChange && !skipUsernameValidation) {
+        const trimmed = updatedSettings.username.trim();
+        if (!USERNAME_REGEX.test(trimmed)) {
+          showToast(t("invalidUsername"), "danger");
+          return;
+        }
+
+        const res = await authRequest
+          .post("/api/validate_username")
+          .send({ username: trimmed });
+
+        if (!res.body.available) {
+          showToast(t("usernameTaken"), "danger");
+          return;
+        }
+
+        updatedSettings.username = trimmed;
+      }
+
       const response = await authFetch(`/user/${user.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ settings: updatedSettings }),
       });
+
       const data = await response.json();
-      console.log(data);
+
+      if (!response.ok) {
+        if (
+          data?.error?.includes("duplicate key value") &&
+          data?.error?.includes("unique_username")
+        ) {
+          showToast(t("usernameTaken"), "danger");
+        } else {
+          showToast(t("settingsFailed"), "danger");
+        }
+        return;
+      }
+
       setUser((prev) => ({
         ...prev,
         settings: JSON.stringify(updatedSettings),
-        avatar: updatedSettings.avatar ? updatedSettings.avatar : prev.avatar,
-        username: updatedSettings.username
-          ? updatedSettings.username
-          : prev.username,
+        avatar: updatedSettings.avatar || prev.avatar,
+        username: updatedSettings.username || prev.username,
       }));
 
-      showToast(t("settingsSaved"), "success"); // trigger toast when successful
+      showToast(t("settingsSaved"), "success");
     } catch (error) {
       console.error("Error updating settings:", error);
       showToast(t("settingsFailed"), "danger");
     } finally {
-      if (updatedSettings.username) setIsSavingUsername(false);
+      if (isUsernameChange) setIsSavingUsername(false);
       if (updatedSettings.avatar) setIsSavingAvatar(false);
     }
   }
