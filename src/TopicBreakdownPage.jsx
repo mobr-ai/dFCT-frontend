@@ -8,6 +8,7 @@ import LoadingPage from "./LoadingPage";
 import ContentList from "./components/ContentList";
 import ClaimList from "./components/ClaimList";
 import ContentCarousel from "./components/ContentCarousel";
+import i18n from "i18next";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
@@ -89,6 +90,7 @@ const Topic = ({
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
+  const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
 
   const handleTagClick = (tag) => {
@@ -145,14 +147,12 @@ const Topic = ({
         style={{ fontStyle: "italic" }}
       >
         {createdAt !== updatedAt
-          ? t("createdAt") +
-            ": " +
-            new Date(createdAt).toLocaleString() +
-            " • " +
-            t("updatedAt") +
-            ": " +
-            new Date(updatedAt).toLocaleString()
-          : t("createdAt") + ": " + new Date(createdAt).toLocaleString()}
+          ? `${t("createdAt")}: ${new Date(createdAt).toLocaleString(
+              locale
+            )} • ${t("updatedAt")}: ${new Date(updatedAt).toLocaleString(
+              locale
+            )}`
+          : `${t("createdAt")}: ${new Date(createdAt).toLocaleString(locale)}`}
       </small>
       <p>{description}</p>
       <p>{getHashtags(contentList, true, 6, handleTagClick)}</p>
