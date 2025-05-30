@@ -139,8 +139,13 @@
     "deleting": "Excluindo...",
     "confirmAccountDeletion": "Tem certeza que deseja excluir permanentemente sua conta?",
     "accountDeletionFailed": "Ops! Falha ao excluir a conta. Por favor, tente novamente.",
-    "status": "Status atual",
+    "status": "Estado atual",
     "createdAt": "Criado em",
     "updatedAt": "Última atualização",
-    "rewardAmount": "Pool de Recompensa"
+    "rewardAmount": "Pool de Recompensa",
+    "DRAFT": "RASCUNHO",
+    "PROPOSED": "PROPOSTO",
+    "ACTIVE": "ATIVO",
+    "CLOSED": "ENCERRADO",
+    "REJECTED": "REJEITADO"
 }

@@ -124,8 +124,8 @@ const Topic = ({
     <div className="Breakdown-topic-container">
       <h1 className="Breakdown-topic-title">{title}</h1>
       <small className="Breakdown-topic-subheading">
-        {t("status")}: <strong>{currentStatus}</strong> • {t("rewardAmount")}:{" "}
-        {rewardAmount || 0} $DFCT
+        {t("status")}: <strong>{t(currentStatus)}</strong> • {t("rewardAmount")}
+        : {rewardAmount || 0} $DFCT
       </small>
       <TopicToolbar
         user={user}
