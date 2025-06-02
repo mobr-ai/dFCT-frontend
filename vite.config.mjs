@@ -1,10 +1,16 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import wasm from 'vite-plugin-wasm';
+import compression from 'vite-plugin-compression';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react(), wasm()],
+  plugins: [react(), wasm(), compression({
+    algorithm: 'brotliCompress',
+    ext: '.br',
+    deleteOriginFile: false, // keep original uncompressed files
+    threshold: 10240, // compress files larger than 10kb
+  })],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -23,6 +29,7 @@ export default defineConfig({
         manualChunks: {
           react: ['react', 'react-dom'],
           bootstrap: ['react-bootstrap'],
+          cardano: ['@emurgo/cardano-serialization-lib-browser']
         },
       },
     },
@@ -35,6 +42,6 @@ export default defineConfig({
     'process.env': {}, // Avoid undefined "process" references
   },
   optimizeDeps: {
-    include: ['buffer'],
+    include: ['react', 'react-dom', 'react-bootstrap', 'buffer'],
   },
 });

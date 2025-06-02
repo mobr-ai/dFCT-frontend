@@ -66,6 +66,7 @@
     "@vitejs/plugin-react": "^4.5.0",
     "ajv": "^8.17.1",
     "vite": "^6.3.5",
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-wasm": "^3.4.1"
   }
 }

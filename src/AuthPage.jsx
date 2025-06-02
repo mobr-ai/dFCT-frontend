@@ -1,4 +1,5 @@
 import i18n from "./i18n";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import reactStringReplace from "react-string-replace";
 import Image from "react-bootstrap/Image";
 import Container from "react-bootstrap/Container";
@@ -6,7 +7,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect, useCallback } from "react";
 import {
   NavLink,
   useOutletContext,
@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/AuthPage.css";
 import CardanoWalletLogin from "./components/CardanoWalletLogin";
+
 import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
@@ -379,7 +380,9 @@ function AuthPage(props) {
               </Button>
               {/* Cardano Wallet Login */}
 
-              <CardanoWalletLogin onLogin={handleLogin} />
+              <Suspense fallback={<LoadingPage type="simple" />}>
+                <CardanoWalletLogin onLogin={handleLogin} />
+              </Suspense>
             </Container>
           </Container>
         )}
