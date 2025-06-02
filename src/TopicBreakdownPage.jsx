@@ -8,7 +8,7 @@ import LoadingPage from "./LoadingPage";
 import ContentList from "./components/ContentList";
 import ClaimList from "./components/ClaimList";
 import ContentCarousel from "./components/ContentCarousel";
-import i18n from "i18next";
+import i18n from "./i18n";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";

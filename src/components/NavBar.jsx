@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import i18n from "i18next";
+import i18n from "./../i18n";
 import avatarImg from "./../icons/avatar.png";
 
 // const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
