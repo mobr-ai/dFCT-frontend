@@ -133,12 +133,81 @@
   margin-bottom: 2rem;
 }
 
-.Breakdown-topic-subheading {
+/* .Breakdown-topic-subheading {
   display: block;
   margin-top: -1rem;
   margin-bottom: 1rem;
   font-size: 0.7rem;
   font-family: monospace;
+} */
+
+.Breakdown-topic-subheading {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 1rem;
+  margin-top: -1rem;
+}
+
+.Breakdown-topic-subheading a {
+  color: inherit;
+  text-decoration: underline dotted;
+}
+
+.Breakdown-topic-subheading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* Base color only */
+.status-proposed {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(23deg)
+    brightness(119%) contrast(119%);
+}
+.status-reviewed {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(176deg)
+    brightness(119%) contrast(119%);
+}
+.status-activated {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(44deg)
+    brightness(119%) contrast(119%);
+}
+.status-closed {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg)
+    brightness(119%) contrast(119%);
+}
+.status-rejected {
+  filter: invert(50%) sepia(100) saturate(100) hue-rotate(1deg) brightness(119%)
+    contrast(119%);
+}
+
+/* Combined with subtle hover shadow */
+.status-proposed:hover {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(23deg)
+    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
+}
+.status-reviewed:hover {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(176deg)
+    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
+}
+.status-activated:hover {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(44deg)
+    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
+}
+.status-closed:hover {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg)
+    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
+}
+.status-rejected:hover {
+  filter: invert(50%) sepia(100) saturate(100) hue-rotate(1deg) brightness(119%)
+    contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
 }
 
 .Breakdown-toolbar {
@@ -152,8 +221,21 @@
   height: 25px;
 }
 
-.Breakdown-toolbar-icon:hover {
-  box-shadow: inset 0 0 15px 15px transparent;
+/* .Breakdown-toolbar-icon:hover {
+  filter: drop-shadow(6px 5px 2px rgba(0, 0, 0, 1));
+} */
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating {
+  animation: rotate 2s linear infinite;
 }
 
 .Breakdown-topic-claims {

@@ -1,7 +1,7 @@
 import "./styles/TopicBreakdownPage.css";
 import "./styles/NavigationSidebar.css";
-import TopicSidebar from "./TopicSidebar";
-import TopicToolbar from "./TopicToolbar";
+import TopicSidebar from "./components/topic/TopicSidebar";
+import TopicToolbar from "./components/topic/TopicToolbar";
 import EvidenceModal from "./components/EvidenceModal";
 import Badge from "react-bootstrap/Badge";
 import LoadingPage from "./LoadingPage";
@@ -21,6 +21,8 @@ import {
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef } from "react";
+import TextTransition, { presets } from "react-text-transition";
+import { CARDANO_EXPLORER_URL } from "./chains/cardano/constants";
 
 function getHashtags(
   contentList,
@@ -57,7 +59,6 @@ function getHashtags(
           key={tag}
           className="Breakdown-hashtag"
           bg="secondary"
-          // style={{ cursor: 'pointer' }}
           onClick={() => onClickTag(tag)}
         >
           #{tag}
@@ -70,28 +71,43 @@ function getHashtags(
 
 // Topic Component
 const Topic = ({
-  topicId,
-  title,
-  currentStatus,
-  createdAt,
-  updatedAt,
-  rewardAmount,
-  description,
-  claimList,
-  article,
-  contentList,
+  topic,
+  setTopic,
   user,
+  showToast,
   shareModalShow,
   setShareModalShow,
   evidenceModalShow,
   setEvidenceModalShow,
 }) => {
   const { t } = useTranslation();
+  const {
+    topic_id: topicId,
+    title,
+    status: currentStatus,
+    created_at: createdAt,
+    updated_at: updatedAt,
+    reward_amount: rewardAmount,
+    distribution_fee_amount: distributionFeeAmount,
+    description,
+    article,
+    claims: claimList,
+    content: contentList,
+    transaction_hash: transactionHash,
+    proposed_by: proposedBy,
+  } = topic;
+
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
+
+  const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
+    console.log(message + " datum hash = " + datumHash);
+    setTopic((prev) => ({ ...prev, ...updatedTopic }));
+    if (message) showToast(message, "success");
+  };
 
   const handleTagClick = (tag) => {
     // Navigate to LandingPage with search query
@@ -124,15 +140,51 @@ const Topic = ({
     <div className="Breakdown-topic-container">
       <h1 className="Breakdown-topic-title">{title}</h1>
       <small className="Breakdown-topic-subheading">
-        {t("status")}: <strong>{t(currentStatus)}</strong> • {t("rewardAmount")}
-        : {rewardAmount || 0} $DFCT
+        <span>
+          {t("status")}:
+          <TextTransition springConfig={presets.wobbly}>
+            {transactionHash ? (
+              <a
+                href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t(currentStatus)}
+              </a>
+            ) : (
+              t(currentStatus)
+            )}
+          </TextTransition>
+        </span>
+        <span>•</span>
+        <span>
+          {t("rewardPool")}:{" "}
+          <TextTransition springConfig={presets.gentle}>
+            {transactionHash ? (
+              <a
+                href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {rewardAmount || 0} $DFCT
+              </a>
+            ) : (
+              `${rewardAmount || 0} $DFCT`
+            )}
+          </TextTransition>
+        </span>
       </small>
+
       <TopicToolbar
         user={user}
         shareModalShow={shareModalShow}
         setShareModalShow={setShareModalShow}
         title={title}
+        showToast={showToast}
         hashtags={getHashtags(contentList)}
+        onTopicUpdated={handleTopicUpdate}
+        topicId={topicId}
+        status={currentStatus}
       />
       {contentList && contentList.length > 0 && (
         <div style={{ marginBottom: "2rem" }}>
@@ -187,8 +239,9 @@ function TopicBreakdownPage() {
   });
   const [shareModalShow, setShareModalShow] = useState(false);
   const [evidenceModalShow, setEvidenceModalShow] = useState(false);
+  const [topicData, setTopicData] = useState(null);
   const { topicPromise, userTopicsPromise } = useLoaderData();
-  const { user } = useOutletContext();
+  const { user, showToast } = useOutletContext();
 
   const handleResize = () => {
     setDimensions({
@@ -217,26 +270,23 @@ function TopicBreakdownPage() {
       <Suspense fallback={<LoadingPage />}>
         <div className="Breakdown-middle-column">
           <Await resolve={topicPromise}>
-            {(topicData) => {
+            {(resolved) => {
+              const parsed = JSON.parse(resolved);
+              if (!topicData) setTopicData(parsed); // set only once from loader
               scrollUp();
               return (
-                <Topic
-                  topicId={JSON.parse(topicData).topic_id}
-                  title={JSON.parse(topicData).title}
-                  currentStatus={JSON.parse(topicData).status}
-                  createdAt={JSON.parse(topicData).created_at}
-                  updatedAt={JSON.parse(topicData).updated_at}
-                  rewardAmount={JSON.parse(topicData).reward_amount}
-                  description={JSON.parse(topicData).description}
-                  claimList={JSON.parse(topicData).claims || []}
-                  article={JSON.parse(topicData).article}
-                  contentList={JSON.parse(topicData).content}
-                  user={user}
-                  shareModalShow={shareModalShow}
-                  setShareModalShow={setShareModalShow}
-                  evidenceModalShow={evidenceModalShow}
-                  setEvidenceModalShow={setEvidenceModalShow}
-                />
+                topicData && (
+                  <Topic
+                    topic={topicData}
+                    setTopic={setTopicData}
+                    user={user}
+                    showToast={showToast}
+                    shareModalShow={shareModalShow}
+                    setShareModalShow={setShareModalShow}
+                    evidenceModalShow={evidenceModalShow}
+                    setEvidenceModalShow={setEvidenceModalShow}
+                  />
+                )
               );
             }}
           </Await>

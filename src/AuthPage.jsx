@@ -17,8 +17,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/AuthPage.css";
-import CardanoWalletLogin from "./components/CardanoWalletLogin";
-
+import CardanoWalletLogin from "./components/wallet/CardanoWalletLogin";
 import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
@@ -83,8 +82,6 @@ function AuthPage(props) {
         console.log("Auth success:", result);
 
         if (result.access_token) {
-          // Save token to localStorage
-          localStorage.setItem("access_token", result.access_token);
           handleLogin(result);
         }
       }
@@ -381,7 +378,10 @@ function AuthPage(props) {
               {/* Cardano Wallet Login */}
 
               <Suspense fallback={<LoadingPage type="simple" />}>
-                <CardanoWalletLogin onLogin={handleLogin} />
+                <CardanoWalletLogin
+                  onLogin={handleLogin}
+                  showToast={showToast}
+                />
               </Suspense>
             </Container>
           </Container>

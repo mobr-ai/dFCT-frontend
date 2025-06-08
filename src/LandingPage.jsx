@@ -7,7 +7,7 @@ import logo from "./icons/logo.svg";
 import detector from "i18next-browser-languagedetector";
 import translationEN from "./locales/en/translation.json";
 import translationPT from "./locales/pt/translation.json";
-import TopicList from "./components/TopicList.jsx";
+import TopicList from "./components/topic/TopicList.jsx";
 import LoadingPage from "./LoadingPage.jsx";
 import { useAuthRequest } from "./hooks/useAuthRequest";
 import { Button, Container, Spinner } from "react-bootstrap";

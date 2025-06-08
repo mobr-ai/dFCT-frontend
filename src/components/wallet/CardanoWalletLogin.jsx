@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Buffer } from "buffer";
-import * as CSL from "@emurgo/cardano-serialization-lib-browser";
 import Button from "react-bootstrap/Button";
-import "./../styles/AuthPage.css";
-
-const SUPPORTED_WALLETS = ["nami", "eternl", "flint", "lace"];
-const WALLET_ICONS = {
-  nami: "/icons/nami.png",
-  eternl: "/icons/eternl.png",
-  flint: "/icons/flint.png",
-  lace: "/icons/lace.png",
-};
+import "./../../styles/AuthPage.css";
+import { getWalletInfo } from "./../../chains/cardano/walletUtils";
+import {
+  SUPPORTED_WALLETS,
+  WALLET_ICONS,
+} from "./../../chains/cardano/constants";
 
 function CardanoWalletLogin({ onLogin, showToast }) {
   const { t } = useTranslation();
@@ -27,32 +22,25 @@ function CardanoWalletLogin({ onLogin, showToast }) {
   const handleConnect = async (walletName) => {
     try {
       const walletApi = await window.cardano[walletName].enable();
-      const rawAddress = await walletApi.getChangeAddress();
-      const bech32Address = CSL.Address.from_bytes(
-        Buffer.from(rawAddress, "hex")
-      ).to_bech32();
+      const walletInfo = await getWalletInfo(walletName, walletApi);
 
       const response = await fetch("/api/auth/cardano", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          cbor_address: rawAddress,
-          address: bech32Address,
+          address: walletInfo.address,
+          wallet_info: walletInfo,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
+      if (!response.ok) throw new Error(await response.text());
 
       const data = await response.json();
-      localStorage.setItem("userData", JSON.stringify(data));
 
-      if (onLogin) onLogin(data);
-      if (showToast) showToast(t("loginSuccess"), "success");
+      if (onLogin) onLogin({ ...data, wallet_info: walletInfo });
     } catch (err) {
       console.error("Cardano Auth Error:", err);
-      if (showToast) showToast(t("loginError") + `: ${err.message}`, "danger");
+      if (showToast) showToast(t("loginError"), "danger");
     }
   };
 

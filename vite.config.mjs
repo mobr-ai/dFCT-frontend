@@ -4,6 +4,7 @@ import wasm from 'vite-plugin-wasm';
 import compression from 'vite-plugin-compression';
 import path from 'path';
 
+
 export default defineConfig({
   plugins: [react(), wasm(), compression({
     algorithm: 'brotliCompress',
@@ -29,7 +30,6 @@ export default defineConfig({
         manualChunks: {
           react: ['react', 'react-dom'],
           bootstrap: ['react-bootstrap'],
-          cardano: ['@emurgo/cardano-serialization-lib-browser']
         },
       },
     },

@@ -11,6 +11,7 @@ import AuthPage from "./AuthPage";
 import WaitingList from "./WaitingListPage";
 import SettingsPage from "./SettingsPage";
 import i18n from "./i18n";
+import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import {
@@ -23,6 +24,7 @@ import {
 // import { redirect } from 'react-router';
 
 function Layout() {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(
     window.localStorage.userData
@@ -46,6 +48,7 @@ function Layout() {
       if (userData) {
         setUser(userData);
         window.localStorage.setItem("userData", JSON.stringify(userData));
+        showToast(t("loginSuccess"), "secondary");
         navigate("/");
         setLoading(false);
       } else {

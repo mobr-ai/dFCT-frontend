@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useS3Upload } from "../hooks/useS3Upload.js";
 import request from "superagent";
-import URLCardList from "../URLCardList.jsx";
+import URLCardList from "./URLCardList.jsx";
 import FileUploadArea from "./FileUploadArea.jsx";
 import URLInputField from "./URLInputField.jsx";
 import ContextInputField from "./ContextInputField.jsx";
