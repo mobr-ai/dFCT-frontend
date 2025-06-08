@@ -143,14 +143,11 @@
 
 .Breakdown-topic-subheading {
   display: flex;
-  flex-wrap: nowrap;
+  flex-flow: wrap;
   align-items: center;
   gap: 0.3rem;
   font-size: 0.7rem;
   font-family: monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   margin-bottom: 1rem;
   margin-top: -1rem;
 }
