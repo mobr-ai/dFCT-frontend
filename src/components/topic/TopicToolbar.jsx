@@ -32,19 +32,10 @@ function TopicToolbar(props) {
   const statusToTooltipKey = {
     PROPOSED: "topicProposed",
     REVIEWED: "topicReviewed",
-    ACTIVATED: "topicActivated",
+    ACTIVE: "topicActivated",
     CLOSED: "topicClosed",
     REJECTED: "topicRejected",
     DRAFT: "topicDraft", // fallback
-  };
-
-  const statusToColor = {
-    PROPOSED: "#FFD700", // yellow
-    REVIEWED: "#FFA500", // orange
-    ACTIVATED: "#00C853", // green
-    CLOSED: "#9E9E9E", // gray
-    REJECTED: "#D32F2F", // red
-    DRAFT: "#ffffff", // white
   };
 
   const statusKey = String(props.status ?? "DRAFT").toUpperCase();

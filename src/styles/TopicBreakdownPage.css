@@ -172,7 +172,7 @@
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(176deg)
     brightness(119%) contrast(119%);
 }
-.status-activated {
+.status-active {
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(44deg)
     brightness(119%) contrast(119%);
 }
@@ -194,7 +194,7 @@
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(176deg)
     brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
 }
-.status-activated:hover {
+.status-active:hover {
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(44deg)
     brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
 }
