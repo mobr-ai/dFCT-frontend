@@ -178,7 +178,7 @@
 }
 .status-closed {
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg)
-    brightness(119%) contrast(119%);
+    brightness(119%) contrast(119%) grayscale(1);
 }
 .status-rejected {
   filter: invert(50%) sepia(100) saturate(100) hue-rotate(1deg) brightness(119%)
@@ -200,7 +200,8 @@
 }
 .status-closed:hover {
   filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(196deg)
-    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6));
+    brightness(119%) contrast(119%) drop-shadow(4px 4px 1px rgba(0, 0, 0, 0.6))
+    grayscale(1);
 }
 .status-rejected:hover {
   filter: invert(50%) sepia(100) saturate(100) hue-rotate(1deg) brightness(119%)
