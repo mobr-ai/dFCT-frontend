@@ -16,7 +16,7 @@ function PublishTopicModal({ show, onHide, onConfirm, showToast }) {
   const [reward, setReward] = useState(1000);
   const [selectedWallet, setSelectedWallet] = useState(null);
   const [walletSummaries, setWalletSummaries] = useState([]);
-  const [isLoadingWallet, setIsLoadingWallet] = useState(false);
+  const [isLoadingWallet, setIsLoadingWallet] = useState(true);
   const sessionWalletName = JSON.parse(localStorage.getItem("userData"))
     ?.wallet_info?.name;
 
@@ -26,6 +26,7 @@ function PublishTopicModal({ show, onHide, onConfirm, showToast }) {
     const updateWallets = async () => {
       const summaries = await getEnabledWalletSummaries();
       setWalletSummaries(summaries);
+      setIsLoadingWallet(false);
 
       const current = summaries.find((w) => w.name === selectedWallet?.name);
       if (!current) {
@@ -57,6 +58,8 @@ function PublishTopicModal({ show, onHide, onConfirm, showToast }) {
 
       const walletApi = await window.cardano[selectedWallet.name].enable();
       const walletInfo = await getWalletInfo(selectedWallet.name, walletApi);
+
+      setIsLoadingWallet(false);
 
       onConfirm({
         lovelace_amount: parseInt(lovelace),

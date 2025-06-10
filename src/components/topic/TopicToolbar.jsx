@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
@@ -40,7 +40,25 @@ function TopicToolbar(props) {
 
   const statusKey = String(props.status ?? "DRAFT").toUpperCase();
   const tooltipKey = statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT;
+  const [tooltipText, setTooltipText] = useState(t(tooltipKey));
   const statusClass = statusKey.toLowerCase();
+
+  const TOPIC_SYNCING_KEY = `dfct_topic_syncing_${props.topicId}`;
+  const isSyncing = () => localStorage.getItem(TOPIC_SYNCING_KEY) === "1";
+  const markSync = () => localStorage.setItem(TOPIC_SYNCING_KEY, "1");
+  const clearSync = () => localStorage.removeItem(TOPIC_SYNCING_KEY);
+
+  const handlePublishClick = () => {
+    if (isSyncing()) {
+      handlePublishConfirmed({
+        lovelace_amount: 0,
+        reward_amount: 0,
+        proposer_wallet_info: undefined,
+      });
+      return;
+    }
+    setPublishModalShow(true);
+  };
 
   const handlePublishConfirmed = async ({
     lovelace_amount,
@@ -50,6 +68,12 @@ function TopicToolbar(props) {
     try {
       setLoading(true);
       setTooltipText(t("publishingTopic"));
+
+      // If polling was previously exhausted, skip TX and retry polling
+      if (isSyncing()) {
+        await pollTopicStatus();
+        return;
+      }
 
       const walletApi = await window.cardano[
         proposer_wallet_info.name
@@ -77,25 +101,15 @@ function TopicToolbar(props) {
       const txHash = await signAndSubmitTx(tx, walletApi);
       props.showToast(t("publishingTopic"), "secondary");
 
-      const res = await authRequest.post("/api/topic_tx_status").send({
+      await authRequest.post("/api/topic_tx_status").send({
         topic_id: String(props.topicId),
         transaction_hash: txHash,
         reward_amount,
         distribution_fee_amount: lovelace_amount,
       });
 
-      const newStatusKey = String(
-        res?.body?.topic?.status ?? "DRAFT"
-      ).toUpperCase();
-      setTooltipText(
-        t(statusToTooltipKey[newStatusKey] ?? statusToTooltipKey.DRAFT)
-      );
-
-      props.onTopicUpdated?.({
-        message: t("topicProposed"),
-        updatedTopic: res.body.topic,
-        datumHash: res.body.datum_hash,
-      });
+      markSync();
+      await pollTopicStatus();
     } catch (err) {
       console.error("Topic proposal failed:", err);
       props.showToast(t("proposalFailed"), "danger");
@@ -105,7 +119,56 @@ function TopicToolbar(props) {
     }
   };
 
-  const [tooltipText, setTooltipText] = useState(t(tooltipKey));
+  const pollTopicStatus = async () => {
+    const maxAttempts = 12;
+    const delayMs = 10000;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+
+      try {
+        const statusRes = await authRequest.get(
+          `/api/topic/${props.topicId}/status`
+        );
+        const topic = statusRes.body;
+
+        if (topic.status && topic.status !== "DRAFT") {
+          const newStatusKey = String(topic.status).toUpperCase();
+          setTooltipText(
+            t(statusToTooltipKey[newStatusKey] ?? statusToTooltipKey.DRAFT)
+          );
+
+          props.onTopicUpdated?.({
+            message: t("topicProposed"),
+            updatedTopic: topic,
+          });
+
+          clearSync(); // clear the syncing marker
+          return true;
+        }
+      } catch (pollErr) {
+        console.warn(`Polling attempt ${attempt + 1} failed`, pollErr);
+      }
+    }
+
+    // Polling exhausted
+    props.showToast(t("statusSyncTimeout"), "secondary");
+    setTooltipText(t("verifyTopic"));
+    return false;
+  };
+
+  useEffect(() => {
+    if (isSyncing()) {
+      console.log("Previous topic status sync timed out. Retrying polling...");
+      // pollTopicStatus();
+      handlePublishConfirmed({
+        lovelace_amount: 0,
+        reward_amount: 0,
+        proposer_wallet_info: undefined,
+      });
+      // return;
+    }
+  }, []);
 
   return (
     <Container className="Breakdown-toolbar" fluid>
@@ -127,7 +190,7 @@ function TopicToolbar(props) {
                   className={`Breakdown-toolbar-icon status-${statusClass} ${
                     loading ? "rotating" : ""
                   }`}
-                  onClick={() => setPublishModalShow(true)}
+                  onClick={handlePublishClick}
                   style={{ cursor: "pointer" }}
                 />
               </OverlayTrigger>

@@ -142,19 +142,21 @@ const Topic = ({
       <small className="Breakdown-topic-subheading">
         <span>
           {t("status")}:
-          <TextTransition springConfig={presets.wobbly}>
-            {transactionHash ? (
-              <a
-                href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t(currentStatus)}
-              </a>
-            ) : (
-              t(currentStatus)
-            )}
-          </TextTransition>
+          <b>
+            <TextTransition springConfig={presets.wobbly}>
+              {transactionHash ? (
+                <a
+                  href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t(currentStatus)}
+                </a>
+              ) : (
+                t(currentStatus)
+              )}
+            </TextTransition>
+          </b>
         </span>
         <span>•</span>
         <span>
