@@ -43,6 +43,14 @@ const WaitingList = () => {
       .then(reqSuccess, reqError);
   };
 
+  const handleInputChange = (e) => {
+    const input = e.target.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(input) || input === "") {
+      setEmail(input);
+    }
+  };
+
   return (
     <div className="WaitingList-body">
       <div className="WaitingList-middle-column">
@@ -67,7 +75,7 @@ const WaitingList = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleInputChange}
               placeholder={t("enterEmailPlaceholder")}
               className=""
               required

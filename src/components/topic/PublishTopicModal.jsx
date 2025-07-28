@@ -8,7 +8,7 @@ import {
   getWalletInfo,
 } from "./../../chains/cardano/walletUtils";
 import LoadingPage from "./../../LoadingPage";
-import "./../../styles/PublishTopicModal.css";
+import "./../../styles/Wallet.css";
 
 function PublishTopicModal({ show, onHide, onConfirm, showToast }) {
   const { t } = useTranslation();

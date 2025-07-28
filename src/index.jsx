@@ -21,7 +21,11 @@ import {
   defer,
   useNavigate,
 } from "react-router-dom";
-// import { redirect } from 'react-router';
+import GovernancePage from "./GovernancePage";
+import ProposalPage from "./ProposalPage";
+
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
 
 function Layout() {
   const { t } = useTranslation();
@@ -48,7 +52,7 @@ function Layout() {
       if (userData) {
         setUser(userData);
         window.localStorage.setItem("userData", JSON.stringify(userData));
-        showToast(t("loginSuccess"), "secondary");
+        showToast(t("loginSuccess"), "success");
         navigate("/");
         setLoading(false);
       } else {
@@ -67,7 +71,7 @@ function Layout() {
   }, [user]);
 
   return (
-    <GoogleOAuthProvider clientId="929889600149-2qik7i9dn76tr2lu78bc9m05ns27kmag.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Header
         userData={user}
         setLoading={setLoading}
@@ -116,6 +120,24 @@ const allTopicsLoader = async () => {
   return defer({ allTopicsPromise });
 };
 
+const fetchGovProposals = async (userData) => {
+  const response = await fetch("/api/governance/proposals", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userData.access_token}`,
+    },
+  });
+
+  if (response.status === 401) {
+    console.warn("Unauthorized: redirecting to /login");
+    window.localStorage.removeItem("userData");
+    window.location.href = "/login?sessionExpired=1";
+  }
+
+  return await response.json();
+};
+
 const fetchUserTopics = async (userData) => {
   const lang =
     i18n.language.split("-")[0] || window.localStorage.i18nextLng.split("-")[0];
@@ -137,11 +159,21 @@ const fetchUserTopics = async (userData) => {
     console.warn("Unauthorized: redirecting to /login");
     window.localStorage.removeItem("userData");
     window.location.href = "/login?sessionExpired=1";
-    // return redirect('/login?sessionExpired=1');
-    // return <Navigate to="/login" replace />;
   }
 
   return await response.json();
+};
+
+const govProposalsLoader = async () => {
+  if (!window.localStorage.userData) return {};
+
+  let userData = JSON.parse(window.localStorage.userData);
+  if (userData && userData.id) {
+    const govProposalsPromise = fetchGovProposals(userData);
+    return defer({ govProposalsPromise });
+  }
+
+  return {};
 };
 
 const userTopicsLoader = async () => {
@@ -191,6 +223,15 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "/gov",
+        element: <GovernancePage />,
+        loader: govProposalsLoader,
+      },
+      {
+        path: "/proposal/:proposalId",
+        element: <ProposalPage />,
       },
       {
         path: "/signup",

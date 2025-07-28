@@ -35,10 +35,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 8000,
     open: true,
   },
   define: {
+    global: {},
     'process.env': {}, // Avoid undefined "process" references
   },
   optimizeDeps: {

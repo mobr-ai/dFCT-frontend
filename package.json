@@ -13,7 +13,6 @@
     "@testing-library/user-event": "^13.5.0",
     "assert": "^2.1.0",
     "bootstrap": "^5.3.3",
-    "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
     "i18next": "^23.16.8",
     "i18next-browser-languagedetector": "^8.0.0",
@@ -66,6 +65,8 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@vitejs/plugin-react": "^4.5.0",
     "ajv": "^8.17.1",
+    "buffer": "^6.0.3",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "vite": "^6.3.5",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-wasm": "^3.4.1"

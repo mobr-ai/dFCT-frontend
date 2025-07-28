@@ -12,6 +12,7 @@ import {
   faMagnifyingGlassArrowRight,
   faFolderOpen,
   faCog,
+  faGavel,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -32,7 +33,8 @@ function NavBar(props) {
   const { t } = useTranslation();
 
   const topClick = useCallback(() => {
-    if (window.location.pathname !== "/") navigate("/");
+    if (window.location.pathname.startsWith("/proposal")) navigate("/gov");
+    else if (window.location.pathname !== "/") navigate("/");
     else {
       document
         .getElementsByClassName("bm-menu")[0]
@@ -91,8 +93,7 @@ function NavBar(props) {
         : props.userData.username}
     </Container>
   );
-  // hide when on landing and not logged
-  // if (window.location.pathname === '/' && !props.userData) return null;
+
   return (
     <Navbar
       data-bs-theme="dark"
@@ -155,6 +156,15 @@ function NavBar(props) {
                   active={location.pathname.includes("/mytopics")}
                 >
                   <FontAwesomeIcon icon={faFolderOpen} /> {t("myTopics")}
+                </Nav.Link>
+                <Nav.Link
+                  onClick={() => {
+                    navigate("/gov");
+                    setExpanded(false);
+                  }}
+                  active={location.pathname.includes("/gov")}
+                >
+                  <FontAwesomeIcon icon={faGavel} /> {t("governance")}
                 </Nav.Link>
                 <Nav.Link
                   onClick={() => {

@@ -1,0 +1,141 @@
+.ProposalPage {
+  background-color: #2b303a;
+  margin: auto;
+  color: #fff;
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  font-family: Anton;
+  min-height: 100vh;
+  overflow-wrap: anywhere;
+  justify-content: space-evenly;
+  position: relative;
+  overflow-y: scroll;
+}
+
+.ProposalContainer {
+  background: #343a40;
+  border-radius: 8px;
+  box-shadow: #0000004d 0 19px 38px, #00000038 0 15px 12px;
+  padding: 2rem;
+  font-family: monospace;
+  position: relative;
+  min-height: 30vh;
+  top: 1rem;
+}
+
+.ProposalPage h2 {
+  margin-bottom: 1rem;
+}
+
+.ProposalPage p {
+  font-family: monospace;
+}
+
+.ProposalStatus {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: larger;
+}
+
+.ProposalDescription {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.ProposalMeta {
+  margin-bottom: 1rem;
+}
+
+.ProposalActionsCard {
+  margin-top: 2rem;
+  background-color: #454c53;
+  color: lightslategray;
+  text-align: center;
+}
+
+.ProposalActions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.ProposalActions button {
+  margin-right: 0.5rem;
+}
+
+.ModalConfirmButton {
+  position: relative;
+  min-width: 120px;
+  height: 38px; /* ensure consistent height */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ModalConfirmButton.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.ModalSpinnerWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.4);
+}
+
+.DatePillWrapper {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.DatePill {
+  display: flex;
+  white-space: nowrap;
+  padding: 0.4em 0.75em;
+  border-radius: 999px;
+  background-color: #6c757d;
+  color: #fff;
+  font-size: 0.85em;
+}
+
+.DatePillArrow {
+  color: #6c757d;
+}
+
+@media (max-width: 768px) {
+  .ProposalActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.shimmer {
+  position: relative;
+  background: #343a40;
+  background-image: linear-gradient(
+    to right,
+    #343a4000,
+    #343a40 20%,
+    #586573 40% 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  display: inline-block;
+  animation: shimmer 1.5s infinite ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -800px 0;
+  }
+  100% {
+    background-position: 800px 0;
+  }
+}

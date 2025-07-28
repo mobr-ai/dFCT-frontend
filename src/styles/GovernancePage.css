@@ -1,0 +1,218 @@
+.GovernancePage {
+  background-color: #2b303a;
+  margin: auto;
+  color: #fff;
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  font-family: Anton;
+  min-height: 100vh;
+  overflow-wrap: anywhere;
+  justify-content: space-evenly;
+  position: relative;
+  overflow-y: scroll;
+}
+
+.GovernanceContainer {
+  background: #343a40;
+  border-radius: 8px;
+  box-shadow: #0000004d 0 19px 38px, #00000038 0 15px 12px;
+  padding: 2rem;
+  font-family: monospace;
+  position: relative;
+  min-height: 30vh;
+  top: 1rem;
+}
+
+@media only screen and (max-width: 1023px) {
+  .GovernanceContainer {
+    max-width: 90% !important;
+  }
+}
+
+.GovernanceContainer .EmptyState {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.GovernanceTitle {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  font-family: monospace !important;
+}
+
+.ProposalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.ProposalGrid .fa-arrow-right {
+  color: #6c757d;
+  vertical-align: middle;
+}
+
+.ProposalGrid .ProposalStatus {
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+
+.ProposalCard {
+  background: #1f1f1f;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px #0006;
+  color: #fff;
+  transition: transform 0.2s ease-in-out;
+  max-width: 71vw;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.ProposalCard:hover {
+  transform: translateY(-5px);
+}
+
+.ProposalTitle {
+  text-transform: capitalize;
+  font-size: larger;
+  margin: 0.5rem;
+  font-weight: 800;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ProposalStatus {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  padding: 0.4rem;
+  border-radius: 6px;
+  text-transform: capitalize;
+}
+
+.ProposalStatus-draft {
+  background-color: #535368;
+  color: #fff;
+}
+.ProposalStatus-proposed {
+  background-color: #333366;
+  color: #fff;
+}
+.ProposalStatus-voting {
+  background-color: #665500;
+  color: #fff;
+}
+.ProposalStatus-approved {
+  background-color: #1b703b;
+  color: #fff;
+}
+.ProposalStatus-rejected {
+  background-color: #7a1a1a;
+  color: #fff;
+}
+.ProposalStatus-executed {
+  background-color: #006f80;
+  color: #fff;
+}
+
+.TxLink {
+  display: block;
+  margin-top: 0.5rem;
+  color: #33c3f0;
+  font-weight: bold;
+  width: fit-content;
+}
+
+.ProposalButton {
+  font-family: monospace;
+}
+
+/* --- Date Pill Group --- */
+.DatePillWrapper {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+@media only screen and (max-width: 1023px) {
+  .DatePillWrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.DatePill {
+  display: flex;
+  white-space: nowrap;
+  padding: 0.4em 0.75em;
+  border-radius: 999px;
+  font-weight: 500;
+  background-color: #6c757d;
+  color: #fff;
+  font-size: 10px;
+}
+
+.DatePillArrow {
+  color: #6c757d;
+  vertical-align: middle;
+}
+
+.DatePill + .DatePill {
+  margin-left: 0; /* no margin, handled by wrapper gap */
+}
+
+/* Controls and Sort */
+.ProposalControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  place-self: end;
+  font-size: 12px;
+}
+
+.ProposalSortSelect {
+  background: #343a40;
+  color: #fff;
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  padding: 0.3em 0.6em;
+  font-family: monospace;
+}
+
+/* Shimmer effect for DRAFT cards */
+.DraftShimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.DraftShimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: draft-shimmer 1.5s infinite;
+}
+
+@keyframes draft-shimmer {
+  100% {
+    left: 100%;
+  }
+}

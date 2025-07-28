@@ -74,3 +74,14 @@
   justify-content: center;
   display: flex;
 }
+
+.wallet-error {
+  color: red;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.wallet-info {
+  text-align: center;
+  font-size: small;
+}

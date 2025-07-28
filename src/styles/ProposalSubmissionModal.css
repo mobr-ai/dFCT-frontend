@@ -1,0 +1,25 @@
+.ProposalCardInput {
+  border-left: 4px solid #334867;
+  background-color: #789;
+}
+
+.ProposalModal {
+  max-height: 90%;
+}
+
+.ProposalCardInput .form-range {
+  margin-top: 0.5rem;
+}
+
+.ProposalCardInput .InputGroup {
+  width: 100%;
+}
+
+.ProposalCardInput .card {
+  background: #91a2b3;
+  word-break: break-word;
+}
+
+.ProposalCardInput .card .btn {
+  margin-left: auto;
+}

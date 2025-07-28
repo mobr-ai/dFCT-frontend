@@ -18,7 +18,7 @@ import shareIcon from "./../../icons/share.svg";
 import {
   DFCT_POLICY_ID,
   DFCT_TOKEN_NAME,
-  PLUTUS_SCRIPT_ADDRESS,
+  PROV_SCRIPT_ADDRESS,
 } from "./../../chains/cardano/constants";
 
 function TopicToolbar(props) {
@@ -44,9 +44,9 @@ function TopicToolbar(props) {
   const statusClass = statusKey.toLowerCase();
 
   const TOPIC_SYNCING_KEY = `dfct_topic_syncing_${props.topicId}`;
-  const isSyncing = () => localStorage.getItem(TOPIC_SYNCING_KEY) === "1";
-  const markSync = () => localStorage.setItem(TOPIC_SYNCING_KEY, "1");
-  const clearSync = () => localStorage.removeItem(TOPIC_SYNCING_KEY);
+  const isSyncing = () => sessionStorage.getItem(TOPIC_SYNCING_KEY) === "1";
+  const markSync = () => sessionStorage.setItem(TOPIC_SYNCING_KEY, "1");
+  const clearSync = () => sessionStorage.removeItem(TOPIC_SYNCING_KEY);
 
   const handlePublishClick = () => {
     if (isSyncing()) {
@@ -88,7 +88,7 @@ function TopicToolbar(props) {
 
       const tx = await buildTopicTx({
         walletApi,
-        outputAddress: PLUTUS_SCRIPT_ADDRESS,
+        outputAddress: PROV_SCRIPT_ADDRESS,
         datumHex: datum.datumHex,
         dfctPolicyId: DFCT_POLICY_ID,
         dfctAssetName: DFCT_TOKEN_NAME,

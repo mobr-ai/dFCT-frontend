@@ -4,19 +4,21 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import request from 'superagent';
 
-/**
- * React Hook to provide auth-aware request helpers.
- * Usage: const { authFetch, authRequest } = useAuthRequest(user);
- */
 export function useAuthRequest(user) {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { showToast } = useOutletContext();
 
+    const handleUnauthorized = () => {
+        console.warn('Token expired or invalid. Redirecting to login...');
+        window.localStorage.removeItem('userData');
+        if (showToast) showToast(t('sessionExpired'), 'secondary');
+        navigate('/login?sessionExpired=1');
+    };
+
     const authFetch = async (url, options = {}) => {
         if (!user || !user.access_token) {
-            console.warn('No user token found. Redirecting...');
-            navigate('/login');
+            handleUnauthorized();
             return;
         }
 
@@ -28,16 +30,37 @@ export function useAuthRequest(user) {
         const response = await fetch(url, { ...options, headers });
 
         if (response.status === 401) {
-            const errorMsg = "Token expired. Redirecting to login."
-            console.warn(errorMsg);
-            if (showToast) showToast(t('sessionExpired'), 'secondary');
-            window.localStorage.removeItem('userData')
-            navigate('/login?sessionExpired=1');
-            // navigate(0);
-            throw new Error(errorMsg)
+            handleUnauthorized();
+            throw new Error("Unauthorized");
         }
 
         return response;
+    };
+
+    const buildRequest = (req) => {
+        if (!user || !user.access_token) {
+            handleUnauthorized();
+            return req; // early exit — not ideal but safe fallback
+        }
+
+        req.set('Authorization', `Bearer ${user.access_token}`);
+
+        // Wrap .end and .send to handle 401 in all usages
+        const originalEnd = req.end.bind(req);
+        req.end = (fn) => {
+            return originalEnd((err, res) => {
+                if (err && err.status === 401) handleUnauthorized();
+                if (fn) fn(err, res);
+            });
+        };
+
+        const originalSend = req.send.bind(req);
+        req.send = (...args) => {
+            originalSend(...args);
+            return req; // allow chaining!
+        };
+
+        return req;
     };
 
     const authRequest = {
@@ -46,32 +69,6 @@ export function useAuthRequest(user) {
         put: (url) => buildRequest(request.put(url)),
         delete: (url) => buildRequest(request.delete(url)),
     };
-
-    const buildRequest = (req) => {
-        if (!user || !user.access_token) {
-            console.warn('No user token found. Redirecting...');
-            navigate('/login');
-            return req;
-        }
-
-        req.set('Authorization', `Bearer ${user.access_token}`);
-
-        // Wrap the original send to catch 401s
-        const originalSend = req.send.bind(req);
-        req.send = (body) => {
-            return originalSend(body).catch(err => {
-                if (err.status === 401) {
-                    console.warn('Token expired. Redirecting to login.');
-                    window.localStorage.removeItem('userData')
-                    navigate('/login?sessionExpired=1');
-                }
-                throw err;
-            });
-        };
-
-        return req;
-    };
-
 
     return { authFetch, authRequest };
 }

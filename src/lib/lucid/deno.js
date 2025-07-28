@@ -1,0 +1,24 @@
+export default {
+    "tasks": {
+        "build": "deno run -A build.ts",
+        "build:core": "cd ./rs_lib && wasm-pack build . --no-pack --weak-refs --release && rm ./pkg/.gitignore; cd ./message_signing && wasm-pack build . --no-pack --weak-refs --release && rm ./pkg/.gitignore",
+        "publish": "deno task build && deno task test && npm publish dist",
+        "test": "deno test --allow-env --allow-read --allow-net tests",
+        "test:core": "cd ./rs_lib && cargo test; cd ./message_signing && RUSTFLAGS=-Awarnings cargo test"
+    },
+    "lint": {
+        "include": ["src/", "tests/", "blueprint.ts"],
+        "exclude": ["src/core/libs/"]
+    },
+    "nodeModulesDir": "none",
+    "name": "@spacebudz/lucid",
+    "version": "0.20.11",
+    "license": "MIT",
+    "exports": {
+        ".": "./mod.ts",
+        "./blueprint": "./blueprint.ts"
+    },
+    "author": "Alessandro Konrad",
+    "description": "Lucid is a library designed to simplify creating Cardano transactions and writing off-chain code for Plutus contracts.",
+    "repository": "https://github.com/spacebudz/lucid"
+};
