@@ -514,7 +514,11 @@ function TopicSubmissionPage() {
                   processContent={() => {
                     if (files.length > 0) {
                       setHasDismissedRelatedModal(false);
-                      setShowRelatedTopicsModal(true);
+                      if (relatedTopics && relatedTopics.length > 0) {
+                        setShowRelatedTopicsModal(true);
+                      } else {
+                        processTopic();
+                      }
                     } else {
                       processTopic();
                     }
