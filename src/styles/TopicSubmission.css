@@ -310,18 +310,18 @@
 }
 
 .Submission-related-modal-header {
-  background-color: #37474fff;
+  background-color: #37474fff !important;
   color: lightgray;
   font-family: monospace;
 }
 
 .Submission-related-modal-body {
-  background-color: #343a40;
+  background-color: #343a40 !important;
   color: lightgray;
 }
 
 .Submission-related-modal-footer {
-  background-color: #343a40;
+  background-color: #343a40 !important;
   color: lightgray;
 }
 
@@ -331,7 +331,7 @@
 }
 
 #input-url-label {
-  background-color: #343a40;
+  background-color: #343a40 !important;
   font-family: monospace;
   color: #bdbdbd;
   font-size: small;
