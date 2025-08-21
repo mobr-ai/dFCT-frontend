@@ -184,7 +184,8 @@ function NavBar(props) {
             <Nav.Link
               onClick={() => {
                 window.open(
-                  "https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true"
+                  // "https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true"
+                  "https://www.youtube.com/watch?v=jdnXWIeVVYQ"
                 );
               }}
             >
