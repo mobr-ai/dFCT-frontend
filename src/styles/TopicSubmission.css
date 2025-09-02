@@ -61,7 +61,7 @@
 .Submission-drop {
   display: inline-table;
   cursor: pointer;
-  width: 33vw;
+  /* width: 33vw; */
   padding-bottom: 1rem;
 }
 
