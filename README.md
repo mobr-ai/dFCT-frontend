@@ -325,6 +325,9 @@ Backends typically live in a separate repository (e.g., `dfct-backend`) and must
 
 ## License
 
-Licensing details will be documented in a dedicated `LICENSE` file.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-If you are using or extending this code, please open an issue or contact the maintainers to clarify licensing and contribution guidelines.
+This project is licensed under the **MIT License**.  
+See the **[LICENSE](./LICENSE)** file for the full text.
+
+© 2025 MOBR Systems LTDA.
