@@ -50,13 +50,13 @@ function NavBar(props) {
     const intervalId = setInterval(
       () => {
         setBrandIndex((index) =>
-          index < brandText.length ? index + 1 : index
+          index < brandText.length ? index + 1 : index,
         );
         setSuffixBrandIndex((index) =>
-          index < suffixText.length ? index + 1 : index
+          index < suffixText.length ? index + 1 : index,
         );
       },
-      600 // every ms
+      600, // every ms
     );
 
     return () => clearTimeout(intervalId);
@@ -185,7 +185,8 @@ function NavBar(props) {
               onClick={() => {
                 window.open(
                   // "https://github.com/mobr-ai/dfct-cardano/blob/main/docs/TechnicalReport-M1.pdf?raw=true"
-                  "https://www.youtube.com/watch?v=jdnXWIeVVYQ"
+                  // "https://www.youtube.com/watch?v=jdnXWIeVVYQ"
+                  "https://youtu.be/ip4RaxWSorQ",
                 );
               }}
             >
