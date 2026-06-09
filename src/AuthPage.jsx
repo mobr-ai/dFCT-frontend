@@ -178,6 +178,11 @@ function AuthPage(props) {
     onSuccess: (tokenResponse) => {
       handleGoogleResponse(tokenResponse, handleLogin);
     },
+    onError: (errorResponse) => {
+      console.error("Google OAuth error:", errorResponse);
+      setLoading(false);
+      showToast(t("loginError"), "danger");
+    },
   });
 
   useEffect(() => {
@@ -345,12 +350,12 @@ function AuthPage(props) {
               <p>
                 {props.type === "login"
                   ? reactStringReplace(t("signUpAlternativeMsg"), "{}", () => (
-                      <NavLink className="Auth-alternative-link" to="/signup">
+                      <NavLink key="signup-link" className="Auth-alternative-link" to="/signup">
                         {t("signUpButton")}
                       </NavLink>
                     ))
                   : reactStringReplace(t("loginAlternativeMsg"), "{}", () => (
-                      <NavLink className="Auth-alternative-link" to="/login">
+                      <NavLink key="login-link" className="Auth-alternative-link" to="/login">
                         {t("loginButton")}
                       </NavLink>
                     ))}
@@ -364,7 +369,6 @@ function AuthPage(props) {
                 variant="outline-secondary"
                 size="md"
                 onClick={() => {
-                  setLoading(true);
                   loginWithGoogle();
                 }}
               >
