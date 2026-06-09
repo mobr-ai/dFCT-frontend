@@ -58,7 +58,7 @@ function TopicList({ content, type, showSideBar }) {
       : string;
   };
 
-  const TopicCard = ({ topic, type, onDelete, key }) => {
+  const TopicCard = ({ topic, type, onDelete }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const videoRef = useRef(null);

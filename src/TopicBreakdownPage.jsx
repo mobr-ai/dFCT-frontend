@@ -69,6 +69,44 @@ function getHashtags(
   return tags;
 }
 
+
+function TopicDataResolver({
+  parsedTopic,
+  topicData,
+  setTopicData,
+  scrollUp,
+  user,
+  showToast,
+  shareModalShow,
+  setShareModalShow,
+  evidenceModalShow,
+  setEvidenceModalShow,
+}) {
+  useEffect(() => {
+    if (parsedTopic && !topicData) {
+      setTopicData(parsedTopic);
+      scrollUp();
+    }
+  }, [parsedTopic, topicData, setTopicData, scrollUp]);
+
+  const topicToRender = topicData || parsedTopic;
+
+  if (!topicToRender) return null;
+
+  return (
+    <Topic
+      topic={topicToRender}
+      setTopic={setTopicData}
+      user={user}
+      showToast={showToast}
+      shareModalShow={shareModalShow}
+      setShareModalShow={setShareModalShow}
+      evidenceModalShow={evidenceModalShow}
+      setEvidenceModalShow={setEvidenceModalShow}
+    />
+  );
+}
+
 // Topic Component
 const Topic = ({
   topic,
@@ -209,7 +247,7 @@ const Topic = ({
           : `${t("createdAt")}: ${new Date(createdAt).toLocaleString(locale)}`}
       </small>
       <p>{description}</p>
-      <p>{getHashtags(contentList, true, 6, handleTagClick)}</p>
+      <div>{getHashtags(contentList, true, 6, handleTagClick)}</div>
       {claimList && claimList.length > 0 && <h3>{t("claims")}</h3>}
       <ClaimList
         content={claimList}
@@ -274,21 +312,20 @@ function TopicBreakdownPage() {
           <Await resolve={topicPromise}>
             {(resolved) => {
               const parsed = JSON.parse(resolved);
-              if (!topicData) setTopicData(parsed); // set only once from loader
-              scrollUp();
+
               return (
-                topicData && (
-                  <Topic
-                    topic={topicData}
-                    setTopic={setTopicData}
-                    user={user}
-                    showToast={showToast}
-                    shareModalShow={shareModalShow}
-                    setShareModalShow={setShareModalShow}
-                    evidenceModalShow={evidenceModalShow}
-                    setEvidenceModalShow={setEvidenceModalShow}
-                  />
-                )
+                <TopicDataResolver
+                  parsedTopic={parsed}
+                  topicData={topicData}
+                  setTopicData={setTopicData}
+                  scrollUp={scrollUp}
+                  user={user}
+                  showToast={showToast}
+                  shareModalShow={shareModalShow}
+                  setShareModalShow={setShareModalShow}
+                  evidenceModalShow={evidenceModalShow}
+                  setEvidenceModalShow={setEvidenceModalShow}
+                />
               );
             }}
           </Await>

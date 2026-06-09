@@ -179,11 +179,11 @@ const ContentCard = ({ item, innerRef }) => {
           <u>{t("source")}</u>:&nbsp;&nbsp;{encodeURI(item.src_url)}
         </Linkify>
       </div>
-      <p>
-        <Linkify as="div" options={linkifyOpts}>
+      <div>
+  <Linkify as="div" options={linkifyOpts}>
           {item.description}
         </Linkify>
-      </p>
+</div>
       {item.output_tags && (
         <div className="Breakdown-content-tag-container">
           {item.output_tags

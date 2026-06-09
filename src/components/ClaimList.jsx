@@ -24,22 +24,38 @@ const ClaimItem = ({ index, claim, showEvidenceModal, topicId }) => {
                         <Linkify as="p" options={linkifyOpts}>{claim.pro_evidence + " " + claim.con_evidence}</Linkify>
                     </div>
                     {
-                        claim.output_tags ? (<div className="Breakdown-content-tag-container">{claim.output_tags.replaceAll('{', '').replaceAll('"', '').replaceAll('}', '').split(',').map((tag) => (<div className='Breakdown-topic-claims-tag'><Badge bg="secondary">{t(tag)}</Badge></div>))}</div>) : ""
+                        claim.output_tags ? (
+                            <div className="Breakdown-content-tag-container">
+                                {claim.output_tags
+                                    .replaceAll('{', '')
+                                    .replaceAll('"', '')
+                                    .replaceAll('}', '')
+                                    .split(',')
+                                    .map((tag, tagIndex) => (
+                                        <div
+                                            key={`${claim.claim_id || index}-tag-${tagIndex}`}
+                                            className='Breakdown-topic-claims-tag'
+                                        >
+                                            <Badge bg="secondary">{t(tag)}</Badge>
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : ""
                     }
                     <div className='Breakdown-topic-claims-toolbar'>
-                        <p>
+                        <div>
                             <ButtonGroup size="sm">
                                 <Button variant="dark">{t('upVote')}</Button>
                                 <Button variant="dark">{t('downVote')}</Button>
                                 <Button variant="dark">{t('reviewClaim')}</Button>
                             </ButtonGroup>
-                        </p>
-                        <p>
+                        </div>
+                        <div>
                             <ButtonGroup size="sm">
                                 <Button variant="success" onClick={() => showEvidenceModal(t('addProEvidence'), 'proEvidence', claim.claim_id)}>{t('addProEvidence')}</Button>
                                 <Button variant="danger" onClick={() => showEvidenceModal(t('addConEvidence'), 'conEvidence', claim.claim_id)}>{t('addConEvidence')}</Button>
                             </ButtonGroup>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </Accordion.Body>
@@ -53,7 +69,13 @@ function ClaimList({ content, showEvidenceModal, topicId }) {
     return (
         <Accordion className='Breakdown-topic-claims' flush>
             {content.map((item, index) => (
-                <ClaimItem index={index} claim={item} showEvidenceModal={showEvidenceModal} topicId={topicId} />
+                <ClaimItem
+                    key={item.claim_id || index}
+                    index={index}
+                    claim={item}
+                    showEvidenceModal={showEvidenceModal}
+                    topicId={topicId}
+                />
             ))}
         </Accordion>
     );

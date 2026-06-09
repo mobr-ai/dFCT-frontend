@@ -42,6 +42,25 @@ i18n
     interpolation: { escapeValue: false },
   });
 
+
+function LandingTopicsResolver({
+  loadedTopics,
+  topics,
+  setTopics,
+  setTotalTopics,
+  setLoading,
+}) {
+  useEffect(() => {
+    if (loadedTopics && (!topics || topics.length === 0)) {
+      setTopics(loadedTopics.topics || []);
+      setTotalTopics(loadedTopics.total || 0);
+      setLoading(false);
+    }
+  }, [loadedTopics, topics, setTopics, setTotalTopics, setLoading]);
+
+  return null;
+}
+
 function LandingPage(props) {
   const { t } = useTranslation();
   const { userTopicsPromise, allTopicsPromise } = useLoaderData();
@@ -393,13 +412,15 @@ function LandingPage(props) {
                   : allTopicsPromise
               }
             >
-              {(loadedTopics) => {
-                if (loadedTopics && (!topics || topics.length === 0)) {
-                  setTopics(loadedTopics.topics);
-                  setTotalTopics(loadedTopics.total);
-                  setLoading(false);
-                }
-              }}
+              {(loadedTopics) => (
+                <LandingTopicsResolver
+                  loadedTopics={loadedTopics}
+                  topics={topics}
+                  setTopics={setTopics}
+                  setTotalTopics={setTotalTopics}
+                  setLoading={setLoading}
+                />
+              )}
             </Await>
             {user &&
               showScrollUpButton &&
