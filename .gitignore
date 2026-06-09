@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local environment and generated build
+.env
+dist/
+
+# Local helper scripts
+openai-tts.py
