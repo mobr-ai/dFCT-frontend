@@ -28,3 +28,8 @@ dist/
 
 # Local helper scripts
 openai-tts.py
+
+# Environment files
+.env
+.env.*
+!.env.example
