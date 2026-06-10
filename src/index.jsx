@@ -20,9 +20,11 @@ import {
   Outlet,
   defer,
   useNavigate,
+  useOutletContext,
 } from "react-router-dom";
 import GovernancePage from "./GovernancePage";
 import ProposalPage from "./ProposalPage";
+import WelcomePage from "./WelcomePage";
 
 import { Buffer } from "buffer";
 window.Buffer = Buffer;
@@ -103,6 +105,17 @@ function Layout() {
       </ToastContainer>
     </GoogleOAuthProvider>
   );
+}
+
+
+function HomePage() {
+  const { user } = useOutletContext();
+
+  if (user) {
+    return <LandingPage type="all" />;
+  }
+
+  return <WelcomePage />;
 }
 
 const fetchAllTopics = async () => {
@@ -212,6 +225,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <HomePage />,
+        loader: allTopicsLoader,
+      },
+      {
+        path: "/topics",
         element: <LandingPage type="all" />,
         loader: allTopicsLoader,
       },
