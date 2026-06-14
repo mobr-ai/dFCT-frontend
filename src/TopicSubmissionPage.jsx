@@ -326,7 +326,7 @@ function TopicSubmissionPage() {
       };
 
       authRequest
-        .post("/fetch_url")
+        .post("/api/fetch_url")
         .set("Accept", "application/json")
         .send({ url: document.getElementById("input-url-text").value })
         .then(metaSuccess, metaError);
@@ -353,7 +353,7 @@ function TopicSubmissionPage() {
 
       // create request to process content
       authRequest
-        .post("/process")
+        .post("/api/process")
         .send({
           files: hash.map((file) => ({
             name: file.name,
@@ -412,7 +412,7 @@ function TopicSubmissionPage() {
       // request progress and wait for topic to be processed
       while (nextProgress >= 0 && nextProgress < 100) {
         await authRequest
-          .post("/check")
+          .post("/api/check")
           .send(topic)
           .then((res) => checkStatus(res))
           .catch((err) => {

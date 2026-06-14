@@ -146,7 +146,7 @@ function EvidenceModal(props) {
       };
 
       request
-        .post("/fetch_url")
+        .post("/api/fetch_url")
         .set("Accept", "application/json")
         .send({ url: document.getElementById("input-url-text").value })
         .then(metaSuccess, metaError);
@@ -201,7 +201,7 @@ function EvidenceModal(props) {
       while (nextProgress >= 0 && nextProgress < 100) {
         // request synchronously to check progress
         await authRequest
-          .post("/check")
+          .post("/api/check")
           .send(topic)
           .then((res) => checkStatus(res));
         await sleep(2000);
@@ -226,7 +226,7 @@ function EvidenceModal(props) {
       setLoading(true);
 
       authRequest
-        .post("/process_evidence")
+        .post("/api/process_evidence")
         .send({
           files: hash.map((file) => ({
             name: file.name,
