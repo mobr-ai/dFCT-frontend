@@ -7,30 +7,30 @@ import { faMagnifyingGlassArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const getBackgroundColor = (props) => {
-  if (props.background) {
-    return props.background;
+  if (props.$background) {
+    return props.$background;
   }
   return "#37474fff";
 };
 
 const getFontColor = (props) => {
-  if (props.fontColor) {
-    return props.fontColor;
+  if (props.$fontColor) {
+    return props.$fontColor;
   }
   return "#bdbdbd";
 };
 
 const getColor = (props) => {
-  if (props.border) {
-    return props.border;
+  if (props.$border) {
+    return props.$border;
   }
-  if (props.isDragAccept) {
+  if (props.$isDragAccept) {
     return "#00e676";
   }
-  if (props.isDragReject) {
+  if (props.$isDragReject) {
     return "#ff1744";
   }
-  if (props.isFocused) {
+  if (props.$isFocused) {
     return "#2196f3";
   }
 
@@ -105,10 +105,13 @@ function StyledDropzone(props) {
 
   return (
     <Container
-      border={props.border}
-      fontColor={props.fontColor}
-      background={props.background}
-      {...getRootProps({ isFocused, isDragAccept, isDragReject })}
+      {...getRootProps()}
+      $border={props.border}
+      $fontColor={props.fontColor}
+      $background={props.background}
+      $isFocused={isFocused}
+      $isDragAccept={isDragAccept}
+      $isDragReject={isDragReject}
     >
       <input {...getInputProps()} />
       <FontAwesomeIcon
@@ -132,7 +135,5 @@ function StyledDropzone(props) {
     </Container>
   );
 }
-
-<StyledDropzone />;
 
 export default StyledDropzone;
