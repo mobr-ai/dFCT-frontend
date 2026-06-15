@@ -62,8 +62,11 @@ export default function GovernancePage() {
         const statusRes = await authRequest.get(
           `/api/proposal/${proposalId}/status`
         );
-        const proposal = statusRes.body;
-        if (proposal?.status && proposal.status !== 5) {
+        const statusBody = statusRes.body;
+        const proposal = statusBody?.proposal || statusBody;
+        const statusCode = statusBody?.status_code ?? proposal?.status;
+
+        if (statusBody?.found && proposal && statusCode !== 5) {
           mergeProposal(proposal);
           clearProposalSync(proposalId);
 

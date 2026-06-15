@@ -439,7 +439,7 @@ function LandingPage(props) {
           !searchQuery &&
           searchResults.length === 0 &&
           totalTopics === 0 && (
-            <p className="Landing-no-topics-msg">
+            <div className="Landing-no-topics-msg">
               <section>
                 <img src={logo} className="Landing-logo-static" alt="logo" />
               </section>
@@ -458,7 +458,7 @@ function LandingPage(props) {
                 <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} />
                 &nbsp;{t("tryNow")}
               </Button>
-            </p>
+            </div>
           )}
         {user && !loading && loadingMore && (
           <LoadingPage

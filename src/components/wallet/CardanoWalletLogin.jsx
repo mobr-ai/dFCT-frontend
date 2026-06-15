@@ -75,6 +75,8 @@ function CardanoWalletLogin({ onLogin, showToast }) {
         })
       );
 
+      localStorage.setItem("dfct_last_used_wallet", walletName);
+
       if (onLogin) onLogin({ ...data, wallet_info: walletInfo });
     } catch (err) {
       console.error("Cardano Auth Error:", err);

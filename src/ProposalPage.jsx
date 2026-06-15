@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -42,6 +42,14 @@ import "./styles/ProposalSubmissionModal.css";
 import "./styles/Wallet.css";
 
 export default function ProposalPage() {
+  const sessionUser = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("userData") || "null");
+    } catch {
+      return null;
+    }
+  }, []);
+
   const { proposalId } = useParams();
   const { t } = useTranslation();
   const { user } = useOutletContext();
@@ -61,10 +69,10 @@ export default function ProposalPage() {
   const [newPKH, setNewPKH] = useState("");
   const [newPKHs, setNewPKHs] = useState({});
   const [newMinTokens, setNewMinTokens] = useState(
-    proposal?.min_voting_tokens || 1
+    proposal?.min_voting_tokens || 1,
   );
   const [newVotingStart, setNewVotingStart] = useState(
-    proposal?.voting_start || 0
+    proposal?.voting_start || 0,
   );
   const [newVotingEnd, setNewVotingEnd] = useState(proposal?.voting_end || 0);
 
@@ -74,7 +82,7 @@ export default function ProposalPage() {
     updateSelectedWallet,
     getWalletInfoForSelected,
     isLoadingWallet,
-  } = getSessionWalletHandlers(JSON.parse(localStorage.getItem("userData")));
+  } = getSessionWalletHandlers(sessionUser);
 
   const {
     optimisticProposal,
@@ -302,8 +310,8 @@ export default function ProposalPage() {
             <FontAwesomeIcon icon={faCoins} />{" "}
             <strong>{t("minVotingTokens")}:</strong>{" "}
             {pendingField === "min_voting_tokens"
-              ? optimisticProposal?.min_voting_tokens ??
-                proposal.min_voting_tokens
+              ? (optimisticProposal?.min_voting_tokens ??
+                proposal.min_voting_tokens)
               : proposal.min_voting_tokens}
           </span>
         </div>
