@@ -19,23 +19,61 @@ function CardanoWalletLogin({ onLogin, showToast }) {
     setAvailableWallets(wallets);
   }, []);
 
+  const textToHex = (text) =>
+    Array.from(new TextEncoder().encode(text))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+
+  const readJsonOrThrow = async (response) => {
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || response.statusText || "Cardano auth failed");
+    }
+    return data;
+  };
+
   const handleConnect = async (walletName) => {
     try {
       const walletApi = await window.cardano[walletName].enable();
+
+      if (!walletApi?.signData) {
+        throw new Error("Selected wallet does not support CIP-30 signData");
+      }
+
       const walletInfo = await getWalletInfo(walletName, walletApi);
 
-      const response = await fetch("/api/auth/cardano", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          address: walletInfo.address,
-          wallet_info: walletInfo,
-        }),
-      });
+      const challenge = await readJsonOrThrow(
+        await fetch("/api/auth/cardano/challenge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: walletInfo.address,
+            raw_address: walletInfo.raw_address,
+            wallet_name: walletName,
+          }),
+        })
+      );
 
-      if (!response.ok) throw new Error(await response.text());
+      const signed = await walletApi.signData(
+        walletInfo.raw_address,
+        textToHex(challenge.message)
+      );
 
-      const data = await response.json();
+      const data = await readJsonOrThrow(
+        await fetch("/api/auth/cardano/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: walletInfo.address,
+            raw_address: walletInfo.raw_address,
+            wallet_name: walletName,
+            message: challenge.message,
+            challenge_token: challenge.challenge_token,
+            signature: signed.signature,
+            key: signed.key,
+          }),
+        })
+      );
 
       if (onLogin) onLogin({ ...data, wallet_info: walletInfo });
     } catch (err) {
