@@ -19,7 +19,7 @@ export function useAuthRequest(user) {
     const authFetch = async (url, options = {}) => {
         if (!user || !user.access_token) {
             handleUnauthorized();
-            return;
+            throw new Error("Unauthorized");
         }
 
         const headers = {

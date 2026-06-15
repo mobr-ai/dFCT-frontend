@@ -12,9 +12,6 @@ import RelatedTopicsModal from "./components/RelatedTopicsModal.jsx";
 import logo from "./icons/logo.svg";
 import Form from "react-bootstrap/Form";
 import i18n from "./i18n";
-import detector from "i18next-browser-languagedetector";
-import translationEN from "./locales/en/translation.json";
-import translationPT from "./locales/pt/translation.json";
 import {
   useOutletContext,
   useLocation,
@@ -23,29 +20,9 @@ import {
   Await,
 } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback } from "react";
-import { useTranslation, initReactI18next } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useS3Upload } from "./hooks/useS3Upload.js";
 import { useAuthRequest } from "./hooks/useAuthRequest";
-
-i18n
-  .use(detector)
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    resources: {
-      en: {
-        translation: translationEN,
-      },
-      pt: {
-        translation: translationPT,
-      },
-    },
-    // lng: "pt", // do not define the lng option if using language detector
-    fallbackLng: "en",
-
-    interpolation: {
-      escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
-    },
-  });
 
 function TopicSubmissionPage() {
   const { t } = useTranslation();
@@ -270,6 +247,8 @@ function TopicSubmissionPage() {
     window.addEventListener("resize", handleResize, false);
 
     if (!user) navigate("/");
+
+    return () => window.removeEventListener("resize", handleResize, false);
   }, [user, navigate]);
 
   useEffect(() => {

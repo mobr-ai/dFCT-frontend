@@ -303,6 +303,8 @@ function TopicBreakdownPage() {
   useEffect(() => {
     window.addEventListener("resize", handleResize, false);
     scrollUp();
+
+    return () => window.removeEventListener("resize", handleResize, false);
   }, []);
 
   return (
@@ -311,7 +313,7 @@ function TopicBreakdownPage() {
         <div className="Breakdown-middle-column">
           <Await resolve={topicPromise}>
             {(resolved) => {
-              const parsed = JSON.parse(resolved);
+              const parsed = typeof resolved === "string" ? JSON.parse(resolved) : resolved;
 
               return (
                 <TopicDataResolver

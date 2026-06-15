@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useS3Upload } from "../hooks/useS3Upload.js";
-import request from "superagent";
 import URLCardList from "./URLCardList.jsx";
 import FileUploadArea from "./FileUploadArea.jsx";
 import URLInputField from "./URLInputField.jsx";
@@ -145,7 +144,7 @@ function EvidenceModal(props) {
         document.getElementById("input-url-text").value = "";
       };
 
-      request
+      authRequest
         .post("/api/fetch_url")
         .set("Accept", "application/json")
         .send({ url: document.getElementById("input-url-text").value })

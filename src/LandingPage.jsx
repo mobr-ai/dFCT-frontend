@@ -4,9 +4,6 @@ import "./styles/TopicList.css";
 import "./styles/NavigationSidebar.css";
 import i18n from "./i18n";
 import logo from "./icons/logo.svg";
-import detector from "i18next-browser-languagedetector";
-import translationEN from "./locales/en/translation.json";
-import translationPT from "./locales/pt/translation.json";
 import TopicList from "./components/topic/TopicList.jsx";
 import LoadingPage from "./LoadingPage.jsx";
 import { useAuthRequest } from "./hooks/useAuthRequest";
@@ -19,7 +16,7 @@ import {
   Await,
 } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback, useRef } from "react";
-import { useTranslation, initReactI18next } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlassArrowRight,
@@ -29,18 +26,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { InputGroup, FormControl } from "react-bootstrap";
 import ReactTextTransition, { presets } from "react-text-transition";
-
-i18n
-  .use(detector)
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: { translation: translationEN },
-      pt: { translation: translationPT },
-    },
-    fallbackLng: "en",
-    interpolation: { escapeValue: false },
-  });
 
 
 function LandingTopicsResolver({
@@ -123,7 +108,8 @@ function LandingPage(props) {
           request = `/api/topics/${lang}/${newPage}/${perPage}`;
         }
 
-        const response = await authFetch(request, {
+        const fetcher = props.type === "user" ? authFetch : fetch;
+        const response = await fetcher(request, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
@@ -204,7 +190,7 @@ function LandingPage(props) {
       600 // every ms
     );
 
-    return () => clearTimeout(intervalId);
+    return () => clearInterval(intervalId);
   }, [brandText.length, suffixText.length]);
 
   const handleDrop = async (event) => {

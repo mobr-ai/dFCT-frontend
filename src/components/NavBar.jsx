@@ -59,7 +59,7 @@ function NavBar(props) {
       600, // every ms
     );
 
-    return () => clearTimeout(intervalId);
+    return () => clearInterval(intervalId);
   }, []);
 
   const logout = () => {
