@@ -201,11 +201,43 @@ const userTopicsLoader = async () => {
   return {};
 };
 
+const normalizeTopicPayload = (payload) => {
+  if (!payload || typeof payload !== "object" || payload.error) {
+    return null;
+  }
+
+  return {
+    ...payload,
+    claims: Array.isArray(payload.claims) ? payload.claims : [],
+    content: Array.isArray(payload.content) ? payload.content : [],
+    contents: Array.isArray(payload.contents) ? payload.contents : [],
+  };
+};
+
 const fetchTopic = async (userId, topicId, signal) => {
   const response = await fetch(`/api/topic/full/${userId}/${topicId}`, {
     signal: signal,
   });
-  return await response.json();
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Response(payload?.error || "Topic not found", {
+      status: response.status,
+      statusText: response.statusText || "Topic not found",
+    });
+  }
+
+  const topic = normalizeTopicPayload(payload);
+
+  if (!topic) {
+    throw new Response("Invalid topic payload", {
+      status: 502,
+      statusText: "Invalid topic payload",
+    });
+  }
+
+  return topic;
 };
 
 const topicLoader = async (dynData) => {
