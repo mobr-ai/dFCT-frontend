@@ -79,7 +79,6 @@ function AuthPage(props) {
 
       const result = await response.json();
       if (props.type === "login") {
-        console.log("Auth success:", result);
 
         if (result.access_token) {
           handleLogin(result);
@@ -139,7 +138,6 @@ function AuthPage(props) {
       };
 
       const finalOptions = { ...defaultOptions, ...options };
-      console.log("API Request:", url, finalOptions);
 
       const response = await fetch(url, finalOptions);
 
@@ -158,16 +156,13 @@ function AuthPage(props) {
 
   const handleGoogleResponse = async (tokenResponse, handleLogin) => {
     try {
-      console.log("Google Response:", tokenResponse);
       const payload = { token: tokenResponse.access_token };
-      console.log("Payload to server:", payload);
 
       const apiResponse = await handleApiRequest("/api/auth/google", {
         method: "POST",
         body: JSON.stringify(payload),
       });
 
-      console.log("Server Response:", apiResponse);
       handleLogin(apiResponse);
     } catch (err) {
       console.error("Authentication Error:", err);

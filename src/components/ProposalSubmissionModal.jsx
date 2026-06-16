@@ -286,8 +286,6 @@ export default function ProposalSubmissionModal({
 
       try {
         const walletInfo = await getWalletInfoForSelected();
-        console.log("walletInfo.pub_key_hash: ", walletInfo.pub_key_hash);
-        console.log("typeof pub_key_hash:", typeof walletInfo.pub_key_hash); // string
 
         const lucid = await createLucid();
         await lucid.selectWalletFromApi(walletInfo.wallet_api);
