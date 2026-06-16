@@ -107,8 +107,12 @@ export default function ProposalSubmissionModal({
         const statusRes = await authRequest.get(
           `/api/proposal/${proposalId}/status`
         );
-        const proposal = statusRes.body;
-        if (proposal?.status && proposal.status !== 5) {
+        const statusBody = statusRes.body;
+        const proposal = statusBody?.proposal || statusBody;
+        const statusCode = statusBody?.status_code ?? proposal?.status;
+        const found = statusBody?.found ?? Boolean(proposal?.proposal_id);
+
+        if (found && proposal && Number(statusCode) !== 5) {
           onSubmitted(proposal);
           clearProposalSync(proposalId);
           return true;
@@ -149,12 +153,16 @@ export default function ProposalSubmissionModal({
 
     try {
       // === Prepare proposal input ===
-      const lucid = await createLucid();
-      const walletApi = await window.cardano[selectedWallet.name].enable();
-      await lucid.selectWalletFromApi(walletApi);
-      const walletAddr = await lucid.wallet.address();
-      const walletPKH = paymentCredentialOf(walletAddr).hash;
       const walletInfo = await getWalletInfoForSelected();
+
+      if (!walletInfo?.wallet_api) {
+        throw new Error(t("selectWallet"));
+      }
+
+      const walletApi = walletInfo.wallet_api;
+      const lucid = await createLucid();
+      await lucid.selectWalletFromApi(walletApi);
+      const walletPKH = walletInfo.pub_key_hash;
       const proposalId = `p${Date.now()}`;
       const votingStartMs = new Date(votingStart).getTime();
       const votingEndMs = new Date(votingEnd).getTime();
@@ -229,7 +237,23 @@ export default function ProposalSubmissionModal({
       onHide();
     } catch (err) {
       console.error("Proposal submission failed:", err);
-      showToast(t("proposalSubmissionFailed"), "danger");
+      console.error("Proposal submission error details:", {
+        name: err?.name,
+        message: err?.message,
+        code: err?.code,
+        info: err?.info,
+        stack: err?.stack,
+        raw: err,
+      });
+
+      const detail = getWalletErrorMessage(err, selectedWallet?.name || "Wallet");
+
+      showToast(
+        detail
+          ? `${t("proposalSubmissionFailed")}: ${detail}`
+          : t("proposalSubmissionFailed"),
+        "danger",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -249,12 +273,16 @@ export default function ProposalSubmissionModal({
     const estimateFee = async () => {
       if (
         !selectedWallet ||
+        selectedWallet.needsEnable ||
         !title ||
         !description ||
         !votingStart ||
         !votingEnd
-      )
+      ) {
+        setLovelaceAmount((current) => current || 167569);
+        setError("");
         return;
+      }
 
       try {
         const walletInfo = await getWalletInfoForSelected();
@@ -316,8 +344,12 @@ export default function ProposalSubmissionModal({
           setError("");
         }
       } catch (err) {
-        console.error("Fee estimation failed:", err);
-        setError(t("errorEstimatingFee") + `: (${err.message})`);
+        console.warn("Fee estimation skipped:", err);
+
+        // Fee estimation is best-effort. Do not block proposal submission just
+        // because a wallet provider is slow during passive estimation.
+        setLovelaceAmount((current) => current || 167569);
+        setError("");
       }
     };
 

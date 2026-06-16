@@ -11,6 +11,7 @@ import { createLucid } from "@/chains/cardano/useLucidClient";
 const enabledWallets = {};
 
 const WALLET_DISCOVERY_TIMEOUT_MS = 8000;
+const WALLET_ACTION_TIMEOUT_MS = 30000;
 
 async function withTimeout(promise, label, timeoutMs = WALLET_DISCOVERY_TIMEOUT_MS) {
     let timeoutId;
@@ -27,6 +28,29 @@ async function withTimeout(promise, label, timeoutMs = WALLET_DISCOVERY_TIMEOUT_
     } finally {
         clearTimeout(timeoutId);
     }
+}
+
+export async function enableWalletForAction(walletName) {
+    const walletProvider = window.cardano?.[walletName];
+
+    if (!walletProvider?.enable) {
+        throw new Error(`${walletName} wallet provider is not available`);
+    }
+
+    if (enabledWallets[walletName]) {
+        return enabledWallets[walletName];
+    }
+
+    const walletApi = await withTimeout(
+        walletProvider.enable(),
+        `${walletName}.enable`,
+        WALLET_ACTION_TIMEOUT_MS
+    );
+
+    enabledWallets[walletName] = walletApi;
+    localStorage.setItem("dfct_last_used_wallet", walletName);
+
+    return walletApi;
 }
 
 function uniqueWalletNames(names) {
@@ -137,41 +161,68 @@ export async function getEnabledWalletSummaries(user = null) {
                 };
             }
 
-            const api = enabledWallets[name] || await withTimeout(
-                wallet.enable(),
-                `${name}.enable`
-            );
+            const api = enabledWallets[name];
 
-            enabledWallets[name] = api;
+            if (api) {
+                const balance = await withTimeout(
+                    getWalletBalance(api),
+                    `${name}.balance`
+                );
 
-            const balance = await withTimeout(
-                getWalletBalance(api),
-                `${name}.balance`
-            );
-
-            return {
-                name,
-                icon,
-                lovelace: Number(balance.lovelace),
-                dfct: Number(balance.dfct),
-                displayADA: `${(Number(balance.lovelace) / 1_000_000).toFixed(2)} ADA`,
-                displayDFCT: `${Number(balance.dfct)} DFC`,
-                enabled: true,
-                needsEnable: false,
-                isLoginWallet,
-            };
-        } catch (err) {
-            console.warn(`Failed to load wallet ${name}:`, err);
+                return {
+                    name,
+                    icon,
+                    lovelace: Number(balance.lovelace),
+                    dfct: Number(balance.dfct),
+                    displayADA: `${(Number(balance.lovelace) / 1_000_000).toFixed(2)} ADA`,
+                    displayDFCT: `${Number(balance.dfct)} DFC`,
+                    enabled: true,
+                    needsEnable: false,
+                    isLoginWallet,
+                };
+            }
 
             return {
                 name,
                 icon,
                 lovelace: null,
                 dfct: null,
-                displayADA: "Error",
+                displayADA: "Connected",
+                displayDFCT: "Connect on confirm",
+                enabled: true,
+                needsEnable: true,
+                isLoginWallet,
+            };
+        } catch (err) {
+            console.warn(`Failed to load wallet ${name}:`, err);
+
+            const isLoginWallet = sessionWalletName === name;
+            const isLastUsedWallet = lastUsedWalletName === name;
+
+            if (isLoginWallet || isLastUsedWallet) {
+                return {
+                    name,
+                    icon,
+                    lovelace: null,
+                    dfct: null,
+                    displayADA: isLoginWallet ? "Login wallet" : "Last used",
+                    displayDFCT: "Connect on confirm",
+                    enabled: true,
+                    needsEnable: true,
+                    isLoginWallet,
+                    warning: err?.message || String(err),
+                };
+            }
+
+            return {
+                name,
+                icon,
+                lovelace: null,
+                dfct: null,
+                displayADA: "Unavailable",
                 displayDFCT: "-",
                 enabled: false,
-                isLoginWallet: sessionWalletName === name,
+                isLoginWallet: false,
                 error: err?.message || String(err),
             };
         }
@@ -255,15 +306,7 @@ export function getSessionWalletHandlers(user = null) {
             throw new Error(`${selectedWallet.name} wallet provider is not available`);
         }
 
-        const walletApi = enabledWallets[selectedWallet.name] ||
-            await withTimeout(
-                walletProvider.enable(),
-                `${selectedWallet.name}.enable`,
-                20000
-            );
-
-        enabledWallets[selectedWallet.name] = walletApi;
-        localStorage.setItem("dfct_last_used_wallet", selectedWallet.name);
+        const walletApi = await enableWalletForAction(selectedWallet.name);
 
         return await getWalletInfo(selectedWallet.name, walletApi);
     };
@@ -338,4 +381,29 @@ export async function getWalletBalance(walletApi) {
     }
 
     return { lovelace, dfct };
+}
+
+
+export function getWalletErrorMessage(err, walletName = "wallet") {
+    const rawMessage =
+        err?.info ||
+        err?.message ||
+        err?.code ||
+        String(err || "");
+
+    const message = String(rawMessage);
+
+    if (
+        err?.code === -3 ||
+        /wallet is locked/i.test(message) ||
+        /please unlock/i.test(message)
+    ) {
+        return `${walletName} is locked. Please unlock it and try again.`;
+    }
+
+    if (/timed out/i.test(message)) {
+        return `${walletName} did not respond in time. Please unlock/open the wallet and try again.`;
+    }
+
+    return message;
 }

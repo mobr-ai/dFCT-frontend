@@ -65,8 +65,9 @@ export default function GovernancePage() {
         const statusBody = statusRes.body;
         const proposal = statusBody?.proposal || statusBody;
         const statusCode = statusBody?.status_code ?? proposal?.status;
+        const found = statusBody?.found ?? Boolean(proposal?.proposal_id);
 
-        if (statusBody?.found && proposal && statusCode !== 5) {
+        if (found && proposal && Number(statusCode) !== 5) {
           mergeProposal(proposal);
           clearProposalSync(proposalId);
 
@@ -86,8 +87,8 @@ export default function GovernancePage() {
       const updated = [...loaded];
       let foundDrafts = [];
 
-      // Check localStorage for syncing keys
-      for (const key of Object.keys(localStorage)) {
+      // Check sessionStorage for syncing keys
+      for (const key of Object.keys(sessionStorage)) {
         if (key.startsWith("dfct_proposal_syncing_")) {
           const proposalId = key.replace("dfct_proposal_syncing_", "");
           const inLoaded = loaded.find((p) => p.proposal_id === proposalId);
@@ -229,7 +230,7 @@ export default function GovernancePage() {
                       key={p.proposal_id}
                       onClick={
                         p.status === 5 || isSyncing(p.proposal_id)
-                          ? ""
+                          ? undefined
                           : () => navigate(`/proposal/${p.proposal_id}`)
                       }
                     >

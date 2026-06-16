@@ -57,6 +57,8 @@ export default function ProposalPage() {
   const { setLoading, loading, showToast } = useOutletContext();
 
   const [proposal, setProposal] = useState(null);
+  const [proposalActionable, setProposalActionable] = useState(null);
+  const [proposalActionabilityReason, setProposalActionabilityReason] = useState("");
   const [insufficientFeeFunds, setInsufficientFeeFunds] = useState(false);
   const [showPKHModal, setShowPKHModal] = useState(false);
   const [showMinTokensModal, setShowMinTokensModal] = useState(false);
@@ -98,6 +100,19 @@ export default function ProposalPage() {
   const onSubmitted = (optimisticProposal, showMsg) => {
     setProposal(optimisticProposal);
     if (showMsg) showToast(showMsg, "secondary");
+  };
+
+  const ensureProposalActionable = () => {
+    if (proposalActionable === false) {
+      showToast(
+        proposalActionabilityReason ||
+          "This proposal exists in d-FCT, but no matching on-chain UTXO was found.",
+        "warning",
+      );
+      return false;
+    }
+
+    return true;
   };
 
   const handleConfirmMinTokens = async () => {
@@ -147,19 +162,24 @@ export default function ProposalPage() {
   };
 
   const handleVote = async (approve = true) => {
+    if (!ensureProposalActionable()) return;
     setVoteChoice(approve);
     setShowVoteModal(true);
   };
 
   const handleFinalize = async () => {
+    if (!ensureProposalActionable()) return;
     setShowFinalizeModal(true);
   };
 
   const handleExecute = async () => {
+    if (!ensureProposalActionable()) return;
     setShowExecuteModal(true);
   };
 
   const handleConfirmVote = async () => {
+    if (!ensureProposalActionable()) return;
+
     try {
       setIsUpdating(true);
       await confirmVote({
@@ -175,6 +195,8 @@ export default function ProposalPage() {
   };
 
   const handleConfirmFinalize = async () => {
+    if (!ensureProposalActionable()) return;
+
     try {
       setIsUpdating(true);
       await confirmFinalize({
@@ -189,6 +211,8 @@ export default function ProposalPage() {
   };
 
   const handleConfirmExecute = async () => {
+    if (!ensureProposalActionable()) return;
+
     try {
       setIsUpdating(true);
       await confirmExecute({
@@ -206,8 +230,33 @@ export default function ProposalPage() {
     const fetchProposal = async () => {
       try {
         setLoading(true);
+        setProposalActionable(null);
+        setProposalActionabilityReason("");
+
         const res = await authRequest.get(`/api/proposal/${proposalId}/status`);
         setProposal(res.body);
+
+        try {
+          const utxoRes = await authRequest
+            .get(`/api/proposal/${proposalId}/utxos`)
+            .set("Accept", "application/json");
+
+          const hasMatchingUtxo =
+            Array.isArray(utxoRes.body?.matching_utxos) &&
+            utxoRes.body.matching_utxos.length > 0;
+
+          setProposalActionable(hasMatchingUtxo);
+
+          if (!hasMatchingUtxo) {
+            setProposalActionabilityReason(
+              "This proposal exists in d-FCT, but no matching on-chain UTXO was found. It may be a legacy proposal, already spent, or created with an older script.",
+            );
+          }
+        } catch (utxoErr) {
+          console.warn("Failed to verify proposal UTXO:", utxoErr);
+          setProposalActionable(null);
+          setProposalActionabilityReason("");
+        }
       } catch (err) {
         console.error("Failed to load proposal:", err);
       } finally {
@@ -571,7 +620,7 @@ export default function ProposalPage() {
           <Button
             variant="dark"
             onClick={handleConfirmPKHs}
-            disabled={insufficientFeeFunds || isUpdating}
+            disabled={insufficientFeeFunds || isUpdating || proposalActionable === false}
             className={`ModalConfirmButton ${isUpdating ? "loading" : ""}`}
           >
             {isUpdating ? (
