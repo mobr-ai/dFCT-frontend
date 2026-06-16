@@ -98,7 +98,7 @@ function TopicList({ content, type, showSideBar }) {
       if (!window.confirm(t("confirmDeleteTopic"))) return;
 
       try {
-        const response = await authFetch(`/topic/${user.id}/${topic.id}`, {
+        const response = await authFetch(`/api/topic/${user.id}/${topic.id}`, {
           method: "DELETE",
         });
 

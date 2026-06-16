@@ -99,7 +99,7 @@ function SettingsPage() {
     if (!window.confirm(t("confirmAccountDeletion"))) return;
     setIsDeleting(true);
     try {
-      const res = await authFetch(`/user/${user.id}`, {
+      const res = await authFetch(`/api/user/${user.id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -183,7 +183,7 @@ function SettingsPage() {
         updatedSettings.username = trimmed;
       }
 
-      const response = await authFetch(`/user/${user.id}`, {
+      const response = await authFetch(`/api/user/${user.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ settings: updatedSettings }),

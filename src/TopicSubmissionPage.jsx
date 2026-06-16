@@ -104,7 +104,7 @@ function TopicSubmissionPage() {
     (callback) => {
       if (!topicId) {
         authRequest
-          .put("/topic/" + user.id)
+          .put("/api/topic/" + user.id)
           .send({
             title: "Topic template",
             description: "This is a new topic",

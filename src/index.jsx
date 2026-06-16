@@ -202,7 +202,7 @@ const userTopicsLoader = async () => {
 };
 
 const fetchTopic = async (userId, topicId, signal) => {
-  const response = await fetch(`/topic/full/${userId}/${topicId}`, {
+  const response = await fetch(`/api/topic/full/${userId}/${topicId}`, {
     signal: signal,
   });
   return await response.json();
