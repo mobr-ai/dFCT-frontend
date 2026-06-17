@@ -1,9 +1,15 @@
 import "./styles/index.css";
-import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom/client";
+import LandingPage from "./LandingPage";
 import Header from "./Header";
 import ErrorPage from "./ErrorPage";
 import reportWebVitals from "./reportWebVitals";
+import TopicBreakdownPage from "./TopicBreakdownPage";
+import TopicSubmissionPage from "./TopicSubmissionPage";
+import AuthPage from "./AuthPage";
+import WaitingList from "./WaitingListPage";
+import SettingsPage from "./SettingsPage";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -16,23 +22,12 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
+import GovernancePage from "./GovernancePage";
+import ProposalPage from "./ProposalPage";
+import WelcomePage from "./WelcomePage";
 
 import { Buffer } from "buffer";
 window.Buffer = Buffer;
-
-const LandingPage = lazy(() => import("./LandingPage"));
-const TopicBreakdownPage = lazy(() => import("./TopicBreakdownPage"));
-const TopicSubmissionPage = lazy(() => import("./TopicSubmissionPage"));
-const AuthPage = lazy(() => import("./AuthPage"));
-const WaitingList = lazy(() => import("./WaitingListPage"));
-const SettingsPage = lazy(() => import("./SettingsPage"));
-const GovernancePage = lazy(() => import("./GovernancePage"));
-const ProposalPage = lazy(() => import("./ProposalPage"));
-const WelcomePage = lazy(() => import("./WelcomePage"));
-
-function RouteFallback() {
-  return <div className="route-loading" aria-live="polite" />;
-}
 
 function Layout() {
   const { t } = useTranslation();
@@ -86,11 +81,9 @@ function Layout() {
         setSidebarOpen={setSidebarOpen}
         sidebarIsOpen={sidebarOpen}
       />
-      <Suspense fallback={<RouteFallback />}>
-        <Outlet
-          context={{ user, setUser, loading, setLoading, handleLogin, showToast }}
-        />
-      </Suspense>
+      <Outlet
+        context={{ user, setUser, loading, setLoading, handleLogin, showToast }}
+      />
       <ToastContainer
         position="bottom-end"
         className="p-3"
