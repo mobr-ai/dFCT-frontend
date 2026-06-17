@@ -140,6 +140,14 @@ const allTopicsLoader = async () => {
   return defer({ allTopicsPromise });
 };
 
+const homeLoader = async () => {
+  if (!window.localStorage.userData) {
+    return {};
+  }
+
+  return allTopicsLoader();
+};
+
 const fetchGovProposals = async (userData) => {
   const response = await fetch("/api/governance/proposals", {
     method: "GET",
@@ -265,7 +273,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
-        loader: allTopicsLoader,
+        loader: homeLoader,
       },
       {
         path: "/topics",
