@@ -70,7 +70,7 @@ function EvidenceModal(props) {
 
   // Called when user drops new files
   const onDropAccepted = async (acceptedFiles) => {
-    console.log("User dropped accepted files = " + acceptedFiles.length);
+    if (import.meta.env.DEV) console.log("User dropped accepted files = " + acceptedFiles.length);
 
     showError("", true);
     setFiles(files.concat(acceptedFiles));
@@ -103,7 +103,7 @@ function EvidenceModal(props) {
   const handleURLInput = () => {
     if (document.getElementById("input-url-text").value) {
       if (!URL.canParse(document.getElementById("input-url-text").value)) {
-        console.log(
+        if (import.meta.env.DEV) console.log(
           "Oops, invalid URL: " +
             document.getElementById("input-url-text").value
         );
@@ -133,7 +133,7 @@ function EvidenceModal(props) {
       const metaError = (res) => {
         // let url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
         // display error msg
-        console.log(
+        if (import.meta.env.DEV) console.log(
           "Oops, error fetching URL: " + res.status + " (" + res.message + ")"
         );
         document.getElementById("input-url-help-msg").innerText =
@@ -163,7 +163,7 @@ function EvidenceModal(props) {
     function handleError(res) {
       // display error msg
       showError(t("topicCreationFailed"));
-      console.log(
+      if (import.meta.env.DEV) console.log(
         "Topic (id = " +
           topicId +
           ") processing failed: [" +
@@ -187,9 +187,9 @@ function EvidenceModal(props) {
           }
           setProgress(p);
           nextProgress = p;
-          console.log("Topic processing progress=" + p);
+          if (import.meta.env.DEV) console.log("Topic processing progress=" + p);
         } catch (e) {
-          console.log("Error retrieving processing progress: " + e.message);
+          if (import.meta.env.DEV) console.log("Error retrieving processing progress: " + e.message);
           setProgress(0);
           nextProgress = -1;
           showError(t("topicCreationFailed"));

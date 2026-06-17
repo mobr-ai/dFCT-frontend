@@ -142,7 +142,7 @@ const Topic = ({
   const navigate = useNavigate();
 
   const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
-    console.log(message + " datum hash = " + datumHash);
+    if (import.meta.env.DEV) console.log(message + " datum hash = " + datumHash);
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
     if (message) showToast(message, "success");
   };

@@ -123,7 +123,7 @@ function TopicSubmissionPage() {
   // Called when user drops new files
   const onDropAccepted = useCallback(
     (acceptedFiles) => {
-      console.log(
+      if (import.meta.env.DEV) console.log(
         "User dropped accepted files = " +
           acceptedFiles.length +
           " state.files = " +
@@ -267,7 +267,7 @@ function TopicSubmissionPage() {
   const handleURLInput = () => {
     if (document.getElementById("input-url-text").value) {
       if (!URL.canParse(document.getElementById("input-url-text").value)) {
-        console.log(
+        if (import.meta.env.DEV) console.log(
           "Oops, invalid URL: " +
             document.getElementById("input-url-text").value
         );
@@ -295,7 +295,7 @@ function TopicSubmissionPage() {
       };
 
       const metaError = (res) => {
-        console.log(
+        if (import.meta.env.DEV) console.log(
           "Oops, error fetching URL: " + res.status + " (" + res.message + ")"
         );
         document.getElementById("input-url-help-msg").innerText =
@@ -356,7 +356,7 @@ function TopicSubmissionPage() {
     function handleError(res) {
       // display error msg
       showError(t("topicCreationFailed"));
-      console.log(
+      if (import.meta.env.DEV) console.log(
         "Topic (id = " +
           topicId +
           ") processing failed: [" +
@@ -379,9 +379,9 @@ function TopicSubmissionPage() {
           }
           setProgress(p);
           nextProgress = p;
-          console.log("Topic processing progress=" + p);
+          if (import.meta.env.DEV) console.log("Topic processing progress=" + p);
         } catch (e) {
-          console.log("Error retrieving processing progress: " + e.message);
+          if (import.meta.env.DEV) console.log("Error retrieving processing progress: " + e.message);
           setProgress(0);
           nextProgress = -1;
           showError(t("topicCreationFailed"));
@@ -396,7 +396,7 @@ function TopicSubmissionPage() {
           .then((res) => checkStatus(res))
           .catch((err) => {
             showError(t("topicCreationFailed"));
-            console.log(
+            if (import.meta.env.DEV) console.log(
               "Topic (id = " + topicId + ") processing failed: [" + err + "]"
             );
           });
@@ -417,7 +417,7 @@ function TopicSubmissionPage() {
       urls.length > 0 ||
       files.filter((f) => f.completed).length === files.length
     ) {
-      console.log("All files available, processing content...");
+      if (import.meta.env.DEV) console.log("All files available, processing content...");
 
       setDropMsg(t("processingContent"));
       setShowFiles(false);

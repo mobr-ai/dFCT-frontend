@@ -44,16 +44,16 @@ export async function buildProposalUpdateTx({
         script: GOV_SCRIPT_CBOR_HEX,
     };
 
-    console.log("payToContract params:");
-    console.log(" - address =", outputAddress);
-    console.log(` - proposalInputUtxo:`);
-    console.dir(proposalInputUtxo, { depth: null, colors: true });
-    console.log(` - Data.from(proposalInputUtxo.datum) = (${Data.from(proposalInputUtxo.datum)}) type = ${typeof (Data.from(proposalInputUtxo.datum))}`);
-    console.dir(Data.from(proposalInputUtxo.datum), { depth: null, colors: true });
-    console.log(` - updatedDatum = ${updatedDatum} type = ${typeof updatedDatum}`);
-    console.log(` - Data.to(updatedDatum) = ${Data.to(updatedDatum)} type = ${typeof Data.to(updatedDatum)}`);
-    console.log(` - redeemerPlutusData (${typeof redeemerPlutusData}) = ${redeemerPlutusData}`);
-    console.log(` - safeHex(redeemerPlutusData) (${typeof safeHex(redeemerPlutusData)}) = ${safeHex(redeemerPlutusData)}`);
+    if (import.meta.env.DEV) console.log("payToContract params:");
+    if (import.meta.env.DEV) console.log(" - address =", outputAddress);
+    if (import.meta.env.DEV) console.log(` - proposalInputUtxo:`);
+    if (import.meta.env.DEV) console.dir(proposalInputUtxo, { depth: null, colors: true });
+    if (import.meta.env.DEV) console.log(` - Data.from(proposalInputUtxo.datum) = (${Data.from(proposalInputUtxo.datum)}) type = ${typeof (Data.from(proposalInputUtxo.datum))}`);
+    if (import.meta.env.DEV) console.dir(Data.from(proposalInputUtxo.datum), { depth: null, colors: true });
+    if (import.meta.env.DEV) console.log(` - updatedDatum = ${updatedDatum} type = ${typeof updatedDatum}`);
+    if (import.meta.env.DEV) console.log(` - Data.to(updatedDatum) = ${Data.to(updatedDatum)} type = ${typeof Data.to(updatedDatum)}`);
+    if (import.meta.env.DEV) console.log(` - redeemerPlutusData (${typeof redeemerPlutusData}) = ${redeemerPlutusData}`);
+    if (import.meta.env.DEV) console.log(` - safeHex(redeemerPlutusData) (${typeof safeHex(redeemerPlutusData)}) = ${safeHex(redeemerPlutusData)}`);
 
     // Build the TX
     const tx = await lucid

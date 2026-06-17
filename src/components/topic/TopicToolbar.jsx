@@ -159,7 +159,7 @@ function TopicToolbar(props) {
 
   useEffect(() => {
     if (isSyncing()) {
-      console.log("Previous topic status sync timed out. Retrying polling...");
+      if (import.meta.env.DEV) console.log("Previous topic status sync timed out. Retrying polling...");
       // pollTopicStatus();
       handlePublishConfirmed({
         lovelace_amount: 0,
