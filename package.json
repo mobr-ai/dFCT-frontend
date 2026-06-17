@@ -13,7 +13,6 @@
     "@testing-library/user-event": "^13.5.0",
     "assert": "^2.1.0",
     "bootstrap": "^5.3.3",
-    "crypto-browserify": "^3.12.1",
     "i18next": "^24.0.0",
     "i18next-browser-languagedetector": "^8.0.0",
     "linkify-react": "^4.1.4",
