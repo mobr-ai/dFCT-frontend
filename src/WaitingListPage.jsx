@@ -37,7 +37,7 @@ const WaitingList = () => {
 
     // Handle form submission (send to backend or mailing list API)
     request
-      .post("/wait_list")
+      .post("/api/wait_list")
       .set("accept", "json")
       .send({ email: email, ref: ref, language: i18n.language.split("-")[0] })
       .then(reqSuccess, reqError);
