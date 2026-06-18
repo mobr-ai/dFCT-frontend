@@ -39,16 +39,12 @@ const WaitingList = () => {
     request
       .post("/api/wait_list")
       .set("accept", "json")
-      .send({ email: email, ref: ref, language: i18n.language.split("-")[0] })
+      .send({ email: email.trim(), ref: ref, language: i18n.language.split("-")[0] })
       .then(reqSuccess, reqError);
   };
 
   const handleInputChange = (e) => {
-    const input = e.target.value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(input) || input === "") {
-      setEmail(input);
-    }
+    setEmail(e.target.value);
   };
 
   return (
