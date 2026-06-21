@@ -28,29 +28,63 @@ function TopicList({ content, type, showSideBar }) {
   };
 
   const getElapsedTime = (timeStr) => {
-    let pubTime = new Date(timeStr);
-    let elapsed = Math.round(
-      parseFloat((Date.now() - pubTime.getTime()) / 1000)
-    );
-    if (elapsed < 1) elapsed = 1;
-    if (elapsed >= 60) {
-      elapsed = elapsed / 60;
-      if (elapsed >= 60) {
-        elapsed = elapsed / 60;
-        if (elapsed >= 24) {
-          elapsed = elapsed / 24;
-          if (elapsed >= 31) {
-            elapsed = elapsed / (365 / 12);
-            if (elapsed >= 12) return Math.round(elapsed) + "y";
-            return Math.round(elapsed) + "mo";
-          }
-          return Math.round(elapsed) + "d";
-        }
-        return Math.round(elapsed) + "h";
-      }
-      return Math.round(elapsed) + "m";
+    const pubTime = new Date(timeStr);
+
+    if (Number.isNaN(pubTime.getTime())) {
+      return "";
     }
-    return elapsed + "s";
+
+    const now = new Date();
+
+    let years = now.getFullYear() - pubTime.getFullYear();
+    const beforeYearAnniversary =
+      now.getMonth() < pubTime.getMonth() ||
+      (now.getMonth() === pubTime.getMonth() &&
+        now.getDate() < pubTime.getDate());
+
+    if (beforeYearAnniversary) {
+      years -= 1;
+    }
+
+    if (years >= 1) {
+      return `${years}y`;
+    }
+
+    let months =
+      (now.getFullYear() - pubTime.getFullYear()) * 12 +
+      now.getMonth() -
+      pubTime.getMonth();
+
+    if (now.getDate() < pubTime.getDate()) {
+      months -= 1;
+    }
+
+    if (months >= 1) {
+      return `${months}mo`;
+    }
+
+    const elapsedSeconds = Math.max(
+      1,
+      Math.floor((now.getTime() - pubTime.getTime()) / 1000),
+    );
+
+    const minute = 60;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+
+    if (elapsedSeconds >= day) {
+      return `${Math.floor(elapsedSeconds / day)}d`;
+    }
+
+    if (elapsedSeconds >= hour) {
+      return `${Math.floor(elapsedSeconds / hour)}h`;
+    }
+
+    if (elapsedSeconds >= minute) {
+      return `${Math.floor(elapsedSeconds / minute)}m`;
+    }
+
+    return `${elapsedSeconds}s`;
   };
 
   const truncateString = (string = "", maxLength = 200) => {
@@ -214,7 +248,7 @@ function TopicList({ content, type, showSideBar }) {
         {
           threshold: [0, 0.9],
           rootMargin: "220px 0px 220px 0px",
-        }
+        },
       );
 
       observer.observe(video);
@@ -321,7 +355,9 @@ function TopicList({ content, type, showSideBar }) {
 
   return (
     content && (
-      <div className={`Topic-list-container-${type} ${type === "main" ? "Topic-feed-list" : ""} ${type === "explore" ? "Topic-explore-grid" : ""}`}>
+      <div
+        className={`Topic-list-container-${type} ${type === "main" ? "Topic-feed-list" : ""} ${type === "explore" ? "Topic-explore-grid" : ""}`}
+      >
         {visibleTopics.map((topic, index) => (
           <TopicCard
             key={topic.id}
