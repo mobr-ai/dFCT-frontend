@@ -1,0 +1,89 @@
+/* Theme bridge for Governance / Proposal pages */
+[data-theme] .Governance-body,
+[data-theme] .Governance-page,
+[data-theme] .Governance-container,
+[data-theme] .Proposal-body,
+[data-theme] .Proposal-page,
+[data-theme] .Proposal-container,
+[data-theme] [class*="Governance"],
+[data-theme] [class*="Proposal"] {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+[data-theme] .Governance-body,
+[data-theme] .Proposal-body {
+  background: var(--theme-page-gradient) !important;
+}
+
+[data-theme] .Governance-body h1,
+[data-theme] .Governance-body h2,
+[data-theme] .Governance-body h3,
+[data-theme] .Governance-body h4,
+[data-theme] .Governance-body h5,
+[data-theme] .Proposal-body h1,
+[data-theme] .Proposal-body h2,
+[data-theme] .Proposal-body h3,
+[data-theme] .Proposal-body h4,
+[data-theme] .Proposal-body h5,
+[data-theme] [class*="Governance"] h1,
+[data-theme] [class*="Governance"] h2,
+[data-theme] [class*="Governance"] h3,
+[data-theme] [class*="Proposal"] h1,
+[data-theme] [class*="Proposal"] h2,
+[data-theme] [class*="Proposal"] h3 {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Governance-body p,
+[data-theme] .Governance-body small,
+[data-theme] .Governance-body label,
+[data-theme] .Proposal-body p,
+[data-theme] .Proposal-body small,
+[data-theme] .Proposal-body label,
+[data-theme] [class*="Governance"] p,
+[data-theme] [class*="Governance"] small,
+[data-theme] [class*="Proposal"] p,
+[data-theme] [class*="Proposal"] small {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] .Governance-body .card,
+[data-theme] .Governance-body .list-group-item,
+[data-theme] .Governance-body .modal-content,
+[data-theme] .Governance-body .dropdown-menu,
+[data-theme] .Proposal-body .card,
+[data-theme] .Proposal-body .list-group-item,
+[data-theme] .Proposal-body .modal-content,
+[data-theme] .Proposal-body .dropdown-menu,
+[data-theme] [class*="Governance"] .card,
+[data-theme] [class*="Proposal"] .card {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Governance-body a,
+[data-theme] .Proposal-body a,
+[data-theme] [class*="Governance"] a,
+[data-theme] [class*="Proposal"] a {
+  color: var(--theme-primary-hover) !important;
+}
+
+[data-theme] .Governance-body .btn-dark,
+[data-theme] .Proposal-body .btn-dark,
+[data-theme] [class*="Governance"] .btn-dark,
+[data-theme] [class*="Proposal"] .btn-dark {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Governance-body .form-select,
+[data-theme] .Governance-body .form-control,
+[data-theme] .Proposal-body .form-select,
+[data-theme] .Proposal-body .form-control {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}

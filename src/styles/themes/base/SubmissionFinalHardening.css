@@ -1,0 +1,144 @@
+/* Final hardening for Submission page styled-components + burger button */
+
+/* Keep submit page shell clean and theme-native. */
+[data-theme] .Submission-body {
+  min-height: calc(100dvh - 56px) !important;
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Submission-middle-column,
+[data-theme] .Submission-input-group,
+[data-theme] .Submission-input-url,
+[data-theme] .Submission-divider {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+/* Remove the weird rectangular panel behind the dropzone. */
+[data-theme] .Submission-drop {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/*
+  StyledDropzone is styled-components, so the class is generated.
+  Target the stable DOM contract instead: the inner react-dropzone node has
+  role="presentation" and sits under .Submission-drop.
+*/
+[data-theme] .Submission-body .Submission-drop [role="presentation"],
+[data-theme] .Submission-body .Submission-drop div[role="presentation"],
+[data-theme] .Submission-body .Submission-drop [tabindex="0"] {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 78%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 86%, transparent)
+    ) !important;
+  color: var(--theme-text-soft) !important;
+  border: 2px dashed var(--theme-border-strong) !important;
+  border-radius: 26px !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+  outline: none !important;
+}
+
+[data-theme] .Submission-body .Submission-drop [role="presentation"]:hover,
+[data-theme] .Submission-body .Submission-drop [role="presentation"]:focus,
+[data-theme] .Submission-body .Submission-drop [tabindex="0"]:hover,
+[data-theme] .Submission-body .Submission-drop [tabindex="0"]:focus {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface-2) 84%, transparent),
+      color-mix(in srgb, var(--theme-accent-soft) 64%, var(--theme-surface))
+    ) !important;
+  border-color: var(--theme-accent) !important;
+  box-shadow:
+    var(--theme-shadow-soft),
+    0 0 0 3px var(--theme-accent-soft) !important;
+}
+
+/* Dropzone content and icon */
+[data-theme] .Submission-body .Submission-drop [role="presentation"] *,
+[data-theme] .Submission-body .Submission-drop [tabindex="0"] * {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] .Submission-body .Submission-drop svg,
+[data-theme] .Submission-body .Submission-drop svg *,
+[data-theme] .Submission-body .Submission-drop path {
+  color: var(--theme-accent) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* URL input row */
+[data-theme] .Submission-body .Submission-input-url .input-group,
+[data-theme] .Submission-body .Submission-input-url .input-group-text,
+[data-theme] .Submission-body .Submission-input-url .form-control,
+[data-theme] .Submission-body .Submission-input-url .btn {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Submission-body .Submission-input-url .input-group-text {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] .Submission-body .Submission-input-url .btn:hover {
+  background: var(--theme-surface-3) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Divider lines */
+[data-theme] .Submission-divider::before,
+[data-theme] .Submission-divider::after,
+[data-theme] .Submission-body hr {
+  border-color: var(--theme-border-strong) !important;
+  background: var(--theme-border-strong) !important;
+}
+
+/* Paper-specific submit polish */
+[data-theme="paper"] .Submission-body .Submission-drop [role="presentation"],
+[data-theme="paper"] .Submission-body .Submission-drop div[role="presentation"],
+[data-theme="paper"] .Submission-body .Submission-drop [tabindex="0"] {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.88),
+      rgba(241, 245, 249, 0.86)
+    ) !important;
+  color: var(--theme-text-soft) !important;
+}
+
+/* Burger button should never become a white square on a light page. */
+[data-theme] .Navbar-toggle-btn {
+  background: color-mix(in srgb, var(--theme-surface-glass) 82%, transparent) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(12px);
+}
+
+[data-theme] .Navbar-toggle-btn svg,
+[data-theme] .Navbar-toggle-btn path {
+  color: var(--theme-text) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+[data-theme] .Navbar-toggle-btn:hover {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-accent-hover) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme="paper"] .Navbar-toggle-btn {
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.16) !important;
+}

@@ -1,0 +1,250 @@
+/* Final last-loaded bridge for Bootstrap modals + Governance page */
+
+/* ----------------------------- */
+/* Bootstrap modals              */
+/* ----------------------------- */
+
+[data-theme] body.modal-open {
+  background: var(--theme-bg) !important;
+}
+
+[data-theme] .modal,
+[data-theme] .modal-dialog,
+[data-theme] .modal-dialog-centered,
+[data-theme] .modal-dialog-scrollable {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-content {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 96%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+  backdrop-filter: blur(18px);
+}
+
+[data-theme] .modal-header,
+[data-theme] .modal-footer {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-body {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-title,
+[data-theme] .modal-content h1,
+[data-theme] .modal-content h2,
+[data-theme] .modal-content h3,
+[data-theme] .modal-content h4,
+[data-theme] .modal-content h5,
+[data-theme] .modal-content h6 {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-content p,
+[data-theme] .modal-content small,
+[data-theme] .modal-content span,
+[data-theme] .modal-content label,
+[data-theme] .modal-content div {
+  color: var(--theme-text-soft);
+}
+
+[data-theme] .modal-content .form-control,
+[data-theme] .modal-content .form-select,
+[data-theme] .modal-content input,
+[data-theme] .modal-content textarea {
+  background: var(--theme-bg-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-content .form-control::placeholder,
+[data-theme] .modal-content input::placeholder,
+[data-theme] .modal-content textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] .modal-content .btn,
+[data-theme] .modal-content button {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-content .btn-secondary,
+[data-theme] .modal-content .btn-dark {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-content .btn-secondary:hover,
+[data-theme] .modal-content .btn-dark:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme] .modal-content .btn-primary,
+[data-theme] .modal-content .btn-success {
+  background: var(--theme-accent) !important;
+  color: #ffffff !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme] .modal-content .btn-close {
+  opacity: 0.82 !important;
+  filter: invert(1) grayscale(100%) brightness(140%) !important;
+}
+
+[data-theme="paper"] .modal-content {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.96)
+    ) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme="paper"] .modal-content p,
+[data-theme="paper"] .modal-content small,
+[data-theme="paper"] .modal-content span,
+[data-theme="paper"] .modal-content label,
+[data-theme="paper"] .modal-content div {
+  color: var(--theme-text-soft);
+}
+
+[data-theme="paper"] .modal-content .btn-close {
+  filter: none !important;
+}
+
+[data-theme] .modal-backdrop.show {
+  background: #000 !important;
+  opacity: 0.58 !important;
+}
+
+/* Wallet / publish modal cards */
+[data-theme] .modal-content [class*="Wallet"],
+[data-theme] .modal-content [class*="wallet"],
+[data-theme] .modal-content [class*="Option"],
+[data-theme] .modal-content [class*="option"] {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-content button[class*="Wallet"],
+[data-theme] .modal-content button[class*="wallet"],
+[data-theme] .modal-content .wallet-option,
+[data-theme] .modal-content .Wallet-option {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-content button[class*="Wallet"]:hover,
+[data-theme] .modal-content button[class*="wallet"]:hover,
+[data-theme] .modal-content .wallet-option:hover,
+[data-theme] .modal-content .Wallet-option:hover {
+  background: var(--theme-surface-3) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+/* ----------------------------- */
+/* Governance page               */
+/* ----------------------------- */
+
+[data-theme] .GovernancePage {
+  min-height: calc(100dvh - 56px);
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .GovernanceTitle {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .GovernancePage h1,
+[data-theme] .GovernancePage h2,
+[data-theme] .GovernancePage h3,
+[data-theme] .GovernancePage h4,
+[data-theme] .GovernancePage h5,
+[data-theme] .GovernancePage h6 {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .ProposalsContainer {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 90%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 82%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+[data-theme] .GovernancePage .ProposalButton,
+[data-theme] .GovernancePage button.ProposalButton {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+[data-theme] .GovernancePage .ProposalButton:hover,
+[data-theme] .GovernancePage button.ProposalButton:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme] .GovernancePage select,
+[data-theme] .GovernancePage .form-select,
+[data-theme] .GovernancePage input,
+[data-theme] .GovernancePage .form-control {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .GovernancePage .card,
+[data-theme] .GovernancePage [class*="Card"],
+[data-theme] .GovernancePage [class*="card"] {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+[data-theme] .GovernancePage .card-body,
+[data-theme] .GovernancePage [class*="card-body"],
+[data-theme] .GovernancePage [class*="CardBody"] {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .GovernancePage p,
+[data-theme] .GovernancePage small,
+[data-theme] .GovernancePage span,
+[data-theme] .GovernancePage label,
+[data-theme] .GovernancePage div {
+  border-color: var(--theme-border);
+}
+
+[data-theme] .GovernancePage a {
+  color: var(--theme-primary-hover) !important;
+}
+
+[data-theme="paper"] .ProposalsContainer,
+[data-theme="paper"] .GovernancePage .card,
+[data-theme="paper"] .GovernancePage [class*="Card"],
+[data-theme="paper"] .GovernancePage [class*="card"] {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: var(--theme-text) !important;
+}

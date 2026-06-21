@@ -1,0 +1,151 @@
+/* Final theme bridge for governance proposal submission modal and status cards */
+
+/* ProposalSubmissionModal / governance modal */
+html[data-theme] body .modal-content,
+html[data-theme] body .ProposalSubmissionModal,
+html[data-theme] body [class*="ProposalSubmissionModal"] {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 96%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+}
+
+html[data-theme] body .modal-content .modal-header,
+html[data-theme] body .modal-content .modal-body,
+html[data-theme] body .modal-content .modal-footer {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .modal-content h1,
+html[data-theme] body .modal-content h2,
+html[data-theme] body .modal-content h3,
+html[data-theme] body .modal-content h4,
+html[data-theme] body .modal-content h5,
+html[data-theme] body .modal-content h6,
+html[data-theme] body .modal-content .modal-title,
+html[data-theme] body .ProposalSubmissionModal h1,
+html[data-theme] body .ProposalSubmissionModal h2,
+html[data-theme] body .ProposalSubmissionModal h3,
+html[data-theme] body .ProposalSubmissionModal h4,
+html[data-theme] body .ProposalSubmissionModal h5,
+html[data-theme] body .ProposalSubmissionModal h6 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .modal-content p,
+html[data-theme] body .modal-content small,
+html[data-theme] body .modal-content label,
+html[data-theme] body .modal-content span,
+html[data-theme] body .ProposalSubmissionModal p,
+html[data-theme] body .ProposalSubmissionModal small,
+html[data-theme] body .ProposalSubmissionModal label,
+html[data-theme] body .ProposalSubmissionModal span {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body .modal-content input,
+html[data-theme] body .modal-content textarea,
+html[data-theme] body .modal-content select,
+html[data-theme] body .modal-content .form-control,
+html[data-theme] body .modal-content .form-select,
+html[data-theme] body .modal-content .input-group-text,
+html[data-theme] body .ProposalSubmissionModal input,
+html[data-theme] body .ProposalSubmissionModal textarea,
+html[data-theme] body .ProposalSubmissionModal select,
+html[data-theme] body .ProposalSubmissionModal .form-control,
+html[data-theme] body .ProposalSubmissionModal .form-select,
+html[data-theme] body .ProposalSubmissionModal .input-group-text {
+  background: var(--theme-bg-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .modal-content input::placeholder,
+html[data-theme] body .modal-content textarea::placeholder,
+html[data-theme] body .ProposalSubmissionModal input::placeholder,
+html[data-theme] body .ProposalSubmissionModal textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-theme] body .modal-content .btn,
+html[data-theme] body .modal-content button,
+html[data-theme] body .ProposalSubmissionModal .btn,
+html[data-theme] body .ProposalSubmissionModal button {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .modal-content .btn-secondary,
+html[data-theme] body .modal-content .btn-dark,
+html[data-theme] body .modal-content button[type="button"],
+html[data-theme] body .ProposalSubmissionModal .btn-secondary,
+html[data-theme] body .ProposalSubmissionModal .btn-dark {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .modal-content .btn-primary,
+html[data-theme] body .modal-content .btn-success,
+html[data-theme] body .modal-content button[type="submit"],
+html[data-theme] body .ProposalSubmissionModal .btn-primary,
+html[data-theme] body .ProposalSubmissionModal .btn-success {
+  background: var(--theme-accent) !important;
+  color: #ffffff !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .modal-content .btn-close {
+  opacity: 0.82 !important;
+  filter: invert(1) grayscale(100%) brightness(140%) !important;
+}
+
+html[data-theme="paper"] body .modal-content,
+html[data-theme="paper"] body .ProposalSubmissionModal,
+html[data-theme="paper"] body [class*="ProposalSubmissionModal"] {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.96)
+    ) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="paper"] body .modal-content .btn-close {
+  filter: none !important;
+}
+
+/* Likely status-specific class names, when present. */
+html[data-theme="paper"] body .GovernanceContainer [class*="Proposed"],
+html[data-theme="paper"] body .GovernanceContainer [class*="proposed"] {
+  background: #7c79d8 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="paper"] body .GovernanceContainer [class*="Voting"],
+html[data-theme="paper"] body .GovernanceContainer [class*="voting"] {
+  background: #b89b00 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="paper"] body .GovernanceContainer [class*="Approved"],
+html[data-theme="paper"] body .GovernanceContainer [class*="approved"],
+html[data-theme="paper"] body .GovernanceContainer [class*="Finalized"],
+html[data-theme="paper"] body .GovernanceContainer [class*="finalized"] {
+  background: #2f9e7e !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="paper"] body .GovernanceContainer [class*="Rejected"],
+html[data-theme="paper"] body .GovernanceContainer [class*="rejected"],
+html[data-theme="paper"] body .GovernanceContainer [class*="Failed"],
+html[data-theme="paper"] body .GovernanceContainer [class*="failed"] {
+  background: #d96a6a !important;
+  color: #ffffff !important;
+}

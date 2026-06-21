@@ -1,0 +1,118 @@
+.Settings-theme-section {
+  margin-top: 1.35rem;
+  margin-bottom: 1.35rem;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border: 1px solid var(--theme-border);
+  border-radius: 18px;
+  background: var(--theme-surface-glass);
+}
+
+.Settings-theme-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.Settings-section-title {
+  color: var(--theme-text);
+  margin: 0;
+}
+
+.Settings-section-subtitle {
+  color: var(--theme-text-muted);
+  margin: 0.35rem 0 0;
+}
+
+.Settings-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.85rem;
+}
+
+.Settings-theme-option {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg);
+  background: var(--theme-surface);
+  color: var(--theme-text-soft);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.Settings-theme-option:hover {
+  border-color: var(--theme-border-strong);
+  background: var(--theme-surface-2);
+  transform: translateY(-1px);
+}
+
+.Settings-theme-option.is-active {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 1px var(--theme-accent-soft);
+}
+
+.Settings-theme-preview {
+  display: grid;
+  gap: 0.22rem;
+  width: 3rem;
+  min-width: 3rem;
+  padding: 0.35rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--theme-border);
+}
+
+.Settings-theme-preview span {
+  display: block;
+  height: 0.42rem;
+  border-radius: 999px;
+}
+
+.Settings-theme-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.Settings-theme-copy strong {
+  color: var(--theme-text);
+  font-size: 0.92rem;
+}
+
+.Settings-theme-copy small {
+  color: var(--theme-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.Settings-theme-preview-dfct-dark { background: #2b303a; }
+.Settings-theme-preview-dfct-dark span:nth-child(1) { background: #61dafb; }
+.Settings-theme-preview-dfct-dark span:nth-child(2) { background: #20b2aa; }
+.Settings-theme-preview-dfct-dark span:nth-child(3) { background: #343a40; }
+
+.Settings-theme-preview-graphite { background: #111113; }
+.Settings-theme-preview-graphite span:nth-child(1) { background: #d4d4d8; }
+.Settings-theme-preview-graphite span:nth-child(2) { background: #71717a; }
+.Settings-theme-preview-graphite span:nth-child(3) { background: #2a2a30; }
+
+.Settings-theme-preview-midnight { background: #07111f; }
+.Settings-theme-preview-midnight span:nth-child(1) { background: #60a5fa; }
+.Settings-theme-preview-midnight span:nth-child(2) { background: #22d3ee; }
+.Settings-theme-preview-midnight span:nth-child(3) { background: #172b49; }
+
+.Settings-theme-preview-paper { background: #ffffff; }
+.Settings-theme-preview-paper span:nth-child(1) { background: #2563eb; }
+.Settings-theme-preview-paper span:nth-child(2) { background: #0f766e; }
+.Settings-theme-preview-paper span:nth-child(3) { background: #e2e8f0; }
+
+.Settings-theme-preview-terminal { background: #020403; }
+.Settings-theme-preview-terminal span:nth-child(1) { background: #39ff88; }
+.Settings-theme-preview-terminal span:nth-child(2) { background: #22c55e; }
+.Settings-theme-preview-terminal span:nth-child(3) { background: #0d241a; }

@@ -383,5 +383,41 @@
       "body": "Um ecossistema de verificação em que a IA estrutura a análise, comunidades inspecionam as evidências e registros em blockchain preservam a trilha.",
       "bannerAlt": "Banner de perfil do d-FCT para fact-checking descentralizado"
     }
-  }
+  },
+  "landingFeed": {
+    "recentSubtitle": "Um feed vivo de tópicos sendo verificados pela comunidade.",
+    "myTopicsSubtitle": "Seus tópicos submetidos e trabalhos de verificação em andamento.",
+    "exploreLabel": "Explorar",
+    "exploreSubtitle": "Pesquise tópicos, alegações e evidências.",
+    "exploreResults": "Resultados da busca",
+    "exploreResultsSubtitle": "{{count}} tópicos encontrados para sua busca."
+  },
+  "settingsTheme": {
+    "title": "Aparência",
+    "subtitle": "Escolha o tema visual usado na interface do d-FCT.",
+    "options": {
+      "dfct-dark": {
+        "label": "d-FCT Dark",
+        "description": "Interface escura original do d-FCT"
+      },
+      "graphite": {
+        "label": "Graphite",
+        "description": "Tema escuro neutro para verificação focada"
+      },
+      "midnight": {
+        "label": "Midnight",
+        "description": "Tema azul profundo para o feed de verificação"
+      },
+      "paper": {
+        "label": "Paper",
+        "description": "Tema claro para leitura e revisão"
+      },
+      "terminal": {
+        "label": "Terminal",
+        "description": "Tema retrô CLI com acentos fósforo"
+      }
+    }
+  },
+  "sidebarPin": "Fixar menu",
+  "sidebarUnpin": "Desafixar menu"
 }

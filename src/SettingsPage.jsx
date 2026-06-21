@@ -19,6 +19,7 @@ import { useS3Upload } from "./hooks/useS3Upload";
 import { resizeImage } from "./helpers/resizeImage"; // helper class
 import useOnClickOutside from "./hooks/useOnClickOutside"; // custom hook
 import avatarImg from "./icons/avatar.png";
+import ThemeSelector from "./components/settings/ThemeSelector";
 
 function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -401,6 +402,9 @@ function SettingsPage() {
               </Form.Control>
             </Form.Group>
           </Form>
+
+          <ThemeSelector />
+
           <div
             className="mt-4 p-3"
             style={{ backgroundColor: "#59454d", borderRadius: "6px" }}

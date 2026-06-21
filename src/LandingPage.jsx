@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/LandingPage.css";
-import "./styles/TopicList.css";
+import "./styles/landing/FeedLayout.css";
+import "./styles/landing/FeedCards.css";
 import "./styles/NavigationSidebar.css";
 import i18n from "./i18n";
 import logo from "./icons/logo.svg";
@@ -40,6 +41,12 @@ function LandingTopicsResolver({
       setTopics(loadedTopics.topics || []);
       setTotalTopics(loadedTopics.total || 0);
       setLoading(false);
+
+      requestAnimationFrame(() => {
+        document
+          .querySelector(".Landing-middle-column")
+          ?.scrollTo({ top: 0, behavior: "auto" });
+      });
     }
   }, [loadedTopics, topics, setTopics, setTotalTopics, setLoading]);
 
@@ -64,19 +71,31 @@ function LandingPage(props) {
   const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const initialQuery = params.get("q") ? "#" + params.get("q") : "";
+  const initialQuery = params.get("q") || "";
   const brandText = ["d-", "de", "fact", "tool"];
   const suffixText = ["FCT", "centralized", "-checking", "kit"];
-  const displayedTopics = searching ? searchResults : topics;
   const dragCounter = useRef(0);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [exploreVisibleCount, setExploreVisibleCount] = useState(12);
+  const [searchSettling, setSearchSettling] = useState(false);
+  const normalizedSearchQuery = searchQuery.trim();
+  const isExploreMode = searching || Boolean(normalizedSearchQuery);
+  const displayedTopics = isExploreMode ? searchResults : topics;
+  const visibleDisplayedTopics = isExploreMode
+    ? displayedTopics.slice(0, exploreVisibleCount)
+    : displayedTopics;
 
-  // Trigger search when initialQuery changes
+  // Sync search from navbar/sidebar query parameter without flashing the full feed.
   useEffect(() => {
-    if (initialQuery) {
-      setSearchQuery(initialQuery);
-      setSearching(true);
+    setSearchQuery(initialQuery);
+    setSearching(Boolean(initialQuery));
+    setExploreVisibleCount(12);
+    setSearchSettling(Boolean(initialQuery));
+
+    if (!initialQuery) {
+      setSearchResults([]);
+      setSearchSettling(false);
     }
   }, [initialQuery]);
 
@@ -146,6 +165,13 @@ function LandingPage(props) {
         scrollElement.scrollHeight - 50;
       const perPage = window.sessionStorage.getItem("perPage") || 9;
 
+      if (nearBottom && isExploreMode && !searchLoading) {
+        setExploreVisibleCount((current) =>
+          Math.min(current + 12, displayedTopics.length)
+        );
+        return;
+      }
+
       if (nearBottom && !loadingMore && !searching) {
         if (page * perPage < totalTopics) {
           const nextPage = page + 1;
@@ -175,9 +201,14 @@ function LandingPage(props) {
     loadTopics,
     searching,
     showScrollUpButton,
+    isExploreMode,
+    searchLoading,
+    displayedTopics.length,
   ]);
 
   useEffect(() => {
+    if (user) return undefined;
+
     const intervalId = setInterval(
       () => {
         setBrandIndex((index) =>
@@ -187,11 +218,11 @@ function LandingPage(props) {
           index < suffixText.length ? index + 1 : index
         );
       },
-      600 // every ms
+      600
     );
 
     return () => clearInterval(intervalId);
-  }, [brandText.length, suffixText.length]);
+  }, [brandText.length, suffixText.length, user]);
 
   const handleDrop = async (event) => {
     event.preventDefault();
@@ -232,7 +263,8 @@ function LandingPage(props) {
     window.history.replaceState(null, "", window.location.pathname);
     setSearchQuery("");
     setSearchResults([]);
-    setTimeout(scrollUp, 500);
+    setExploreVisibleCount(12);
+    setTimeout(scrollUp, 300);
   };
 
   useEffect(() => {
@@ -242,20 +274,25 @@ function LandingPage(props) {
 
       if (query) {
         setSearching(true);
-        setSearchLoading(true); // Start loading indicator
+        setSearchLoading(true);
+        setSearchSettling(true);
+        setExploreVisibleCount(12);
 
         const response = await fetch(
           `/api/search?q=${encodeURIComponent(query)}&lang=${lang}`
         );
         const data = await response.json();
 
-        setSearchResults(data.topics);
-        setSearchLoading(false); // End loading after fetch
+        setSearchResults(data.topics || []);
+        setSearchLoading(false);
+        window.setTimeout(() => setSearchSettling(false), 120);
         setLoading(false);
       } else {
         setSearching(false);
         setSearchResults([]);
-        setSearchLoading(false); // No loading when cleared
+        setExploreVisibleCount(12);
+        setSearchLoading(false);
+        setSearchSettling(false);
       }
     };
 
@@ -273,11 +310,13 @@ function LandingPage(props) {
     setPage(1);
     setSearching(false);
     setSearchResults([]);
+    setExploreVisibleCount(12);
+    setSearchSettling(false);
     setLoading(true);
   }, [location.pathname, setLoading]);
 
   return (
-    <div className="Landing-body">
+    <div className={`Landing-body ${isExploreMode ? "Landing-body-explore" : "Landing-body-feed"} ${searchSettling ? "Landing-search-settling" : ""}`}>
       <Container
         className="Landing-middle-column"
         fluid
@@ -298,94 +337,64 @@ function LandingPage(props) {
             </div>
           </div>
         )}
-        <div
-          className="Landing-header-top"
-          style={!user ? { position: "absolute" } : { position: "relative" }}
-        >
-          {!user && (
-            <>
-              <section>
-                <img src={logo} className="Landing-logo-static" alt="logo" />
-              </section>
-              <section className="inline Landing-logo-text">
-                <Container className="Landing-logo-text-transition">
-                  <ReactTextTransition springConfig={presets.gentle} inline>
-                    {brandText[brandIndex % brandText.length]}
-                  </ReactTextTransition>
-                  {suffixText[suffixIndex % suffixText.length]}
-                </Container>
-                <Container className="Landing-signup-login-buttons">
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    onClick={() => navigate("/login")}
-                  >
-                    {t("loginButton")}
-                  </Button>
-                  <Button
-                    variant="dark"
-                    size="lg"
-                    onClick={() => navigate("/signup")}
-                  >
-                    {t("signUpButton")}
-                  </Button>
-                </Container>
-              </section>
-            </>
-          )}
-        </div>
-
-        {user && (searchResults?.length > 0 || topics?.length > 0) && (
-          <div className="Landing-search-sticky">
-            <InputGroup className="Landing-search-bar mb-3">
-              <FormControl
-                placeholder={t("searchPlaceholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery ? (
-                searchLoading ? (
-                  <Button
-                    className="Landing-search-button"
-                    variant="outline-secondary"
-                    disabled
-                  >
-                    <Spinner animation="border" size="sm" />
-                  </Button>
-                ) : (
-                  <Button
-                    className="Landing-search-button"
-                    variant="outline-secondary"
-                    onClick={() => clearSearch()}
-                  >
-                    <FontAwesomeIcon icon={faTimes} />
-                  </Button>
-                )
-              ) : (
-                <div className="Landing-search-dummy-button">
-                  <Button
-                    className="Landing-search-button"
-                    variant="outline-secondary"
-                    disabled
-                  >
-                    <FontAwesomeIcon icon={faMagnifyingGlass} />
-                  </Button>
-                </div>
-              )}
-            </InputGroup>
+        {!user && (
+          <div className="Landing-header-top" style={{ position: "absolute" }}>
+            <section>
+              <img src={logo} className="Landing-logo-static" alt="logo" />
+            </section>
+            <section className="inline Landing-logo-text">
+              <Container className="Landing-logo-text-transition">
+                <ReactTextTransition springConfig={presets.gentle} inline>
+                  {brandText[brandIndex % brandText.length]}
+                </ReactTextTransition>
+                {suffixText[suffixIndex % suffixText.length]}
+              </Container>
+              <Container className="Landing-signup-login-buttons">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => navigate("/login")}
+                >
+                  {t("loginButton")}
+                </Button>
+                <Button
+                  variant="dark"
+                  size="lg"
+                  onClick={() => navigate("/signup")}
+                >
+                  {t("signUpButton")}
+                </Button>
+              </Container>
+            </section>
           </div>
         )}
 
         {user && !loading && (
           <>
-            {!searching && !searchLoading && (
+            {!searchLoading && (
               <div className="Landing-section-title">
                 <h3>
-                  {props.type === "user" ? t("myTopics") : t("recentTopics")}
+                  {isExploreMode
+                    ? t("landingFeed.exploreResults")
+                    : props.type === "user"
+                      ? t("myTopics")
+                      : t("recentTopics")}
                 </h3>
+                <p className="Landing-feed-meta">
+                  {isExploreMode
+                    ? t("landingFeed.exploreResultsSubtitle", {
+                        count: displayedTopics.length,
+                      })
+                    : props.type === "user"
+                      ? t("landingFeed.myTopicsSubtitle")
+                      : t("landingFeed.recentSubtitle")}
+                </p>
               </div>
             )}
-            <TopicList content={displayedTopics} type="main" />
+            <TopicList
+              content={visibleDisplayedTopics}
+              type={isExploreMode || props.type === "user" ? "explore" : "main"}
+            />
           </>
         )}
 
@@ -412,7 +421,7 @@ function LandingPage(props) {
               showScrollUpButton &&
               !loadingMore &&
               !loading &&
-              displayedTopics.length > 3 && (
+              visibleDisplayedTopics.length > 3 && (
                 <Button
                   variant="secondary"
                   className="Landing-scroll-up"

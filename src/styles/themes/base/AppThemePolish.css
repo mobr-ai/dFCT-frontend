@@ -1,0 +1,87 @@
+/* General app theme polish */
+
+/* Top search should be one rounded control, not a rounded box with square focus. */
+[data-theme] .GlobalTopicSearch-inputGroup {
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 999px !important;
+  background: var(--theme-surface-glass) !important;
+  overflow: hidden !important;
+}
+
+[data-theme] .GlobalTopicSearch-inputGroup:focus-within {
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 3px var(--theme-accent-soft) !important;
+}
+
+[data-theme] .GlobalTopicSearch .form-control,
+[data-theme] .GlobalTopicSearch .form-control:focus,
+[data-theme] .GlobalTopicSearch .form-control:focus-visible {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+[data-theme] .GlobalTopicSearch-button,
+[data-theme] .GlobalTopicSearch-button:focus,
+[data-theme] .GlobalTopicSearch-button:active,
+[data-theme] .GlobalTopicSearch-button:focus-visible {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 1px solid var(--theme-border) !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Topic card hashtags/concepts */
+[data-theme] .Topic-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+[data-theme] .Topic-card-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-accent-soft);
+  color: var(--theme-text-soft);
+  font-size: 0.76rem;
+  line-height: 1.1;
+}
+
+/* Paper needs readable topic controls. */
+[data-theme] .Breakdown-toolbar,
+[data-theme] .Breakdown-toolbar .row,
+[data-theme] .Breakdown-topic-toolbar {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Breakdown-toolbar button,
+[data-theme] .Breakdown-toolbar .btn,
+[data-theme] .Breakdown-topic-toolbar button,
+[data-theme] .Breakdown-topic-toolbar .btn,
+[data-theme] .Breakdown-toolbar svg,
+[data-theme] .Breakdown-topic-toolbar svg {
+  color: var(--theme-text-muted) !important;
+  fill: currentColor !important;
+}
+
+[data-theme] .Breakdown-toolbar button:hover,
+[data-theme] .Breakdown-toolbar .btn:hover,
+[data-theme] .Breakdown-topic-toolbar button:hover,
+[data-theme] .Breakdown-topic-toolbar .btn:hover,
+[data-theme] .Breakdown-toolbar button:hover svg,
+[data-theme] .Breakdown-topic-toolbar button:hover svg {
+  color: var(--theme-accent-hover) !important;
+}
+
+/* Hide redundant react-burger-menu cross button. */
+.bm-cross-button {
+  display: none !important;
+}

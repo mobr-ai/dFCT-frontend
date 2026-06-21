@@ -1,0 +1,27 @@
+/* Text-only theme bridge for proposal status boxes.
+   Do NOT override background/status colors here. */
+
+html[data-theme] body .ProposalStatus,
+html[data-theme] body [class*="ProposalStatus"],
+html[data-theme] body .GovernanceContainer [class*="Status"],
+html[data-theme] body .GovernanceContainer [class*="status"] {
+  color: var(--theme-text) !important;
+  border-color: color-mix(in srgb, var(--theme-border) 70%, transparent) !important;
+}
+
+html[data-theme] body .ProposalStatus *,
+html[data-theme] body [class*="ProposalStatus"] *,
+html[data-theme] body .GovernanceContainer [class*="Status"] *,
+html[data-theme] body .GovernanceContainer [class*="status"] * {
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* On Paper, use dark theme text over the existing status backgrounds. */
+html[data-theme="paper"] body .ProposalStatus,
+html[data-theme="paper"] body [class*="ProposalStatus"],
+html[data-theme="paper"] body .GovernanceContainer [class*="Status"],
+html[data-theme="paper"] body .GovernanceContainer [class*="status"] {
+  color: var(--theme-text) !important;
+}

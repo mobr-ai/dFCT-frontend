@@ -1,0 +1,84 @@
+/* Strong theme bridge for TopicBreakdownPage control toolbar */
+[data-theme] .Breakdown-toolbar,
+[data-theme] .Breakdown-toolbar.container-fluid,
+[data-theme] .Breakdown-toolbar .row,
+[data-theme] .Breakdown-toolbar .col {
+  color: var(--theme-text-muted) !important;
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Breakdown-toolbar button,
+[data-theme] .Breakdown-toolbar .btn,
+[data-theme] .Breakdown-toolbar a,
+[data-theme] .Breakdown-toolbar [role="button"] {
+  color: var(--theme-text-muted) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+[data-theme] .Breakdown-toolbar button *,
+[data-theme] .Breakdown-toolbar .btn *,
+[data-theme] .Breakdown-toolbar a *,
+[data-theme] .Breakdown-toolbar [role="button"] * {
+  color: inherit !important;
+}
+
+[data-theme] .Breakdown-toolbar svg,
+[data-theme] .Breakdown-toolbar svg *,
+[data-theme] .Breakdown-toolbar path,
+[data-theme] .Breakdown-toolbar .svg-inline--fa,
+[data-theme] .Breakdown-toolbar .fa,
+[data-theme] .Breakdown-toolbar i {
+  color: var(--theme-text-muted) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+[data-theme] .Breakdown-toolbar button:hover,
+[data-theme] .Breakdown-toolbar .btn:hover,
+[data-theme] .Breakdown-toolbar a:hover,
+[data-theme] .Breakdown-toolbar [role="button"]:hover,
+[data-theme] .Breakdown-toolbar button:focus,
+[data-theme] .Breakdown-toolbar .btn:focus,
+[data-theme] .Breakdown-toolbar a:focus {
+  color: var(--theme-accent-hover) !important;
+  background: var(--theme-accent-soft) !important;
+  border-color: var(--theme-border) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px var(--theme-accent-soft) !important;
+}
+
+[data-theme] .Breakdown-toolbar button:hover svg,
+[data-theme] .Breakdown-toolbar .btn:hover svg,
+[data-theme] .Breakdown-toolbar a:hover svg,
+[data-theme] .Breakdown-toolbar button:focus svg,
+[data-theme] .Breakdown-toolbar .btn:focus svg,
+[data-theme] .Breakdown-toolbar a:focus svg {
+  color: var(--theme-accent-hover) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Paper-specific hardening: prevent inherited white icon/text styles. */
+[data-theme="paper"] .Breakdown-toolbar,
+[data-theme="paper"] .Breakdown-toolbar *,
+[data-theme="paper"] .Breakdown-toolbar svg,
+[data-theme="paper"] .Breakdown-toolbar svg *,
+[data-theme="paper"] .Breakdown-toolbar path {
+  color: var(--theme-text-muted) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+[data-theme="paper"] .Breakdown-toolbar button:hover,
+[data-theme="paper"] .Breakdown-toolbar .btn:hover,
+[data-theme="paper"] .Breakdown-toolbar a:hover,
+[data-theme="paper"] .Breakdown-toolbar button:focus,
+[data-theme="paper"] .Breakdown-toolbar .btn:focus,
+[data-theme="paper"] .Breakdown-toolbar a:focus {
+  color: var(--theme-primary) !important;
+  background: var(--theme-primary-soft) !important;
+}

@@ -1,4 +1,3 @@
-// NavigationSidebar.js
 import React from "react";
 import Button from "react-bootstrap/Button";
 import { slide as Menu } from "react-burger-menu";
@@ -10,50 +9,86 @@ import {
   faFolderOpen,
   faCog,
   faGavel,
+  faThumbtack,
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import "./../styles/NavigationSidebar.css";
+import GlobalTopicSearch from "./search/GlobalTopicSearch";
 
-function NavigationSidebar({ isOpen, setIsOpen }) {
+function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
-  if (window.innerWidth < 1024) return null; // Hide on mobile
+  if (window.innerWidth < 1024) return null;
+
+  const closeIfUnpinned = () => {
+    if (!isPinned) setIsOpen(false);
+  };
+
+  const togglePinned = () => {
+    const nextPinned = !isPinned;
+    setIsPinned(nextPinned);
+    setIsOpen(nextPinned);
+  };
 
   return (
     <Menu
-      className=""
-      isOpen={isOpen}
+      className={`Navbar-navigation-bar ${isPinned ? "is-pinned" : ""}`}
+      isOpen={isOpen || isPinned}
       customBurgerIcon={false}
-      onStateChange={(state) => setIsOpen(state.isOpen)}
+      noOverlay={isPinned}
+      disableOverlayClick={isPinned}
+      onStateChange={(state) => {
+        if (!isPinned) setIsOpen(state.isOpen);
+      }}
     >
+      <div className="Navbar-sidebar-header">
+        <div>
+          <div className="Navbar-sidebar-eyebrow">d-FCT</div>
+          <div className="Navbar-sidebar-title">{t("navigation")}</div>
+        </div>
+
+        <button
+          type="button"
+          className={`Navbar-pin-btn ${isPinned ? "is-active" : ""}`}
+          onClick={togglePinned}
+          title={isPinned ? t("sidebarUnpin") : t("sidebarPin")}
+        >
+          <FontAwesomeIcon icon={faThumbtack} />
+        </button>
+      </div>
+
       <Button
         variant="dark"
         size="md"
         className="Navbar-button"
         onClick={() => {
           navigate("/submit");
-          setIsOpen(false);
+          closeIfUnpinned();
         }}
       >
-        <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} />{" "}
+        <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} />
         {t("verifyContent")}
       </Button>
+
+      <GlobalTopicSearch
+        placement="sidebar"
+        onSearchCommitted={closeIfUnpinned}
+      />
+
       <div className="Navbar-topics-title">{t("navigation")}</div>
+
       <Link
-        onClick={() => {
-          setIsOpen(false);
-        }}
+        onClick={closeIfUnpinned}
         to="/"
         className={`Navbar-item ${location.pathname === "/" ? "active" : ""}`}
       >
         <FontAwesomeIcon icon={faHome} /> {t("home")}
       </Link>
+
       <Link
-        onClick={() => {
-          setIsOpen(false);
-        }}
+        onClick={closeIfUnpinned}
         to="/mytopics"
         className={`Navbar-item ${
           location.pathname.includes("/mytopics") ? "active" : ""
@@ -61,10 +96,9 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
       >
         <FontAwesomeIcon icon={faFolderOpen} /> {t("myTopics")}
       </Link>
+
       <Link
-        onClick={() => {
-          setIsOpen(false);
-        }}
+        onClick={closeIfUnpinned}
         to="/gov"
         className={`Navbar-item ${
           location.pathname.includes("/gov") ? "active" : ""
@@ -72,10 +106,9 @@ function NavigationSidebar({ isOpen, setIsOpen }) {
       >
         <FontAwesomeIcon icon={faGavel} /> {t("governance")}
       </Link>
+
       <Link
-        onClick={() => {
-          setIsOpen(false);
-        }}
+        onClick={closeIfUnpinned}
         to="/settings"
         className={`Navbar-item ${
           location.pathname === "/settings" ? "active" : ""

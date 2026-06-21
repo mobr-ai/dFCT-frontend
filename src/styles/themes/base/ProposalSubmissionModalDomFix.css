@@ -1,0 +1,162 @@
+/* Exact DOM-based theme bridge for Submit New Proposal modal.
+   The reliable marker is .modal-content containing .ProposalCardInput. */
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput),
+html[data-theme] body.modal-open .modal-dialog .modal-content:has(.ProposalCardInput) {
+  --bs-modal-bg: var(--theme-surface);
+  --bs-modal-color: var(--theme-text);
+  --bs-body-bg: var(--theme-surface);
+  --bs-body-color: var(--theme-text);
+  --bs-border-color: var(--theme-border);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 97%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .modal-header,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .modal-body,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .modal-footer {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .modal-title,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h1,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h2,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h3,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h4,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h5,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) h6 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .ProposalCardInput,
+html[data-theme] body.modal-open .modal-content .ProposalCardInput,
+html[data-theme] body.modal-open .modal-content div.ProposalCardInput.card {
+  --bs-card-bg: var(--theme-surface-2);
+  --bs-card-color: var(--theme-text);
+  --bs-card-border-color: var(--theme-border);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface-2) 88%, transparent),
+      color-mix(in srgb, var(--theme-surface) 94%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-md) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .card-body,
+html[data-theme] body.modal-open .modal-content .ProposalCardInput .card-body {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .card-body *,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) label,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) p,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) small,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) span {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) input,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) textarea,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) select,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .form-control,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .form-select,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .input-group-text {
+  background: var(--theme-bg-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) input::placeholder,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) input[type="range"] {
+  accent-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) button {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-secondary,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-dark,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) button[type="button"]:not(.btn-close) {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-primary,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-success,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) button[type="submit"] {
+  background: var(--theme-accent) !important;
+  color: #fff !important;
+  border-color: var(--theme-accent) !important;
+}
+
+/* Close button */
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-close {
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0.45rem !important;
+  border-radius: 999px !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  opacity: 0.82 !important;
+  box-shadow: none !important;
+  filter: invert(1) grayscale(100%) brightness(150%) !important;
+}
+
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-close:hover,
+html[data-theme] body.modal-open .modal-content:has(.ProposalCardInput) .btn-close:focus {
+  background-color: var(--theme-accent-soft) !important;
+  border-color: var(--theme-border) !important;
+  opacity: 1 !important;
+}
+
+/* Paper modal */
+html[data-theme="paper"] body.modal-open .modal-content:has(.ProposalCardInput) {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.96)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="paper"] body.modal-open .modal-content:has(.ProposalCardInput) .ProposalCardInput,
+html[data-theme="paper"] body.modal-open .modal-content .ProposalCardInput,
+html[data-theme="paper"] body.modal-open .modal-content div.ProposalCardInput.card {
+  --bs-card-bg: rgba(255, 255, 255, 0.92);
+  --bs-card-color: var(--theme-text);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(241, 245, 249, 0.9)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="paper"] body.modal-open .modal-content:has(.ProposalCardInput) .btn-close {
+  filter: none !important;
+}

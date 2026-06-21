@@ -1,0 +1,71 @@
+/* Theme bridge for TopicBreakdownPage and claim/evidence sections */
+[data-theme] .Breakdown-body {
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Breakdown-middle-column,
+[data-theme] .Breakdown-left-column,
+[data-theme] .Breakdown-right-column {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Breakdown-body h1,
+[data-theme] .Breakdown-body h2,
+[data-theme] .Breakdown-body h3,
+[data-theme] .Breakdown-body h4,
+[data-theme] .Breakdown-body h5,
+[data-theme] .Breakdown-body h6 {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Breakdown-body p,
+[data-theme] .Breakdown-body small,
+[data-theme] .Breakdown-body li {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] .Breakdown-body .text-muted {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] .Breakdown-body a {
+  color: var(--theme-primary-hover) !important;
+}
+
+[data-theme] .Breakdown-body .card,
+[data-theme] .Breakdown-body .accordion-item,
+[data-theme] .Breakdown-body .accordion-button,
+[data-theme] .Breakdown-body .accordion-body,
+[data-theme] .Breakdown-body .list-group-item,
+[data-theme] .Breakdown-body .modal-content,
+[data-theme] .Breakdown-body .dropdown-menu {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Breakdown-body .accordion-button:not(.collapsed) {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Breakdown-body .badge,
+[data-theme] .Breakdown-body .rounded-pill {
+  border: 1px solid var(--theme-border);
+}
+
+[data-theme] .Breakdown-body img,
+[data-theme] .Breakdown-body video {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme="paper"] .Breakdown-body {
+  background: var(--theme-page-gradient) !important;
+}
+
+[data-theme="paper"] .Breakdown-body p,
+[data-theme="paper"] .Breakdown-body small,
+[data-theme="paper"] .Breakdown-body li {
+  color: var(--theme-text-soft) !important;
+}

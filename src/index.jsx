@@ -1,4 +1,6 @@
 import "./styles/index.css";
+import "./styles/theme-tokens.css";
+import "./styles/theme-overrides.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom/client";
 import LandingPage from "./LandingPage";
@@ -25,9 +27,11 @@ import {
 import GovernancePage from "./GovernancePage";
 import ProposalPage from "./ProposalPage";
 import WelcomePage from "./WelcomePage";
+import { installThemeRouteSync } from "./theme/themeStorage";
 
 import { Buffer } from "buffer";
 window.Buffer = Buffer;
+installThemeRouteSync();
 
 function Layout() {
   const { t } = useTranslation();

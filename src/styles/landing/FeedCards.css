@@ -1,0 +1,339 @@
+/* Main landing feed. Loaded after legacy TopicList.css. */
+.Landing-body .Topic-feed-list,
+.Landing-body .Topic-list-container-main.Topic-feed-list {
+  width: min(100%, 720px) !important;
+  margin: 0 auto !important;
+  padding: 0 0 5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  gap: clamp(1rem, 2.5vw, 1.4rem) !important;
+  overflow: visible !important;
+}
+
+.Landing-body .Topic-feed-card,
+.Landing-body .Topic-card.Topic-card-main.Topic-feed-card {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: min(76dvh, 760px);
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 26px !important;
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateZ(0);
+  animation: TopicCard-enter 320ms ease both;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.Landing-body .Topic-feed-card:hover {
+  border-color: var(--theme-border-strong) !important;
+  background: var(--theme-surface) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+  transform: translateY(-2px);
+}
+
+.Landing-body .Topic-feed-card:active {
+  transform: translateY(0) scale(0.995);
+}
+
+.Landing-body .Topic-feed-card-img,
+.Landing-body .Topic-feed-card .Topic-card-img,
+.Landing-body .Topic-feed-card video.Topic-card-img,
+.Landing-body .Topic-feed-card img.Topic-card-img {
+  width: 100% !important;
+  height: clamp(300px, 46dvh, 500px) !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  display: block;
+  background: var(--theme-surface-3);
+  border-radius: 0 !important;
+}
+
+.Landing-body .Topic-feed-card .card-body {
+  padding: clamp(1rem, 2.6vw, 1.35rem) !important;
+  background: transparent !important;
+}
+
+.Landing-body .Topic-feed-card .Topic-card-title,
+.Landing-body .Topic-feed-card .card-title {
+  position: relative;
+  color: var(--theme-text) !important;
+  font-size: clamp(1.25rem, 3.6vw, 1.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  margin-bottom: 0.55rem;
+  font-weight: 800;
+}
+
+.Landing-body .Topic-feed-card .card-subtitle,
+.Landing-body .Topic-feed-card .text-muted {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.84rem;
+  margin-bottom: 0.85rem;
+}
+
+.Landing-body .Topic-feed-card .card-text {
+  color: var(--theme-text-soft) !important;
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.Landing-body .Topic-feed-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-accent) 10%, transparent),
+      transparent 28%,
+      transparent 72%,
+      color-mix(in srgb, var(--theme-primary) 8%, transparent)
+    );
+  opacity: 0.65;
+}
+
+/* Search active: Explore grid, not TikTok feed. */
+.Landing-body .Topic-explore-grid,
+.Landing-body .Topic-list-container-explore.Topic-explore-grid {
+  width: min(100%, 1040px) !important;
+  margin: 0 auto !important;
+  padding: 0 0 5rem !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)) !important;
+  gap: clamp(0.9rem, 2vw, 1.15rem) !important;
+  align-items: stretch !important;
+}
+
+.Landing-body .Topic-explore-card {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 22px !important;
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+  overflow: hidden;
+  animation: TopicCard-enter 260ms ease both;
+  animation-delay: calc(min(var(--topic-index, 0), 12) * 24ms);
+}
+
+.Landing-body .Topic-explore-card:hover {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border-strong) !important;
+  transform: translateY(-2px);
+}
+
+.Landing-body .Topic-explore-card-img,
+.Landing-body .Topic-explore-card .Topic-card-img,
+.Landing-body .Topic-explore-card video.Topic-card-img,
+.Landing-body .Topic-explore-card img.Topic-card-img {
+  width: 100% !important;
+  height: clamp(170px, 22vw, 240px) !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+}
+
+.Landing-body .Topic-explore-card .card-body {
+  padding: 1rem !important;
+}
+
+.Landing-body .Topic-explore-card .Topic-card-title,
+.Landing-body .Topic-explore-card .card-title {
+  color: var(--theme-text) !important;
+  font-size: 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.Landing-body .Topic-explore-card .card-subtitle,
+.Landing-body .Topic-explore-card .text-muted {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.78rem;
+}
+
+.Landing-body .Topic-explore-card .card-text {
+  color: var(--theme-text-soft) !important;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.Landing-body .Topic-delete-btn {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.68);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+  z-index: 10;
+  width: 2rem;
+  height: 2rem;
+}
+
+.Landing-body .Topic-delete-btn:hover {
+  background: var(--theme-danger, #ef4444);
+  color: white;
+  transform: scale(1.08);
+}
+
+.Landing-body .fade-out {
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes TopicCard-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .Landing-body .Topic-feed-list {
+    width: 100% !important;
+    gap: 0.85rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  .Landing-body .Topic-feed-card,
+  .Landing-body .Topic-card.Topic-card-main.Topic-feed-card {
+    min-height: calc(100dvh - 9.25rem);
+    border-radius: 22px !important;
+    scroll-snap-align: start;
+  }
+
+  .Landing-body .Topic-feed-card-img,
+  .Landing-body .Topic-feed-card .Topic-card-img,
+  .Landing-body .Topic-feed-card video.Topic-card-img,
+  .Landing-body .Topic-feed-card img.Topic-card-img {
+    height: clamp(270px, 52dvh, 480px) !important;
+  }
+
+  .Landing-body .Topic-feed-card .card-body {
+    padding: 1rem !important;
+  }
+
+  .Landing-body .Topic-explore-grid,
+  .Landing-body .Topic-list-container-explore.Topic-explore-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+  }
+
+  .Landing-body .Topic-explore-card-img,
+  .Landing-body .Topic-explore-card .Topic-card-img,
+  .Landing-body .Topic-explore-card video.Topic-card-img,
+  .Landing-body .Topic-explore-card img.Topic-card-img {
+    height: clamp(190px, 44vw, 280px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Landing-body .Topic-feed-card,
+  .Landing-body .Topic-feed-card:hover,
+  .Landing-body .Topic-feed-card:active,
+  .Landing-body .Topic-explore-card,
+  .Landing-body .Topic-explore-card:hover {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+
+/* Stability: main feed should not replay entrance animation on initial data hydration. */
+.Landing-body-feed .Topic-feed-card,
+.Landing-body-feed .Topic-card.Topic-card-main.Topic-feed-card {
+  animation: none !important;
+}
+
+.Landing-body-feed .Topic-feed-card-img {
+  transform: translateZ(0);
+}
+
+
+/* Smooth media hydration without replaying card animations */
+.Landing-body .Topic-feed-card-img,
+.Landing-body .Topic-explore-card-img,
+.Landing-body .Topic-feed-card .Topic-card-img,
+.Landing-body .Topic-explore-card .Topic-card-img {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface-3) 92%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    );
+  transition:
+    opacity 220ms ease,
+    filter 220ms ease,
+    transform 220ms ease;
+}
+
+.Landing-body .Topic-card.is-media-loading .Topic-card-img {
+  opacity: 0.38;
+  filter: blur(8px) saturate(0.85);
+  transform: scale(1.01);
+}
+
+.Landing-body .Topic-card.is-media-loaded .Topic-card-img {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Landing-body .Topic-feed-card-img,
+  .Landing-body .Topic-explore-card-img,
+  .Landing-body .Topic-feed-card .Topic-card-img,
+  .Landing-body .Topic-explore-card .Topic-card-img {
+    transition: none;
+  }
+
+  .Landing-body .Topic-card.is-media-loading .Topic-card-img,
+  .Landing-body .Topic-card.is-media-loaded .Topic-card-img {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}

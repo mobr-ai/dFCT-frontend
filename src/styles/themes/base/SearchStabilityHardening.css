@@ -1,0 +1,40 @@
+/* Search results should feel stable, not re-animate on every keystroke. */
+[data-theme] .Landing-body-explore .Topic-explore-grid {
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+[data-theme] .Landing-body-explore .Topic-explore-card,
+[data-theme] .Landing-body-explore:not(.Landing-search-settling) .Topic-explore-card {
+  animation: none !important;
+}
+
+[data-theme] .Landing-body-explore.Landing-search-settling .Topic-explore-grid {
+  opacity: 0.64;
+  filter: blur(2px) saturate(0.92);
+  transform: translateY(1px);
+}
+
+/* My topics/grid cards: never leave cards glassed out forever. */
+[data-theme] .Landing-body .Topic-explore-card.is-media-loading .Topic-card-img {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  background:
+    radial-gradient(circle at 24% 20%, var(--theme-accent-soft), transparent 30%),
+    linear-gradient(135deg, var(--theme-surface-2), var(--theme-surface-3)) !important;
+}
+
+[data-theme] .Landing-body .Topic-explore-card.is-media-loading::before,
+[data-theme] .Landing-body .Topic-explore-card.is-media-loading::after {
+  display: none !important;
+}
+
+/* Feed cards can keep a subtle placeholder, but no aggressive blur. */
+[data-theme] .Landing-body-feed .Topic-card.is-media-loading .Topic-card-img {
+  opacity: 0.88 !important;
+  filter: none !important;
+  transform: none !important;
+}

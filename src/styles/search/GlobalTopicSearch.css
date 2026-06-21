@@ -1,0 +1,206 @@
+.GlobalTopicSearch {
+  font-family: monospace;
+}
+
+.GlobalTopicSearch-navbar {
+  width: min(34vw, 420px);
+  min-width: 260px;
+  margin-inline: clamp(1rem, 3vw, 2rem);
+}
+
+.GlobalTopicSearch-inputGroup {
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.GlobalTopicSearch .form-control {
+  min-height: 2.45rem;
+  background: var(--theme-surface-glass);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  font-size: 0.88rem;
+}
+
+.GlobalTopicSearch .form-control::placeholder {
+  color: var(--theme-text-muted);
+}
+
+.GlobalTopicSearch .form-control:focus {
+  color: var(--theme-text);
+  background: var(--theme-surface);
+  border-color: var(--theme-accent);
+  box-shadow: none;
+}
+
+.GlobalTopicSearch-button {
+  min-width: 2.8rem;
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text-muted) !important;
+  border-color: var(--theme-border) !important;
+}
+
+.GlobalTopicSearch-button:hover {
+  color: var(--theme-text) !important;
+  background: var(--theme-surface-3) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+.GlobalTopicSearch-sidebar {
+  width: 100%;
+  margin: 0.75rem 0 1.1rem;
+  padding: 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 18px;
+  background: var(--theme-surface-glass);
+}
+
+.GlobalTopicSearch-copy {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.65rem;
+}
+
+.GlobalTopicSearch-copy strong {
+  color: var(--theme-text);
+  font-size: 0.9rem;
+}
+
+.GlobalTopicSearch-copy small {
+  color: var(--theme-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 991px) {
+  .GlobalTopicSearch-navbar {
+    display: none;
+  }
+}
+
+
+/* Placement refinements */
+.Navbar-brand-text {
+  white-space: nowrap;
+  font-weight: 650;
+}
+
+.Navbar-mobile-search {
+  width: 100%;
+  margin: 0.35rem 0 0.85rem;
+}
+
+.GlobalTopicSearch-mobile {
+  width: 100%;
+}
+
+.GlobalTopicSearch-mobile .GlobalTopicSearch-inputGroup {
+  box-shadow: none;
+}
+
+.GlobalTopicSearch-mobile .form-control {
+  min-height: 2.55rem;
+}
+
+@media (min-width: 992px) {
+  .GlobalTopicSearch-navbar {
+    display: block;
+  }
+}
+
+@media (min-width: 1200px) {
+  .GlobalTopicSearch-navbar {
+    width: min(31vw, 520px);
+  }
+}
+
+@media (max-width: 991px) {
+  .GlobalTopicSearch-navbar {
+    display: none !important;
+  }
+
+  .GlobalTopicSearch-sidebar {
+    display: none;
+  }
+}
+
+
+/* Fit search into nav/sidebar surfaces */
+.GlobalTopicSearch-navbar {
+  flex: 1 1 420px;
+  width: min(34vw, 520px);
+  min-width: 260px;
+  max-width: 540px;
+}
+
+.GlobalTopicSearch-sidebar {
+  width: 100%;
+  margin: 0.8rem 0 1.15rem;
+  padding: 0.85rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--theme-surface) 82%, transparent);
+  box-shadow: none;
+}
+
+.bm-menu .GlobalTopicSearch-inputGroup {
+  box-shadow: none;
+}
+
+.bm-menu .GlobalTopicSearch .form-control {
+  min-height: 2.5rem;
+}
+
+.GlobalTopicSearch-mobile {
+  width: 100%;
+}
+
+.GlobalTopicSearch-mobile .GlobalTopicSearch-inputGroup {
+  box-shadow: none;
+}
+
+@media (max-width: 991px) {
+  .GlobalTopicSearch-navbar {
+    display: none !important;
+  }
+
+  .GlobalTopicSearch-sidebar {
+    display: none;
+  }
+}
+
+
+/* Polished rounded search: border belongs to wrapper, not inner input/button */
+.GlobalTopicSearch-inputGroup {
+  border: 1px solid var(--theme-border);
+  background: var(--theme-surface-glass);
+  overflow: hidden;
+}
+
+.GlobalTopicSearch-inputGroup:focus-within {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px var(--theme-accent-soft);
+}
+
+.GlobalTopicSearch .form-control,
+.GlobalTopicSearch .form-control:focus {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.GlobalTopicSearch-button,
+.GlobalTopicSearch-button:focus,
+.GlobalTopicSearch-button:active {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.GlobalTopicSearch-button {
+  border-left: 1px solid var(--theme-border) !important;
+}
+
+.GlobalTopicSearch-inputGroup:focus-within .GlobalTopicSearch-button {
+  border-left-color: var(--theme-accent) !important;
+}

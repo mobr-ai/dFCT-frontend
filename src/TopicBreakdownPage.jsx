@@ -149,7 +149,11 @@ const Topic = ({
 
   const handleTagClick = (tag) => {
     // Navigate to LandingPage with search query
-    navigate(`/?q=${encodeURIComponent(tag)}`);
+    const cleanTag = String(tag || "").trim();
+    if (!cleanTag) return;
+
+    const hashtagQuery = cleanTag.startsWith("#") ? cleanTag : `#${cleanTag}`;
+    navigate(`/?q=${encodeURIComponent(hashtagQuery)}`);
   };
 
   const showEvidenceModal = (title, evidenceType, claimId) => {
