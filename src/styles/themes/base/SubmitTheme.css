@@ -1,0 +1,61 @@
+/* Theme bridge for Submit / Fact-check page */
+[data-theme] .Submit-body,
+[data-theme] .SubmitPage-body,
+[data-theme] .Process-body,
+[data-theme] .ProcessPage-body,
+[data-theme] [class*="Submit"],
+[data-theme] [class*="Dropzone"],
+[data-theme] [class*="Process"] {
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+[data-theme] .Submit-body,
+[data-theme] .SubmitPage-body,
+[data-theme] .Process-body,
+[data-theme] .ProcessPage-body {
+  background: var(--theme-page-gradient) !important;
+}
+
+[data-theme] [class*="Dropzone"],
+[data-theme] .StyledDropzone,
+[data-theme] .dropzone,
+[data-theme] .url-input-container,
+[data-theme] .UrlInput-container {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] [class*="Submit"] h1,
+[data-theme] [class*="Submit"] h2,
+[data-theme] [class*="Submit"] h3,
+[data-theme] [class*="Submit"] p,
+[data-theme] [class*="Submit"] small,
+[data-theme] [class*="Dropzone"] p,
+[data-theme] [class*="Dropzone"] small {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] [class*="Submit"] input,
+[data-theme] [class*="Submit"] textarea,
+[data-theme] [class*="Submit"] .form-control,
+[data-theme] [class*="Process"] input,
+[data-theme] [class*="Process"] textarea,
+[data-theme] [class*="Process"] .form-control {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] [class*="Submit"] input::placeholder,
+[data-theme] [class*="Submit"] textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] [class*="Submit"] .btn-dark,
+[data-theme] [class*="Process"] .btn-dark {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}

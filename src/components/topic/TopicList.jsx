@@ -1,4 +1,5 @@
 import "./../../styles/TopicList.css";
+import "./../../styles/landing/FeedCards.css";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -58,12 +59,61 @@ function TopicList({ content, type, showSideBar }) {
       : string;
   };
 
-  const TopicCard = ({ topic, type, onDelete }) => {
+  const normalizeTag = (tag) => {
+    const value =
+      typeof tag === "string"
+        ? tag
+        : tag?.name || tag?.label || tag?.title || tag?.concept || "";
+
+    const cleanValue = String(value).trim();
+    if (!cleanValue) return null;
+
+    return cleanValue.startsWith("#") ? cleanValue : `#${cleanValue}`;
+  };
+
+  const getTopicTags = (topic) => {
+    const candidateTags = [
+      topic?.hashtags,
+      topic?.tags,
+      topic?.concepts,
+      topic?.keywords,
+      topic?.labels,
+      topic?.semanticTags,
+      topic?.semantic_tags,
+    ];
+
+    return candidateTags
+      .flatMap((value) => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value;
+        if (typeof value === "string") {
+          return value
+            .split(/[;,\s]+/)
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+        }
+        return [];
+      })
+      .map(normalizeTag)
+      .filter(Boolean)
+      .filter((tag, index, arr) => arr.indexOf(tag) === index)
+      .slice(0, 6);
+  };
+
+  const TopicCard = ({ topic, type, onDelete, style, index = 0 }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const videoRef = useRef(null);
     const location = useLocation();
     const isMyTopicsPage = location.pathname === "/mytopics";
+    const [mediaLoaded, setMediaLoaded] = useState(false);
+    const videoPlaybackRef = useRef({
+      isVisible: false,
+      isReady: false,
+      isPlaying: false,
+      lastPlayAttempt: 0,
+    });
+    const topicTags = getTopicTags(topic);
 
     const checkContentType = (url) => {
       if (!url) return "unknown";
@@ -115,35 +165,78 @@ function TopicList({ content, type, showSideBar }) {
     };
 
     useEffect(() => {
+      setMediaLoaded(false);
+
+      const fallbackTimer = window.setTimeout(() => {
+        setMediaLoaded(true);
+      }, 2200);
+
+      return () => window.clearTimeout(fallbackTimer);
+    }, [topic.cover]);
+
+    const syncVideoPlayback = () => {
+      const video = videoRef.current;
+      const playback = videoPlaybackRef.current;
+
+      if (!video || !playback.isReady) return;
+
+      if (!playback.isVisible) {
+        if (!video.paused) video.pause();
+        return;
+      }
+
+      if (!video.paused || playback.isPlaying) return;
+
+      const now = Date.now();
+      if (now - playback.lastPlayAttempt < 900) return;
+
+      playback.lastPlayAttempt = now;
+      playback.isPlaying = true;
+
+      video
+        .play()
+        .catch(() => {})
+        .finally(() => {
+          playback.isPlaying = false;
+        });
+    };
+
+    useEffect(() => {
+      const video = videoRef.current;
+      if (!video) return undefined;
+
       const observer = new IntersectionObserver(
         ([entry]) => {
-          const video = videoRef.current;
-          if (!video) return;
-          if (entry.isIntersecting) {
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
+          videoPlaybackRef.current.isVisible =
+            entry.isIntersecting && entry.intersectionRatio >= 0.9;
+          syncVideoPlayback();
         },
-        { threshold: 0.6 }
+        {
+          threshold: [0, 0.9],
+          rootMargin: "220px 0px 220px 0px",
+        }
       );
 
-      const currentVideo = videoRef.current;
-      if (currentVideo) observer.observe(currentVideo);
+      observer.observe(video);
 
       return () => {
-        if (currentVideo) observer.unobserve(currentVideo);
+        observer.disconnect();
+        video.pause();
+        videoPlaybackRef.current.isVisible = false;
       };
-    }, []);
+    }, [topic.cover]);
 
     if (!user || topic.title === "Topic template") return null;
+
+    const isFeedCard = type === "main" || type === "explore";
 
     return (
       <Card
         id={`topic-card-${topic.id}`}
         variant="dark"
-        className={"Topic-card Topic-card-" + type}
+        className={`Topic-card Topic-card-${type} ${isFeedCard ? "Topic-feed-card" : ""} ${type === "explore" ? "Topic-explore-card" : ""} ${mediaLoaded ? "is-media-loaded" : "is-media-loading"}`}
         onClick={() => navigate(`/t/${user.id}/${topic.id}`)}
+        style={style}
       >
         {isMyTopicsPage && (
           <button
@@ -160,19 +253,45 @@ function TopicList({ content, type, showSideBar }) {
           <video
             ref={videoRef}
             src={topic.cover}
-            className="Topic-card-img"
+            className={`Topic-card-img ${isFeedCard ? "Topic-feed-card-img" : ""} ${type === "explore" ? "Topic-explore-card-img" : ""}`}
             muted
+            loop
             preload="metadata"
             playsInline
+            disablePictureInPicture
+            poster={
+              topic.thumbnail ||
+              topic.thumbnail_url ||
+              topic.thumbnailUrl ||
+              topic.preview ||
+              topic.preview_image ||
+              topic.previewImage ||
+              undefined
+            }
+            onLoadedMetadata={() => setMediaLoaded(true)}
+            onError={() => setMediaLoaded(true)}
+            onLoadedData={() => {
+              videoPlaybackRef.current.isReady = true;
+              setMediaLoaded(true);
+              syncVideoPlayback();
+            }}
+            onCanPlay={() => {
+              videoPlaybackRef.current.isReady = true;
+              setMediaLoaded(true);
+              syncVideoPlayback();
+            }}
             onClick={handleClick}
-            style={{ width: "100%", height: "auto", borderRadius: "8px" }}
           />
         ) : (
           <Card.Img
             variant="top"
             onClick={handleClick}
-            className="Topic-card-img"
+            className={`Topic-card-img ${isFeedCard ? "Topic-feed-card-img" : ""} ${type === "explore" ? "Topic-explore-card-img" : ""}`}
             src={topic.cover || "/placeholder.png"}
+            loading={index < 2 ? "eager" : "lazy"}
+            decoding="async"
+            onLoad={() => setMediaLoaded(true)}
+            onError={() => setMediaLoaded(true)}
           />
         )}
         <Card.Body>
@@ -185,6 +304,16 @@ function TopicList({ content, type, showSideBar }) {
                 : getElapsedTime(topic.updatedAt) + " " + t("ago"))}
           </Card.Subtitle>
           <Card.Text>{truncateString(topic.description)}</Card.Text>
+
+          {topicTags.length > 0 && (
+            <div className="Topic-card-tags">
+              {topicTags.map((tag) => (
+                <span key={tag} className="Topic-card-tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </Card.Body>
       </Card>
     );
@@ -192,12 +321,14 @@ function TopicList({ content, type, showSideBar }) {
 
   return (
     content && (
-      <div className={"Topic-list-container-" + type}>
-        {visibleTopics.map((topic) => (
+      <div className={`Topic-list-container-${type} ${type === "main" ? "Topic-feed-list" : ""} ${type === "explore" ? "Topic-explore-grid" : ""}`}>
+        {visibleTopics.map((topic, index) => (
           <TopicCard
             key={topic.id}
             type={type}
             topic={topic}
+            style={{ "--topic-index": index }}
+            index={index}
             onDelete={() => handleRemove(topic.id)}
           />
         ))}

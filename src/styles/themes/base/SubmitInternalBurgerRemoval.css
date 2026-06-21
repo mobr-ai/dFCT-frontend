@@ -1,0 +1,21 @@
+/* Remove legacy/internal submit-page react-burger-menu entry point.
+   This is NOT the global Header navigation sidebar. */
+html[data-theme] body .Submission-body .Sidebar-left-column,
+html[data-theme] body .Submission-body #react-burger-menu-btn,
+html[data-theme] body .Submission-body .Sidebar-left-column #react-burger-menu-btn,
+html[data-theme] body .Submission-body .Sidebar-left-column .bm-burger-button,
+html[data-theme] body .Submission-body .Sidebar-left-column .bm-menu-wrap,
+html[data-theme] body .Submission-body .Sidebar-left-column .bm-overlay {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body .Submission-body {
+  grid-template-columns: 1fr !important;
+}
+
+html[data-theme] body .Submission-middle-column {
+  grid-column: 1 / -1 !important;
+  margin-inline: auto !important;
+}

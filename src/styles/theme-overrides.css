@@ -1,0 +1,68 @@
+@import "./themes/base/ThemeSelector.css";
+@import "./themes/base/ThemeBase.css";
+@import "./themes/base/AppThemePolish.css";
+@import "./themes/base/TopicBreakdownTheme.css";
+@import "./themes/base/TopicToolbarTheme.css";
+@import "./themes/base/TopicToolbarIconHardening.css";
+@import "./themes/base/GovernanceTheme.css";
+@import "./themes/base/SubmitTheme.css";
+
+@import "./themes/base/SearchExplorePolish.css";
+
+@import "./themes/base/ScrollbarTheme.css";
+
+@import "./themes/base/VideoPlaceholderTheme.css";
+
+@import "./themes/base/SubmissionTheme.css";
+
+@import "./themes/base/SearchStabilityHardening.css";
+
+@import "./themes/base/SubmissionHardening.css";
+
+@import "./themes/base/ShareModalTheme.css";
+@import "./themes/base/SubmissionFinalHardening.css";
+@import "./themes/base/ModalGovernanceFinalTheme.css";
+@import "./themes/base/GovernanceBurgerSpecificityFix.css";
+@import "./themes/base/GovernanceModalStatusFinal.css";
+@import "./themes/base/SubmitInternalBurgerRemoval.css";
+@import "./themes/base/GovProposalPageFinalTheme.css";
+@import "./themes/base/ProposalExactFinalTheme.css";
+@import "./themes/base/ProposalModalExactHardening.css";
+@import "./themes/base/ProposalStatusTextOnlyTheme.css";
+@import "./themes/base/ProposalSubmissionModalDomFix.css";
+@import "./themes/base/ProposalStatusLightTextFix.css";
+
+/* FINAL INLINE OVERRIDE: proposal status text on light themes */
+/*
+  Keep semantic status backgrounds untouched.
+  Only force status label/title text to white on Paper/light theme.
+  This is inline and last-loaded to beat earlier imported bridges.
+*/
+html[data-theme="paper"] body div#root .ProposalPage .ProposalContainer .ProposalStatus,
+html[data-theme="paper"] body div#root .ProposalPage .ProposalContainer [class*="ProposalStatus"],
+html[data-theme="paper"] body div#root .GovernancePage .GovernanceContainer .ProposalStatus,
+html[data-theme="paper"] body div#root .GovernancePage .GovernanceContainer [class*="ProposalStatus"],
+html[data-workspace-theme="paper"] body div#root .ProposalPage .ProposalContainer .ProposalStatus,
+html[data-workspace-theme="paper"] body div#root .ProposalPage .ProposalContainer [class*="ProposalStatus"],
+html[data-workspace-theme="paper"] body div#root .GovernancePage .GovernanceContainer .ProposalStatus,
+html[data-workspace-theme="paper"] body div#root .GovernancePage .GovernanceContainer [class*="ProposalStatus"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.36) !important;
+}
+
+html[data-theme="paper"] body div#root .ProposalPage .ProposalContainer .ProposalStatus *,
+html[data-theme="paper"] body div#root .ProposalPage .ProposalContainer [class*="ProposalStatus"] *,
+html[data-theme="paper"] body div#root .GovernancePage .GovernanceContainer .ProposalStatus *,
+html[data-theme="paper"] body div#root .GovernancePage .GovernanceContainer [class*="ProposalStatus"] *,
+html[data-workspace-theme="paper"] body div#root .ProposalPage .ProposalContainer .ProposalStatus *,
+html[data-workspace-theme="paper"] body div#root .ProposalPage .ProposalContainer [class*="ProposalStatus"] *,
+html[data-workspace-theme="paper"] body div#root .GovernancePage .GovernanceContainer .ProposalStatus *,
+html[data-workspace-theme="paper"] body div#root .GovernancePage .GovernanceContainer [class*="ProposalStatus"] * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.36) !important;
+}
+/* END FINAL INLINE OVERRIDE: proposal status text on light themes */

@@ -1,11 +1,10 @@
 import "./../styles/NavBar.css";
-import ReactTextTransition, { presets } from "react-text-transition";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -18,49 +17,38 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import avatarImg from "./../icons/avatar.png";
+import AnimatedBrand from "./branding/AnimatedBrand";
+import GlobalTopicSearch from "./search/GlobalTopicSearch";
 
-// const brandText = ['d-F', 'de', 'd-', 'd-F4C'];
-// const suffixText = ['CT', 'facto', 'FaCTo', 'T0'];
-const brandText = ["d-", "de", "fact", "tool"];
-const suffixText = ["FCT", "centralized", "-checking", "kit"];
 
 function NavBar(props) {
-  const [brandIndex, setBrandIndex] = useState(1);
-  const [suffixIndex, setSuffixBrandIndex] = useState(1);
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
   const topClick = useCallback(() => {
-    if (window.location.pathname.startsWith("/proposal")) navigate("/gov");
-    else if (window.location.pathname !== "/") navigate("/");
-    else {
-      document
-        .getElementsByClassName("bm-menu")[0]
-        ?.scrollTo({ top: 0, behavior: "smooth" });
-      document
-        .getElementsByClassName("Landing-middle-column")[0]
-        ?.scrollTo({ top: 0, behavior: "smooth" });
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    const clearSearchHome = () => {
+      navigate("/", { replace: true });
+      requestAnimationFrame(() => {
+        document
+          .getElementsByClassName("bm-menu")[0]
+          ?.scrollTo({ top: 0, behavior: "smooth" });
+        document
+          .getElementsByClassName("Landing-middle-column")[0]
+          ?.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    };
+
+    if (window.location.pathname.startsWith("/proposal")) {
+      navigate("/gov");
+      return;
     }
+
+    clearSearchHome();
   }, [navigate]);
 
-  useEffect(() => {
-    const intervalId = setInterval(
-      () => {
-        setBrandIndex((index) =>
-          index < brandText.length ? index + 1 : index,
-        );
-        setSuffixBrandIndex((index) =>
-          index < suffixText.length ? index + 1 : index,
-        );
-      },
-      600, // every ms
-    );
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   const logout = () => {
     props.setUser(null);
@@ -112,20 +100,16 @@ function NavBar(props) {
             height="30"
             className="d-inline-block align-top Navbar-brand-img"
           />{" "}
-          {props.userData && (
-            <section className="inline">
-              <ReactTextTransition springConfig={presets.gentle} inline>
-                {brandText[brandIndex % brandText.length]}
-              </ReactTextTransition>
-              {suffixText[suffixIndex % suffixText.length]}
-            </section>
-          )}
-          {!props.userData && "d-FCT"}
+          <AnimatedBrand enabled={Boolean(props.userData)} />
         </Navbar.Brand>
+        {props.userData && <GlobalTopicSearch placement="navbar" />}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           {props.userData && (
             <>
+              <div className="Navbar-mobile-search d-lg-none">
+                <GlobalTopicSearch placement="mobile" />
+              </div>
               <Nav className="me-auto d-lg-none">
                 {" "}
                 {/* Visible only in mobile */}

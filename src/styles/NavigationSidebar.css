@@ -89,3 +89,170 @@
   align-items: center;
   justify-content: space-evenly;
 }
+
+
+/* Theme-aware react-burger-menu shell */
+.bm-overlay {
+  background: rgba(2, 6, 23, 0.48) !important;
+  backdrop-filter: blur(2px);
+}
+
+.bm-menu-wrap {
+  top: 0 !important;
+  width: 320px !important;
+  max-width: min(86vw, 320px);
+}
+
+.bm-menu {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-right: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow-large);
+  backdrop-filter: blur(18px);
+}
+
+.bm-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  color: var(--theme-text);
+}
+
+.bm-cross-button {
+  right: 0.85rem !important;
+  top: 0.85rem !important;
+}
+
+.bm-cross {
+  background: var(--theme-text-muted) !important;
+}
+
+[data-sidebar-pinned="true"] .bm-overlay {
+  display: none !important;
+}
+
+[data-sidebar-pinned="true"] .bm-menu {
+  box-shadow: 8px 0 28px rgba(0, 0, 0, 0.16);
+}
+
+.Navbar-sidebar-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  margin: 0.25rem 0 0.8rem;
+  padding: 0.75rem 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.Navbar-sidebar-eyebrow {
+  color: var(--theme-text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.Navbar-sidebar-title {
+  color: var(--theme-text);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.Navbar-pin-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-surface);
+  color: var(--theme-text-muted);
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.Navbar-pin-btn:hover,
+.Navbar-pin-btn.is-active {
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-hover);
+  border-color: var(--theme-accent);
+}
+
+.Navbar-button {
+  justify-content: center !important;
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
+  border: 1px solid var(--theme-border) !important;
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  box-shadow: none !important;
+}
+
+.Navbar-button:hover {
+  background: var(--theme-surface-3) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+.Navbar-topics-title {
+  color: var(--theme-text-muted) !important;
+  padding: 0.65rem 0.75rem 0.35rem !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.Navbar-item {
+  display: flex !important;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.85rem 0.9rem !important;
+  color: var(--theme-text-soft) !important;
+  background: transparent;
+}
+
+.Navbar-item svg {
+  color: var(--theme-text-muted);
+}
+
+.Navbar-item:hover,
+.Navbar-item.active {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+}
+
+.Navbar-item:hover svg,
+.Navbar-item.active svg {
+  color: var(--theme-accent-hover);
+}
+
+[data-theme="paper"] .bm-menu {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme="paper"] .bm-overlay {
+  background: rgba(15, 23, 42, 0.28) !important;
+}
+
+
+/* Cross button is redundant with the pin/unpin + overlay close behavior. */
+.bm-cross-button {
+  display: none !important;
+}
+
+.bm-menu-wrap {
+  transition: transform 180ms ease !important;
+}
+
+[data-sidebar-pinned="true"] .bm-menu-wrap {
+  transform: translate3d(0, 0, 0) !important;
+}
+
+[data-sidebar-pinned="true"] .Navbar-toggle-btn {
+  background: var(--theme-accent-soft) !important;
+  color: var(--theme-accent-hover) !important;
+  border-color: var(--theme-accent) !important;
+}
