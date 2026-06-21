@@ -2,10 +2,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/LandingPage.css";
 import "./styles/landing/FeedLayout.css";
 import "./styles/landing/FeedCards.css";
+import "./styles/landing/FeedSnap.css";
 import "./styles/NavigationSidebar.css";
 import i18n from "./i18n";
 import logo from "./icons/logo.svg";
 import TopicList from "./components/topic/TopicList.jsx";
+import LandingSnapTopicFeed from "./components/landing/LandingSnapTopicFeed.jsx";
+import { LandingCompactTopicGrid, LandingCompactTopicList } from "./components/landing/LandingTopicViews.jsx";
 import LoadingPage from "./LoadingPage.jsx";
 import { useAuthRequest } from "./hooks/useAuthRequest";
 import { Button, Container, Spinner } from "react-bootstrap";
@@ -24,7 +27,9 @@ import {
   faMagnifyingGlass,
   faTimes,
   faArrowUp,
-} from "@fortawesome/free-solid-svg-icons";
+  faUpDown,
+  faGrip,
+  faListUl,} from "@fortawesome/free-solid-svg-icons";
 import { InputGroup, FormControl } from "react-bootstrap";
 import ReactTextTransition, { presets } from "react-text-transition";
 
@@ -53,6 +58,36 @@ function LandingTopicsResolver({
   return null;
 }
 
+const landingFeedViewModes = ["snap", "grid", "list"];
+
+const getLandingFeedViewStorageKey = (type) =>
+  type === "user" ? "dfctSubmittedTopicView" : "dfctLandingHomeFeedView";
+
+const getLandingFeedDefaultMode = (type) => (type === "user" ? "grid" : "snap");
+
+const normalizeLandingFeedViewMode = (mode, type) =>
+  landingFeedViewModes.includes(mode) ? mode : getLandingFeedDefaultMode(type);
+
+const readLandingFeedViewMode = (type) => {
+  const fallback = getLandingFeedDefaultMode(type);
+
+  try {
+    return normalizeLandingFeedViewMode(
+      window.localStorage.getItem(getLandingFeedViewStorageKey(type)) || fallback,
+      type
+    );
+  } catch {
+    return fallback;
+  }
+};
+
+
+const getLandingFeedViewIcon = (mode) => {
+  if (mode === "grid") return faGrip;
+  if (mode === "list") return faListUl;
+  return faUpDown;
+};
+
 function LandingPage(props) {
   const { t } = useTranslation();
   const { userTopicsPromise, allTopicsPromise } = useLoaderData();
@@ -79,12 +114,70 @@ function LandingPage(props) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [exploreVisibleCount, setExploreVisibleCount] = useState(12);
   const [searchSettling, setSearchSettling] = useState(false);
+  const [isCompactFeedViewport, setIsCompactFeedViewport] = useState(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    return window.matchMedia("(max-width: 768px)").matches;
+  });
+  const [feedViewMode, setFeedViewMode] = useState(() => readLandingFeedViewMode(props.type));
+  const [homeFeedViewMode, setHomeFeedViewMode] = useState(() => {
+    try {
+      return (
+        window.localStorage.getItem("dfctLandingHomeFeedView") ||
+        window.localStorage.getItem("dfctLandingFeedView") ||
+        "snap"
+      );
+    } catch {
+      return "snap";
+    }
+  });
+  const [submittedTopicsViewMode, setSubmittedTopicsViewMode] = useState(() => {
+    try {
+      return (
+        window.localStorage.getItem("dfctSubmittedTopicsView") ||
+        window.localStorage.getItem("dfctSubmittedTopicView") ||
+        "grid"
+      );
+    } catch {
+      return "grid";
+    }
+  });
+  useEffect(() => {
+    setFeedViewMode(readLandingFeedViewMode(props.type));
+  }, [props.type]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return undefined;
+
+    const query = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsCompactFeedViewport(Boolean(query.matches));
+
+    update();
+
+    if (query.addEventListener) {
+      query.addEventListener("change", update);
+      return () => query.removeEventListener("change", update);
+    }
+
+    query.addListener(update);
+    return () => query.removeListener(update);
+  }, []);
+
   const normalizedSearchQuery = searchQuery.trim();
   const isExploreMode = searching || Boolean(normalizedSearchQuery);
   const displayedTopics = isExploreMode ? searchResults : topics;
   const visibleDisplayedTopics = isExploreMode
     ? displayedTopics.slice(0, exploreVisibleCount)
     : displayedTopics;
+  const isHomeFeedMode = user && !loading && !isExploreMode && props.type !== "user";
+  const isSubmittedTopicsMode = user && !loading && !isExploreMode && props.type === "user";
+  const hasFeedViewControls = isHomeFeedMode || isSubmittedTopicsMode;
+  const activeFeedViewMode = isSubmittedTopicsMode ? submittedTopicsViewMode : homeFeedViewMode;
+  const normalizedFeedViewMode = ["snap", "grid", "list"].includes(activeFeedViewMode)
+    ? activeFeedViewMode
+    : isSubmittedTopicsMode
+      ? "grid"
+      : "snap";
+  const isSnapFeedMode = hasFeedViewControls && normalizedFeedViewMode === "snap";
 
   // Sync search from navbar/sidebar query parameter without flashing the full feed.
   useEffect(() => {
@@ -100,6 +193,9 @@ function LandingPage(props) {
   }, [initialQuery]);
 
   const scrollUp = () => {
+    document
+      .querySelector(".Landing-snap-feed")
+      ?.scrollTo({ top: 0, behavior: "smooth" });
     document
       .getElementsByClassName("Landing-middle-column")[0]
       ?.scrollTo({ top: 0, behavior: "smooth" });
@@ -315,10 +411,57 @@ function LandingPage(props) {
     setLoading(true);
   }, [location.pathname, setLoading]);
 
+  const handleFeedViewChange = useCallback((nextMode) => {
+    const normalizedNextMode = ["snap", "grid", "list"].includes(nextMode)
+      ? nextMode
+      : props.type === "user"
+        ? "grid"
+        : "snap";
+
+    if (props.type === "user") {
+      setSubmittedTopicsViewMode(normalizedNextMode);
+
+      try {
+        window.localStorage.setItem("dfctSubmittedTopicsView", normalizedNextMode);
+        window.localStorage.setItem("dfctSubmittedTopicView", normalizedNextMode);
+      } catch {
+        // Ignore storage failures; the control still works for this session.
+      }
+    } else {
+      setHomeFeedViewMode(normalizedNextMode);
+
+      try {
+        window.localStorage.setItem("dfctLandingFeedView", normalizedNextMode);
+        window.localStorage.setItem("dfctLandingHomeFeedView", normalizedNextMode);
+      } catch {
+        // Ignore storage failures; the control still works for this session.
+      }
+    }
+
+    if (typeof setFeedViewMode === "function") {
+      setFeedViewMode(normalizedNextMode);
+    }
+  }, [props.type]);
+
+  const handleFeedNearEnd = useCallback(() => {
+    if (loadingMore || searching) return;
+
+    const perPage = Number(window.sessionStorage.getItem("perPage") || 9);
+
+    if (page * perPage < totalTopics) {
+      loadTopics(page + 1);
+      return;
+    }
+
+    if (!showScrollUpButton) {
+      setShowScrollUpButton(true);
+    }
+  }, [loadTopics, loadingMore, page, searching, showScrollUpButton, totalTopics]);
+
   return (
     <div className={`Landing-body ${isExploreMode ? "Landing-body-explore" : "Landing-body-feed"} ${searchSettling ? "Landing-search-settling" : ""}`}>
       <Container
-        className="Landing-middle-column"
+        className={`Landing-middle-column ${hasFeedViewControls ? "Landing-middle-column-has-view-controls" : ""} ${isHomeFeedMode ? "Landing-middle-column-feed-home" : ""} ${isSubmittedTopicsMode ? "Landing-middle-column-submitted" : ""} ${isSnapFeedMode ? "Landing-middle-column-snap" : ""}`}
         fluid
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
@@ -371,7 +514,50 @@ function LandingPage(props) {
 
         {user && !loading && (
           <>
-            {!searchLoading && (
+            {hasFeedViewControls && (
+              <div
+                className="Landing-view-controls"
+                aria-label={t("landingFeed.viewLabel")}
+              >
+                <div className="Landing-view-control-inner" role="group">
+                  {[
+                    ["snap", t("landingFeed.viewSnap")],
+                    ["grid", t("landingFeed.viewGrid")],
+                    ["list", t("landingFeed.viewList")],
+                  ].map(([mode, label]) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      data-feed-view-mode={mode}
+                      className={`Landing-view-control-btn ${normalizedFeedViewMode === mode ? "is-active" : ""}`}
+                      aria-pressed={normalizedFeedViewMode === mode}
+                      title={label}
+                      aria-label={label}
+                      onPointerUp={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleFeedViewChange(mode);
+                      }}
+                      onPointerDown={(event) => event.stopPropagation()}
+                      onMouseDown={(event) => event.stopPropagation()}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleFeedViewChange(mode);
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={getLandingFeedViewIcon(mode)}
+                        className="Landing-view-control-icon"
+                        aria-hidden="true"
+                      />
+                      <span className="Landing-view-control-label">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {!searchLoading && !isHomeFeedMode && !(isSubmittedTopicsMode && isSnapFeedMode) && (
               <div className="Landing-section-title">
                 <h3>
                   {isExploreMode
@@ -391,10 +577,43 @@ function LandingPage(props) {
                 </p>
               </div>
             )}
-            <TopicList
-              content={visibleDisplayedTopics}
-              type={isExploreMode || props.type === "user" ? "explore" : "main"}
-            />
+            {isSnapFeedMode ? (
+              <LandingSnapTopicFeed
+                topics={visibleDisplayedTopics}
+                title={isSubmittedTopicsMode ? t("myTopics") : t("recentTopics")}
+                loadingMore={loadingMore}
+                onNearEnd={handleFeedNearEnd}
+                labels={{
+                  openTopic: t("landingFeed.openTopic"),
+                }}
+              />
+            ) : (isHomeFeedMode || (isSubmittedTopicsMode && isCompactFeedViewport)) && normalizedFeedViewMode === "grid" ? (
+              <LandingCompactTopicGrid
+                topics={visibleDisplayedTopics}
+                labels={{
+                  grid: t("landingFeed.viewGrid"),
+                  openTopic: t("landingFeed.openTopic"),
+                }}
+              />
+            ) : isSubmittedTopicsMode && normalizedFeedViewMode === "grid" ? (
+              <TopicList
+                content={visibleDisplayedTopics}
+                type="explore"
+              />
+            ) : hasFeedViewControls && normalizedFeedViewMode === "list" ? (
+              <LandingCompactTopicList
+                topics={visibleDisplayedTopics}
+                labels={{
+                  list: t("landingFeed.viewList"),
+                  openTopic: t("landingFeed.openTopic"),
+                }}
+              />
+            ) : (
+              <TopicList
+                content={visibleDisplayedTopics}
+                type={isExploreMode || props.type === "user" ? "explore" : "main"}
+              />
+            )}
           </>
         )}
 

@@ -390,7 +390,16 @@
     "exploreLabel": "Explorar",
     "exploreSubtitle": "Pesquise tópicos, alegações e evidências.",
     "exploreResults": "Resultados da busca",
-    "exploreResultsSubtitle": "{{count}} tópicos encontrados para sua busca."
+    "exploreResultsSubtitle": "{{count}} tópicos encontrados para sua busca.",
+    "viewLabel": "Visualização do feed",
+    "viewSnap": "Swipe",
+    "viewGrid": "Grade",
+    "viewList": "Lista",
+    "openTopic": "Abrir tópico",
+    "timestamp": {
+      "created": "Criado",
+      "lastUpdate": "Última atualização"
+    }
   },
   "settingsTheme": {
     "title": "Aparência",

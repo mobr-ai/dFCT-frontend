@@ -43,7 +43,6 @@
   margin: 0.5rem 0;
 }
 
-
 .Navbar-brand-text {
   display: inline-flex;
   align-items: center;
@@ -86,7 +85,6 @@
     display: block;
   }
 }
-
 
 /* Isolated animated brand */
 .Navbar-brand-animated,
@@ -145,8 +143,8 @@
 
   .Navbar-brand-animated,
   .Navbar-brand-text {
-    width: 5.75rem;
+    width: 100%;
     min-width: 5.75rem;
-    max-width: 5.75rem;
+    /* max-width: 5.75rem; */
   }
 }

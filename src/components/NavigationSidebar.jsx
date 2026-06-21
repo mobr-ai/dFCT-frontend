@@ -15,16 +15,43 @@ import { useTranslation } from "react-i18next";
 import "./../styles/NavigationSidebar.css";
 import GlobalTopicSearch from "./search/GlobalTopicSearch";
 
-function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned }) {
+const SIDEBAR_DESKTOP_QUERY = "(min-width: 1024px)";
+
+function useSidebarDesktop() {
+  const [isDesktop, setIsDesktop] = React.useState(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return true;
+    return window.matchMedia(SIDEBAR_DESKTOP_QUERY).matches;
+  });
+
+  React.useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return undefined;
+
+    const query = window.matchMedia(SIDEBAR_DESKTOP_QUERY);
+    const update = () => setIsDesktop(Boolean(query.matches));
+
+    update();
+
+    if (query.addEventListener) {
+      query.addEventListener("change", update);
+      return () => query.removeEventListener("change", update);
+    }
+
+    query.addListener(update);
+    return () => query.removeListener(update);
+  }, []);
+
+  return isDesktop;
+}
+
+function NavigationSidebarContent({
+  isPinned,
+  setIsPinned,
+  setIsOpen,
+  closeIfUnpinned,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-
-  if (window.innerWidth < 1024) return null;
-
-  const closeIfUnpinned = () => {
-    if (!isPinned) setIsOpen(false);
-  };
 
   const togglePinned = () => {
     const nextPinned = !isPinned;
@@ -33,16 +60,7 @@ function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned })
   };
 
   return (
-    <Menu
-      className={`Navbar-navigation-bar ${isPinned ? "is-pinned" : ""}`}
-      isOpen={isOpen || isPinned}
-      customBurgerIcon={false}
-      noOverlay={isPinned}
-      disableOverlayClick={isPinned}
-      onStateChange={(state) => {
-        if (!isPinned) setIsOpen(state.isOpen);
-      }}
-    >
+    <div className="Navbar-sidebar-content">
       <div className="Navbar-sidebar-header">
         <div>
           <div className="Navbar-sidebar-eyebrow">d-FCT</div>
@@ -116,6 +134,48 @@ function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned })
       >
         <FontAwesomeIcon icon={faCog} /> {t("settings")}
       </Link>
+    </div>
+  );
+}
+
+function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned }) {
+  const isDesktop = useSidebarDesktop();
+
+  if (!isDesktop) return null;
+
+  const closeIfUnpinned = () => {
+    if (!isPinned) setIsOpen(false);
+  };
+
+  const content = (
+    <NavigationSidebarContent
+      isPinned={isPinned}
+      setIsPinned={setIsPinned}
+      setIsOpen={setIsOpen}
+      closeIfUnpinned={closeIfUnpinned}
+    />
+  );
+
+  if (isPinned) {
+    return (
+      <aside
+        className="Navbar-navigation-bar dfct-navigation-sidebar is-pinned"
+        aria-label="d-FCT navigation"
+      >
+        {content}
+      </aside>
+    );
+  }
+
+  return (
+    <Menu
+      width="18rem"
+      className="Navbar-navigation-bar dfct-navigation-sidebar"
+      isOpen={isOpen}
+      customBurgerIcon={false}
+      onStateChange={(state) => setIsOpen(state.isOpen)}
+    >
+      {content}
     </Menu>
   );
 }

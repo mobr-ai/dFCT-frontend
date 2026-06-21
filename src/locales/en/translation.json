@@ -367,7 +367,16 @@
     "exploreLabel": "Explore",
     "exploreSubtitle": "Search topics, claims, and evidence.",
     "exploreResults": "Explore results",
-    "exploreResultsSubtitle": "{{count}} topics matched your search."
+    "exploreResultsSubtitle": "{{count}} topics matched your search.",
+    "viewLabel": "Feed view",
+    "viewSnap": "Swipe",
+    "viewGrid": "Grid",
+    "viewList": "List",
+    "openTopic": "Open topic",
+    "timestamp": {
+      "created": "Created",
+      "lastUpdate": "Last update"
+    }
   },
   "settingsTheme": {
     "title": "Appearance",
