@@ -428,5 +428,50 @@
   "ago": "ago",
   "moments ago": "moments ago",
   "registerError": "Registration failed. Please try again.",
-  "submissionFailed": "Submission failed. Please try again."
+  "submissionFailed": "Submission failed. Please try again.",
+  "dsm": {
+    "refresh": "Refresh",
+    "loadingTasks": "Loading tasks...",
+    "noTasks": "No lifecycle tasks found.",
+    "untitledTask": "Untitled task",
+    "acceptTask": "Accept task",
+    "accepting": "Accepting...",
+    "decision": "Decision",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reason": "Reason",
+    "reasonPlaceholder": "Short reason for this decision",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional review notes",
+    "submitDecision": "Submit decision",
+    "submittingDecision": "Submitting...",
+    "status": {
+      "open": "Open",
+      "accepted": "Accepted",
+      "completed": "Completed",
+      "expired": "Expired",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "taskTypes": {
+      "topic_review": "Topic review"
+    },
+    "refreshing": "Refreshing tasks...",
+    "lastUpdated": "Updated {{time}}",
+    "waitingForRefresh": "Syncing task state...",
+    "refreshBackoff": "Temporary sync issue. Retrying automatically."
+  },
+  "topicReview": {
+    "nav": "Topic Review",
+    "title": "Topic Review Workbench",
+    "subtitle": "Review proposed d-FCT topics and record workflow decisions.",
+    "availableTasks": "Available tasks",
+    "myAcceptedTasks": "My accepted tasks",
+    "noAvailableTasks": "No topic review tasks are currently available.",
+    "noAcceptedTasks": "You do not have accepted topic review tasks.",
+    "topicId": "Topic ID",
+    "acceptedToast": "Topic review task accepted.",
+    "approvedToast": "Topic approved.",
+    "rejectedToast": "Topic rejected."
+  }
 }

@@ -428,5 +428,50 @@
     }
   },
   "sidebarPin": "Fixar menu",
-  "sidebarUnpin": "Desafixar menu"
+  "sidebarUnpin": "Desafixar menu",
+  "dsm": {
+    "refresh": "Atualizar",
+    "loadingTasks": "Carregando tarefas...",
+    "noTasks": "Nenhuma tarefa de ciclo de vida encontrada.",
+    "untitledTask": "Tarefa sem título",
+    "acceptTask": "Aceitar tarefa",
+    "accepting": "Aceitando...",
+    "decision": "Decisão",
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Motivo curto para esta decisão",
+    "notes": "Observações",
+    "notesPlaceholder": "Observações opcionais da revisão",
+    "submitDecision": "Enviar decisão",
+    "submittingDecision": "Enviando...",
+    "status": {
+      "open": "Aberta",
+      "accepted": "Aceita",
+      "completed": "Concluída",
+      "expired": "Expirada",
+      "approved": "Aprovada",
+      "rejected": "Rejeitada"
+    },
+    "taskTypes": {
+      "topic_review": "Revisão de tópico"
+    },
+    "refreshing": "Atualizando tarefas...",
+    "lastUpdated": "Atualizado às {{time}}",
+    "waitingForRefresh": "Sincronizando estado das tarefas...",
+    "refreshBackoff": "Falha temporária de sincronização. Tentando novamente automaticamente."
+  },
+  "topicReview": {
+    "nav": "Revisão de Tópicos",
+    "title": "Workbench de Revisão de Tópicos",
+    "subtitle": "Revise tópicos propostos no d-FCT e registre decisões do workflow.",
+    "availableTasks": "Tarefas disponíveis",
+    "myAcceptedTasks": "Minhas tarefas aceitas",
+    "noAvailableTasks": "Nenhuma tarefa de revisão de tópico está disponível no momento.",
+    "noAcceptedTasks": "Você não possui tarefas de revisão de tópico aceitas.",
+    "topicId": "ID do tópico",
+    "acceptedToast": "Tarefa de revisão de tópico aceita.",
+    "approvedToast": "Tópico aprovado.",
+    "rejectedToast": "Tópico rejeitado."
+  }
 }

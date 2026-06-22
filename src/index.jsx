@@ -1,3 +1,4 @@
+import TopicReviewWorkbench from "./workflows/topicReview/TopicReviewWorkbench.jsx";
 import "./styles/index.css";
 import "./styles/theme-tokens.css";
 import "./styles/theme-overrides.css";
@@ -311,6 +312,10 @@ const router = createBrowserRouter([
         path: "/submit",
         element: <TopicSubmissionPage />,
         loader: userTopicsLoader,
+      },
+      {
+        path: "/workbench/topic-review",
+        element: <TopicReviewWorkbench />,
       },
       {
         path: "/t/:userId/:topicId",

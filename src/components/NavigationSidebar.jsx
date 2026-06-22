@@ -10,6 +10,7 @@ import {
   faCog,
   faGavel,
   faThumbtack,
+  faClipboardCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import "./../styles/NavigationSidebar.css";
@@ -123,6 +124,16 @@ function NavigationSidebarContent({
         }`}
       >
         <FontAwesomeIcon icon={faGavel} /> {t("governance")}
+      </Link>
+
+      <Link
+        onClick={closeIfUnpinned}
+        to="/workbench/topic-review"
+        className={`Navbar-item ${
+          location.pathname.includes("/workbench/topic-review") ? "active" : ""
+        }`}
+      >
+        <FontAwesomeIcon icon={faClipboardCheck} /> {t("topicReview.nav")}
       </Link>
 
       <Link
