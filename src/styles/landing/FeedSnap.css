@@ -2990,3 +2990,121 @@ html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
     ) !important;
   border-color: rgba(242, 244, 248, 0.14) !important;
 }
+
+/* ---- d-FCT swipe view card expansion + true centering ---- */
+
+/*
+  Swipe mode should use the available viewport area:
+  - one slide = one visible feed viewport
+  - card is centered horizontally and vertically
+  - card grows wider/taller instead of being capped around 720px
+  - grid/list modes remain untouched
+*/
+.Landing-body-feed .Landing-middle-column-snap {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.Landing-body-feed .Landing-middle-column-snap .Landing-snap-feed {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.Landing-body-feed .Landing-snap-slide {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  justify-content: center !important;
+
+  padding:
+    clamp(4.35rem, 7vh, 5.4rem)
+    clamp(1rem, 4vw, 3rem)
+    clamp(1rem, 3vh, 2.25rem) !important;
+}
+
+.Landing-body-feed .Landing-snap-slide .Landing-topic-card-spotlight {
+  width: min(100%, 72rem) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  justify-self: center !important;
+  align-self: center !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-card-link {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+}
+
+.Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-visual-frame {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-copy {
+  flex: 0 0 auto !important;
+  padding: clamp(1rem, 2.2vw, 1.45rem) !important;
+}
+
+.Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-copy h3 {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+.Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-copy p {
+  -webkit-line-clamp: 3 !important;
+}
+
+@media (max-width: 768px) {
+  .Landing-body-feed .Landing-snap-slide {
+    padding:
+      0.45rem
+      0.72rem
+      0.9rem !important;
+  }
+
+  .Landing-body-feed .Landing-snap-slide .Landing-topic-card-spotlight {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .Landing-body-feed
+    .Landing-snap-slide
+    .Landing-topic-card-spotlight
+    .Landing-topic-copy p {
+    -webkit-line-clamp: 2 !important;
+  }
+}
+
