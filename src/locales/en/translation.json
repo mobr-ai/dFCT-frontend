@@ -503,7 +503,14 @@
     "intentAmount": "Amount",
     "intentCreated": "Created",
     "noActivity": "No billing activity yet.",
-    "publishFlowNote": "Next slice: revamp topic publication so publishing can be free, credit-based, or paired with an optional reward pool."
+    "publishFlowNote": "Next slice: revamp topic publication so publishing can be free, credit-based, or paired with an optional reward pool.",
+    "syncPreparing": "Preparing sync",
+    "syncing": "Syncing credits…",
+    "lastSynced": "Synced at {{time}}",
+    "syncBackoff": "Sync retrying safely",
+    "syncWaitingForApi": "Waiting for billing API",
+    "syncIssueTitle": "Billing sync issue",
+    "syncIssueText": "We could not refresh billing data. The page will retry automatically with backoff."
   },
   "adminBilling": {
     "nav": "Admin Billing",
@@ -528,6 +535,13 @@
     "colTier": "Tier",
     "noUsers": "No users loaded.",
     "packagesTitle": "Packages",
-    "accessTiersTitle": "Access tiers"
+    "accessTiersTitle": "Access tiers",
+    "syncPreparing": "Preparing sync",
+    "syncing": "Syncing admin data…",
+    "lastSynced": "Synced at {{time}}",
+    "syncBackoff": "Sync retrying safely",
+    "syncWaitingForApi": "Waiting for admin billing API",
+    "syncIssueTitle": "Admin billing sync issue",
+    "syncIssueText": "We could not refresh admin billing data. The page will retry automatically with backoff."
   }
 }

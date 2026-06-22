@@ -6,7 +6,6 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Spinner from "react-bootstrap/Spinner";
 import Table from "react-bootstrap/Table";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -15,6 +14,41 @@ import "../styles/billing/BillingAccess.css";
 
 function formatCredits(value) {
   return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function formatSyncTime(value) {
+  if (!value) return "";
+  return value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function BillingSyncStatus({
+  apiUnavailable,
+  loading,
+  lastUpdatedAt,
+  consecutiveFailures,
+}) {
+  const { t } = useTranslation();
+
+  let label = t("billingAccess.syncPreparing");
+
+  if (apiUnavailable) {
+    label = t("billingAccess.syncWaitingForApi");
+  } else if (loading) {
+    label = t("billingAccess.syncing");
+  } else if (consecutiveFailures > 0) {
+    label = t("billingAccess.syncBackoff", { count: consecutiveFailures });
+  } else if (lastUpdatedAt) {
+    label = t("billingAccess.lastSynced", {
+      time: formatSyncTime(lastUpdatedAt),
+    });
+  }
+
+  return (
+    <div className={`BillingAccess-syncBadge ${apiUnavailable ? "is-pending" : ""}`}>
+      <span className="BillingAccess-syncDot" />
+      <span>{label}</span>
+    </div>
+  );
 }
 
 export default function BillingAccessPage() {
@@ -30,7 +64,9 @@ export default function BillingAccessPage() {
     paymentIntents,
     loading,
     error,
-    refresh,
+    lastUpdatedAt,
+    consecutiveFailures,
+    apiUnavailable,
   } = useBillingCredits(user);
 
   useEffect(() => {
@@ -58,16 +94,23 @@ export default function BillingAccessPage() {
             <h1>{t("billingAccess.title")}</h1>
             <p>{t("billingAccess.subtitle")}</p>
           </div>
-          <Button variant="outline-primary" onClick={refresh} disabled={loading}>
-            {loading ? <Spinner size="sm" className="me-2" /> : null}
-            {t("billingAccess.refresh")}
-          </Button>
+          <BillingSyncStatus
+            apiUnavailable={apiUnavailable}
+            loading={loading}
+            lastUpdatedAt={lastUpdatedAt}
+            consecutiveFailures={consecutiveFailures}
+          />
         </header>
 
-        {error ? (
+        {apiUnavailable ? (
           <Alert variant="secondary" className="BillingAccess-alert">
             <strong>{t("billingAccess.apiPendingTitle")}</strong>
             <div>{t("billingAccess.apiPendingText")}</div>
+          </Alert>
+        ) : error ? (
+          <Alert variant="secondary" className="BillingAccess-alert">
+            <strong>{t("billingAccess.syncIssueTitle")}</strong>
+            <div>{t("billingAccess.syncIssueText")}</div>
             <small>{error}</small>
           </Alert>
         ) : null}

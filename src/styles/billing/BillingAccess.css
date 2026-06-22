@@ -204,3 +204,37 @@
     width: 100%;
   }
 }
+
+.BillingAccess-syncBadge {
+  align-items: center;
+  align-self: flex-start;
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 999px;
+  color: var(--theme-text-soft) !important;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.01em;
+  padding: 0.55rem 0.8rem;
+  white-space: nowrap;
+}
+
+.BillingAccess-syncBadge.is-pending {
+  color: var(--theme-text-muted) !important;
+}
+
+.BillingAccess-syncDot {
+  background: var(--theme-primary);
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px var(--theme-primary-soft);
+  display: inline-block;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+.BillingAccess-syncBadge.is-pending .BillingAccess-syncDot {
+  background: var(--theme-text-muted);
+  box-shadow: none;
+}

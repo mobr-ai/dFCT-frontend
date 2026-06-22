@@ -503,7 +503,14 @@
     "intentAmount": "Valor",
     "intentCreated": "Criado em",
     "noActivity": "Nenhuma atividade de cobrança ainda.",
-    "publishFlowNote": "Próximo slice: reformular a publicação de tópicos para permitir publicação gratuita, baseada em créditos ou com pool de recompensa opcional."
+    "publishFlowNote": "Próximo slice: reformular a publicação de tópicos para permitir publicação gratuita, baseada em créditos ou com pool de recompensa opcional.",
+    "syncPreparing": "Preparando sincronização",
+    "syncing": "Sincronizando créditos…",
+    "lastSynced": "Sincronizado às {{time}}",
+    "syncBackoff": "Nova tentativa segura de sincronização",
+    "syncWaitingForApi": "Aguardando API de cobrança",
+    "syncIssueTitle": "Problema na sincronização de cobrança",
+    "syncIssueText": "Não foi possível atualizar os dados de cobrança. A página tentará novamente automaticamente com backoff."
   },
   "adminBilling": {
     "nav": "Admin Cobrança",
@@ -528,6 +535,13 @@
     "colTier": "Nível",
     "noUsers": "Nenhum usuário carregado.",
     "packagesTitle": "Pacotes",
-    "accessTiersTitle": "Níveis de acesso"
+    "accessTiersTitle": "Níveis de acesso",
+    "syncPreparing": "Preparando sincronização",
+    "syncing": "Sincronizando dados admin…",
+    "lastSynced": "Sincronizado às {{time}}",
+    "syncBackoff": "Nova tentativa segura de sincronização",
+    "syncWaitingForApi": "Aguardando API admin de cobrança",
+    "syncIssueTitle": "Problema na sincronização admin de cobrança",
+    "syncIssueText": "Não foi possível atualizar os dados admin de cobrança. A página tentará novamente automaticamente com backoff."
   }
 }
