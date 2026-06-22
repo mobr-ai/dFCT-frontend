@@ -1,0 +1,206 @@
+.BillingAccessPage {
+  background: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  min-height: calc(100vh - var(--dfct-navbar-height, 76px));
+  width: 100%;
+}
+
+.BillingAccess {
+  color: var(--theme-text) !important;
+  padding: 2rem 0 4rem;
+}
+
+.BillingAccess-header,
+.BillingAccess-sectionHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.BillingAccess-eyebrow {
+  color: var(--theme-primary) !important;
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.BillingAccess h1,
+.BillingAccess h2 {
+  color: var(--theme-text) !important;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.45rem;
+  text-shadow: none !important;
+}
+
+.BillingAccess h2 {
+  font-size: 1.25rem;
+}
+
+.BillingAccess p,
+.BillingAccess-cardCopy {
+  color: var(--theme-text-muted) !important;
+  margin: 0;
+}
+
+.BillingAccess-card {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px) !important;
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  height: 100%;
+}
+
+.BillingAccess-cardLabel {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.BillingAccess-balanceValue {
+  color: var(--theme-text) !important;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  margin-bottom: 0.65rem;
+}
+
+.BillingAccess-metricRow {
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+}
+
+.BillingAccess-metricRow:last-child {
+  border-bottom: 0;
+}
+
+.BillingAccess-gatewayList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.BillingAccess-section {
+  margin-top: 2rem;
+}
+
+.BillingAccess-packageGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.BillingAccess-packageName {
+  color: var(--theme-text) !important;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-packageCredits {
+  color: var(--theme-primary) !important;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-tableWrap {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  overflow: hidden;
+}
+
+.BillingAccess-table {
+  color: var(--theme-text) !important;
+  margin: 0 !important;
+}
+
+.BillingAccess-table th,
+.BillingAccess-table td {
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-table th {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.BillingAccess-alert {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-note {
+  background: var(--theme-primary-soft) !important;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 18px);
+  color: var(--theme-text) !important;
+  font-weight: 700;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.BillingAccess-tabs {
+  border-bottom-color: var(--theme-border) !important;
+}
+
+.BillingAccess-tabs .nav-link {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-text-muted) !important;
+  font-weight: 800;
+}
+
+.BillingAccess-tabs .nav-link.active {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) var(--theme-border) var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-jsonPreview {
+  background: var(--theme-surface-2) !important;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text-soft) !important;
+  font-size: 0.8rem;
+  max-height: 22rem;
+  overflow: auto;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .BillingAccess {
+    padding: 1.25rem 0 3rem;
+  }
+
+  .BillingAccess-header,
+  .BillingAccess-sectionHeader {
+    display: block;
+  }
+
+  .BillingAccess-header .btn,
+  .BillingAccess-sectionHeader .btn {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}

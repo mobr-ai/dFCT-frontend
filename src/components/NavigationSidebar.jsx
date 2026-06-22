@@ -11,6 +11,8 @@ import {
   faGavel,
   faThumbtack,
   faClipboardCheck,
+  faCreditCard,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import "./../styles/NavigationSidebar.css";
@@ -53,6 +55,14 @@ function NavigationSidebarContent({
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const userData = React.useMemo(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("userData") || "null");
+    } catch {
+      return null;
+    }
+  }, [location.pathname]);
+  const isAdmin = Boolean(userData?.is_admin);
 
   const togglePinned = () => {
     const nextPinned = !isPinned;
@@ -125,6 +135,28 @@ function NavigationSidebarContent({
       >
         <FontAwesomeIcon icon={faGavel} /> {t("governance")}
       </Link>
+
+      <Link
+        onClick={closeIfUnpinned}
+        to="/billing"
+        className={`Navbar-item ${
+          location.pathname.includes("/billing") ? "active" : ""
+        }`}
+      >
+        <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}
+      </Link>
+
+      {isAdmin && (
+        <Link
+          onClick={closeIfUnpinned}
+          to="/admin/billing"
+          className={`Navbar-item ${
+            location.pathname.includes("/admin/billing") ? "active" : ""
+          }`}
+        >
+          <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.nav")}
+        </Link>
+      )}
 
       <Link
         onClick={closeIfUnpinned}

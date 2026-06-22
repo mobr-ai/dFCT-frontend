@@ -12,6 +12,8 @@ import {
   faFolderOpen,
   faCog,
   faGavel,
+  faCreditCard,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -152,6 +154,26 @@ function NavBar(props) {
                 </Nav.Link>
                 <Nav.Link
                   onClick={() => {
+                    navigate("/billing");
+                    setExpanded(false);
+                  }}
+                  active={location.pathname === "/billing"}
+                >
+                  <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}
+                </Nav.Link>
+                {props.userData?.is_admin && (
+                  <Nav.Link
+                    onClick={() => {
+                      navigate("/admin/billing");
+                      setExpanded(false);
+                    }}
+                    active={location.pathname.includes("/admin/billing")}
+                  >
+                    <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.nav")}
+                  </Nav.Link>
+                )}
+                <Nav.Link
+                  onClick={() => {
                     navigate("/settings");
                     setExpanded(false);
                   }}
@@ -228,6 +250,26 @@ function NavBar(props) {
                   {t("logOut")}
                 </NavDropdown.Item>
                 <NavDropdown.Divider className="d-none d-lg-block" />
+                <NavDropdown.Item
+                  className="d-none d-lg-block"
+                  onClick={() => {
+                    navigate("/billing");
+                    setExpanded(false);
+                  }}
+                >
+                  {t("billingAccess.nav")}
+                </NavDropdown.Item>
+                {props.userData?.is_admin && (
+                  <NavDropdown.Item
+                    className="d-none d-lg-block"
+                    onClick={() => {
+                      navigate("/admin/billing");
+                      setExpanded(false);
+                    }}
+                  >
+                    {t("adminBilling.nav")}
+                  </NavDropdown.Item>
+                )}
                 <NavDropdown.Item
                   className="d-none d-lg-block"
                   onClick={() => {
