@@ -1,0 +1,196 @@
+.DsmWorkbenchPage {
+  background: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  min-height: calc(100vh - var(--dfct-navbar-height, 76px));
+  width: 100%;
+}
+
+.DsmWorkbench {
+  color: var(--theme-text) !important;
+  padding: 2rem 0 4rem;
+}
+
+.DsmWorkbench-header {
+  margin-bottom: 1.5rem;
+}
+
+.DsmWorkbench-header h1 {
+  color: var(--theme-text) !important;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.45rem;
+  text-shadow: none !important;
+}
+
+.DsmWorkbench-header p {
+  color: var(--theme-text-muted) !important;
+  margin: 0;
+}
+
+.DsmWorkbench-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.DsmWorkbench .btn-outline-primary {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+}
+
+.DsmWorkbench .btn-outline-primary:hover,
+.DsmWorkbench .btn-outline-primary:focus {
+  background: var(--theme-primary);
+  border-color: var(--theme-primary);
+  color: var(--theme-bg);
+}
+
+.DsmWorkbench .nav-tabs {
+  border-bottom-color: var(--theme-border) !important;
+}
+
+.DsmWorkbench .nav-tabs .nav-link {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-text-muted) !important;
+  font-weight: 700;
+}
+
+.DsmWorkbench .nav-tabs .nav-link:hover,
+.DsmWorkbench .nav-tabs .nav-link:focus {
+  border-color: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+.DsmWorkbench .nav-tabs .nav-link.active {
+  background: var(--theme-surface) !important;
+  border-color:
+    var(--theme-border)
+    var(--theme-border)
+    var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+.DsmWorkbench .alert {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.DsmTaskList {
+  display: grid;
+  gap: 1rem;
+}
+
+.DsmTaskList-loading {
+  align-items: center;
+  color: var(--theme-text-muted) !important;
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.DsmTaskCard {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  overflow: hidden;
+}
+
+.DsmTaskCard .card-body {
+  color: var(--theme-text) !important;
+}
+
+.DsmTaskCard-header {
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.DsmTaskCard-date,
+.DsmTaskCard-meta {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.85rem;
+}
+
+.DsmTaskCard-title {
+  color: var(--theme-text) !important;
+  margin-bottom: 0.5rem;
+}
+
+.DsmTaskCard-description {
+  color: var(--theme-text-muted) !important;
+}
+
+.DsmStatusBadge {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.DsmDecisionPanel {
+  border-top: 1px solid var(--theme-border);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.DsmDecisionPanel label {
+  color: var(--theme-text) !important;
+  font-weight: 700;
+}
+
+.DsmDecisionPanel .form-control {
+  background: var(--theme-input-bg, var(--theme-surface-2)) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.DsmDecisionPanel .form-control::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+.DsmDecisionPanel-buttons {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .DsmWorkbench {
+    padding: 1.25rem 0 3rem;
+  }
+
+  .DsmWorkbench-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .DsmWorkbench .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .DsmWorkbench .nav-tabs .nav-link {
+    white-space: nowrap;
+  }
+}
+
+.DsmWorkbench-refreshState,
+.DsmWorkbench-refreshWarning {
+  align-items: center;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.DsmWorkbench-refreshState {
+  background: var(--theme-surface);
+  color: var(--theme-text-muted);
+}
+
+.DsmWorkbench-refreshWarning {
+  background: var(--theme-primary-soft);
+  color: var(--theme-text);
+}
