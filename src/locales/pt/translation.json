@@ -473,5 +473,6 @@
     "acceptedToast": "Tarefa de revisão de tópico aceita.",
     "approvedToast": "Tópico aprovado.",
     "rejectedToast": "Tópico rejeitado."
-  }
+  },
+  "closeModal": "Fechar modal"
 }

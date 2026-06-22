@@ -309,20 +309,117 @@
   justify-content: space-evenly;
 }
 
+.Submission-related-modal-dialog {
+  color: var(--theme-text);
+}
+
+.Submission-related-modal-content {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px) !important;
+  box-shadow: var(--theme-shadow-large);
+  color: var(--theme-text) !important;
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
 .Submission-related-modal-header {
-  background-color: #37474fff !important;
-  color: lightgray;
+  align-items: center;
+  background: var(--theme-surface) !important;
+  border-bottom: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  display: flex;
   font-family: monospace;
+  justify-content: space-between;
+}
+
+.Submission-related-modal-header .modal-title {
+  color: var(--theme-text) !important;
+}
+
+.Submission-related-modal-close {
+  align-items: center;
+  background: var(--theme-surface-2);
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  color: var(--theme-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.25rem;
+  height: 2rem;
+  justify-content: center;
+  line-height: 1;
+  margin-left: 1rem;
+  padding: 0;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+  width: 2rem;
+}
+
+.Submission-related-modal-close:hover,
+.Submission-related-modal-close:focus {
+  background: var(--theme-surface-3);
+  border-color: var(--theme-border-strong);
+  transform: translateY(-1px);
 }
 
 .Submission-related-modal-body {
-  background-color: #343a40 !important;
-  color: lightgray;
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+.Submission-related-modal-body p {
+  color: var(--theme-text-soft) !important;
 }
 
 .Submission-related-modal-footer {
-  background-color: #343a40 !important;
-  color: lightgray;
+  background: var(--theme-surface) !important;
+  border-top: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.Submission-related-modal-body .Topic-list-container-main,
+.Submission-related-modal-body .Topic-feed-list {
+  gap: 1rem;
+  justify-content: center;
+}
+
+.Submission-related-modal-body .Topic-card {
+  background: var(--theme-surface-2) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-lg, 14px) !important;
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  overflow: hidden;
+}
+
+.Submission-related-modal-body .Topic-card .card-body {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+.Submission-related-modal-body .Topic-card-title,
+.Submission-related-modal-body .Topic-card .card-title {
+  color: var(--theme-text) !important;
+}
+
+.Submission-related-modal-body .Topic-card .card-text,
+.Submission-related-modal-body .Topic-card-description,
+.Submission-related-modal-body .Topic-card time,
+.Submission-related-modal-body .Topic-card small {
+  color: var(--theme-text-muted) !important;
+}
+
+.Submission-related-modal-body .Topic-card-tag {
+  background: var(--theme-surface-3) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-soft) !important;
+}
+
+.Submission-related-modal-body .Topic-card-img {
+  border-bottom: 1px solid var(--theme-border);
 }
 
 #input-url-button {

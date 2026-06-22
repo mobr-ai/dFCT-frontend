@@ -15,9 +15,19 @@ const RelatedTopicsModal = ({ show, onClose, onProceed, topics }) => {
       keyboard={false}
       size="lg"
       centered
+      dialogClassName="Submission-related-modal-dialog"
+      contentClassName="Submission-related-modal-content"
     >
-      <Modal.Header className="Submission-related-modal-header" closeButton>
+      <Modal.Header className="Submission-related-modal-header">
         <Modal.Title>{t("relatedTopicsFound")}</Modal.Title>
+        <button
+          type="button"
+          className="Submission-related-modal-close"
+          onClick={onClose}
+          aria-label={t("closeModal")}
+        >
+          ×
+        </button>
       </Modal.Header>
       <Modal.Body className="Submission-related-modal-body">
         <p>{t("relatedTopicsIntro")}</p>

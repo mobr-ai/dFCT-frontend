@@ -473,5 +473,6 @@
     "acceptedToast": "Topic review task accepted.",
     "approvedToast": "Topic approved.",
     "rejectedToast": "Topic rejected."
-  }
+  },
+  "closeModal": "Close modal"
 }
