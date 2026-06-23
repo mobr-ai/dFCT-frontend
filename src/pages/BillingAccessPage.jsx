@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -58,41 +57,6 @@ function packageDisplayName(t, pkg) {
   );
 }
 
-function formatSyncTime(value) {
-  if (!value) return "";
-  return value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
-
-function BillingSyncStatus({
-  apiUnavailable,
-  loading,
-  lastUpdatedAt,
-  consecutiveFailures,
-}) {
-  const { t } = useTranslation();
-
-  let label = t("billingAccess.syncPreparing");
-
-  if (apiUnavailable) {
-    label = t("billingAccess.syncWaitingForApi");
-  } else if (loading) {
-    label = t("billingAccess.syncing");
-  } else if (consecutiveFailures > 0) {
-    label = t("billingAccess.syncBackoff", { count: consecutiveFailures });
-  } else if (lastUpdatedAt) {
-    label = t("billingAccess.lastSynced", {
-      time: formatSyncTime(lastUpdatedAt),
-    });
-  }
-
-  return (
-    <div className={`BillingAccess-syncBadge ${apiUnavailable ? "is-pending" : ""}`}>
-      <span className="BillingAccess-syncDot" />
-      <span>{label}</span>
-    </div>
-  );
-}
-
 export default function BillingAccessPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -104,12 +68,7 @@ export default function BillingAccessPage() {
     accessSummary,
     packages,
     paymentIntents,
-    loading,
     purchaseLoading,
-    error,
-    lastUpdatedAt,
-    consecutiveFailures,
-    apiUnavailable,
     purchasePackage,
   } = useBillingCredits(user);
 
@@ -159,26 +118,7 @@ export default function BillingAccessPage() {
             <h1>{t("billingAccess.title")}</h1>
             <p>{t("billingAccess.subtitle")}</p>
           </div>
-          <BillingSyncStatus
-            apiUnavailable={apiUnavailable}
-            loading={loading}
-            lastUpdatedAt={lastUpdatedAt}
-            consecutiveFailures={consecutiveFailures}
-          />
         </header>
-
-        {apiUnavailable ? (
-          <Alert variant="secondary" className="BillingAccess-alert">
-            <strong>{t("billingAccess.apiPendingTitle")}</strong>
-            <div>{t("billingAccess.apiPendingText")}</div>
-          </Alert>
-        ) : error ? (
-          <Alert variant="secondary" className="BillingAccess-alert">
-            <strong>{t("billingAccess.syncIssueTitle")}</strong>
-            <div>{t("billingAccess.syncIssueText")}</div>
-            <small>{error}</small>
-          </Alert>
-        ) : null}
 
         <Row className="g-3">
           <Col lg={4}>
