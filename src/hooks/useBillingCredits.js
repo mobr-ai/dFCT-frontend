@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 import {
+  createPaymentIntent,
   getCreditPackages,
   getMyAccessSummary,
   getMyCreditBalance,
@@ -99,6 +100,7 @@ export function useBillingCredits(user) {
   const [creditPackages, setCreditPackages] = useState([]);
   const [paymentIntents, setPaymentIntents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [apiUnavailable, setApiUnavailable] = useState(isBillingApiUnavailableCached);
   const [error, setError] = useState("");
   const [manualLastUpdatedAt, setManualLastUpdatedAt] = useState(null);
@@ -149,6 +151,57 @@ export function useBillingCredits(user) {
     [apiUnavailable, authRequest, canLoad],
   );
 
+  const purchasePackage = useCallback(
+    async (pkg) => {
+      if (!canLoad) return null;
+
+      const packageId = pkg?.package_id ?? pkg?.id;
+      const packageKey = pkg?.key ?? pkg?.package_key ?? pkg?.code;
+
+      if (!packageId && !packageKey) {
+        throw new Error("Missing billing package identifier.");
+      }
+
+      setPurchaseLoading(true);
+      setError("");
+
+      try {
+        const payload = {
+          gateway: pkg?.gateway || "cardano",
+        };
+
+        if (packageId) {
+          payload.package_id = packageId;
+        } else {
+          payload.package_key = packageKey;
+        }
+
+        const response = await createPaymentIntent(authRequest, payload);
+        const intent = response?.payment_intent || response?.intent || response;
+
+        if (intent) {
+          const intentId = intent.payment_intent_id || intent.id;
+          setPaymentIntents((current) => [
+            intent,
+            ...current.filter((item) => {
+              const itemId = item.payment_intent_id || item.id;
+              return !intentId || itemId !== intentId;
+            }),
+          ]);
+        }
+
+        await loadAll({ silent: true });
+        return intent;
+      } catch (err) {
+        setError(getApiErrorMessage(err, "Unable to create payment intent."));
+        throw err;
+      } finally {
+        setPurchaseLoading(false);
+      }
+    },
+    [authRequest, canLoad, loadAll],
+  );
+
   const autoRefresh = useAutoRefresh({
     enabled: canLoad && !apiUnavailable,
     refresh: () => loadAll({ silent: true }),
@@ -168,12 +221,15 @@ export function useBillingCredits(user) {
       packages: creditPackages,
       paymentIntents,
       loading,
+      purchaseLoading,
       apiUnavailable,
       error,
       consecutiveFailures: autoRefresh.consecutiveFailures,
       isRefreshing: autoRefresh.isRefreshing,
       lastUpdatedAt: autoRefresh.lastUpdatedAt || manualLastUpdatedAt,
       refresh: loadAll,
+      purchasePackage,
+      createPurchaseIntent: purchasePackage,
     }),
     [
       balance,
@@ -181,6 +237,7 @@ export function useBillingCredits(user) {
       creditPackages,
       paymentIntents,
       loading,
+      purchaseLoading,
       apiUnavailable,
       error,
       autoRefresh.consecutiveFailures,
@@ -188,6 +245,7 @@ export function useBillingCredits(user) {
       autoRefresh.lastUpdatedAt,
       manualLastUpdatedAt,
       loadAll,
+      purchasePackage,
     ],
   );
 }

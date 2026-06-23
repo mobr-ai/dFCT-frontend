@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
@@ -23,6 +23,39 @@ function packageTranslation(t, pkg, field, fallback) {
   return t(`billingAccess.packageCatalog.${key}.${field}`, {
     defaultValue: fallback,
   });
+}
+
+function formatPaymentAmount(intent) {
+  const amount = intent?.display_price ??
+    intent?.amount_due ??
+    intent?.price_amount ??
+    intent?.amount ??
+    intent?.price;
+
+  if (amount === undefined || amount === null || amount === "") return "—";
+
+  const currency = intent?.currency_code ||
+    intent?.price_currency ||
+    intent?.currency ||
+    "";
+
+  return `${amount} ${currency}`.trim();
+}
+
+function formatIntentDate(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString();
+}
+
+function packageDisplayName(t, pkg) {
+  return packageTranslation(
+    t,
+    pkg,
+    "name",
+    pkg?.name || pkg?.code || t("billingAccess.unnamedPackage"),
+  );
 }
 
 function formatSyncTime(value) {
@@ -72,11 +105,15 @@ export default function BillingAccessPage() {
     packages,
     paymentIntents,
     loading,
+    purchaseLoading,
     error,
     lastUpdatedAt,
     consecutiveFailures,
     apiUnavailable,
+    purchasePackage,
   } = useBillingCredits(user);
+
+  const [purchaseNotice, setPurchaseNotice] = useState(null);
 
   useEffect(() => {
     if (!user?.access_token) navigate("/login");
@@ -93,6 +130,25 @@ export default function BillingAccessPage() {
     accessSummary?.free_topics_remaining ??
     accessSummary?.quota?.free_topics_remaining ??
     "—";
+
+  const handlePackagePurchase = async (pkg) => {
+    setPurchaseNotice(null);
+
+    try {
+      await purchasePackage(pkg);
+      setPurchaseNotice({
+        variant: "success",
+        message: t("billingAccess.purchaseIntentCreated", {
+          packageName: packageDisplayName(t, pkg),
+        }),
+      });
+    } catch (err) {
+      setPurchaseNotice({
+        variant: "secondary",
+        message: t("billingAccess.purchaseIntentFailed"),
+      });
+    }
+  };
 
   return (
     <main className="BillingAccessPage">
@@ -173,8 +229,24 @@ export default function BillingAccessPage() {
               <h2>{t("billingAccess.packagesTitle")}</h2>
               <p>{t("billingAccess.packagesSubtitle")}</p>
             </div>
-            <Button variant="primary" disabled>{t("billingAccess.addCredits")}</Button>
+            <Button
+              variant="primary"
+              disabled={packages.length === 0}
+              onClick={() => {
+                document
+                  .querySelector(".BillingAccess-packageGrid")
+                  ?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+            >
+              {t("billingAccess.addCredits")}
+            </Button>
           </div>
+
+          {purchaseNotice ? (
+            <Alert variant={purchaseNotice.variant} className="BillingAccess-alert">
+              {purchaseNotice.message}
+            </Alert>
+          ) : null}
 
           <div className="BillingAccess-packageGrid">
             {packages.length > 0 ? packages.map((pkg) => (
@@ -199,6 +271,16 @@ export default function BillingAccessPage() {
                       pkg.description || t("billingAccess.packageComingSoon"),
                     )}
                   </div>
+                  <Button
+                    className="BillingAccess-packageAction"
+                    variant="outline-primary"
+                    disabled={purchaseLoading || apiUnavailable}
+                    onClick={() => handlePackagePurchase(pkg)}
+                  >
+                    {purchaseLoading
+                      ? t("billingAccess.purchaseCreating")
+                      : t("billingAccess.createPaymentIntent")}
+                  </Button>
                 </Card.Body>
               </Card>
             )) : (
@@ -230,10 +312,10 @@ export default function BillingAccessPage() {
               <tbody>
                 {paymentIntents.length > 0 ? paymentIntents.map((intent) => (
                   <tr key={intent.id || intent.intent_id || intent.created_at}>
-                    <td>{intent.kind || intent.gateway || "—"}</td>
+                    <td>{intent.package?.name || intent.package_name || intent.gateway || "—"}</td>
                     <td>{intent.status || "—"}</td>
-                    <td>{intent.display_price || intent.amount || "—"}</td>
-                    <td>{intent.created_at || "—"}</td>
+                    <td>{formatPaymentAmount(intent)}</td>
+                    <td>{formatIntentDate(intent.created_at)}</td>
                   </tr>
                 )) : (
                   <tr><td colSpan="4">{t("billingAccess.noActivity")}</td></tr>
