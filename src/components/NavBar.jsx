@@ -26,6 +26,25 @@ import avatarImg from "./../icons/avatar.png";
 import AnimatedBrand from "./branding/AnimatedBrand";
 import GlobalTopicSearch from "./search/GlobalTopicSearch";
 import { useAdminAccess } from "../hooks/useAdminAccess";
+import { useBillingStatus } from "../hooks/useBillingStatus";
+
+function numberFrom(...values) {
+  for (const value of values) {
+    const n = Number(value);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+
+function formatCredits(value) {
+  const n = numberFrom(value);
+  return Number.isInteger(n) ? String(n) : n.toFixed(6).replace(/\.?0+$/, "");
+}
+
+function compactUserName(user) {
+  const value = user?.username || user?.email || "d-FCT user";
+  return value.length > 16 ? `${value.slice(0, 13)}…` : value;
+}
 
 function NavBar(props) {
   const [expanded, setExpanded] = useState(false);
@@ -33,6 +52,30 @@ function NavBar(props) {
   const location = useLocation();
   const { t } = useTranslation();
   const { isAdmin } = useAdminAccess(props.userData);
+  const billingStatus = useBillingStatus(props.userData);
+  const billingCredits = formatCredits(
+    billingStatus.balance?.credits_available ??
+      billingStatus.balance?.available_credits ??
+      billingStatus.balance?.balance,
+  );
+  const freeTopicsRemaining = numberFrom(
+    billingStatus.access?.free_topics_remaining ??
+      billingStatus.access?.freeTopicsRemaining,
+  );
+  const accessTier =
+    billingStatus.access?.access_tier || billingStatus.access?.tier || "standard";
+  const hasCreditBalance = numberFrom(
+    billingStatus.balance?.credits_available,
+    billingStatus.balance?.available_credits,
+    billingStatus.balance?.balance,
+  ) > 0;
+  const billingStatusLabel = hasCreditBalance
+    ? `${billingCredits} DFCT`
+    : t("billingAccess.freeTopicsCompact", {
+        count: freeTopicsRemaining,
+      });
+  const showBillingStatus =
+    Boolean(props.userData) && billingStatus.loaded && !billingStatus.apiUnavailable;
 
   const topClick = useCallback(() => {
     const clearSearchHome = () => {
@@ -76,15 +119,20 @@ function NavBar(props) {
         src={props.userData.avatar ? props.userData.avatar : avatarImg}
         alt="Profile avatar"
         title={
-          props.userData.username.length > 16 ? props.userData.username : null
+          (props.userData.username || "").length > 16
+            ? props.userData.username
+            : null
         }
         onError={(e) => (e.target.src = avatarImg)}
         roundedCircle
-        style={{ width: "30px", marginRight: "5px" }}
+        className="Navbar-user-avatar"
       />
-      {" " + props.userData.username.length > 16
-        ? props.userData.username.slice(0, 13) + "…"
-        : props.userData.username}
+      <span className="Navbar-user-name">{compactUserName(props.userData)}</span>
+      {showBillingStatus && (
+        <span className="Navbar-billing-status-badge">
+          {billingStatusLabel}
+        </span>
+      )}
     </Container>
   );
 
@@ -323,6 +371,51 @@ function NavBar(props) {
 
             {props.userData && (
               <NavDropdown title={userMenu} id="navbar-dropdown">
+                {showBillingStatus && (
+                  <>
+                    <div className="Navbar-account-summary">
+                      <div className="Navbar-account-profile">
+                        <Image
+                          src={props.userData.avatar ? props.userData.avatar : avatarImg}
+                          alt="Profile avatar"
+                          onError={(e) => (e.target.src = avatarImg)}
+                          roundedCircle
+                          className="Navbar-account-avatar"
+                        />
+                        <div>
+                          <strong>{compactUserName(props.userData)}</strong>
+                          <span>
+                            {hasCreditBalance
+                              ? t("billingAccess.creditBalanceLabel")
+                              : t("billingAccess.freeAccessLabel")}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={`Navbar-account-stats ${hasCreditBalance ? "is-credit" : "is-free"}`}>
+                        <div className="Navbar-account-stat">
+                          <span>{t("billingAccess.creditsAvailable")}</span>
+                          <strong>{billingCredits} DFCT</strong>
+                        </div>
+
+                        {!hasCreditBalance && (
+                          <>
+                            <div className="Navbar-account-stat">
+                              <span>{t("billingAccess.freeTopicsRemaining")}</span>
+                              <strong>{freeTopicsRemaining}</strong>
+                            </div>
+                            <div className="Navbar-account-stat is-wide">
+                              <span>{t("billingAccess.accessTier")}</span>
+                              <strong>{accessTier}</strong>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <NavDropdown.Divider />
+                  </>
+                )}
+
                 <NavDropdown.Item
                   onClick={() => {
                     navigate("/");
