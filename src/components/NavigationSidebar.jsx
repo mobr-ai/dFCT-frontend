@@ -147,7 +147,7 @@ function NavigationSidebarContent({
         onClick={closeIfUnpinned}
         to="/billing"
         className={`Navbar-item ${
-          location.pathname.includes("/billing") ? "active" : ""
+          location.pathname === "/billing" ? "active" : ""
         }`}
       >
         <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}

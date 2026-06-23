@@ -876,3 +876,72 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+.DfctBillingAdmin-paymentIntentList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.DfctBillingAdmin-paymentIntentCard {
+  background: var(--theme-surface-subtle, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  border-radius: 16px;
+  padding: 0.85rem;
+}
+
+.DfctBillingAdmin-paymentIntentMain {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.DfctBillingAdmin-paymentIntentMain > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.DfctBillingAdmin-paymentIntentMain strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctBillingAdmin-paymentIntentMain span {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.82rem;
+}
+
+.DfctBillingAdmin-paymentIntentMeta {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.DfctBillingAdmin-paymentIntentMeta span {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.DfctBillingAdmin-paymentIntentMeta small {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.DfctBillingAdmin-paymentIntentMeta strong {
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .DfctBillingAdmin-paymentIntentMeta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

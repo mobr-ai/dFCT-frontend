@@ -510,7 +510,8 @@
     "syncBackoff": "Sync retrying safely",
     "syncWaitingForApi": "Waiting for billing API",
     "syncIssueTitle": "Billing sync issue",
-    "syncIssueText": "We could not refresh billing data. The page will retry automatically with backoff."
+    "syncIssueText": "We could not refresh billing data. The page will retry automatically with backoff.",
+    "packageComingSoon": "Payment rails are being configured for this package."
   },
   "adminBilling": {
     "nav": "Admin Billing",
@@ -622,6 +623,10 @@
     "notifyPaymentConfirmedDescription": "Send after a payment intent is verified and credits are issued.",
     "notifyAccessChanged": "Access changed",
     "notifyAccessChangedDescription": "Send when free quota, tier, or premium access changes.",
-    "navAdmin": "Admin"
+    "navAdmin": "Admin",
+    "intentCredits": "Credits",
+    "intentAmount": "Amount",
+    "intentGateway": "Gateway",
+    "intentCreated": "Created"
   }
 }

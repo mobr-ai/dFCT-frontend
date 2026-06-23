@@ -574,11 +574,79 @@ export default function AdminBillingCreditsPage() {
                 <h2>{t("adminBilling.paymentIntentsTitle")}</h2>
                 <p>{t("adminBilling.paymentIntentsSubtitle")}</p>
               </div>
-              <div className="BillingAccess-emptyState">
-                {paymentIntents.length === 0
-                  ? t("adminBilling.noPaymentIntents")
-                  : JSON.stringify(paymentIntents, null, 2)}
-              </div>
+              {paymentIntents.length === 0 ? (
+                <div className="BillingAccess-emptyState">
+                  {t("adminBilling.noPaymentIntents")}
+                </div>
+              ) : (
+                <div className="DfctBillingAdmin-paymentIntentList">
+                  {paymentIntents.map((intent) => {
+                    const packageName =
+                      intent.package?.name ||
+                      intent.package_name ||
+                      intent.package_key ||
+                      (intent.package_id ? `#${intent.package_id}` : "—");
+
+                    const credits = formatCredits(
+                      intent.credits_amount ||
+                      intent.credits ||
+                      intent.credit_amount ||
+                      0,
+                    );
+
+                    const amountDue = numberFrom(
+                      intent.amount_due,
+                      intent.price_amount,
+                      intent.amount,
+                      intent.price,
+                    );
+
+                    const currency =
+                      intent.currency_code ||
+                      intent.price_currency ||
+                      intent.currency ||
+                      "";
+
+                    return (
+                      <article
+                        className="DfctBillingAdmin-paymentIntentCard"
+                        key={intent.payment_intent_id || intent.id || intent.external_reference}
+                      >
+                        <div className="DfctBillingAdmin-paymentIntentMain">
+                          <div>
+                            <strong>{packageName}</strong>
+                            <span>{shorten(intent.external_reference || intent.id || intent.payment_intent_id)}</span>
+                          </div>
+                          <Badge bg={intent.status === "completed" ? "success" : "secondary"}>
+                            {intent.status || "pending"}
+                          </Badge>
+                        </div>
+
+                        <div className="DfctBillingAdmin-paymentIntentMeta">
+                          <span>
+                            <small>{t("adminBilling.intentCredits", "Credits")}</small>
+                            <strong>{credits} DFCT</strong>
+                          </span>
+                          <span>
+                            <small>{t("adminBilling.intentAmount", "Amount")}</small>
+                            <strong>
+                              {amountDue ? `${amountDue} ${currency}` : "—"}
+                            </strong>
+                          </span>
+                          <span>
+                            <small>{t("adminBilling.intentGateway", "Gateway")}</small>
+                            <strong>{intent.gateway || "—"}</strong>
+                          </span>
+                          <span>
+                            <small>{t("adminBilling.intentCreated", "Created")}</small>
+                            <strong>{formatDate(intent.created_at)}</strong>
+                          </span>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           </Tab>
 

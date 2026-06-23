@@ -175,10 +175,10 @@ export default function BillingAccessPage() {
                     {pkg.name || pkg.code || t("billingAccess.unnamedPackage")}
                   </div>
                   <div className="BillingAccess-packageCredits">
-                    {formatCredits(pkg.credits || pkg.credit_amount || 0)} DFCT
+                    {formatCredits(pkg.credits || pkg.credits_amount || pkg.credit_amount || 0)} DFCT
                   </div>
                   <div className="BillingAccess-cardCopy">
-                    {pkg.display_price || pkg.price || pkg.amount || "—"} {pkg.currency || ""}
+                    {pkg.description || t("billingAccess.packageComingSoon")}
                   </div>
                 </Card.Body>
               </Card>

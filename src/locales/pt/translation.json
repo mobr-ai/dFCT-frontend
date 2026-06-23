@@ -510,7 +510,8 @@
     "syncBackoff": "Nova tentativa segura de sincronização",
     "syncWaitingForApi": "Aguardando API de cobrança",
     "syncIssueTitle": "Problema na sincronização de cobrança",
-    "syncIssueText": "Não foi possível atualizar os dados de cobrança. A página tentará novamente automaticamente com backoff."
+    "syncIssueText": "Não foi possível atualizar os dados de cobrança. A página tentará novamente automaticamente com backoff.",
+    "packageComingSoon": "Os meios de pagamento deste pacote estão sendo configurados."
   },
   "adminBilling": {
     "nav": "Admin Cobrança",
@@ -622,6 +623,10 @@
     "notifyPaymentConfirmedDescription": "Enviar após uma intenção de pagamento ser verificada e os créditos emitidos.",
     "notifyAccessChanged": "Acesso alterado",
     "notifyAccessChangedDescription": "Enviar quando cota gratuita, plano ou acesso premium mudar.",
-    "navAdmin": "Admin"
+    "navAdmin": "Admin",
+    "intentCredits": "Créditos",
+    "intentAmount": "Valor",
+    "intentGateway": "Gateway",
+    "intentCreated": "Criado em"
   }
 }
