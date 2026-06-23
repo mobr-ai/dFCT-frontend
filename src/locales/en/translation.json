@@ -511,7 +511,21 @@
     "syncWaitingForApi": "Waiting for billing API",
     "syncIssueTitle": "Billing sync issue",
     "syncIssueText": "We could not refresh billing data. The page will retry automatically with backoff.",
-    "packageComingSoon": "Payment rails are being configured for this package."
+    "packageComingSoon": "Payment rails are being configured for this package.",
+    "packageCatalog": {
+      "starter_25": {
+        "name": "Starter Pack",
+        "description": "Starter credits for lightweight fact-checking and topic publication."
+      },
+      "reviewer_100": {
+        "name": "Reviewer Pack",
+        "description": "Credits for regular review workflows, evidence analysis, and contribution activity."
+      },
+      "auditor_500": {
+        "name": "Auditor Pack",
+        "description": "Credits for larger verification efforts, audits, campaigns, and community-scale review."
+      }
+    }
   },
   "adminBilling": {
     "nav": "Admin Billing",

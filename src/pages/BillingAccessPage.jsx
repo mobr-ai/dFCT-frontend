@@ -16,6 +16,15 @@ function formatCredits(value) {
   return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
+function packageTranslation(t, pkg, field, fallback) {
+  const key = String(pkg?.key || pkg?.package_key || pkg?.code || "").trim();
+  if (!key) return fallback;
+
+  return t(`billingAccess.packageCatalog.${key}.${field}`, {
+    defaultValue: fallback,
+  });
+}
+
 function formatSyncTime(value) {
   if (!value) return "";
   return value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -169,16 +178,26 @@ export default function BillingAccessPage() {
 
           <div className="BillingAccess-packageGrid">
             {packages.length > 0 ? packages.map((pkg) => (
-              <Card key={pkg.id || pkg.code || pkg.name} className="BillingAccess-card">
+              <Card key={pkg.id || pkg.key || pkg.code || pkg.name} className="BillingAccess-card">
                 <Card.Body>
                   <div className="BillingAccess-packageName">
-                    {pkg.name || pkg.code || t("billingAccess.unnamedPackage")}
+                    {packageTranslation(
+                      t,
+                      pkg,
+                      "name",
+                      pkg.name || pkg.code || t("billingAccess.unnamedPackage"),
+                    )}
                   </div>
                   <div className="BillingAccess-packageCredits">
                     {formatCredits(pkg.credits || pkg.credits_amount || pkg.credit_amount || 0)} DFCT
                   </div>
                   <div className="BillingAccess-cardCopy">
-                    {pkg.description || t("billingAccess.packageComingSoon")}
+                    {packageTranslation(
+                      t,
+                      pkg,
+                      "description",
+                      pkg.description || t("billingAccess.packageComingSoon"),
+                    )}
                   </div>
                 </Card.Body>
               </Card>
