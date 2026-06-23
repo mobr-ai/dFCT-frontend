@@ -961,3 +961,51 @@
 .BillingAccess-purchaseNotice.is-secondary {
   border-color: rgba(255, 255, 255, 0.18);
 }
+
+.DfctBillingAdmin-statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-width: 3.75rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  color: var(--dfct-muted-text, var(--bs-secondary-color, #64748b));
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.DfctBillingAdmin-statusPill.is-paid,
+.DfctBillingAdmin-statusPill.is-fulfilled,
+.DfctBillingAdmin-statusPill.is-completed {
+  color: var(--dfct-success, var(--bs-success, #16a34a));
+}
+
+.DfctBillingAdmin-statusPill.is-pending {
+  color: var(--dfct-muted-text, var(--bs-secondary-color, #64748b));
+}
+
+.DfctBillingAdmin-paymentIntentAction {
+  align-items: flex-start;
+}
+
+.btn.DfctBillingAdmin-fulfillPaymentButton {
+  width: auto;
+  min-width: 7.5rem;
+  max-width: 12rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.55rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .btn.DfctBillingAdmin-fulfillPaymentButton {
+    width: 100%;
+    max-width: none;
+  }
+}

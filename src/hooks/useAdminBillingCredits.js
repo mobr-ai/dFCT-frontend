@@ -8,6 +8,7 @@ import {
   fetchAdminCreditPackages,
   fetchAdminGateways,
   fetchAdminPaymentIntents,
+  fulfillAdminPaymentIntent,
 } from "../api/billingCredits";
 import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
 import { useAutoRefresh } from "./useAutoRefresh";
@@ -173,6 +174,30 @@ export function useAdminBillingCredits(user) {
     [authRequest, canLoad, loadAll],
   );
 
+  const fulfillPaymentIntent = useCallback(
+    async (paymentIntentId, { note } = {}) => {
+      if (!canLoad || !paymentIntentId) return null;
+
+      setActionLoading(`fulfillPaymentIntent:${paymentIntentId}`);
+      setError("");
+
+      try {
+        const payload = await fulfillAdminPaymentIntent(authRequest, paymentIntentId, {
+          note,
+        });
+
+        await loadAll({ silent: true });
+        return payload;
+      } catch (err) {
+        setError(getApiErrorMessage(err, "Unable to fulfill payment request."));
+        throw err;
+      } finally {
+        setActionLoading("");
+      }
+    },
+    [authRequest, canLoad, loadAll],
+  );
+
   return useMemo(
     () => ({
       users,
@@ -191,6 +216,7 @@ export function useAdminBillingCredits(user) {
       lastUpdatedAt: autoRefresh.lastUpdatedAt || manualLastUpdatedAt,
       refresh: loadAll,
       grantCredits,
+      fulfillPaymentIntent,
     }),
     [
       users,
@@ -210,6 +236,7 @@ export function useAdminBillingCredits(user) {
       manualLastUpdatedAt,
       loadAll,
       grantCredits,
+      fulfillPaymentIntent,
     ],
   );
 }

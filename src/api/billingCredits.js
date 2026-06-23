@@ -47,6 +47,9 @@ export const createAdminCreditGrant = (authRequest, payload = {}) =>
 export const fetchAdminPaymentIntents = (authRequest, params = {}) =>
   get(authRequest, "/api/admin/billing/payment-intents", params);
 
+export const fulfillAdminPaymentIntent = (authRequest, paymentIntentId, payload = {}) =>
+  post(authRequest, `/api/admin/billing/payment-intents/${paymentIntentId}/fulfill`, payload);
+
 export const fetchAdminCreditPackages = (authRequest, params = {}) =>
   get(authRequest, "/api/admin/billing/credits/packages", params);
 
@@ -66,6 +69,7 @@ export const listAdminCreditGrants = fetchAdminCreditGrants;
 export const grantAdminCredits = createAdminCreditGrant;
 export const grantCredits = createAdminCreditGrant;
 export const listAdminPaymentIntents = fetchAdminPaymentIntents;
+export const markAdminPaymentIntentPaid = fulfillAdminPaymentIntent;
 export const listAdminCreditPackages = fetchAdminCreditPackages;
 export const listAdminGateways = fetchAdminGateways;
 export const listAdminAccessTiers = fetchAdminAccessTiers;

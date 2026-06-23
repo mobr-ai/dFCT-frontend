@@ -224,6 +224,7 @@ export default function AdminBillingCreditsPage() {
     error,
     lastUpdatedAt,
     grantCredits,
+    fulfillPaymentIntent,
   } = useAdminBillingCredits(user);
 
   const [activeTab, setActiveTab] = useState("billing");
@@ -231,6 +232,22 @@ export default function AdminBillingCreditsPage() {
   const [sortField, setSortField] = useState("user_id");
   const [sortDirection, setSortDirection] = useState("asc");
   const [modalState, setModalState] = useState({ action: null, row: null });
+
+  const handleFulfillPaymentIntent = async (intent) => {
+    const paymentIntentId = intent?.payment_intent_id || intent?.id;
+
+    if (!paymentIntentId) return;
+
+    try {
+      await fulfillPaymentIntent(paymentIntentId);
+      showToast?.(t("adminBilling.fulfillPaymentIntentSuccess"), "success");
+    } catch (err) {
+      showToast?.(
+        err?.message || t("adminBilling.fulfillPaymentIntentError"),
+        "danger",
+      );
+    }
+  };
 
   const normalizedUsers = useMemo(
     () =>
@@ -607,19 +624,24 @@ export default function AdminBillingCreditsPage() {
                       intent.currency ||
                       "";
 
+                    const paymentIntentId = intent.payment_intent_id || intent.id;
+                    const status = String(intent.status || "pending").toLowerCase();
+                    const canFulfill = status === "pending";
+                    const fulfillLoading = actionLoading === `fulfillPaymentIntent:${paymentIntentId}`;
+
                     return (
                       <article
                         className="DfctBillingAdmin-paymentIntentCard"
-                        key={intent.payment_intent_id || intent.id || intent.external_reference}
+                        key={paymentIntentId || intent.external_reference}
                       >
                         <div className="DfctBillingAdmin-paymentIntentMain">
                           <div>
                             <strong>{packageName}</strong>
                             <span>{shorten(intent.external_reference || intent.id || intent.payment_intent_id)}</span>
                           </div>
-                          <Badge bg={intent.status === "completed" ? "success" : "secondary"}>
+                          <span className={`DfctBillingAdmin-statusPill is-${status}`}>
                             {intent.status || "pending"}
-                          </Badge>
+                          </span>
                         </div>
 
                         <div className="DfctBillingAdmin-paymentIntentMeta">
@@ -636,6 +658,29 @@ export default function AdminBillingCreditsPage() {
                           <span>
                             <small>{t("adminBilling.intentGateway", "Gateway")}</small>
                             <strong>{intent.gateway || "—"}</strong>
+                          </span>
+                          <span className="DfctBillingAdmin-paymentIntentAction">
+                            <small>{t("adminBilling.intentActions", "Actions")}</small>
+                            {canFulfill ? (
+                              <Button
+                                size="sm"
+                                variant="outline-success"
+                                className="DfctBillingAdmin-fulfillPaymentButton"
+                                disabled={fulfillLoading}
+                                onClick={() => handleFulfillPaymentIntent(intent)}
+                              >
+                                {fulfillLoading ? (
+                                  <>
+                                    <Spinner animation="border" size="sm" className="me-2" />
+                                    {t("adminBilling.fulfillPaymentIntentLoading")}
+                                  </>
+                                ) : (
+                                  t("adminBilling.fulfillPaymentIntent")
+                                )}
+                              </Button>
+                            ) : (
+                              <strong>{t("adminBilling.intentNoAction", "—")}</strong>
+                            )}
                           </span>
                           <span>
                             <small>{t("adminBilling.intentCreated", "Created")}</small>
