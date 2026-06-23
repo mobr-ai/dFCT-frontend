@@ -24,21 +24,44 @@ function packageTranslation(t, pkg, field, fallback) {
   });
 }
 
-function formatPaymentAmount(intent) {
-  const amount = intent?.display_price ??
+function preferredCurrencyForLanguage(language) {
+  return String(language || "").toLowerCase().startsWith("pt") ? "BRL" : "USD";
+}
+
+function formatMoneyAmount(amount, currency, language) {
+  if (amount === undefined || amount === null || amount === "") return "—";
+
+  const numericAmount = Number(amount);
+  const currencyCode = String(currency || "").toUpperCase();
+
+  if (!currencyCode) return String(amount);
+
+  const fiatCurrencies = new Set(["BRL", "USD", "EUR", "GBP"]);
+
+  if (!Number.isFinite(numericAmount) || !fiatCurrencies.has(currencyCode)) {
+    return `${amount} ${currencyCode}`.trim();
+  }
+
+  return new Intl.NumberFormat(language || undefined, {
+    style: "currency",
+    currency: currencyCode,
+  }).format(numericAmount);
+}
+
+function formatPaymentAmount(intent, language) {
+  const amount = intent?.display_amount ??
     intent?.amount_due ??
     intent?.price_amount ??
     intent?.amount ??
     intent?.price;
 
-  if (amount === undefined || amount === null || amount === "") return "—";
-
-  const currency = intent?.currency_code ||
+  const currency = intent?.display_currency ||
+    intent?.currency_code ||
     intent?.price_currency ||
     intent?.currency ||
     "";
 
-  return `${amount} ${currency}`.trim();
+  return formatMoneyAmount(amount, currency, language);
 }
 
 function formatIntentDate(value) {
@@ -58,7 +81,7 @@ function packageDisplayName(t, pkg) {
 }
 
 export default function BillingAccessPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const outlet = useOutletContext() || {};
   const user = outlet.user;
@@ -95,7 +118,9 @@ export default function BillingAccessPage() {
     setPurchaseNotice(null);
 
     try {
-      await purchasePackage(pkg);
+      await purchasePackage(pkg, {
+        preferredCurrency: preferredCurrencyForLanguage(i18n.language),
+      });
       setPurchaseNotice({
         variant: "success",
         message: t("billingAccess.purchaseIntentCreated", {
@@ -184,9 +209,9 @@ export default function BillingAccessPage() {
           </div>
 
           {purchaseNotice ? (
-            <Alert variant={purchaseNotice.variant} className="BillingAccess-alert">
+            <div className={`BillingAccess-purchaseNotice is-${purchaseNotice.variant || "info"}`}>
               {purchaseNotice.message}
-            </Alert>
+            </div>
           ) : null}
 
           <div className="BillingAccess-packageGrid">
@@ -255,7 +280,7 @@ export default function BillingAccessPage() {
                   <tr key={intent.id || intent.intent_id || intent.created_at}>
                     <td>{intent.package?.name || intent.package_name || intent.gateway || "—"}</td>
                     <td>{intent.status || "—"}</td>
-                    <td>{formatPaymentAmount(intent)}</td>
+                    <td>{formatPaymentAmount(intent, i18n.language)}</td>
                     <td>{formatIntentDate(intent.created_at)}</td>
                   </tr>
                 )) : (
