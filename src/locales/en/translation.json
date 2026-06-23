@@ -542,6 +542,7 @@
     "syncBackoff": "Sync retrying safely",
     "syncWaitingForApi": "Waiting for admin billing API",
     "syncIssueTitle": "Admin billing sync issue",
-    "syncIssueText": "We could not refresh admin billing data. The page will retry automatically with backoff."
+    "syncIssueText": "We could not refresh admin billing data. The page will retry automatically with backoff.",
+    "accessDeniedHint": "Admin access is resolved by backend roles. Ask an operator to grant your account an admin role."
   }
 }

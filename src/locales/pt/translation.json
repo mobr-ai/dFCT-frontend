@@ -542,6 +542,7 @@
     "syncBackoff": "Nova tentativa segura de sincronização",
     "syncWaitingForApi": "Aguardando API admin de cobrança",
     "syncIssueTitle": "Problema na sincronização admin de cobrança",
-    "syncIssueText": "Não foi possível atualizar os dados admin de cobrança. A página tentará novamente automaticamente com backoff."
+    "syncIssueText": "Não foi possível atualizar os dados admin de cobrança. A página tentará novamente automaticamente com backoff.",
+    "accessDeniedHint": "O acesso admin é resolvido pelos papéis do backend. Peça para um operador conceder um papel admin à sua conta."
   }
 }

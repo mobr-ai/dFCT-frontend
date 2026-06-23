@@ -64,20 +64,23 @@ export default function AdminBillingCreditsPage() {
     gateways,
     accessTiers,
     loading,
+    accessDenied,
     lastUpdatedAt,
     consecutiveFailures,
     apiUnavailable,
     error,
   } = useAdminBillingCredits(user);
 
-  if (!user?.is_admin) {
+  if (accessDenied) {
     return (
-      <main className="BillingAccessPage">
+      <main className="BillingAccessPage AdminBillingPage">
         <Container className="BillingAccess">
-          <Alert variant="warning">
-            <strong>{t("adminBilling.accessDeniedTitle")}</strong>
-            <div>{t("adminBilling.accessDeniedText")}</div>
-          </Alert>
+          <section className="BillingAccess-accessDeniedCard">
+            <span className="BillingAccess-eyebrow">{t("adminBilling.eyebrow")}</span>
+            <h1>{t("adminBilling.accessDeniedTitle")}</h1>
+            <p>{t("adminBilling.accessDeniedText")}</p>
+            <p className="BillingAccess-cardCopy">{t("adminBilling.accessDeniedHint")}</p>
+          </section>
         </Container>
       </main>
     );

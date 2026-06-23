@@ -238,3 +238,25 @@
   background: var(--theme-text-muted);
   box-shadow: none;
 }
+
+.BillingAccess-accessDeniedCard {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  margin: 2rem auto;
+  max-width: 760px;
+  padding: 1.35rem;
+}
+
+.BillingAccess-accessDeniedCard h1 {
+  color: var(--theme-text) !important;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-accessDeniedCard p {
+  color: var(--theme-text-soft) !important;
+  margin-bottom: 0.55rem;
+}

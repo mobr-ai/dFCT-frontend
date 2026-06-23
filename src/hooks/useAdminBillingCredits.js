@@ -15,8 +15,16 @@ const ADMIN_BILLING_API_UNAVAILABLE_CACHE_MS = 120000;
 
 let adminBillingApiUnavailableUntil = 0;
 
+function getHttpStatus(err) {
+  return Number(err?.status || err?.statusCode || err?.response?.status);
+}
+
 function isNotFoundError(err) {
-  return Number(err?.status || err?.statusCode || err?.response?.status) === 404;
+  return getHttpStatus(err) === 404;
+}
+
+function isForbiddenError(err) {
+  return getHttpStatus(err) === 403;
 }
 
 function isAdminBillingApiUnavailableCached() {
@@ -47,9 +55,10 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
   const [apiUnavailable, setApiUnavailable] = useState(
     isAdminBillingApiUnavailableCached
   );
+  const [accessDenied, setAccessDenied] = useState(false);
   const [error, setError] = useState("");
 
-  const canLoad = Boolean(user?.access_token && user?.is_admin);
+  const canLoad = Boolean(user?.access_token);
 
   useEffect(() => {
     authRequestRef.current = authRequest;
@@ -66,6 +75,7 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
     }
 
     setLoading(true);
+    setAccessDenied(false);
     setError("");
 
     try {
@@ -80,6 +90,12 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
         if (isNotFoundError(err)) {
           markAdminBillingApiUnavailable();
           setApiUnavailable(true);
+          setError("");
+          return null;
+        }
+
+        if (isForbiddenError(err)) {
+          setAccessDenied(true);
           setError("");
           return null;
         }
@@ -192,6 +208,7 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
       loading: loading || isRefreshing,
       isRefreshing,
       actionLoading,
+      accessDenied,
       lastUpdatedAt,
       consecutiveFailures,
       apiUnavailable,
@@ -209,6 +226,7 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
       loading,
       isRefreshing,
       actionLoading,
+      accessDenied,
       lastUpdatedAt,
       consecutiveFailures,
       apiUnavailable,
