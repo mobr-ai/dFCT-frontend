@@ -2,7 +2,6 @@
   background: var(--theme-bg) !important;
   color: var(--theme-text) !important;
   min-height: calc(100vh - var(--dfct-navbar-height, 76px));
-  margin: 2.5vw;
 }
 
 .BillingAccess {
@@ -189,9 +188,6 @@
 }
 
 @media (max-width: 768px) {
-  .BillingAccess {
-    padding: 1.25rem 0 3rem;
-  }
 
   .BillingAccess-header,
   .BillingAccess-sectionHeader {
@@ -694,10 +690,9 @@
   display: none !important;
 }
 
-/* Final width/overflow pass for CAP-like admin billing table. */
+/*  width/overflow for admin billing table. */
 .AdminBillingPage .BillingAccess.DfctBillingAdmin {
   max-width: min(1520px, calc(100vw - 300px)) !important;
-  width: min(1520px, calc(100vw - 300px)) !important;
 }
 
 .DfctBillingAdmin-userTableWrap {
@@ -775,7 +770,6 @@
 /* Final responsive correction: desktop can be wide, mobile must never use sidebar-width math. */
 .AdminBillingPage .BillingAccess.DfctBillingAdmin {
   max-width: min(1520px, calc(100vw - 2rem)) !important;
-  width: min(1520px, calc(100vw - 2rem)) !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
@@ -809,7 +803,7 @@
 
   .AdminBillingPage .BillingAccess.DfctBillingAdmin {
     max-width: calc(100vw - 1rem) !important;
-    width: calc(100vw - 1rem) !important;
+    width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }

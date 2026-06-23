@@ -511,7 +511,21 @@
     "syncWaitingForApi": "Aguardando API de cobrança",
     "syncIssueTitle": "Problema na sincronização de cobrança",
     "syncIssueText": "Não foi possível atualizar os dados de cobrança. A página tentará novamente automaticamente com backoff.",
-    "packageComingSoon": "Os meios de pagamento deste pacote estão sendo configurados."
+    "packageComingSoon": "Os meios de pagamento deste pacote estão sendo configurados.",
+    "packageCatalog": {
+      "starter_25": {
+        "name": "Pacote inicial",
+        "description": "Créditos iniciais para checagens leves e publicação de tópicos."
+      },
+      "reviewer_100": {
+        "name": "Pacote revisor",
+        "description": "Créditos para fluxos regulares de revisão, análise de evidências e participação."
+      },
+      "auditor_500": {
+        "name": "Pacote auditor",
+        "description": "Créditos para verificações maiores, auditorias, campanhas e revisão em escala comunitária."
+      }
+    }
   },
   "adminBilling": {
     "nav": "Admin Cobrança",
