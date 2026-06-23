@@ -1,0 +1,947 @@
+.BillingAccessPage {
+  background: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  min-height: calc(100vh - var(--dfct-navbar-height, 76px));
+  margin: 2.5vw;
+}
+
+.BillingAccess {
+  color: var(--theme-text) !important;
+  padding: 2rem 0 4rem;
+}
+
+.BillingAccess-header,
+.BillingAccess-sectionHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.BillingAccess-eyebrow {
+  color: var(--theme-primary) !important;
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.BillingAccess h1,
+.BillingAccess h2 {
+  color: var(--theme-text) !important;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.45rem;
+  text-shadow: none !important;
+}
+
+.BillingAccess h2 {
+  font-size: 1.25rem;
+}
+
+.BillingAccess p,
+.BillingAccess-cardCopy {
+  color: var(--theme-text-muted) !important;
+  margin: 0;
+}
+
+.BillingAccess-card {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px) !important;
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  height: 100%;
+}
+
+.BillingAccess-cardLabel {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.BillingAccess-balanceValue {
+  color: var(--theme-text) !important;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  margin-bottom: 0.65rem;
+}
+
+.BillingAccess-metricRow {
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+}
+
+.BillingAccess-metricRow:last-child {
+  border-bottom: 0;
+}
+
+.BillingAccess-gatewayList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.BillingAccess-section {
+  margin-top: 2rem;
+}
+
+.BillingAccess-packageGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.BillingAccess-packageName {
+  color: var(--theme-text) !important;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-packageCredits {
+  color: var(--theme-primary) !important;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-tableWrap {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  overflow: hidden;
+}
+
+.BillingAccess-table {
+  color: var(--theme-text) !important;
+  margin: 0 !important;
+}
+
+.BillingAccess-table th,
+.BillingAccess-table td {
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-table th {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.BillingAccess-alert {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-note {
+  background: var(--theme-primary-soft) !important;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 18px);
+  color: var(--theme-text) !important;
+  font-weight: 700;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.BillingAccess-tabs {
+  border-bottom-color: var(--theme-border) !important;
+}
+
+.BillingAccess-tabs .nav-link {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-text-muted) !important;
+  font-weight: 800;
+}
+
+.BillingAccess-tabs .nav-link.active {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) var(--theme-border) var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-jsonPreview {
+  background: var(--theme-surface-2) !important;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text-soft) !important;
+  font-size: 0.8rem;
+  max-height: 22rem;
+  overflow: auto;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .BillingAccess {
+    padding: 1.25rem 0 3rem;
+  }
+
+  .BillingAccess-header,
+  .BillingAccess-sectionHeader {
+    display: block;
+  }
+
+  .BillingAccess-header .btn,
+  .BillingAccess-sectionHeader .btn {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
+
+.BillingAccess-syncBadge {
+  align-items: center;
+  align-self: flex-start;
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 999px;
+  color: var(--theme-text-soft) !important;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.01em;
+  padding: 0.55rem 0.8rem;
+  white-space: nowrap;
+}
+
+.BillingAccess-syncBadge.is-pending {
+  color: var(--theme-text-muted) !important;
+}
+
+.BillingAccess-syncDot {
+  background: var(--theme-primary);
+  border-radius: 999px;
+  box-shadow: 0 0 0 4px var(--theme-primary-soft);
+  display: inline-block;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+.BillingAccess-syncBadge.is-pending .BillingAccess-syncDot {
+  background: var(--theme-text-muted);
+  box-shadow: none;
+}
+
+.BillingAccess-accessDeniedCard {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  margin: 2rem auto;
+  max-width: 760px;
+  padding: 1.35rem;
+}
+
+.BillingAccess-accessDeniedCard h1 {
+  color: var(--theme-text) !important;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  margin-bottom: 0.5rem;
+}
+
+.BillingAccess-accessDeniedCard p {
+  color: var(--theme-text-soft) !important;
+  margin-bottom: 0.55rem;
+}
+
+.BillingAccess-adminStat strong {
+  color: var(--theme-text) !important;
+  display: block;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+  margin-top: 0.5rem;
+}
+
+.BillingAccess-tabs {
+  border-bottom: 1px solid var(--theme-border) !important;
+  margin-top: 1.5rem;
+}
+
+.BillingAccess-tabs .nav-link {
+  color: var(--theme-text-soft) !important;
+  border-color: transparent !important;
+  font-weight: 700;
+}
+
+.BillingAccess-tabs .nav-link.active {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) var(--theme-border) var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-panel {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.BillingAccess-panel h2 {
+  color: var(--theme-text) !important;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.BillingAccess-panel p,
+.BillingAccess-panel label {
+  color: var(--theme-text-soft) !important;
+}
+
+.BillingAccess-panelHeader {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.BillingAccess-searchInput {
+  max-width: 360px;
+}
+
+.BillingAccess-adminGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1.2fr);
+}
+
+.BillingAccess-tableWrap {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  overflow: hidden;
+}
+
+.BillingAccess-table {
+  color: var(--theme-text) !important;
+  margin-bottom: 0;
+}
+
+.BillingAccess-table th {
+  color: var(--theme-text-muted) !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.BillingAccess-table td {
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.BillingAccess-emptyState {
+  background: var(--theme-surface-muted, rgba(127, 127, 127, 0.08));
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text-soft);
+  padding: 1rem;
+  white-space: pre-wrap;
+}
+
+.BillingAccess-error {
+  background: rgba(220, 53, 69, 0.12);
+  border: 1px solid rgba(220, 53, 69, 0.28);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text) !important;
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .BillingAccess-panelHeader,
+  .BillingAccess-adminGrid {
+    display: block;
+  }
+
+  .BillingAccess-searchInput {
+    margin-top: 1rem;
+    max-width: none;
+  }
+}
+
+/* CAP-like Billing & Access admin directory adapted for d-FCT. */
+.DfctBillingAdmin {
+  max-width: 1120px;
+}
+
+.DfctBillingAdmin .BillingAccess-header {
+  align-items: flex-start;
+}
+
+.DfctBillingAdmin-tabs {
+  margin-top: 1.3rem;
+}
+
+.DfctBillingAdmin-section {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl, 18px);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text) !important;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.DfctBillingAdmin-sectionHeader {
+  margin-bottom: 0.9rem;
+}
+
+.DfctBillingAdmin-sectionHeader h2 {
+  color: var(--theme-text) !important;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.DfctBillingAdmin-sectionHeader p {
+  color: var(--theme-text-soft) !important;
+  margin: 0.35rem 0 0;
+}
+
+.DfctBillingAdmin-statGrid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 0.9rem;
+}
+
+.DfctBillingAdmin-stat {
+  background: var(--theme-surface-muted, rgba(127, 127, 127, 0.08));
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  min-height: 82px;
+  padding: 0.85rem;
+}
+
+.DfctBillingAdmin-stat span {
+  color: var(--theme-text-muted) !important;
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctBillingAdmin-stat strong {
+  color: var(--theme-text) !important;
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1;
+  margin-top: 0.35rem;
+}
+
+.DfctBillingAdmin-stat small {
+  color: var(--theme-text-soft) !important;
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.DfctBillingAdmin-stat--green {
+  border-color: rgba(25, 135, 84, 0.45);
+}
+
+.DfctBillingAdmin-stat--red {
+  border-color: rgba(220, 53, 69, 0.35);
+}
+
+.DfctBillingAdmin-search {
+  background: var(--theme-input-bg, var(--theme-surface)) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  margin-bottom: 0.75rem;
+}
+
+.DfctBillingAdmin-search::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+.DfctBillingAdmin-tableWrap {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  overflow: auto;
+}
+
+.DfctBillingAdmin-table {
+  border-collapse: collapse;
+  color: var(--theme-text) !important;
+  font-size: 0.88rem;
+  margin: 0;
+  min-width: 980px;
+  width: 100%;
+}
+
+.DfctBillingAdmin-table th,
+.DfctBillingAdmin-table td {
+  border-bottom: 1px solid var(--theme-border);
+  padding: 0.55rem 0.65rem;
+  vertical-align: middle;
+}
+
+.DfctBillingAdmin-table th {
+  color: var(--theme-text-muted) !important;
+  cursor: default;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.DfctBillingAdmin-table tbody tr:hover {
+  background: var(--theme-surface-muted, rgba(127, 127, 127, 0.08));
+}
+
+.DfctBillingAdmin-actions {
+  display: flex;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.DfctBillingAdmin-actions button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.45rem;
+  color: var(--theme-text) !important;
+  display: inline-flex;
+  font-size: 0.78rem;
+  height: 1.75rem;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 0 0.35rem;
+}
+
+.DfctBillingAdmin-actions button:hover {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary) !important;
+}
+
+.DfctBillingAdmin-toggleRow {
+  align-items: center;
+  border-top: 1px solid var(--theme-border);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.DfctBillingAdmin-toggleRow:first-of-type {
+  border-top: 0;
+}
+
+.DfctBillingAdmin-toggleRow strong {
+  color: var(--theme-text) !important;
+  display: block;
+}
+
+.DfctBillingAdmin-toggleRow p {
+  color: var(--theme-text-soft) !important;
+  margin: 0.2rem 0 0;
+}
+
+.DfctBillingAdmin-toggle {
+  align-items: center;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  color: var(--theme-text-soft);
+  display: inline-flex;
+  font-size: 0.75rem;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+}
+
+.DfctBillingAdmin-toggle span {
+  background: var(--theme-text-muted);
+  border-radius: 50%;
+  display: block;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+.DfctBillingAdmin-toggle.is-on span {
+  background: var(--theme-primary);
+}
+
+.DfctBillingAdmin-chipRow {
+  color: var(--theme-text-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.DfctBillingAdmin-modalBlock {
+  background: var(--theme-surface-muted, rgba(127, 127, 127, 0.08));
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+}
+
+.DfctBillingAdmin-modalBlock span,
+.DfctBillingAdmin-modalBlock small {
+  color: var(--theme-text-soft);
+  display: block;
+}
+
+.DfctBillingAdmin-modalBlock strong {
+  color: var(--theme-text);
+  display: block;
+}
+
+.DfctBillingAdmin-placeholderNotice {
+  background: rgba(255, 193, 7, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text);
+  padding: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .DfctBillingAdmin-statGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .DfctBillingAdmin-statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pro, theme-aware scrollbars for billing/admin dense surfaces. */
+.BillingAccessPage,
+.BillingAccessPage *,
+.DfctBillingAdmin-tableWrap,
+.Navbar-sidebar-content,
+.bm-menu {
+  scrollbar-color: var(--theme-primary, #2f80ed) transparent;
+  scrollbar-width: thin;
+}
+
+.BillingAccessPage *::-webkit-scrollbar,
+.DfctBillingAdmin-tableWrap::-webkit-scrollbar,
+.Navbar-sidebar-content::-webkit-scrollbar,
+.bm-menu::-webkit-scrollbar {
+  height: 0.72rem;
+  width: 0.72rem;
+}
+
+.BillingAccessPage *::-webkit-scrollbar-track,
+.DfctBillingAdmin-tableWrap::-webkit-scrollbar-track,
+.Navbar-sidebar-content::-webkit-scrollbar-track,
+.bm-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.BillingAccessPage *::-webkit-scrollbar-thumb,
+.DfctBillingAdmin-tableWrap::-webkit-scrollbar-thumb,
+.Navbar-sidebar-content::-webkit-scrollbar-thumb,
+.bm-menu::-webkit-scrollbar-thumb {
+  background: var(--theme-primary, #2f80ed);
+  border: 3px solid var(--theme-surface, #111827);
+  border-radius: 999px;
+}
+
+.BillingAccessPage *::-webkit-scrollbar-thumb:hover,
+.DfctBillingAdmin-tableWrap::-webkit-scrollbar-thumb:hover,
+.Navbar-sidebar-content::-webkit-scrollbar-thumb:hover,
+.bm-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-accent, var(--theme-primary, #2f80ed));
+}
+
+.DfctBillingAdmin-userTableWrap {
+  max-height: min(66vh, 680px);
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table thead th {
+  background: var(--theme-surface, #111827) !important;
+  box-shadow: 0 1px 0 var(--theme-border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.DfctBillingAdmin-actions button svg {
+  height: 0.82rem;
+  width: 0.82rem;
+}
+
+/* Billing/admin polling is silent; do not show sync status pills. */
+.BillingAccess-syncPill,
+.BillingAccess-syncDot {
+  display: none !important;
+}
+
+/* Final width/overflow pass for CAP-like admin billing table. */
+.AdminBillingPage .BillingAccess.DfctBillingAdmin {
+  max-width: min(1520px, calc(100vw - 300px)) !important;
+  width: min(1520px, calc(100vw - 300px)) !important;
+}
+
+.DfctBillingAdmin-userTableWrap {
+  max-height: 620px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table {
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th,
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td {
+  overflow: hidden !important;
+  padding-left: 0.45rem !important;
+  padding-right: 0.45rem !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(1),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(1) {
+  width: 118px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(2),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(2) {
+  width: 46px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(3),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(3) {
+  width: 250px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(4),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(4) {
+  width: 64px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(5),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(5),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(6),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(6) {
+  width: 76px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(7),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(7),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(8),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(8) {
+  width: 72px !important;
+}
+
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(9),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(9),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table th:nth-child(10),
+.DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table td:nth-child(10) {
+  width: 105px !important;
+}
+
+.DfctBillingAdmin-actions {
+  gap: 0.25rem !important;
+}
+
+.DfctBillingAdmin-actions button {
+  height: 1.55rem !important;
+  min-width: 1.55rem !important;
+  width: 1.55rem !important;
+}
+
+/* Final responsive correction: desktop can be wide, mobile must never use sidebar-width math. */
+.AdminBillingPage .BillingAccess.DfctBillingAdmin {
+  max-width: min(1520px, calc(100vw - 2rem)) !important;
+  width: min(1520px, calc(100vw - 2rem)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Silent polling: hide sync status in billing/admin headers. */
+.BillingAccess-header > .BillingAccess-syncPill,
+.BillingAccess-header > span.BillingAccess-syncPill,
+.BillingAccess-header > span {
+  display: none !important;
+}
+
+/* Desktop/tablet: avoid horizontal scroll by fitting the table. */
+@media (min-width: 901px) {
+  .DfctBillingAdmin-userTableWrap {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table {
+    min-width: 0 !important;
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
+}
+
+/* Mobile: restore usable layout instead of squeezing the admin panel. */
+@media (max-width: 900px) {
+  .AdminBillingPage {
+    padding: 0 !important;
+  }
+
+  .AdminBillingPage .BillingAccess.DfctBillingAdmin {
+    max-width: calc(100vw - 1rem) !important;
+    width: calc(100vw - 1rem) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .DfctBillingAdmin .BillingAccess-header {
+    padding: 1rem 0.25rem 0.5rem !important;
+  }
+
+  .DfctBillingAdmin .BillingAccess-header h1 {
+    font-size: 1.65rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .DfctBillingAdmin .BillingAccess-header p {
+    max-width: 100% !important;
+  }
+
+  .DfctBillingAdmin-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0.35rem !important;
+    overflow-x: auto !important;
+    padding-bottom: 0.35rem !important;
+    white-space: nowrap !important;
+  }
+
+  .DfctBillingAdmin-tabs .nav-link {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+  .DfctBillingAdmin-section {
+    border-radius: 16px !important;
+    padding: 0.8rem !important;
+  }
+
+  .DfctBillingAdmin-statGrid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .DfctBillingAdmin-stat {
+    min-height: 74px !important;
+    padding: 0.7rem !important;
+  }
+
+  .DfctBillingAdmin-stat strong {
+    font-size: 1.35rem !important;
+  }
+
+  .DfctBillingAdmin-userTableWrap {
+    max-height: 62vh !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+  }
+
+  .DfctBillingAdmin-userTableWrap .DfctBillingAdmin-table {
+    min-width: 980px !important;
+    table-layout: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .DfctBillingAdmin-statGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.DfctBillingAdmin-paymentIntentList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.DfctBillingAdmin-paymentIntentCard {
+  background: var(--theme-surface-subtle, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  border-radius: 16px;
+  padding: 0.85rem;
+}
+
+.DfctBillingAdmin-paymentIntentMain {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.DfctBillingAdmin-paymentIntentMain > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.DfctBillingAdmin-paymentIntentMain strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctBillingAdmin-paymentIntentMain span {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.82rem;
+}
+
+.DfctBillingAdmin-paymentIntentMeta {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.DfctBillingAdmin-paymentIntentMeta span {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.DfctBillingAdmin-paymentIntentMeta small {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.DfctBillingAdmin-paymentIntentMeta strong {
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .DfctBillingAdmin-paymentIntentMeta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
