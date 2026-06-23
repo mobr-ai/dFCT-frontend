@@ -69,6 +69,7 @@ export default function BillingAccessPage() {
     packages,
     paymentIntents,
     purchaseLoading,
+    apiUnavailable,
     purchasePackage,
   } = useBillingCredits(user);
 
