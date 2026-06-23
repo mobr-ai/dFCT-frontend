@@ -189,3 +189,196 @@
 .Navbar-mobile-logout-link {
   color: var(--theme-danger, #ff6b6b) !important;
 }
+
+.Navbar-user-avatar {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.35rem;
+  object-fit: cover;
+}
+
+.Navbar-user-name {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.Navbar-billing-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  margin-left: 0.45rem;
+  padding: 0.18rem 0.48rem;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #60a5fa) 34%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-accent, #60a5fa) 10%, transparent);
+  color: var(--theme-text, #f8fafc);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.Navbar-billing-status-separator {
+  color: var(--theme-muted-text, rgba(248, 250, 252, 0.65));
+}
+
+.Navbar-billing-dropdown-summary {
+  min-width: 16rem;
+  padding: 0.55rem 0.85rem;
+}
+
+.Navbar-billing-dropdown-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.18rem 0;
+}
+
+.Navbar-billing-dropdown-summary span {
+  color: var(--theme-muted-text, rgba(248, 250, 252, 0.68));
+  font-size: 0.78rem;
+}
+
+.Navbar-billing-dropdown-summary strong {
+  color: var(--theme-text, #f8fafc);
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-align: right;
+  white-space: nowrap;
+}
+
+[data-theme="paper"] .Navbar-billing-status-badge {
+  color: var(--theme-text, #0f172a);
+}
+
+@media (max-width: 1199px) {
+  .Navbar-billing-status-badge {
+    display: none;
+  }
+}
+
+.Navbar-billing-status-badge {
+  max-width: 7.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Navbar-billing-dropdown-summary {
+  min-width: 13rem;
+}
+
+/* CAP-like account/billing summary in user dropdown */
+.Navbar-account-summary {
+  min-width: 17rem;
+  padding: 0.85rem;
+}
+
+.Navbar-account-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+  margin-bottom: 0.72rem;
+}
+
+.Navbar-account-avatar {
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: 0 0 2.15rem;
+  object-fit: cover;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(148, 163, 184, 0.35)) 80%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent, #60a5fa) 8%, transparent);
+}
+
+.Navbar-account-profile strong {
+  display: block;
+  color: var(--theme-text, #f8fafc);
+  font-size: 0.92rem;
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.Navbar-account-profile span {
+  display: block;
+  color: var(--theme-muted-text, rgba(248, 250, 252, 0.62));
+  font-size: 0.78rem;
+  line-height: 1.25;
+  margin-top: 0.12rem;
+}
+
+.Navbar-account-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.Navbar-account-stats.is-credit {
+  grid-template-columns: 1fr;
+}
+
+.Navbar-account-stat {
+  min-height: 3.1rem;
+  padding: 0.58rem 0.66rem;
+  border: 1px solid var(--theme-border, rgba(148, 163, 184, 0.24));
+  border-radius: 0.72rem;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-accent, #60a5fa) 10%, transparent),
+      color-mix(in srgb, var(--theme-surface, #0f172a) 92%, transparent)
+    );
+}
+
+.Navbar-account-stat.is-wide {
+  grid-column: 1 / -1;
+}
+
+.Navbar-account-stat span {
+  display: block;
+  color: var(--theme-muted-text, rgba(248, 250, 252, 0.62));
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  line-height: 1.1;
+  margin-bottom: 0.28rem;
+  text-transform: uppercase;
+}
+
+.Navbar-account-stat strong {
+  display: block;
+  color: var(--theme-text, #f8fafc);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+[data-theme="paper"] .Navbar-account-profile strong,
+[data-theme="paper"] .Navbar-account-stat strong {
+  color: var(--theme-text, #0f172a);
+}
+
+[data-theme="paper"] .Navbar-account-profile span,
+[data-theme="paper"] .Navbar-account-stat span {
+  color: var(--theme-muted-text, #64748b);
+}
+
+[data-theme="paper"] .Navbar-account-stat {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-accent, #2563eb) 8%, #ffffff),
+      #ffffff
+    );
+  border-color: var(--theme-border, #dbe3ef);
+}
+
+[data-theme="paper"] .Navbar-account-avatar {
+  border-color: var(--theme-border, #dbe3ef);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent, #2563eb) 10%, transparent);
+}
+
+/* Hide the older loose summary block if any stale markup remains after hot reload. */
+.Navbar-billing-dropdown-summary {
+  display: none;
+}
