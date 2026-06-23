@@ -944,3 +944,20 @@
   margin-top: 0.85rem;
   width: 100%;
 }
+
+.BillingAccess-purchaseNotice {
+  border: 1px solid var(--theme-border);
+  border-radius: 0.9rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.85rem 1rem;
+  color: var(--theme-text);
+  background: var(--theme-surface);
+}
+
+.BillingAccess-purchaseNotice.is-success {
+  border-color: rgba(73, 214, 116, 0.45);
+}
+
+.BillingAccess-purchaseNotice.is-secondary {
+  border-color: rgba(255, 255, 255, 0.18);
+}

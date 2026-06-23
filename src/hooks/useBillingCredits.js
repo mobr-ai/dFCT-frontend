@@ -152,7 +152,7 @@ export function useBillingCredits(user) {
   );
 
   const purchasePackage = useCallback(
-    async (pkg) => {
+    async (pkg, options = {}) => {
       if (!canLoad) return null;
 
       const packageId = pkg?.package_id ?? pkg?.id;
@@ -169,6 +169,10 @@ export function useBillingCredits(user) {
         const payload = {
           gateway: pkg?.gateway || "cardano",
         };
+
+        if (options.preferredCurrency) {
+          payload.preferred_currency = options.preferredCurrency;
+        }
 
         if (packageId) {
           payload.package_id = packageId;
