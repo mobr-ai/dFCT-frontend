@@ -1,71 +1,75 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import { getUserAdminIdentity, hasExplicitAdminClaim } from "../utils/adminAccess";
-import { useAuthRequest } from "./useAuthRequest";
+export const SYSTEM_ADMIN_ROLE = "system_admin";
 
-function getHttpStatus(err) {
-  return Number(err?.status || err?.statusCode || err?.response?.status);
+function isExpired(value) {
+  if (!value) return false;
+
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) return false;
+
+  return timestamp <= Date.now();
 }
 
-export function useAdminAccess(userData) {
-  const { authRequest } = useAuthRequest(userData);
+function isActiveGrant(grant) {
+  if (!grant || typeof grant !== "object") return true;
 
-  const identity = getUserAdminIdentity(userData);
-  const hasToken = Boolean(userData?.access_token);
-  const explicitAdmin = hasExplicitAdminClaim(userData);
+  const revokedAt = grant.revokedAt ?? grant.revoked_at;
+  const expiresAt = grant.expiresAt ?? grant.expires_at;
 
-  const [state, setState] = useState({
-    isAdmin: false,
-    checked: false,
-  });
+  return !revokedAt && !isExpired(expiresAt);
+}
 
-  useEffect(() => {
-    let cancelled = false;
+function roleKeyFrom(value) {
+  if (!value) return null;
 
-    setState({ isAdmin: false, checked: false });
+  if (typeof value === "string") {
+    return value;
+  }
 
-    if (!hasToken || !identity) {
-      setState({ isAdmin: false, checked: true });
-      return () => {
-        cancelled = true;
-      };
-    }
+  if (typeof value !== "object") {
+    return null;
+  }
 
-    if (explicitAdmin) {
-      setState({ isAdmin: true, checked: true });
-      return () => {
-        cancelled = true;
-      };
-    }
+  return value.key ?? value.role?.key ?? null;
+}
 
-    authRequest
-      .get("/api/admin/billing/users?limit=1")
-      .then(() => {
-        if (!cancelled) {
-          setState({ isAdmin: true, checked: true });
-        }
-      })
-      .catch((err) => {
-        const status = getHttpStatus(err);
+export function getActiveRoleKeys(user) {
+  if (!user) return [];
 
-        if (!cancelled) {
-          setState({
-            isAdmin: false,
-            checked: status === 401 || status === 403 || status === 404,
-          });
-        }
-      });
+  const directRoles = Array.isArray(user.roles) ? user.roles : [];
 
-    return () => {
-      cancelled = true;
-    };
-  }, [explicitAdmin, hasToken, identity]);
+  const grantedRoles = [
+    ...(Array.isArray(user.userRoles) ? user.userRoles : []),
+    ...(Array.isArray(user.user_roles) ? user.user_roles : []),
+  ].filter(isActiveGrant);
 
-  return useMemo(
-    () => ({
-      isAdmin: state.isAdmin,
-      checked: state.checked,
-    }),
-    [state.checked, state.isAdmin],
+  return Array.from(
+    new Set(
+      [...directRoles, ...grantedRoles]
+        .map(roleKeyFrom)
+        .filter(Boolean)
+        .map((key) => String(key).toLowerCase())
+    )
   );
 }
+
+export function hasRole(user, roleKey) {
+  return getActiveRoleKeys(user).includes(String(roleKey).toLowerCase());
+}
+
+export function hasAdminClaim(user) {
+  return hasRole(user, SYSTEM_ADMIN_ROLE);
+}
+
+export function useAdminAccess(user) {
+  const roleKeys = useMemo(() => getActiveRoleKeys(user), [user]);
+
+  return {
+    isAdmin: roleKeys.includes(SYSTEM_ADMIN_ROLE),
+    isCheckingAdmin: false,
+    roleKeys,
+  };
+}
+
+export default useAdminAccess;

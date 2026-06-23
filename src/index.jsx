@@ -53,7 +53,16 @@ function Layout() {
   const navigate = useNavigate();
 
   const showToast = (message, variant = "success") => {
-    setToast({ show: true, message, variant });
+    if (message && typeof message === "object") {
+      setToast({
+        show: true,
+        message: message.message || "",
+        variant: message.variant || message.type || variant,
+      });
+      return;
+    }
+
+    setToast({ show: true, message: String(message || ""), variant });
   };
 
   const handleLogin = useCallback(
@@ -104,7 +113,7 @@ function Layout() {
           autohide
         >
           <Toast.Body className="text-white">
-            {toast.message.split("\n").map((line, idx) => (
+            {String(toast.message || "").split("\n").map((line, idx) => (
               <div key={idx}>{line}</div>
             ))}
           </Toast.Body>

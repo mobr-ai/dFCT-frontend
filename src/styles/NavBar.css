@@ -209,7 +209,8 @@
   gap: 0.28rem;
   margin-left: 0.45rem;
   padding: 0.18rem 0.48rem;
-  border: 1px solid color-mix(in srgb, var(--theme-accent, #60a5fa) 34%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--theme-accent, #60a5fa) 34%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--theme-accent, #60a5fa) 10%, transparent);
   color: var(--theme-text, #f8fafc);
@@ -287,8 +288,14 @@
   height: 2.15rem;
   flex: 0 0 2.15rem;
   object-fit: cover;
-  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(148, 163, 184, 0.35)) 80%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent, #60a5fa) 8%, transparent);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-border, rgba(148, 163, 184, 0.35)) 80%,
+      transparent
+    );
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--theme-accent, #60a5fa) 8%, transparent);
 }
 
 .Navbar-account-profile strong {
@@ -322,12 +329,11 @@
   padding: 0.58rem 0.66rem;
   border: 1px solid var(--theme-border, rgba(148, 163, 184, 0.24));
   border-radius: 0.72rem;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--theme-accent, #60a5fa) 10%, transparent),
-      color-mix(in srgb, var(--theme-surface, #0f172a) 92%, transparent)
-    );
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-accent, #60a5fa) 10%, transparent),
+    color-mix(in srgb, var(--theme-surface, #0f172a) 92%, transparent)
+  );
 }
 
 .Navbar-account-stat.is-wide {
@@ -364,18 +370,18 @@
 }
 
 [data-theme="paper"] .Navbar-account-stat {
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--theme-accent, #2563eb) 8%, #ffffff),
-      #ffffff
-    );
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-accent, #2563eb) 8%, #ffffff),
+    #ffffff
+  );
   border-color: var(--theme-border, #dbe3ef);
 }
 
 [data-theme="paper"] .Navbar-account-avatar {
   border-color: var(--theme-border, #dbe3ef);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-accent, #2563eb) 10%, transparent);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--theme-accent, #2563eb) 10%, transparent);
 }
 
 /* Hide the older loose summary block if any stale markup remains after hot reload. */

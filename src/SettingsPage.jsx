@@ -65,16 +65,30 @@ function SettingsPage() {
 
     try {
       setIsSavingAvatar(true);
-      const resizedFile = await resizeImage(file); // resize to 512x512@85% on client-side
-      const uploadResult = await handleUploads([resizedFile]);
-      const avatarUrl = uploadResult[0].url;
+      const resizedImage = await resizeImage(file); // resize to 512x512@85% on client-side
+
+      const avatarFile = new File(
+        [resizedImage],
+        `avatar-${user.id || "user"}.jpg`,
+        { type: "image/jpeg" }
+      );
+
+      const uploadResult = await handleUploads([avatarFile]);
+      const firstUpload = Array.isArray(uploadResult) ? uploadResult[0] : uploadResult;
+      const avatarUrl = firstUpload?.url;
+
+      if (!avatarUrl) {
+        throw new Error("Avatar upload did not return a URL");
+      }
 
       // update the backend user profile
-      saveSettings({ ...JSON.parse(user.settings || "{}"), avatar: avatarUrl });
+      await saveSettings({ ...JSON.parse(user.settings || "{}"), avatar: avatarUrl });
     } catch (err) {
-      showToast({ message: t("avatarUpdateFailed"), type: "error" });
+      console.error("Error updating avatar:", err);
+      showToast(t("avatarUpdateFailed"), "danger");
     } finally {
       setIsSavingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
     }
   };
 
