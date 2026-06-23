@@ -17,6 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 import "./../styles/NavigationSidebar.css";
 import GlobalTopicSearch from "./search/GlobalTopicSearch";
+import { useAdminAccess } from "../hooks/useAdminAccess";
 
 const SIDEBAR_DESKTOP_QUERY = "(min-width: 1024px)";
 
@@ -51,18 +52,12 @@ function NavigationSidebarContent({
   setIsPinned,
   setIsOpen,
   closeIfUnpinned,
+  userData,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const userData = React.useMemo(() => {
-    try {
-      return JSON.parse(window.localStorage.getItem("userData") || "null");
-    } catch {
-      return null;
-    }
-  }, [location.pathname]);
-  const isAdmin = Boolean(userData?.is_admin);
+  const { isAdmin } = useAdminAccess(userData);
 
   const togglePinned = () => {
     const nextPinned = !isPinned;
@@ -116,6 +111,18 @@ function NavigationSidebarContent({
         <FontAwesomeIcon icon={faHome} /> {t("home")}
       </Link>
 
+      {isAdmin && (
+        <Link
+          onClick={closeIfUnpinned}
+          to="/admin/billing"
+          className={`Navbar-item ${
+            location.pathname.startsWith("/admin") ? "active" : ""
+          }`}
+        >
+          <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.navAdmin")}
+        </Link>
+      )}
+
       <Link
         onClick={closeIfUnpinned}
         to="/mytopics"
@@ -145,19 +152,6 @@ function NavigationSidebarContent({
       >
         <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}
       </Link>
-
-      {isAdmin && (
-        <Link
-          onClick={closeIfUnpinned}
-          to="/admin/billing"
-          className={`Navbar-item ${
-            location.pathname.includes("/admin/billing") ? "active" : ""
-          }`}
-        >
-          <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.nav")}
-        </Link>
-      )}
-
       <Link
         onClick={closeIfUnpinned}
         to="/workbench/topic-review"
@@ -181,8 +175,25 @@ function NavigationSidebarContent({
   );
 }
 
-function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned }) {
+function NavigationSidebar({
+  isOpen,
+  setIsOpen,
+  isPinned = false,
+  setIsPinned,
+  userData,
+}) {
   const isDesktop = useSidebarDesktop();
+
+  let effectiveUserData = userData;
+  if (!effectiveUserData && typeof window !== "undefined") {
+    try {
+      effectiveUserData = JSON.parse(
+        window.localStorage.getItem("userData") || "null",
+      );
+    } catch {
+      effectiveUserData = null;
+    }
+  }
 
   if (!isDesktop) return null;
 
@@ -196,6 +207,7 @@ function NavigationSidebar({ isOpen, setIsOpen, isPinned = false, setIsPinned })
       setIsPinned={setIsPinned}
       setIsOpen={setIsOpen}
       closeIfUnpinned={closeIfUnpinned}
+      userData={effectiveUserData}
     />
   );
 

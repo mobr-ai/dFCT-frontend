@@ -1,113 +1,78 @@
-const BILLING_REQUEST_TIMEOUT = {
-  response: 10000,
-  deadline: 20000,
-};
-
-function withBillingTimeout(req) {
-  return req.timeout(BILLING_REQUEST_TIMEOUT);
+function unwrap(res) {
+  return res?.body || {};
 }
 
-function normalizeList(body, key) {
-  if (Array.isArray(body)) return body;
-  if (Array.isArray(body?.[key])) return body[key];
-  if (Array.isArray(body?.items)) return body.items;
-  if (Array.isArray(body?.data)) return body.data;
-  return [];
+function queryString(params = {}) {
+  const clean = Object.entries(params)
+    .filter(([, value]) => value !== undefined && value !== null && value !== "")
+    .map(([key, value]) => [key, String(value)]);
+
+  if (!clean.length) return "";
+
+  return `?${new URLSearchParams(clean).toString()}`;
 }
 
-function buildQuery(params = {}) {
-  const query = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "") return;
-    query.set(key, String(value));
-  });
-
-  const text = query.toString();
-  return text ? `?${text}` : "";
+function get(authRequest, url, params) {
+  return authRequest.get(`${url}${queryString(params)}`).then(unwrap);
 }
 
-export async function getMyCreditBalance(authRequest) {
-  const res = await withBillingTimeout(
-    authRequest.get("/api/billing/credits/balance")
-  );
-
-  return res.body?.balance || res.body || null;
+function post(authRequest, url, payload = {}) {
+  return authRequest.post(url).send(payload).then(unwrap);
 }
 
-export async function getMyAccessSummary(authRequest) {
-  const res = await withBillingTimeout(authRequest.get("/api/billing/access"));
-  return res.body?.access || res.body || null;
-}
+export const fetchBillingCreditBalance = (authRequest) =>
+  get(authRequest, "/api/billing/credits/balance");
 
-export async function getCreditPackages(authRequest) {
-  const res = await withBillingTimeout(
-    authRequest.get("/api/billing/credits/packages")
-  );
+export const fetchBillingAccess = (authRequest) =>
+  get(authRequest, "/api/billing/access");
 
-  return normalizeList(res.body, "packages");
-}
+export const fetchBillingCreditPackages = (authRequest) =>
+  get(authRequest, "/api/billing/credits/packages");
 
-export async function getMyPaymentIntents(authRequest, { limit = 10 } = {}) {
-  const res = await withBillingTimeout(
-    authRequest.get(`/api/billing/payment-intents${buildQuery({ limit })}`)
-  );
+export const fetchMyBillingPaymentIntents = (authRequest, params = {}) =>
+  get(authRequest, "/api/billing/payment-intents", params);
 
-  return normalizeList(res.body, "payment_intents");
-}
+export const createBillingPaymentIntent = (authRequest, payload = {}) =>
+  post(authRequest, "/api/billing/payment-intents", payload);
 
-export async function getAdminCreditUsers(authRequest, params = {}) {
-  const res = await withBillingTimeout(
-    authRequest.get(`/api/admin/billing/users${buildQuery(params)}`)
-  );
+export const fetchAdminBillingUsers = (authRequest, params = {}) =>
+  get(authRequest, "/api/admin/billing/users", params);
 
-  return normalizeList(res.body, "users");
-}
+export const fetchAdminCreditGrants = (authRequest, params = {}) =>
+  get(authRequest, "/api/admin/billing/credit-grants", params);
 
-export async function getAdminCreditGrants(authRequest, params = {}) {
-  const res = await withBillingTimeout(
-    authRequest.get(`/api/admin/billing/credit-grants${buildQuery(params)}`)
-  );
+export const createAdminCreditGrant = (authRequest, payload = {}) =>
+  post(authRequest, "/api/admin/billing/credit-grants", payload);
 
-  return normalizeList(res.body, "grants");
-}
+export const fetchAdminPaymentIntents = (authRequest, params = {}) =>
+  get(authRequest, "/api/admin/billing/payment-intents", params);
 
-export async function createAdminCreditGrant(authRequest, payload = {}) {
-  const res = await withBillingTimeout(
-    authRequest.post("/api/admin/billing/credit-grants").send(payload)
-  );
+export const fetchAdminCreditPackages = (authRequest, params = {}) =>
+  get(authRequest, "/api/admin/billing/credits/packages", params);
 
-  return res.body;
-}
+export const fetchAdminGateways = (authRequest) =>
+  get(authRequest, "/api/admin/billing/gateways");
 
-export async function getAdminPaymentIntents(authRequest, params = {}) {
-  const res = await withBillingTimeout(
-    authRequest.get(`/api/admin/billing/payment-intents${buildQuery(params)}`)
-  );
+export const fetchAdminAccessTiers = (authRequest) =>
+  get(authRequest, "/api/admin/billing/access-tiers");
 
-  return normalizeList(res.body, "payment_intents");
-}
+// Backward-compatible aliases for hooks/pages that may already import these names.
+export const getBillingCreditBalance = fetchBillingCreditBalance;
+export const getBillingAccess = fetchBillingAccess;
+export const listBillingCreditPackages = fetchBillingCreditPackages;
+export const listMyBillingPaymentIntents = fetchMyBillingPaymentIntents;
+export const listAdminBillingUsers = fetchAdminBillingUsers;
+export const listAdminCreditGrants = fetchAdminCreditGrants;
+export const grantAdminCredits = createAdminCreditGrant;
+export const grantCredits = createAdminCreditGrant;
+export const listAdminPaymentIntents = fetchAdminPaymentIntents;
+export const listAdminCreditPackages = fetchAdminCreditPackages;
+export const listAdminGateways = fetchAdminGateways;
+export const listAdminAccessTiers = fetchAdminAccessTiers;
 
-export async function getAdminCreditPackages(authRequest) {
-  const res = await withBillingTimeout(
-    authRequest.get("/api/admin/billing/credits/packages")
-  );
-
-  return normalizeList(res.body, "packages");
-}
-
-export async function getAdminGatewayStatus(authRequest) {
-  const res = await withBillingTimeout(
-    authRequest.get("/api/admin/billing/gateways")
-  );
-
-  return normalizeList(res.body, "gateways");
-}
-
-export async function getAdminAccessTiers(authRequest) {
-  const res = await withBillingTimeout(
-    authRequest.get("/api/admin/billing/access-tiers")
-  );
-
-  return normalizeList(res.body, "access_tiers");
-}
+// Compatibility aliases used by the user-facing billing hook.
+export const getMyCreditBalance = fetchBillingCreditBalance;
+export const getMyAccessSummary = fetchBillingAccess;
+export const getCreditPackages = fetchBillingCreditPackages;
+export const getMyPaymentIntents = fetchMyBillingPaymentIntents;
+export const createPaymentIntent = createBillingPaymentIntent;

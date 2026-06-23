@@ -14,6 +14,10 @@ import {
   faGavel,
   faCreditCard,
   faUserShield,
+  faCircleQuestion,
+  faGlobe,
+  faClipboardCheck,
+  faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -21,13 +25,14 @@ import i18n from "./../i18n";
 import avatarImg from "./../icons/avatar.png";
 import AnimatedBrand from "./branding/AnimatedBrand";
 import GlobalTopicSearch from "./search/GlobalTopicSearch";
-
+import { useAdminAccess } from "../hooks/useAdminAccess";
 
 function NavBar(props) {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const { isAdmin } = useAdminAccess(props.userData);
 
   const topClick = useCallback(() => {
     const clearSearchHome = () => {
@@ -50,7 +55,6 @@ function NavBar(props) {
 
     clearSearchHome();
   }, [navigate]);
-
 
   const logout = () => {
     props.setUser(null);
@@ -112,9 +116,7 @@ function NavBar(props) {
               <div className="Navbar-mobile-search d-lg-none">
                 <GlobalTopicSearch placement="mobile" />
               </div>
-              <Nav className="me-auto d-lg-none">
-                {" "}
-                {/* Visible only in mobile */}
+              <Nav className="me-auto d-lg-none Navbar-mobile-menu">
                 <Nav.Link
                   onClick={() => {
                     navigate("/");
@@ -124,6 +126,7 @@ function NavBar(props) {
                 >
                   <FontAwesomeIcon icon={faHome} /> {t("home")}
                 </Nav.Link>
+
                 <Nav.Link
                   onClick={() => {
                     navigate("/submit");
@@ -131,9 +134,11 @@ function NavBar(props) {
                   }}
                   active={location.pathname === "/submit"}
                 >
-                  <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} />{" "}
-                  {t("verifyContent")}
+                  <FontAwesomeIcon icon={faMagnifyingGlassArrowRight} /> {t("verifyContent")}
                 </Nav.Link>
+
+                <NavDropdown.Divider />
+
                 <Nav.Link
                   onClick={() => {
                     navigate("/mytopics");
@@ -143,6 +148,19 @@ function NavBar(props) {
                 >
                   <FontAwesomeIcon icon={faFolderOpen} /> {t("myTopics")}
                 </Nav.Link>
+
+                <Nav.Link
+                  onClick={() => {
+                    navigate("/workbench/topic-review");
+                    setExpanded(false);
+                  }}
+                  active={location.pathname.includes("/workbench/topic-review")}
+                >
+                  <FontAwesomeIcon icon={faClipboardCheck} /> {t("topicReview.nav")}
+                </Nav.Link>
+
+                <NavDropdown.Divider />
+
                 <Nav.Link
                   onClick={() => {
                     navigate("/gov");
@@ -152,6 +170,7 @@ function NavBar(props) {
                 >
                   <FontAwesomeIcon icon={faGavel} /> {t("governance")}
                 </Nav.Link>
+
                 <Nav.Link
                   onClick={() => {
                     navigate("/billing");
@@ -161,17 +180,19 @@ function NavBar(props) {
                 >
                   <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}
                 </Nav.Link>
-                {props.userData?.is_admin && (
+
+                {isAdmin && (
                   <Nav.Link
                     onClick={() => {
                       navigate("/admin/billing");
                       setExpanded(false);
                     }}
-                    active={location.pathname.includes("/admin/billing")}
+                    active={location.pathname.startsWith("/admin")}
                   >
-                    <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.nav")}
+                    <FontAwesomeIcon icon={faUserShield} /> {t("adminBilling.navAdmin")}
                   </Nav.Link>
                 )}
+
                 <Nav.Link
                   onClick={() => {
                     navigate("/settings");
@@ -181,12 +202,73 @@ function NavBar(props) {
                 >
                   <FontAwesomeIcon icon={faCog} /> {t("settings")}
                 </Nav.Link>
+
+                <NavDropdown.Divider />
+
+                <Nav.Link
+                  onClick={() => {
+                    window.open("https://youtu.be/ip4RaxWSorQ");
+                    setExpanded(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCircleQuestion} /> {t("learnMore")}
+                </Nav.Link>
+
+                <NavDropdown
+                  title={
+                    <>
+                      <FontAwesomeIcon icon={faGlobe} /> {t("language")}
+                    </>
+                  }
+                  id="navbar-mobile-language-dropdown"
+                >
+                  <NavDropdown.Item
+                    onClick={() => {
+                      changeLanguage("pt");
+                      setExpanded(false);
+                    }}
+                  >
+                    🇧🇷 Português (BR)
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    onClick={() => {
+                      changeLanguage("en");
+                      setExpanded(false);
+                    }}
+                  >
+                    🇺🇸 English (US)
+                  </NavDropdown.Item>
+                </NavDropdown>
+
+                <NavDropdown.Divider />
+
+                <Nav.Link
+                  className="Navbar-mobile-logout-link"
+                  onClick={() => {
+                    logout();
+                    setExpanded(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faRightFromBracket} /> {t("logOut")}
+                </Nav.Link>
               </Nav>
-              <NavDropdown.Divider />
             </>
           )}
 
-          <Nav className="ml-auto NavBar-top-container">
+          <Nav className="ml-auto NavBar-top-container d-none d-lg-flex">
+            {isAdmin && (
+              <Nav.Link
+                className="Navbar-admin-link"
+                onClick={() => {
+                  navigate("/admin/billing");
+                  setExpanded(false);
+                }}
+                active={location.pathname.startsWith("/admin")}
+              >
+                {t("adminBilling.navAdmin")}
+              </Nav.Link>
+            )}
+
             <Nav.Link
               onClick={() => {
                 window.open(
@@ -243,41 +325,78 @@ function NavBar(props) {
               <NavDropdown title={userMenu} id="navbar-dropdown">
                 <NavDropdown.Item
                   onClick={() => {
-                    logout();
+                    navigate("/");
                     setExpanded(false);
                   }}
                 >
-                  {t("logOut")}
+                  <FontAwesomeIcon icon={faHome} /> {t("home")}
                 </NavDropdown.Item>
-                <NavDropdown.Divider className="d-none d-lg-block" />
+
+                <NavDropdown.Divider />
+
                 <NavDropdown.Item
-                  className="d-none d-lg-block"
+                  onClick={() => {
+                    navigate("/mytopics");
+                    setExpanded(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faFolderOpen} /> {t("myTopics")}
+                </NavDropdown.Item>
+
+                <NavDropdown.Item
+                  onClick={() => {
+                    navigate("/workbench/topic-review");
+                    setExpanded(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faClipboardCheck} />{" "}
+                  {t("topicReview.nav")}
+                </NavDropdown.Item>
+
+                <NavDropdown.Divider />
+
+                <NavDropdown.Item
                   onClick={() => {
                     navigate("/billing");
                     setExpanded(false);
                   }}
                 >
+                  <FontAwesomeIcon icon={faCreditCard} />{" "}
                   {t("billingAccess.nav")}
                 </NavDropdown.Item>
-                {props.userData?.is_admin && (
+
+                {isAdmin && (
                   <NavDropdown.Item
-                    className="d-none d-lg-block"
+                    className="Navbar-admin-dropdown-item"
                     onClick={() => {
                       navigate("/admin/billing");
                       setExpanded(false);
                     }}
                   >
-                    {t("adminBilling.nav")}
+                    <FontAwesomeIcon icon={faUserShield} />{" "}
+                    {t("adminBilling.navAdmin")}
                   </NavDropdown.Item>
                 )}
+
                 <NavDropdown.Item
-                  className="d-none d-lg-block"
                   onClick={() => {
                     navigate("/settings");
                     setExpanded(false);
                   }}
                 >
-                  {t("settings")}
+                  <FontAwesomeIcon icon={faCog} /> {t("settings")}
+                </NavDropdown.Item>
+
+                <NavDropdown.Divider />
+
+                <NavDropdown.Item
+                  className="Navbar-logout-dropdown-item"
+                  onClick={() => {
+                    logout();
+                    setExpanded(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faRightFromBracket} /> {t("logOut")}
                 </NavDropdown.Item>
               </NavDropdown>
             )}

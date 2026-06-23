@@ -1,19 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
-import { useAutoRefresh } from "./useAutoRefresh";
+import { useCallback, useMemo, useState } from "react";
+
 import {
   createAdminCreditGrant,
-  getAdminAccessTiers,
-  getAdminCreditGrants,
-  getAdminCreditPackages,
-  getAdminCreditUsers,
-  getAdminGatewayStatus,
-  getAdminPaymentIntents,
+  fetchAdminAccessTiers,
+  fetchAdminBillingUsers,
+  fetchAdminCreditGrants,
+  fetchAdminCreditPackages,
+  fetchAdminGateways,
+  fetchAdminPaymentIntents,
 } from "../api/billingCredits";
+import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
+import { useAutoRefresh } from "./useAutoRefresh";
 
-const ADMIN_BILLING_API_UNAVAILABLE_CACHE_MS = 120000;
-
-let adminBillingApiUnavailableUntil = 0;
+const ADMIN_BILLING_API_UNAVAILABLE_KEY = "dfct_admin_billing_api_unavailable_until";
 
 function getHttpStatus(err) {
   return Number(err?.status || err?.statusCode || err?.response?.status);
@@ -28,64 +27,92 @@ function isForbiddenError(err) {
 }
 
 function isAdminBillingApiUnavailableCached() {
-  return Date.now() < adminBillingApiUnavailableUntil;
+  const until = Number(window.localStorage.getItem(ADMIN_BILLING_API_UNAVAILABLE_KEY) || 0);
+  return until > Date.now();
 }
 
 function markAdminBillingApiUnavailable() {
-  adminBillingApiUnavailableUntil =
-    Date.now() + ADMIN_BILLING_API_UNAVAILABLE_CACHE_MS;
+  window.localStorage.setItem(
+    ADMIN_BILLING_API_UNAVAILABLE_KEY,
+    String(Date.now() + 120000),
+  );
 }
 
-function getFirstRejected(results) {
-  return results.find((item) => item.status === "rejected")?.reason || null;
+function clearAdminBillingApiUnavailable() {
+  window.localStorage.removeItem(ADMIN_BILLING_API_UNAVAILABLE_KEY);
 }
 
-export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
+function arrayFrom(payload, key) {
+  if (Array.isArray(payload?.[key])) return payload[key];
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (Array.isArray(payload)) return payload;
+  return [];
+}
+
+export function useAdminBillingCredits(user) {
   const { authRequest } = useAuthRequest(user);
-  const authRequestRef = useRef(authRequest);
 
   const [users, setUsers] = useState([]);
-  const [grants, setGrants] = useState([]);
+  const [creditGrants, setCreditGrants] = useState([]);
   const [paymentIntents, setPaymentIntents] = useState([]);
-  const [packages, setPackages] = useState([]);
+  const [creditPackages, setCreditPackages] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [accessTiers, setAccessTiers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [apiUnavailable, setApiUnavailable] = useState(
-    isAdminBillingApiUnavailableCached
-  );
+  const [actionLoading, setActionLoading] = useState("");
   const [accessDenied, setAccessDenied] = useState(false);
+  const [apiUnavailable, setApiUnavailable] = useState(isAdminBillingApiUnavailableCached);
   const [error, setError] = useState("");
+  const [manualLastUpdatedAt, setManualLastUpdatedAt] = useState(null);
 
   const canLoad = Boolean(user?.access_token);
 
-  useEffect(() => {
-    authRequestRef.current = authRequest;
-  }, [authRequest]);
+  const loadAll = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!canLoad || apiUnavailable) return null;
 
-  const refresh = useCallback(async () => {
-    if (
-      !canLoad ||
-      apiUnavailable ||
-      isAdminBillingApiUnavailableCached()
-    ) {
-      if (isAdminBillingApiUnavailableCached()) setApiUnavailable(true);
-      return null;
-    }
-
-    setLoading(true);
-    setAccessDenied(false);
-    setError("");
-
-    try {
-      let nextUsers = [];
+      if (!silent) setLoading(true);
+      setAccessDenied(false);
+      setError("");
 
       try {
-        nextUsers = await getAdminCreditUsers(authRequestRef.current, {
-          limit: 50,
-        });
-        setUsers(nextUsers);
+        const [
+          usersPayload,
+          grantsPayload,
+          intentsPayload,
+          packagesPayload,
+          gatewaysPayload,
+          tiersPayload,
+        ] = await Promise.all([
+          fetchAdminBillingUsers(authRequest, { limit: 250 }),
+          fetchAdminCreditGrants(authRequest, { limit: 100 }),
+          fetchAdminPaymentIntents(authRequest, { limit: 100 }),
+          fetchAdminCreditPackages(authRequest),
+          fetchAdminGateways(authRequest),
+          fetchAdminAccessTiers(authRequest),
+        ]);
+
+        clearAdminBillingApiUnavailable();
+        setApiUnavailable(false);
+
+        setUsers(arrayFrom(usersPayload, "users"));
+        setCreditGrants(arrayFrom(grantsPayload, "grants"));
+        setPaymentIntents(arrayFrom(intentsPayload, "payment_intents"));
+        setCreditPackages(arrayFrom(packagesPayload, "packages"));
+        setGateways(arrayFrom(gatewaysPayload, "gateways"));
+        setAccessTiers(arrayFrom(tiersPayload, "access_tiers"));
+
+        const now = new Date();
+        setManualLastUpdatedAt(now);
+
+        return {
+          usersPayload,
+          grantsPayload,
+          intentsPayload,
+          packagesPayload,
+          gatewaysPayload,
+          tiersPayload,
+        };
       } catch (err) {
         if (isNotFoundError(err)) {
           markAdminBillingApiUnavailable();
@@ -100,139 +127,89 @@ export function useAdminBillingCredits(user, { autoLoad = true } = {}) {
           return null;
         }
 
+        setError(getApiErrorMessage(err, "Unable to load admin billing data."));
         throw err;
+      } finally {
+        if (!silent) setLoading(false);
       }
+    },
+    [apiUnavailable, authRequest, canLoad],
+  );
 
-      const results = await Promise.allSettled([
-        getAdminCreditGrants(authRequestRef.current, { limit: 25 }),
-        getAdminPaymentIntents(authRequestRef.current, { limit: 25 }),
-        getAdminCreditPackages(authRequestRef.current),
-        getAdminGatewayStatus(authRequestRef.current),
-        getAdminAccessTiers(authRequestRef.current),
-      ]);
-
-      const rejected = results.filter((item) => item.status === "rejected");
-      const hasMissingEndpoint = rejected.some((item) =>
-        isNotFoundError(item.reason)
-      );
-
-      if (hasMissingEndpoint) {
-        markAdminBillingApiUnavailable();
-        setApiUnavailable(true);
-        setError("");
-        return { users: nextUsers };
-      }
-
-      const [
-        grantsResult,
-        paymentIntentsResult,
-        packagesResult,
-        gatewaysResult,
-        accessTiersResult,
-      ] = results;
-
-      if (grantsResult.status === "fulfilled") setGrants(grantsResult.value);
-      if (paymentIntentsResult.status === "fulfilled") {
-        setPaymentIntents(paymentIntentsResult.value);
-      }
-      if (packagesResult.status === "fulfilled") setPackages(packagesResult.value);
-      if (gatewaysResult.status === "fulfilled") setGateways(gatewaysResult.value);
-      if (accessTiersResult.status === "fulfilled") {
-        setAccessTiers(accessTiersResult.value);
-      }
-
-      if (rejected.length > 0) {
-        const firstError = getFirstRejected(results);
-        setError(
-          getApiErrorMessage(firstError, "Failed to sync admin billing data.")
-        );
-        throw firstError;
-      }
-
-      return true;
-    } catch (err) {
-      setError(getApiErrorMessage(err, "Failed to sync admin billing data."));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiUnavailable, canLoad]);
+  const autoRefresh = useAutoRefresh({
+    enabled: canLoad && !apiUnavailable,
+    refresh: () => loadAll({ silent: true }),
+    intervalMs: 60000,
+    maxIntervalMs: 300000,
+    refreshWhenHidden: false,
+    runImmediately: true,
+  });
 
   const grantCredits = useCallback(
-    async (payload) => {
-      setActionLoading(true);
+    async ({ user_id, amount, reason, note, idempotency_key } = {}) => {
+      if (!canLoad) return null;
+
+      setActionLoading("grantCredits");
       setError("");
 
       try {
-        const result = await createAdminCreditGrant(
-          authRequestRef.current,
-          payload
-        );
-        await refresh();
-        return result;
+        const payload = await createAdminCreditGrant(authRequest, {
+          user_id,
+          amount,
+          reason,
+          note,
+          idempotency_key,
+        });
+
+        await loadAll({ silent: true });
+        return payload;
       } catch (err) {
-        setError(getApiErrorMessage(err, "Failed to grant credits."));
+        setError(getApiErrorMessage(err, "Unable to grant credits."));
         throw err;
       } finally {
-        setActionLoading(false);
+        setActionLoading("");
       }
     },
-    [refresh]
+    [authRequest, canLoad, loadAll],
   );
-
-  const { isRefreshing, lastUpdatedAt, consecutiveFailures } = useAutoRefresh({
-    enabled:
-      autoLoad &&
-      canLoad &&
-      !apiUnavailable &&
-      !isAdminBillingApiUnavailableCached(),
-    refresh,
-    intervalMs: 120000,
-    maxIntervalMs: 900000,
-    refreshWhenHidden: false,
-    runImmediately: true,
-    jitterRatio: 0.2,
-    onError: (err) => {
-      setError(getApiErrorMessage(err, "Failed to sync admin billing data."));
-    },
-  });
 
   return useMemo(
     () => ({
       users,
-      grants,
+      creditGrants,
       paymentIntents,
-      packages,
+      creditPackages,
       gateways,
       accessTiers,
-      loading: loading || isRefreshing,
-      isRefreshing,
+      loading,
       actionLoading,
       accessDenied,
-      lastUpdatedAt,
-      consecutiveFailures,
       apiUnavailable,
       error,
-      refresh,
+      consecutiveFailures: autoRefresh.consecutiveFailures,
+      isRefreshing: autoRefresh.isRefreshing,
+      lastUpdatedAt: autoRefresh.lastUpdatedAt || manualLastUpdatedAt,
+      refresh: loadAll,
       grantCredits,
     }),
     [
       users,
-      grants,
+      creditGrants,
       paymentIntents,
-      packages,
+      creditPackages,
       gateways,
       accessTiers,
       loading,
-      isRefreshing,
       actionLoading,
       accessDenied,
-      lastUpdatedAt,
-      consecutiveFailures,
       apiUnavailable,
       error,
-      refresh,
+      autoRefresh.consecutiveFailures,
+      autoRefresh.isRefreshing,
+      autoRefresh.lastUpdatedAt,
+      manualLastUpdatedAt,
+      loadAll,
       grantCredits,
-    ]
+    ],
   );
 }

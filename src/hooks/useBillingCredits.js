@@ -1,68 +1,137 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
-import { useAutoRefresh } from "./useAutoRefresh";
+import { useCallback, useMemo, useState } from "react";
+
 import {
   getCreditPackages,
   getMyAccessSummary,
   getMyCreditBalance,
   getMyPaymentIntents,
 } from "../api/billingCredits";
+import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
+import { useAutoRefresh } from "./useAutoRefresh";
 
-const BILLING_API_UNAVAILABLE_CACHE_MS = 120000;
+const BILLING_API_UNAVAILABLE_KEY = "dfct_billing_api_unavailable_until";
 
-let billingApiUnavailableUntil = 0;
+function getHttpStatus(err) {
+  return Number(err?.status || err?.statusCode || err?.response?.status);
+}
 
 function isNotFoundError(err) {
-  return Number(err?.status || err?.statusCode || err?.response?.status) === 404;
+  return getHttpStatus(err) === 404;
 }
 
 function isBillingApiUnavailableCached() {
-  return Date.now() < billingApiUnavailableUntil;
+  const until = Number(window.localStorage.getItem(BILLING_API_UNAVAILABLE_KEY) || 0);
+  return until > Date.now();
 }
 
 function markBillingApiUnavailable() {
-  billingApiUnavailableUntil = Date.now() + BILLING_API_UNAVAILABLE_CACHE_MS;
+  window.localStorage.setItem(
+    BILLING_API_UNAVAILABLE_KEY,
+    String(Date.now() + 120000),
+  );
 }
 
-function getFirstRejected(results) {
-  return results.find((item) => item.status === "rejected")?.reason || null;
+function clearBillingApiUnavailable() {
+  window.localStorage.removeItem(BILLING_API_UNAVAILABLE_KEY);
 }
 
-export function useBillingCredits(user, { autoLoad = true } = {}) {
+function numberFrom(...values) {
+  for (const value of values) {
+    const n = Number(value);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+
+function arrayFrom(payload, key) {
+  if (Array.isArray(payload?.[key])) return payload[key];
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (Array.isArray(payload)) return payload;
+  return [];
+}
+
+function normalizeBalance(payload = {}) {
+  const source = payload.balance && typeof payload.balance === "object"
+    ? payload.balance
+    : payload;
+
+  const credits = numberFrom(
+    source.credits_available,
+    source.available_credits,
+    source.balance,
+    source.amount,
+  );
+
+  return {
+    ...source,
+    currency_code: source.currency_code || "DFCT",
+    credits_available: credits,
+    available_credits: credits,
+    balance: credits,
+    lifetime_granted: numberFrom(source.lifetime_granted),
+    lifetime_spent: numberFrom(source.lifetime_spent),
+  };
+}
+
+function normalizeAccess(payload = {}) {
+  const source = payload.access && typeof payload.access === "object"
+    ? payload.access
+    : payload;
+
+  return {
+    ...source,
+    access_tier: source.access_tier || source.tier || "standard",
+    tier: source.tier || source.access_tier || "standard",
+    free_topics_remaining:
+      source.free_topics_remaining ?? source.freeTopicsRemaining ?? 0,
+    topic_publish_credit_cost:
+      source.topic_publish_credit_cost ?? source.topicPublishCreditCost ?? 1,
+    can_publish_topic: source.can_publish_topic ?? source.canPublishTopic ?? true,
+    wallet_required: source.wallet_required ?? false,
+  };
+}
+
+export function useBillingCredits(user) {
   const { authRequest } = useAuthRequest(user);
-  const authRequestRef = useRef(authRequest);
 
-  const [balance, setBalance] = useState(null);
-  const [accessSummary, setAccessSummary] = useState(null);
-  const [packages, setPackages] = useState([]);
+  const [balance, setBalance] = useState(() => normalizeBalance());
+  const [access, setAccess] = useState(() => normalizeAccess());
+  const [creditPackages, setCreditPackages] = useState([]);
   const [paymentIntents, setPaymentIntents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [apiUnavailable, setApiUnavailable] = useState(
-    isBillingApiUnavailableCached
-  );
+  const [apiUnavailable, setApiUnavailable] = useState(isBillingApiUnavailableCached);
   const [error, setError] = useState("");
+  const [manualLastUpdatedAt, setManualLastUpdatedAt] = useState(null);
 
   const canLoad = Boolean(user?.access_token);
 
-  useEffect(() => {
-    authRequestRef.current = authRequest;
-  }, [authRequest]);
+  const loadAll = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!canLoad || apiUnavailable) return null;
 
-  const refresh = useCallback(async () => {
-    if (!canLoad || apiUnavailable || isBillingApiUnavailableCached()) {
-      if (isBillingApiUnavailableCached()) setApiUnavailable(true);
-      return null;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      let nextBalance = null;
+      if (!silent) setLoading(true);
+      setError("");
 
       try {
-        nextBalance = await getMyCreditBalance(authRequestRef.current);
-        setBalance(nextBalance);
+        const [balancePayload, accessPayload, packagesPayload, intentsPayload] =
+          await Promise.all([
+            getMyCreditBalance(authRequest),
+            getMyAccessSummary(authRequest),
+            getCreditPackages(authRequest),
+            getMyPaymentIntents(authRequest, { limit: 50 }),
+          ]);
+
+        clearBillingApiUnavailable();
+        setApiUnavailable(false);
+
+        setBalance(normalizeBalance(balancePayload));
+        setAccess(normalizeAccess(accessPayload));
+        setCreditPackages(arrayFrom(packagesPayload, "packages"));
+        setPaymentIntents(arrayFrom(intentsPayload, "payment_intents"));
+
+        const now = new Date();
+        setManualLastUpdatedAt(now);
+        return true;
       } catch (err) {
         if (isNotFoundError(err)) {
           markBillingApiUnavailable();
@@ -71,118 +140,54 @@ export function useBillingCredits(user, { autoLoad = true } = {}) {
           return null;
         }
 
+        setError(getApiErrorMessage(err, "Unable to load billing data."));
         throw err;
+      } finally {
+        if (!silent) setLoading(false);
       }
+    },
+    [apiUnavailable, authRequest, canLoad],
+  );
 
-      const results = await Promise.allSettled([
-        getMyAccessSummary(authRequestRef.current),
-        getCreditPackages(authRequestRef.current),
-        getMyPaymentIntents(authRequestRef.current),
-      ]);
-
-      const rejected = results.filter((item) => item.status === "rejected");
-      const hasMissingEndpoint = rejected.some((item) =>
-        isNotFoundError(item.reason)
-      );
-
-      if (hasMissingEndpoint) {
-        markBillingApiUnavailable();
-        setApiUnavailable(true);
-        setError("");
-        return { balance: nextBalance };
-      }
-
-      const [accessResult, packagesResult, paymentIntentsResult] = results;
-
-      if (accessResult.status === "fulfilled") {
-        setAccessSummary(accessResult.value);
-      }
-
-      if (packagesResult.status === "fulfilled") {
-        setPackages(packagesResult.value);
-      }
-
-      if (paymentIntentsResult.status === "fulfilled") {
-        setPaymentIntents(paymentIntentsResult.value);
-      }
-
-      if (rejected.length > 0) {
-        const firstError = getFirstRejected(results);
-        setError(
-          getApiErrorMessage(
-            firstError,
-            "Failed to sync billing and credits data."
-          )
-        );
-        throw firstError;
-      }
-
-      return {
-        balance: nextBalance,
-        accessSummary:
-          accessResult.status === "fulfilled" ? accessResult.value : null,
-        packages:
-          packagesResult.status === "fulfilled" ? packagesResult.value : [],
-        paymentIntents:
-          paymentIntentsResult.status === "fulfilled"
-            ? paymentIntentsResult.value
-            : [],
-      };
-    } catch (err) {
-      setError(
-        getApiErrorMessage(err, "Failed to sync billing and credits data.")
-      );
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiUnavailable, canLoad]);
-
-  const { isRefreshing, lastUpdatedAt, consecutiveFailures } = useAutoRefresh({
-    enabled:
-      autoLoad &&
-      canLoad &&
-      !apiUnavailable &&
-      !isBillingApiUnavailableCached(),
-    refresh,
-    intervalMs: 90000,
-    maxIntervalMs: 600000,
+  const autoRefresh = useAutoRefresh({
+    enabled: canLoad && !apiUnavailable,
+    refresh: () => loadAll({ silent: true }),
+    intervalMs: 60000,
+    maxIntervalMs: 300000,
     refreshWhenHidden: false,
     runImmediately: true,
-    jitterRatio: 0.2,
-    onError: (err) => {
-      setError(
-        getApiErrorMessage(err, "Failed to sync billing and credits data.")
-      );
-    },
   });
 
   return useMemo(
     () => ({
       balance,
-      accessSummary,
-      packages,
+      creditBalance: balance,
+      access,
+      accessSummary: access,
+      creditPackages,
+      packages: creditPackages,
       paymentIntents,
-      loading: loading || isRefreshing,
-      isRefreshing,
-      lastUpdatedAt,
-      consecutiveFailures,
+      loading,
       apiUnavailable,
       error,
-      refresh,
+      consecutiveFailures: autoRefresh.consecutiveFailures,
+      isRefreshing: autoRefresh.isRefreshing,
+      lastUpdatedAt: autoRefresh.lastUpdatedAt || manualLastUpdatedAt,
+      refresh: loadAll,
     }),
     [
       balance,
-      accessSummary,
-      packages,
+      access,
+      creditPackages,
       paymentIntents,
       loading,
-      isRefreshing,
-      lastUpdatedAt,
-      consecutiveFailures,
       apiUnavailable,
       error,
-      refresh,
-    ]
+      autoRefresh.consecutiveFailures,
+      autoRefresh.isRefreshing,
+      autoRefresh.lastUpdatedAt,
+      manualLastUpdatedAt,
+      loadAll,
+    ],
   );
 }
