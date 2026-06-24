@@ -90,6 +90,9 @@ function paymentIntentMetaFromPayload(payload = {}, params = {}) {
     offset,
     hasMore: Boolean(payload?.has_more),
     filters: payload?.filters || {},
+    statusCounts: payload?.status_counts || payload?.aggregates?.status_counts || {},
+    volumeByCurrency: payload?.volume_by_currency || payload?.aggregates?.volume_by_currency || {},
+    aggregates: payload?.aggregates || {},
   };
 }
 

@@ -659,12 +659,12 @@
     "intentGateway": "Forma de pagamento",
     "intentCreated": "Criado em",
     "paymentIntentStatsTotal": "Solicitações de pagamento",
-    "paymentIntentStatsTotalCaption": "Visíveis na visualização atual",
+    "paymentIntentStatsTotalCaption": "Em todos os filtros do servidor",
     "paymentIntentStatsPending": "Pendentes",
-    "paymentIntentStatsPendingCaption": "Visíveis na visualização atual",
+    "paymentIntentStatsPendingCaption": "Em todos os filtros do servidor",
     "paymentIntentStatsFulfilled": "Confirmadas",
-    "paymentIntentStatsFulfilledCaption": "Visíveis na visualização atual",
-    "paymentIntentStatsAmountDue": "Volume visível",
+    "paymentIntentStatsFulfilledCaption": "Em todos os filtros do servidor",
+    "paymentIntentStatsAmountDue": "Volume total",
     "paymentIntentStatsAmountDueCaption": "",
     "paymentIntentSearchPlaceholder": "Buscar por usuário, pacote, gateway, referência, tx hash ou id...",
     "paymentIntentStatusAll": "Todos os status",
@@ -688,6 +688,7 @@
       "expired": "Expirado",
       "cancelled": "Cancelado",
       "failed": "Falhou"
-    }
+    },
+    "paymentIntentStatsSearchCaption": "Na busca textual atual"
   }
 }
