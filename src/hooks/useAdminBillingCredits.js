@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
   createAdminCreditGrant,
@@ -50,12 +50,59 @@ function arrayFrom(payload, key) {
   return [];
 }
 
+const DEFAULT_PAYMENT_INTENT_PARAMS = {
+  limit: 25,
+  offset: 0,
+};
+
+function normalizePaymentIntentParams(params = {}) {
+  const clean = {
+    limit: Number(params.limit || DEFAULT_PAYMENT_INTENT_PARAMS.limit),
+    offset: Number(params.offset || DEFAULT_PAYMENT_INTENT_PARAMS.offset),
+  };
+
+  if (params.status && params.status !== "all") {
+    clean.status = String(params.status).trim().toLowerCase();
+  }
+
+  if (params.gateway && params.gateway !== "all") {
+    clean.gateway = String(params.gateway).trim().toLowerCase();
+  }
+
+  if (params.user_id !== undefined && params.user_id !== null && params.user_id !== "") {
+    clean.user_id = params.user_id;
+  }
+
+  return clean;
+}
+
+function paymentIntentMetaFromPayload(payload = {}, params = {}) {
+  const items = arrayFrom(payload, "payment_intents");
+  const limit = Number(payload?.limit ?? params.limit ?? DEFAULT_PAYMENT_INTENT_PARAMS.limit);
+  const offset = Number(payload?.offset ?? params.offset ?? DEFAULT_PAYMENT_INTENT_PARAMS.offset);
+  const count = Number(payload?.count ?? items.length);
+  const total = Number(payload?.total ?? count);
+
+  return {
+    count,
+    total,
+    limit,
+    offset,
+    hasMore: Boolean(payload?.has_more),
+    filters: payload?.filters || {},
+  };
+}
+
 export function useAdminBillingCredits(user) {
   const { authRequest } = useAuthRequest(user);
 
   const [users, setUsers] = useState([]);
   const [creditGrants, setCreditGrants] = useState([]);
   const [paymentIntents, setPaymentIntents] = useState([]);
+  const [paymentIntentMeta, setPaymentIntentMeta] = useState(() =>
+    paymentIntentMetaFromPayload({}, DEFAULT_PAYMENT_INTENT_PARAMS),
+  );
+  const paymentIntentParamsRef = useRef(DEFAULT_PAYMENT_INTENT_PARAMS);
   const [creditPackages, setCreditPackages] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [accessTiers, setAccessTiers] = useState([]);
@@ -87,7 +134,7 @@ export function useAdminBillingCredits(user) {
         ] = await Promise.all([
           fetchAdminBillingUsers(authRequest, { limit: 250 }),
           fetchAdminCreditGrants(authRequest, { limit: 100 }),
-          fetchAdminPaymentIntents(authRequest, { limit: 100 }),
+          fetchAdminPaymentIntents(authRequest, paymentIntentParamsRef.current),
           fetchAdminCreditPackages(authRequest),
           fetchAdminGateways(authRequest),
           fetchAdminAccessTiers(authRequest),
@@ -99,6 +146,7 @@ export function useAdminBillingCredits(user) {
         setUsers(arrayFrom(usersPayload, "users"));
         setCreditGrants(arrayFrom(grantsPayload, "grants"));
         setPaymentIntents(arrayFrom(intentsPayload, "payment_intents"));
+        setPaymentIntentMeta(paymentIntentMetaFromPayload(intentsPayload, paymentIntentParamsRef.current));
         setCreditPackages(arrayFrom(packagesPayload, "packages"));
         setGateways(arrayFrom(gatewaysPayload, "gateways"));
         setAccessTiers(arrayFrom(tiersPayload, "access_tiers"));
@@ -145,6 +193,46 @@ export function useAdminBillingCredits(user) {
     refreshWhenHidden: false,
     runImmediately: true,
   });
+
+  const loadPaymentIntents = useCallback(
+    async (params = {}, { silent = true } = {}) => {
+      if (!canLoad || apiUnavailable) return null;
+
+      const cleanParams = normalizePaymentIntentParams(params);
+      paymentIntentParamsRef.current = cleanParams;
+
+      if (!silent) setActionLoading("paymentIntents");
+      setError("");
+
+      try {
+        const payload = await fetchAdminPaymentIntents(authRequest, cleanParams);
+        setPaymentIntents(arrayFrom(payload, "payment_intents"));
+        setPaymentIntentMeta(paymentIntentMetaFromPayload(payload, cleanParams));
+        clearAdminBillingApiUnavailable();
+        setApiUnavailable(false);
+        return payload;
+      } catch (err) {
+        if (isNotFoundError(err)) {
+          markAdminBillingApiUnavailable();
+          setApiUnavailable(true);
+          setError("");
+          return null;
+        }
+
+        if (isForbiddenError(err)) {
+          setAccessDenied(true);
+          setError("");
+          return null;
+        }
+
+        setError(getApiErrorMessage(err, "Unable to load payment requests."));
+        throw err;
+      } finally {
+        if (!silent) setActionLoading("");
+      }
+    },
+    [apiUnavailable, authRequest, canLoad],
+  );
 
   const grantCredits = useCallback(
     async ({ user_id, amount, reason, note, idempotency_key } = {}) => {
@@ -203,6 +291,7 @@ export function useAdminBillingCredits(user) {
       users,
       creditGrants,
       paymentIntents,
+      paymentIntentMeta,
       creditPackages,
       gateways,
       accessTiers,
@@ -215,6 +304,7 @@ export function useAdminBillingCredits(user) {
       isRefreshing: autoRefresh.isRefreshing,
       lastUpdatedAt: autoRefresh.lastUpdatedAt || manualLastUpdatedAt,
       refresh: loadAll,
+      loadPaymentIntents,
       grantCredits,
       fulfillPaymentIntent,
     }),
@@ -222,6 +312,7 @@ export function useAdminBillingCredits(user) {
       users,
       creditGrants,
       paymentIntents,
+      paymentIntentMeta,
       creditPackages,
       gateways,
       accessTiers,
@@ -235,6 +326,7 @@ export function useAdminBillingCredits(user) {
       autoRefresh.lastUpdatedAt,
       manualLastUpdatedAt,
       loadAll,
+      loadPaymentIntents,
       grantCredits,
       fulfillPaymentIntent,
     ],

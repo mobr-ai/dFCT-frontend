@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Badge,
   Button,
@@ -108,6 +108,24 @@ function paymentReference(intent) {
 
 function paymentCanFulfill(intent) {
   return paymentStatusOf(intent) === "pending";
+}
+
+const PAYMENT_STATUS_FILTER_OPTIONS = [
+  "all",
+  "pending",
+  "paid",
+  "fulfilled",
+  "completed",
+  "expired",
+  "cancelled",
+  "failed",
+];
+
+const PAYMENT_PAGE_SIZE_OPTIONS = [10, 25, 50];
+
+function paymentStatusFilterLabel(t, status) {
+  if (status === "all") return t("adminBilling.paymentIntentStatusAll");
+  return t(`adminBilling.paymentIntentStatus.${status}`, status);
 }
 
 function paymentUserLabel(intent, userById) {
@@ -280,6 +298,7 @@ export default function AdminBillingCreditsPage() {
     users,
     creditGrants,
     paymentIntents,
+    paymentIntentMeta,
     creditPackages,
     gateways,
     accessTiers,
@@ -289,6 +308,7 @@ export default function AdminBillingCreditsPage() {
     apiUnavailable,
     error,
     lastUpdatedAt,
+    loadPaymentIntents,
     grantCredits,
     fulfillPaymentIntent,
   } = useAdminBillingCredits(user);
@@ -299,7 +319,14 @@ export default function AdminBillingCreditsPage() {
   const [sortDirection, setSortDirection] = useState("asc");
   const [paymentSearch, setPaymentSearch] = useState("");
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
+  const [paymentPageSize, setPaymentPageSize] = useState(25);
+  const [paymentOffset, setPaymentOffset] = useState(0);
   const [modalState, setModalState] = useState({ action: null, row: null });
+  const loadPaymentIntentsRef = useRef(loadPaymentIntents);
+
+  useEffect(() => {
+    loadPaymentIntentsRef.current = loadPaymentIntents;
+  }, [loadPaymentIntents]);
 
   const handleFulfillPaymentIntent = async (intent) => {
     const paymentIntentId = intent?.payment_intent_id || intent?.id;
@@ -316,6 +343,16 @@ export default function AdminBillingCreditsPage() {
       );
     }
   };
+
+  useEffect(() => {
+    if (activeTab !== "payments") return;
+
+    loadPaymentIntentsRef.current?.({
+      limit: paymentPageSize,
+      offset: paymentOffset,
+      status: paymentStatusFilter,
+    }).catch(() => {});
+  }, [activeTab, paymentOffset, paymentPageSize, paymentStatusFilter]);
 
   const normalizedUsers = useMemo(
     () =>
@@ -406,11 +443,6 @@ export default function AdminBillingCreditsPage() {
     [paymentIntents, userById],
   );
 
-  const paymentStatusOptions = useMemo(() => {
-    const statuses = new Set(normalizedPaymentIntents.map((intent) => intent.status_normalized));
-    return ["all", ...Array.from(statuses).filter(Boolean).sort()];
-  }, [normalizedPaymentIntents]);
-
   const filteredPaymentIntents = useMemo(() => {
     const q = paymentSearch.trim().toLowerCase();
 
@@ -459,6 +491,26 @@ export default function AdminBillingCreditsPage() {
       amountDueByCurrency,
     };
   }, [filteredPaymentIntents]);
+
+  const paymentPager = useMemo(() => {
+    const total = Number(paymentIntentMeta?.total ?? paymentIntents.length);
+    const limit = Number(paymentIntentMeta?.limit ?? paymentPageSize);
+    const offset = Number(paymentIntentMeta?.offset ?? paymentOffset);
+    const count = Number(paymentIntentMeta?.count ?? paymentIntents.length);
+    const start = total > 0 ? offset + 1 : 0;
+    const end = total > 0 ? Math.min(offset + count, total) : 0;
+
+    return {
+      total,
+      limit,
+      offset,
+      count,
+      start,
+      end,
+      canPrevious: offset > 0,
+      canNext: Boolean(paymentIntentMeta?.hasMore),
+    };
+  }, [paymentIntentMeta, paymentIntents.length, paymentOffset, paymentPageSize]);
 
   const stats = useMemo(() => {
     const shownBlocked = filteredUsers.filter((row) => row.access_tier === "blocked").length;
@@ -785,16 +837,63 @@ export default function AdminBillingCreditsPage() {
 
                 <Form.Select
                   value={paymentStatusFilter}
-                  onChange={(event) => setPaymentStatusFilter(event.target.value)}
+                  onChange={(event) => {
+                    setPaymentStatusFilter(event.target.value);
+                    setPaymentOffset(0);
+                  }}
                 >
-                  {paymentStatusOptions.map((status) => (
+                  {PAYMENT_STATUS_FILTER_OPTIONS.map((status) => (
                     <option key={status} value={status}>
-                      {status === "all"
-                        ? t("adminBilling.paymentIntentStatusAll")
-                        : status}
+                      {paymentStatusFilterLabel(t, status)}
                     </option>
                   ))}
                 </Form.Select>
+
+                <Form.Select
+                  value={paymentPageSize}
+                  onChange={(event) => {
+                    setPaymentPageSize(Number(event.target.value));
+                    setPaymentOffset(0);
+                  }}
+                >
+                  {PAYMENT_PAGE_SIZE_OPTIONS.map((size) => (
+                    <option key={size} value={size}>
+                      {t("adminBilling.paymentIntentPageSize", { count: size })}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+
+              <div className="DfctBillingAdmin-paymentPager">
+                <span>
+                  {t("adminBilling.paymentIntentPageSummary", {
+                    start: paymentPager.start,
+                    end: paymentPager.end,
+                    total: paymentPager.total,
+                  })}
+                </span>
+
+                <div className="DfctBillingAdmin-paymentPagerActions">
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    disabled={!paymentPager.canPrevious || actionLoading === "paymentIntents"}
+                    onClick={() =>
+                      setPaymentOffset((current) => Math.max(0, current - paymentPager.limit))
+                    }
+                  >
+                    {t("adminBilling.paymentIntentPrevious")}
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    disabled={!paymentPager.canNext || actionLoading === "paymentIntents"}
+                    onClick={() => setPaymentOffset((current) => current + paymentPager.limit)}
+                  >
+                    {t("adminBilling.paymentIntentNext")}
+                  </Button>
+                </div>
               </div>
 
               <div className="DfctBillingAdmin-tableWrap DfctBillingAdmin-paymentTableWrap">
@@ -830,7 +929,7 @@ export default function AdminBillingCreditsPage() {
                       filteredPaymentIntents.map((intent) => {
                         const paymentIntentId = paymentIntentIdOf(intent);
                         const status = intent.status_normalized;
-                        const canFulfill = paymentCanFulfill(intent);
+                        const canFulfill = intent.can_fulfill ?? intent.actions?.fulfill ?? paymentCanFulfill(intent);
                         const fulfillLoading =
                           actionLoading === `fulfillPaymentIntent:${paymentIntentId}`;
 
