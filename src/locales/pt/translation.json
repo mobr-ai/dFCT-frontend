@@ -657,6 +657,24 @@
     "intentCredits": "Créditos",
     "intentAmount": "Valor",
     "intentGateway": "Forma de pagamento",
-    "intentCreated": "Criado em"
+    "intentCreated": "Criado em",
+    "paymentIntentStatsTotal": "Solicitações de pagamento",
+    "paymentIntentStatsTotalCaption": "Correspondem aos filtros atuais",
+    "paymentIntentStatsPending": "Pendentes",
+    "paymentIntentStatsPendingCaption": "Pendentes na visualização atual",
+    "paymentIntentStatsFulfilled": "Confirmadas",
+    "paymentIntentStatsFulfilledCaption": "Confirmadas na visualização atual",
+    "paymentIntentStatsAmountDue": "Volume por moeda",
+    "paymentIntentStatsAmountDueCaption": "",
+    "paymentIntentSearchPlaceholder": "Buscar por usuário, pacote, gateway, referência, tx hash ou id...",
+    "paymentIntentStatusAll": "Todos os status",
+    "noPaymentIntentsFiltered": "Nenhuma solicitação de pagamento corresponde aos filtros atuais.",
+    "colPackage": "Pacote",
+    "colStatus": "Status",
+    "colGateway": "Gateway",
+    "colReference": "Referência",
+    "colTxHash": "Tx hash",
+    "colExpires": "Expira em",
+    "colVerified": "Verificado em"
   }
 }

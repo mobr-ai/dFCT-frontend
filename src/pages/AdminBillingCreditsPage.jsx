@@ -37,6 +37,33 @@ function formatDate(value) {
   return date.toLocaleString();
 }
 
+function amountByCurrencyItems(totals = {}) {
+  return Object.entries(totals)
+    .filter(([, amount]) => numberFrom(amount) > 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([currency, amount]) => ({
+      currency,
+      amount: formatCredits(amount),
+    }));
+}
+
+function AmountByCurrencyValue({ totals }) {
+  const items = amountByCurrencyItems(totals);
+
+  if (!items.length) return "—";
+
+  return (
+    <span className="DfctBillingAdmin-currencyStat">
+      {items.map((item) => (
+        <span className="DfctBillingAdmin-currencyPill" key={item.currency}>
+          <span>{item.amount}</span>
+          <em>{item.currency}</em>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function shorten(value, head = 10, tail = 6) {
   const s = String(value || "");
   if (!s) return "—";
@@ -55,6 +82,45 @@ function userLabel(row) {
 function gatewayLabel(item) {
   if (typeof item === "string") return item;
   return item?.label || item?.name || item?.key || item?.gateway || item?.code || "—";
+}
+
+function paymentIntentIdOf(intent) {
+  return intent?.payment_intent_id ?? intent?.id;
+}
+
+function paymentStatusOf(intent) {
+  return String(intent?.status || "pending").toLowerCase();
+}
+
+function paymentPackageLabel(intent) {
+  return (
+    intent?.package?.name ||
+    intent?.package?.label ||
+    intent?.package_name ||
+    intent?.package_key ||
+    (intent?.package_id ? `#${intent.package_id}` : "—")
+  );
+}
+
+function paymentReference(intent) {
+  return intent?.external_reference || intent?.reference || intent?.id || intent?.payment_intent_id;
+}
+
+function paymentCanFulfill(intent) {
+  return paymentStatusOf(intent) === "pending";
+}
+
+function paymentUserLabel(intent, userById) {
+  const userId = intent?.user_id ?? intent?.user?.user_id ?? intent?.user?.id;
+  const linkedUser = userById.get(Number(userId));
+  const source = intent?.user || linkedUser;
+
+  return (
+    source?.email ||
+    source?.username ||
+    source?.display_name ||
+    (userId ? `#${userId}` : "—")
+  );
 }
 
 function sortableValue(row, field) {
@@ -231,6 +297,8 @@ export default function AdminBillingCreditsPage() {
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState("user_id");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [paymentSearch, setPaymentSearch] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
   const [modalState, setModalState] = useState({ action: null, row: null });
 
   const handleFulfillPaymentIntent = async (intent) => {
@@ -298,6 +366,99 @@ export default function AdminBillingCreditsPage() {
         : String(bv).localeCompare(String(av));
     });
   }, [normalizedUsers, search, sortDirection, sortField]);
+
+  const userById = useMemo(() => {
+    return new Map(
+      normalizedUsers
+        .filter((row) => row.user_id !== undefined && row.user_id !== null)
+        .map((row) => [Number(row.user_id), row]),
+    );
+  }, [normalizedUsers]);
+
+  const normalizedPaymentIntents = useMemo(
+    () =>
+      paymentIntents.map((intent) => {
+        const paymentIntentId = paymentIntentIdOf(intent);
+        const amountDue = numberFrom(
+          intent?.amount_due,
+          intent?.price_amount,
+          intent?.amount,
+          intent?.price,
+        );
+        const currency = intent?.currency_code || intent?.price_currency || intent?.currency || "";
+        const userId = intent?.user_id ?? intent?.user?.user_id ?? intent?.user?.id;
+
+        return {
+          ...intent,
+          payment_intent_id: paymentIntentId,
+          user_id: userId,
+          user_label: paymentUserLabel(intent, userById),
+          package_label: paymentPackageLabel(intent),
+          status_normalized: paymentStatusOf(intent),
+          credits_normalized: numberFrom(intent?.credits_amount, intent?.credits, intent?.credit_amount),
+          amount_due_normalized: amountDue,
+          currency_normalized: currency,
+          reference_normalized: paymentReference(intent),
+          tx_hash_normalized: intent?.tx_hash || "",
+          payment_address_normalized: intent?.payment_address || "",
+        };
+      }),
+    [paymentIntents, userById],
+  );
+
+  const paymentStatusOptions = useMemo(() => {
+    const statuses = new Set(normalizedPaymentIntents.map((intent) => intent.status_normalized));
+    return ["all", ...Array.from(statuses).filter(Boolean).sort()];
+  }, [normalizedPaymentIntents]);
+
+  const filteredPaymentIntents = useMemo(() => {
+    const q = paymentSearch.trim().toLowerCase();
+
+    return normalizedPaymentIntents.filter((intent) => {
+      const matchesStatus =
+        paymentStatusFilter === "all" || intent.status_normalized === paymentStatusFilter;
+
+      const searchable = [
+        intent.payment_intent_id,
+        intent.user_id,
+        intent.user_label,
+        intent.package_label,
+        intent.status_normalized,
+        intent.gateway,
+        intent.currency_normalized,
+        intent.reference_normalized,
+        intent.tx_hash_normalized,
+        intent.payment_address_normalized,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return matchesStatus && (!q || searchable.includes(q));
+    });
+  }, [normalizedPaymentIntents, paymentSearch, paymentStatusFilter]);
+
+  const paymentStats = useMemo(() => {
+    const pending = filteredPaymentIntents.filter(
+      (intent) => intent.status_normalized === "pending",
+    ).length;
+    const fulfilled = filteredPaymentIntents.filter((intent) =>
+      ["paid", "fulfilled", "completed"].includes(intent.status_normalized),
+    ).length;
+
+    const amountDueByCurrency = filteredPaymentIntents.reduce((totals, intent) => {
+      const currency = intent.currency_normalized || "—";
+      totals[currency] = numberFrom(totals[currency]) + numberFrom(intent.amount_due_normalized);
+      return totals;
+    }, {});
+
+    return {
+      total: filteredPaymentIntents.length,
+      pending,
+      fulfilled,
+      amountDueByCurrency,
+    };
+  }, [filteredPaymentIntents]);
 
   const stats = useMemo(() => {
     const shownBlocked = filteredUsers.filter((row) => row.access_tier === "blocked").length;
@@ -591,107 +752,145 @@ export default function AdminBillingCreditsPage() {
                 <h2>{t("adminBilling.paymentIntentsTitle")}</h2>
                 <p>{t("adminBilling.paymentIntentsSubtitle")}</p>
               </div>
-              {paymentIntents.length === 0 ? (
-                <div className="BillingAccess-emptyState">
-                  {t("adminBilling.noPaymentIntents")}
-                </div>
-              ) : (
-                <div className="DfctBillingAdmin-paymentIntentList">
-                  {paymentIntents.map((intent) => {
-                    const packageName =
-                      intent.package?.name ||
-                      intent.package_name ||
-                      intent.package_key ||
-                      (intent.package_id ? `#${intent.package_id}` : "—");
 
-                    const credits = formatCredits(
-                      intent.credits_amount ||
-                      intent.credits ||
-                      intent.credit_amount ||
-                      0,
-                    );
+              <div className="DfctBillingAdmin-statGrid">
+                <AdminStat
+                  label={t("adminBilling.paymentIntentStatsTotal")}
+                  value={paymentStats.total}
+                  caption={t("adminBilling.paymentIntentStatsTotalCaption")}
+                />
+                <AdminStat
+                  label={t("adminBilling.paymentIntentStatsPending")}
+                  value={paymentStats.pending}
+                  caption={t("adminBilling.paymentIntentStatsPendingCaption")}
+                />
+                <AdminStat
+                  label={t("adminBilling.paymentIntentStatsFulfilled")}
+                  value={paymentStats.fulfilled}
+                  caption={t("adminBilling.paymentIntentStatsFulfilledCaption")}
+                  tone="green"
+                />
+                <AdminStat
+                  label={t("adminBilling.paymentIntentStatsAmountDue")}
+                  value={<AmountByCurrencyValue totals={paymentStats.amountDueByCurrency} />}
+                />
+              </div>
 
-                    const amountDue = numberFrom(
-                      intent.amount_due,
-                      intent.price_amount,
-                      intent.amount,
-                      intent.price,
-                    );
+              <div className="DfctBillingAdmin-paymentToolbar">
+                <Form.Control
+                  value={paymentSearch}
+                  onChange={(event) => setPaymentSearch(event.target.value)}
+                  placeholder={t("adminBilling.paymentIntentSearchPlaceholder")}
+                />
 
-                    const currency =
-                      intent.currency_code ||
-                      intent.price_currency ||
-                      intent.currency ||
-                      "";
+                <Form.Select
+                  value={paymentStatusFilter}
+                  onChange={(event) => setPaymentStatusFilter(event.target.value)}
+                >
+                  {paymentStatusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {status === "all"
+                        ? t("adminBilling.paymentIntentStatusAll")
+                        : status}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
 
-                    const paymentIntentId = intent.payment_intent_id || intent.id;
-                    const status = String(intent.status || "pending").toLowerCase();
-                    const canFulfill = status === "pending";
-                    const fulfillLoading = actionLoading === `fulfillPaymentIntent:${paymentIntentId}`;
+              <div className="DfctBillingAdmin-tableWrap DfctBillingAdmin-paymentTableWrap">
+                <table className="DfctBillingAdmin-table">
+                  <thead>
+                    <tr>
+                      <th>{t("adminBilling.colActions")}</th>
+                      <th>{t("adminBilling.colId")}</th>
+                      <th>{t("adminBilling.colUser")}</th>
+                      <th>{t("adminBilling.colPackage")}</th>
+                      <th>{t("adminBilling.colStatus")}</th>
+                      <th>{t("adminBilling.colGateway")}</th>
+                      <th>{t("adminBilling.colCredits")}</th>
+                      <th>{t("adminBilling.colAmount")}</th>
+                      <th>{t("adminBilling.colReference")}</th>
+                      <th>{t("adminBilling.colTxHash")}</th>
+                      <th>{t("adminBilling.colCreated")}</th>
+                      <th>{t("adminBilling.colExpires")}</th>
+                      <th>{t("adminBilling.colVerified")}</th>
+                    </tr>
+                  </thead>
 
-                    return (
-                      <article
-                        className="DfctBillingAdmin-paymentIntentCard"
-                        key={paymentIntentId || intent.external_reference}
-                      >
-                        <div className="DfctBillingAdmin-paymentIntentMain">
-                          <div>
-                            <strong>{packageName}</strong>
-                            <span>{shorten(intent.external_reference || intent.id || intent.payment_intent_id)}</span>
-                          </div>
-                          <span className={`DfctBillingAdmin-statusPill is-${status}`}>
-                            {intent.status || "pending"}
-                          </span>
-                        </div>
+                  <tbody>
+                    {filteredPaymentIntents.length === 0 ? (
+                      <tr>
+                        <td colSpan={13}>
+                          {paymentIntents.length === 0
+                            ? t("adminBilling.noPaymentIntents")
+                            : t("adminBilling.noPaymentIntentsFiltered")}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredPaymentIntents.map((intent) => {
+                        const paymentIntentId = paymentIntentIdOf(intent);
+                        const status = intent.status_normalized;
+                        const canFulfill = paymentCanFulfill(intent);
+                        const fulfillLoading =
+                          actionLoading === `fulfillPaymentIntent:${paymentIntentId}`;
 
-                        <div className="DfctBillingAdmin-paymentIntentMeta">
-                          <span>
-                            <small>{t("adminBilling.intentCredits", "Credits")}</small>
-                            <strong>{credits} DFCT</strong>
-                          </span>
-                          <span>
-                            <small>{t("adminBilling.intentAmount", "Amount")}</small>
-                            <strong>
-                              {amountDue ? `${amountDue} ${currency}` : "—"}
-                            </strong>
-                          </span>
-                          <span>
-                            <small>{t("adminBilling.intentGateway", "Gateway")}</small>
-                            <strong>{intent.gateway || "—"}</strong>
-                          </span>
-                          <span className="DfctBillingAdmin-paymentIntentAction">
-                            <small>{t("adminBilling.intentActions", "Actions")}</small>
-                            {canFulfill ? (
-                              <Button
-                                size="sm"
-                                variant="outline-success"
-                                className="DfctBillingAdmin-fulfillPaymentButton"
-                                disabled={fulfillLoading}
-                                onClick={() => handleFulfillPaymentIntent(intent)}
-                              >
-                                {fulfillLoading ? (
-                                  <>
-                                    <Spinner animation="border" size="sm" className="me-2" />
-                                    {t("adminBilling.fulfillPaymentIntentLoading")}
-                                  </>
-                                ) : (
-                                  t("adminBilling.fulfillPaymentIntent")
-                                )}
-                              </Button>
-                            ) : (
-                              <strong>{t("adminBilling.intentNoAction", "—")}</strong>
-                            )}
-                          </span>
-                          <span>
-                            <small>{t("adminBilling.intentCreated", "Created")}</small>
-                            <strong>{formatDate(intent.created_at)}</strong>
-                          </span>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              )}
+                        return (
+                          <tr key={paymentIntentId || intent.external_reference}>
+                            <td>
+                              {canFulfill ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline-success"
+                                  className="DfctBillingAdmin-fulfillPaymentButton"
+                                  disabled={fulfillLoading}
+                                  onClick={() => handleFulfillPaymentIntent(intent)}
+                                >
+                                  {fulfillLoading ? (
+                                    <>
+                                      <Spinner animation="border" size="sm" className="me-2" />
+                                      {t("adminBilling.fulfillPaymentIntentLoading")}
+                                    </>
+                                  ) : (
+                                    t("adminBilling.fulfillPaymentIntent")
+                                  )}
+                                </Button>
+                              ) : (
+                                <span className="DfctBillingAdmin-muted">
+                                  {t("adminBilling.intentNoAction")}
+                                </span>
+                              )}
+                            </td>
+                            <td>{paymentIntentId || "—"}</td>
+                            <td>{intent.user_label}</td>
+                            <td>{intent.package_label}</td>
+                            <td>
+                              <span className={`DfctBillingAdmin-statusPill is-${status}`}>
+                                {intent.status || "pending"}
+                              </span>
+                            </td>
+                            <td>{intent.gateway || "—"}</td>
+                            <td>{formatCredits(intent.credits_normalized)} DFCT</td>
+                            <td>
+                              {intent.amount_due_normalized
+                                ? `${formatCredits(intent.amount_due_normalized)} ${intent.currency_normalized}`
+                                : "—"}
+                            </td>
+                            <td title={String(intent.reference_normalized || "")}>
+                              {shorten(intent.reference_normalized)}
+                            </td>
+                            <td title={String(intent.tx_hash_normalized || "")}>
+                              {shorten(intent.tx_hash_normalized)}
+                            </td>
+                            <td>{formatDate(intent.created_at)}</td>
+                            <td>{formatDate(intent.expires_at)}</td>
+                            <td>{formatDate(intent.verified_at)}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </section>
           </Tab>
 

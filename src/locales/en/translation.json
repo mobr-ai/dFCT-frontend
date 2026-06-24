@@ -657,6 +657,24 @@
     "intentCredits": "Credits",
     "intentAmount": "Amount",
     "intentGateway": "Payment method",
-    "intentCreated": "Created"
+    "intentCreated": "Created",
+    "paymentIntentStatsTotal": "Payment requests",
+    "paymentIntentStatsTotalCaption": "Matching current filters",
+    "paymentIntentStatsPending": "Pending",
+    "paymentIntentStatsPendingCaption": "Pending in current view",
+    "paymentIntentStatsFulfilled": "Fulfilled",
+    "paymentIntentStatsFulfilledCaption": "Fulfilled in current view",
+    "paymentIntentStatsAmountDue": "Volume by currency",
+    "paymentIntentStatsAmountDueCaption": "",
+    "paymentIntentSearchPlaceholder": "Search by user, package, gateway, reference, tx hash, or id...",
+    "paymentIntentStatusAll": "All statuses",
+    "noPaymentIntentsFiltered": "No payment requests match the current filters.",
+    "colPackage": "Package",
+    "colStatus": "Status",
+    "colGateway": "Gateway",
+    "colReference": "Reference",
+    "colTxHash": "Tx hash",
+    "colExpires": "Expires",
+    "colVerified": "Verified"
   }
 }
