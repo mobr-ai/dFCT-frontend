@@ -470,7 +470,25 @@ export default function AdminBillingCreditsPage() {
     });
   }, [normalizedPaymentIntents, paymentSearch, paymentStatusFilter]);
 
+  const isPaymentSearchActive = paymentSearch.trim().length > 0;
+
   const paymentStats = useMemo(() => {
+    if (!isPaymentSearchActive) {
+      const statusCounts = paymentIntentMeta?.statusCounts || {};
+      const fulfilled =
+        numberFrom(statusCounts.paid) +
+        numberFrom(statusCounts.fulfilled) +
+        numberFrom(statusCounts.completed);
+
+      return {
+        total: Number(paymentIntentMeta?.total ?? filteredPaymentIntents.length),
+        pending: numberFrom(statusCounts.pending),
+        fulfilled,
+        amountDueByCurrency: paymentIntentMeta?.volumeByCurrency || {},
+        source: "backend",
+      };
+    }
+
     const pending = filteredPaymentIntents.filter(
       (intent) => intent.status_normalized === "pending",
     ).length;
@@ -489,8 +507,9 @@ export default function AdminBillingCreditsPage() {
       pending,
       fulfilled,
       amountDueByCurrency,
+      source: "client_search",
     };
-  }, [filteredPaymentIntents]);
+  }, [filteredPaymentIntents, isPaymentSearchActive, paymentIntentMeta]);
 
   const paymentPager = useMemo(() => {
     const total = Number(paymentIntentMeta?.total ?? paymentIntents.length);
@@ -809,17 +828,29 @@ export default function AdminBillingCreditsPage() {
                 <AdminStat
                   label={t("adminBilling.paymentIntentStatsTotal")}
                   value={paymentStats.total}
-                  caption={t("adminBilling.paymentIntentStatsTotalCaption")}
+                  caption={
+                    isPaymentSearchActive
+                      ? t("adminBilling.paymentIntentStatsSearchCaption")
+                      : t("adminBilling.paymentIntentStatsTotalCaption")
+                  }
                 />
                 <AdminStat
                   label={t("adminBilling.paymentIntentStatsPending")}
                   value={paymentStats.pending}
-                  caption={t("adminBilling.paymentIntentStatsPendingCaption")}
+                  caption={
+                    isPaymentSearchActive
+                      ? t("adminBilling.paymentIntentStatsSearchCaption")
+                      : t("adminBilling.paymentIntentStatsPendingCaption")
+                  }
                 />
                 <AdminStat
                   label={t("adminBilling.paymentIntentStatsFulfilled")}
                   value={paymentStats.fulfilled}
-                  caption={t("adminBilling.paymentIntentStatsFulfilledCaption")}
+                  caption={
+                    isPaymentSearchActive
+                      ? t("adminBilling.paymentIntentStatsSearchCaption")
+                      : t("adminBilling.paymentIntentStatsFulfilledCaption")
+                  }
                   tone="green"
                 />
                 <AdminStat

@@ -659,12 +659,12 @@
     "intentGateway": "Payment method",
     "intentCreated": "Created",
     "paymentIntentStatsTotal": "Payment requests",
-    "paymentIntentStatsTotalCaption": "Visible in current view",
+    "paymentIntentStatsTotalCaption": "Across matching server filters",
     "paymentIntentStatsPending": "Pending",
-    "paymentIntentStatsPendingCaption": "Visible in current view",
+    "paymentIntentStatsPendingCaption": "Across matching server filters",
     "paymentIntentStatsFulfilled": "Fulfilled",
-    "paymentIntentStatsFulfilledCaption": "Visible in current view",
-    "paymentIntentStatsAmountDue": "Visible volume",
+    "paymentIntentStatsFulfilledCaption": "Across matching server filters",
+    "paymentIntentStatsAmountDue": "Total volume",
     "paymentIntentStatsAmountDueCaption": "",
     "paymentIntentSearchPlaceholder": "Search by user, package, gateway, reference, tx hash, or id...",
     "paymentIntentStatusAll": "All statuses",
@@ -688,6 +688,7 @@
       "expired": "Expired",
       "cancelled": "Cancelled",
       "failed": "Failed"
-    }
+    },
+    "paymentIntentStatsSearchCaption": "Within current text search"
   }
 }
