@@ -659,12 +659,12 @@
     "intentGateway": "Payment method",
     "intentCreated": "Created",
     "paymentIntentStatsTotal": "Payment requests",
-    "paymentIntentStatsTotalCaption": "Matching current filters",
+    "paymentIntentStatsTotalCaption": "Visible in current view",
     "paymentIntentStatsPending": "Pending",
-    "paymentIntentStatsPendingCaption": "Pending in current view",
+    "paymentIntentStatsPendingCaption": "Visible in current view",
     "paymentIntentStatsFulfilled": "Fulfilled",
-    "paymentIntentStatsFulfilledCaption": "Fulfilled in current view",
-    "paymentIntentStatsAmountDue": "Volume by currency",
+    "paymentIntentStatsFulfilledCaption": "Visible in current view",
+    "paymentIntentStatsAmountDue": "Visible volume",
     "paymentIntentStatsAmountDueCaption": "",
     "paymentIntentSearchPlaceholder": "Search by user, package, gateway, reference, tx hash, or id...",
     "paymentIntentStatusAll": "All statuses",
@@ -675,6 +675,19 @@
     "colReference": "Reference",
     "colTxHash": "Tx hash",
     "colExpires": "Expires",
-    "colVerified": "Verified"
+    "colVerified": "Verified",
+    "paymentIntentPageSize": "{{count}} / page",
+    "paymentIntentPageSummary": "{{start}}–{{end}} of {{total}}",
+    "paymentIntentPrevious": "Previous",
+    "paymentIntentNext": "Next",
+    "paymentIntentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "fulfilled": "Fulfilled",
+      "completed": "Completed",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "failed": "Failed"
+    }
   }
 }

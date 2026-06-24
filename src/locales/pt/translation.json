@@ -659,12 +659,12 @@
     "intentGateway": "Forma de pagamento",
     "intentCreated": "Criado em",
     "paymentIntentStatsTotal": "Solicitações de pagamento",
-    "paymentIntentStatsTotalCaption": "Correspondem aos filtros atuais",
+    "paymentIntentStatsTotalCaption": "Visíveis na visualização atual",
     "paymentIntentStatsPending": "Pendentes",
-    "paymentIntentStatsPendingCaption": "Pendentes na visualização atual",
+    "paymentIntentStatsPendingCaption": "Visíveis na visualização atual",
     "paymentIntentStatsFulfilled": "Confirmadas",
-    "paymentIntentStatsFulfilledCaption": "Confirmadas na visualização atual",
-    "paymentIntentStatsAmountDue": "Volume por moeda",
+    "paymentIntentStatsFulfilledCaption": "Visíveis na visualização atual",
+    "paymentIntentStatsAmountDue": "Volume visível",
     "paymentIntentStatsAmountDueCaption": "",
     "paymentIntentSearchPlaceholder": "Buscar por usuário, pacote, gateway, referência, tx hash ou id...",
     "paymentIntentStatusAll": "Todos os status",
@@ -675,6 +675,19 @@
     "colReference": "Referência",
     "colTxHash": "Tx hash",
     "colExpires": "Expira em",
-    "colVerified": "Verificado em"
+    "colVerified": "Verificado em",
+    "paymentIntentPageSize": "{{count}} / página",
+    "paymentIntentPageSummary": "{{start}}–{{end}} de {{total}}",
+    "paymentIntentPrevious": "Anterior",
+    "paymentIntentNext": "Próxima",
+    "paymentIntentStatus": {
+      "pending": "Pendente",
+      "paid": "Pago",
+      "fulfilled": "Confirmado",
+      "completed": "Concluído",
+      "expired": "Expirado",
+      "cancelled": "Cancelado",
+      "failed": "Falhou"
+    }
   }
 }

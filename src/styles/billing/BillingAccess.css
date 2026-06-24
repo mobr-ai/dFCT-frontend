@@ -1208,3 +1208,39 @@
     min-width: 980px;
   }
 }
+
+/* Server-side payment intent filters and pagination. */
+.DfctBillingAdmin-paymentToolbar {
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 210px) minmax(120px, 150px);
+}
+
+.DfctBillingAdmin-paymentPager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem 0 0.65rem;
+  color: rgba(245, 244, 240, 0.64);
+  font-size: 0.82rem;
+}
+
+.DfctBillingAdmin-paymentPagerActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 1080px) {
+  .DfctBillingAdmin-paymentToolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctBillingAdmin-paymentPager {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctBillingAdmin-paymentPagerActions {
+    justify-content: flex-end;
+  }
+}
