@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   getMyAccessSummary,
@@ -127,6 +127,23 @@ export function useBillingStatus(user) {
     refreshWhenHidden: false,
     runImmediately: true,
   });
+
+  useEffect(() => {
+    if (!canLoad) return undefined;
+
+    const handleBillingRefresh = () => {
+      loadStatus();
+    };
+
+    window.addEventListener("dfct:billing-status-refresh", handleBillingRefresh);
+    window.addEventListener("dfct:billing-updated", handleBillingRefresh);
+
+    return () => {
+      window.removeEventListener("dfct:billing-status-refresh", handleBillingRefresh);
+      window.removeEventListener("dfct:billing-updated", handleBillingRefresh);
+    };
+  }, [canLoad, loadStatus]);
+
 
   return useMemo(
     () => ({

@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   createPaymentIntent,
   getCreditPackages,
   getMyAccessSummary,
   getMyCreditBalance,
+  getMyCreditLedger,
   getMyPaymentIntents,
 } from "../api/billingCredits";
 import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
@@ -99,6 +100,7 @@ export function useBillingCredits(user) {
   const [access, setAccess] = useState(() => normalizeAccess());
   const [creditPackages, setCreditPackages] = useState([]);
   const [paymentIntents, setPaymentIntents] = useState([]);
+  const [ledgerEntries, setLedgerEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [apiUnavailable, setApiUnavailable] = useState(isBillingApiUnavailableCached);
@@ -115,12 +117,13 @@ export function useBillingCredits(user) {
       setError("");
 
       try {
-        const [balancePayload, accessPayload, packagesPayload, intentsPayload] =
+        const [balancePayload, accessPayload, packagesPayload, intentsPayload, ledgerPayload] =
           await Promise.all([
             getMyCreditBalance(authRequest),
             getMyAccessSummary(authRequest),
             getCreditPackages(authRequest),
             getMyPaymentIntents(authRequest, { limit: 50 }),
+            getMyCreditLedger(authRequest, { limit: 50 }),
           ]);
 
         clearBillingApiUnavailable();
@@ -130,6 +133,7 @@ export function useBillingCredits(user) {
         setAccess(normalizeAccess(accessPayload));
         setCreditPackages(arrayFrom(packagesPayload, "packages"));
         setPaymentIntents(arrayFrom(intentsPayload, "payment_intents"));
+        setLedgerEntries(arrayFrom(ledgerPayload, "ledger_entries"));
 
         const now = new Date();
         setManualLastUpdatedAt(now);
@@ -215,6 +219,23 @@ export function useBillingCredits(user) {
     runImmediately: true,
   });
 
+  useEffect(() => {
+    if (!canLoad) return undefined;
+
+    const handleBillingRefresh = () => {
+      loadAll({ silent: true });
+    };
+
+    window.addEventListener("dfct:billing-status-refresh", handleBillingRefresh);
+    window.addEventListener("dfct:billing-updated", handleBillingRefresh);
+
+    return () => {
+      window.removeEventListener("dfct:billing-status-refresh", handleBillingRefresh);
+      window.removeEventListener("dfct:billing-updated", handleBillingRefresh);
+    };
+  }, [canLoad, loadAll]);
+
+
   return useMemo(
     () => ({
       balance,
@@ -224,6 +245,8 @@ export function useBillingCredits(user) {
       creditPackages,
       packages: creditPackages,
       paymentIntents,
+      ledgerEntries,
+      creditLedgerEntries: ledgerEntries,
       loading,
       purchaseLoading,
       apiUnavailable,
@@ -240,6 +263,7 @@ export function useBillingCredits(user) {
       access,
       creditPackages,
       paymentIntents,
+      ledgerEntries,
       loading,
       purchaseLoading,
       apiUnavailable,

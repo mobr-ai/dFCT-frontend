@@ -1,178 +1,139 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import {
-  getEnabledWalletSummaries,
-  getWalletInfo,
-} from "./../../chains/cardano/walletUtils";
-import LoadingPage from "./../../LoadingPage";
-import "./../../styles/Wallet.css";
 
-function PublishTopicModal({ show, onHide, onConfirm, showToast }) {
+function numberFrom(...values) {
+  for (const value of values) {
+    const n = Number(value);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+
+function formatCredits(value) {
+  const n = numberFrom(value);
+  if (Number.isInteger(n)) return String(n);
+  return n.toFixed(6).replace(/\.?0+$/, "");
+}
+
+function PublishTopicModal({
+  show,
+  onHide,
+  onConfirm,
+  billingStatus,
+  isPublishing = false,
+}) {
   const { t } = useTranslation();
-  const [lovelace, setLovelace] = useState(2000000);
-  const [reward, setReward] = useState(1000);
-  const [selectedWallet, setSelectedWallet] = useState(null);
-  const [walletSummaries, setWalletSummaries] = useState([]);
-  const [isLoadingWallet, setIsLoadingWallet] = useState(true);
-  const sessionWalletName = JSON.parse(localStorage.getItem("userData"))
-    ?.wallet_info?.name;
 
-  useEffect(() => {
-    let intervalId;
+  const access = billingStatus?.access || {};
+  const balance = billingStatus?.balance || {};
+  const loaded = Boolean(billingStatus?.loaded);
+  const apiUnavailable = Boolean(billingStatus?.apiUnavailable);
 
-    const updateWallets = async () => {
-      const summaries = await getEnabledWalletSummaries();
-      setWalletSummaries(summaries);
-      setIsLoadingWallet(false);
+  const freeTopicsRemaining = numberFrom(
+    access.free_topics_remaining,
+    access.freeTopicsRemaining,
+  );
+  const creditBalance = numberFrom(
+    balance.credits_available,
+    balance.available_credits,
+    balance.balance,
+    access.credit_balance,
+  );
+  const publishCost = numberFrom(
+    access.topic_publish_credit_cost,
+    access.topicPublishCreditCost,
+    1,
+  );
 
-      const current = summaries.find((w) => w.name === selectedWallet?.name);
-      if (!current) {
-        // fallback to previously used or first
-        const lastUsed = localStorage.getItem("dfct_last_used_wallet");
-        const fallback =
-          summaries.find((w) => w.name === lastUsed) ||
-          summaries.find((w) => w.name === sessionWalletName) ||
-          summaries[0];
-        setSelectedWallet(fallback || null);
-      }
-    };
+  const usesFreeQuota = freeTopicsRemaining > 0;
+  const canPublish =
+    loaded &&
+    !apiUnavailable &&
+    access.can_publish_topic !== false &&
+    (usesFreeQuota || publishCost <= 0 || creditBalance >= publishCost);
 
-    if (show) {
-      updateWallets();
-      window.addEventListener("focus", updateWallets);
-      intervalId = setInterval(updateWallets, 5000);
-    }
-
-    return () => {
-      clearInterval(intervalId);
-      window.removeEventListener("focus", updateWallets);
-    };
-  }, [show]);
-
-  const handleSubmit = async () => {
-    try {
-      setIsLoadingWallet(true);
-
-      const walletApi = await window.cardano[selectedWallet.name].enable();
-      const walletInfo = await getWalletInfo(selectedWallet.name, walletApi);
-
-      setIsLoadingWallet(false);
-
-      onConfirm({
-        lovelace_amount: parseInt(lovelace),
-        reward_amount: parseInt(reward),
-        proposer_wallet_info: walletInfo,
+  const accessMessage = (() => {
+    if (!loaded) return t("publicationAccessLoading");
+    if (apiUnavailable) return t("topicPublishAccessUnavailable");
+    if (usesFreeQuota) return t("publicationUsesFreeQuota");
+    if (canPublish) {
+      return t("publicationUsesCredits", {
+        count: formatCredits(publishCost),
       });
-
-      localStorage.setItem("dfct_last_used_wallet", selectedWallet.name);
-      onHide();
-    } catch (err) {
-      console.error("Error enabling wallet or fetching info:", err);
-      showToast(t("walletEnableFailed"), "danger");
-    } finally {
-      setIsLoadingWallet(false);
     }
+    return t("publicationInsufficientCredits");
+  })();
+
+  const accessVariant = (() => {
+    if (!loaded) return "secondary";
+    if (apiUnavailable || !canPublish) return "warning";
+    return usesFreeQuota ? "success" : "info";
+  })();
+
+  const handleSubmit = () => {
+    onConfirm?.({
+      rewardPoolEnabled: false,
+    });
   };
 
-  const noWallets = walletSummaries.length === 0;
-  const isValid =
-    selectedWallet &&
-    selectedWallet.lovelace >= lovelace &&
-    selectedWallet.dfct >= reward;
-
   return (
-    <Modal show={show} onHide={onHide} scrollable centered>
-      <Modal.Header closeButton>
+    <Modal
+      show={show}
+      onHide={onHide}
+      scrollable
+      centered
+      className="PublishTopicModal"
+      contentClassName="PublishTopicModal-content"
+    >
+      <Modal.Header>
         <Modal.Title>{t("confirmPublishTitle")}</Modal.Title>
+        <button
+          type="button"
+          className="PublishTopicModal-close"
+          aria-label={t("cancel")}
+          onClick={onHide}
+          disabled={isPublishing}
+        >
+          ×
+        </button>
       </Modal.Header>
 
       <Modal.Body>
-        {isLoadingWallet ? (
-          <div className="wallet-loading-container">
-            <LoadingPage type="ring" />
+        <div className={`PublishTopicModal-alert is-${accessVariant}`}>
+          {accessMessage}
+        </div>
+
+        <div className="PublishTopicModal-accessSummary">
+          <div>
+            <span>{t("billingAccess.freeTopicsRemaining")}</span>
+            <strong>{freeTopicsRemaining}</strong>
           </div>
-        ) : (
-          <>
-            {walletSummaries.length === 0 ? (
-              <div className="no-wallet-message">{t("noWalletsFound")}</div>
-            ) : (
-              <>
-                <h6 className="wallet-label">{t("connectedWallets")}</h6>
-                <div className="wallet-selection-grid">
-                  {walletSummaries.map((wallet) => (
-                    <div
-                      key={wallet.name}
-                      className={`wallet-option ${
-                        selectedWallet?.name === wallet.name ? "active" : ""
-                      }`}
-                      onClick={() => {
-                        localStorage.setItem(
-                          "dfct_last_used_wallet",
-                          wallet.name
-                        );
-                        setSelectedWallet(wallet);
-                      }}
-                    >
-                      {wallet.name === sessionWalletName && (
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          className="wallet-user-icon"
-                          title={t("walletUsedToLogin")}
-                        />
-                      )}
-                      <img
-                        src={wallet.icon}
-                        alt={wallet.name}
-                        className="wallet-icon"
-                      />
-                      <div className="wallet-name">{wallet.name}</div>
-                      <div className="wallet-balance">
-                        {wallet.displayADA} / <br /> {wallet.displayDFCT}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+          <div>
+            <span>{t("billingAccess.creditsAvailable")}</span>
+            <strong>{formatCredits(creditBalance)} DFCT</strong>
+          </div>
+          <div>
+            <span>{t("publicationCreditCost")}</span>
+            <strong>{formatCredits(publishCost)} DFCT</strong>
+          </div>
+        </div>
 
-            <Form>
-              <Form.Group controlId="lovelaceAmount">
-                <Form.Label>{t("lovelaceAmount")}</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={lovelace}
-                  onChange={(e) => setLovelace(e.target.value)}
-                  disabled={noWallets}
-                />
-                <Form.Text className="text-muted">
-                  {t("lovelaceHelp")}
-                </Form.Text>
-              </Form.Group>
-
-              <Form.Group controlId="rewardAmount" className="mt-3">
-                <Form.Label>{t("rewardAmount")}</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={reward}
-                  onChange={(e) => setReward(e.target.value)}
-                  disabled={noWallets}
-                />
-                <Form.Text className="text-muted">{t("rewardHelp")}</Form.Text>
-              </Form.Group>
-            </Form>
-          </>
-        )}
+        <div className="PublishTopicModal-note">
+          <strong>{t("publicationNoWalletRequired")}</strong>
+          <span>{t("publicationRewardPoolOptionalText")}</span>
+        </div>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={onHide} disabled={isPublishing}>
           {t("cancel")}
         </Button>
-        <Button variant="primary" onClick={handleSubmit} disabled={!isValid}>
-          {t("confirm")}
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={!canPublish || isPublishing}
+        >
+          {isPublishing ? t("publishingTopic") : t("confirmPublishButton")}
         </Button>
       </Modal.Footer>
     </Modal>

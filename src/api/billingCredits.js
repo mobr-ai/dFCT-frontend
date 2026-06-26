@@ -32,8 +32,14 @@ export const fetchBillingCreditPackages = (authRequest) =>
 export const fetchMyBillingPaymentIntents = (authRequest, params = {}) =>
   get(authRequest, "/api/billing/payment-intents", params);
 
+export const fetchMyCreditLedger = (authRequest, params = {}) =>
+  get(authRequest, "/api/billing/credits/ledger", params);
+
 export const createBillingPaymentIntent = (authRequest, payload = {}) =>
   post(authRequest, "/api/billing/payment-intents", payload);
+
+export const publishTopicWithBilling = (authRequest, userId, topicId, payload = {}) =>
+  post(authRequest, `/api/topic/${userId}/${topicId}/publish`, payload);
 
 export const fetchAdminBillingUsers = (authRequest, params = {}) =>
   get(authRequest, "/api/admin/billing/users", params);
@@ -79,4 +85,6 @@ export const getMyCreditBalance = fetchBillingCreditBalance;
 export const getMyAccessSummary = fetchBillingAccess;
 export const getCreditPackages = fetchBillingCreditPackages;
 export const getMyPaymentIntents = fetchMyBillingPaymentIntents;
+export const getMyCreditLedger = fetchMyCreditLedger;
 export const createPaymentIntent = createBillingPaymentIntent;
+export const publishTopic = publishTopicWithBilling;

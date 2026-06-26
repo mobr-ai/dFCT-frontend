@@ -63,7 +63,7 @@
   "topicRejected": "Tópico rejeitado",
   "statusSyncTimeout": "A verificação na blockchain ainda está em andamento. Por favor, tente novamente em alguns instantes.",
   "publishTopic": "Publicar tópico",
-  "publishingTopic": "Verificando tópico na blockchain...",
+  "publishingTopic": "Publicando tópico...",
   "verifyTopic": "Verificar estado do tópico",
   "topicApprovalPending": "Aguardando aprovação",
   "proposalFailed": "Ops! Erro ao propor tópico.  Por favor, tente novamente mais tarde.",
@@ -501,13 +501,13 @@
     "unnamedPackage": "Pacote de créditos",
     "noPackages": "Nenhum pacote de créditos está disponível ainda.",
     "activityTitle": "Atividade de cobrança",
-    "activitySubtitle": "Solicitações de pagamento e lançamentos do ledger de créditos aparecerão aqui.",
-    "intentKind": "Pacote",
-    "intentStatus": "Status",
+    "activitySubtitle": "Concessões de créditos, débitos de publicação de tópicos e solicitações de pagamento aparecem aqui.",
+    "intentKind": "Atividade",
+    "intentStatus": "Status / motivo",
     "intentAmount": "Valor",
     "intentCreated": "Criado em",
     "noActivity": "Nenhuma atividade de cobrança ainda.",
-    "publishFlowNote": "Próximo slice: reformular a publicação de tópicos para permitir publicação gratuita, baseada em créditos ou com pool de recompensa opcional.",
+    "publishFlowNote": "A publicação básica de tópicos agora usa cota gratuita ou DFCT Credits. Pools e distribuição de recompensas aparecerão como etapas do fluxo dSM-Prov.",
     "syncPreparing": "Preparando sincronização",
     "syncing": "Sincronizando créditos…",
     "lastSynced": "Sincronizado às {{time}}",
@@ -533,7 +533,14 @@
     "createPaymentIntent": "Obter pacote",
     "purchaseCreating": "Criando solicitação…",
     "purchaseIntentCreated": "Solicitação de pagamento criada para {{packageName}}.",
-    "purchaseIntentFailed": "Não foi possível criar a solicitação de pagamento. Tente novamente."
+    "purchaseIntentFailed": "Não foi possível criar a solicitação de pagamento. Tente novamente.",
+    "activityTopicPublication": "Publicação de tópico",
+    "activityTopicPublicationWithId": "Publicação do tópico #{{topicId}}",
+    "activityCreditGrant": "Concessão de créditos",
+    "activityPaymentFulfilled": "Pagamento confirmado",
+    "activityPaymentRequest": "Solicitação de pagamento",
+    "activityLedgerEntry": "Entrada no ledger de créditos",
+    "activityCreditDebit": "Débito de crédito"
   },
   "adminBilling": {
     "nav": "Admin Cobrança",
@@ -690,5 +697,19 @@
       "failed": "Falhou"
     },
     "paymentIntentStatsSearchCaption": "Na busca textual atual"
-  }
+  },
+  "topicPublishedFreeQuota": "Tópico publicado usando acesso gratuito de publicação.",
+  "topicPublishedWithCredits": "Tópico publicado usando {{count}} crédito(s) DFCT.",
+  "topicPublishAccessUnavailable": "O acesso para publicação ainda não está disponível. Tente novamente em instantes.",
+  "topicPublishMissingUser": "Não foi possível identificar o proprietário do tópico para publicação.",
+  "publicationAccessTitle": "Acesso para publicação",
+  "publicationAccessLoading": "Carregando acesso para publicação...",
+  "publicationUsesFreeQuota": "Esta publicação usará sua cota gratuita de tópicos.",
+  "publicationUsesCredits": "Esta publicação usará {{count}} crédito(s) DFCT.",
+  "publicationInsufficientCredits": "Você não tem DFCT Credits suficientes para publicar este tópico.",
+  "publicationCreditCost": "Custo de publicação",
+  "publicationNoWalletRequired": "A publicação básica de tópicos não exige transação com carteira.",
+  "publicationRewardPoolOptionalTitle": "O financiamento do pool de recompensa é opcional",
+  "publicationRewardPoolOptionalText": "A criação de pools de recompensa e a distribuição de recompensas chegarão em breve como etapas do fluxo dSM-Prov.",
+  "confirmPublishButton": "Publicar tópico"
 }

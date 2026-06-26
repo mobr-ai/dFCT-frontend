@@ -80,6 +80,94 @@ function packageDisplayName(t, pkg) {
   );
 }
 
+function formatCreditAmount(amount) {
+  const numeric = Number(amount || 0);
+  const sign = numeric > 0 ? "+" : "";
+  return `${sign}${formatCredits(numeric)} DFCT`;
+}
+
+function formatActivityStatus(status) {
+  const value = String(status || "—").trim();
+
+  if (!value || value === "—") return "—";
+
+  return value
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function activityTimestamp(item) {
+  const raw = item?.created_at || item?.createdAt || item?.updated_at || item?.updatedAt;
+  const date = raw ? new Date(raw) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
+}
+
+function ledgerActivityLabel(t, entry) {
+  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
+
+  if (reason.includes("topic_publication")) {
+    const topicId = entry?.source_id || entry?.metadata?.topic_id;
+    return topicId
+      ? t("billingAccess.activityTopicPublicationWithId", { topicId })
+      : t("billingAccess.activityTopicPublication");
+  }
+
+  if (reason.includes("payment_fulfilled")) {
+    return t("billingAccess.activityPaymentFulfilled");
+  }
+
+  if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
+    return t("billingAccess.activityCreditGrant");
+  }
+
+  return entry?.reason || entry?.source_type || t("billingAccess.activityLedgerEntry");
+}
+
+function ledgerActivityStatus(t, entry) {
+  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
+
+  if (reason.includes("topic_publication")) {
+    return t("billingAccess.activityCreditDebit");
+  }
+
+  if (reason.includes("payment_fulfilled")) {
+    return t("billingAccess.activityPaymentFulfilled");
+  }
+
+  if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
+    return t("billingAccess.activityCreditGrant");
+  }
+
+  return formatActivityStatus(entry?.reason || entry?.source_type);
+}
+
+function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries = [] }) {
+  const paymentRows = paymentIntents.map((intent) => ({
+    id: `intent:${intent.payment_intent_id || intent.id || intent.created_at}`,
+    kind: intent.package?.name || intent.package_name || intent.gateway || t("billingAccess.activityPaymentRequest"),
+    status: formatActivityStatus(intent.status),
+    amount: formatPaymentAmount(intent, language),
+    createdAt: intent.created_at,
+    timestamp: activityTimestamp(intent),
+  }));
+
+  const ledgerRows = ledgerEntries.map((entry) => ({
+    id: `ledger:${entry.ledger_entry_id || entry.id || entry.created_at}`,
+    kind: ledgerActivityLabel(t, entry),
+    status: ledgerActivityStatus(t, entry),
+    amount: formatCreditAmount(entry.amount),
+    createdAt: entry.created_at,
+    timestamp: activityTimestamp(entry),
+  }));
+
+  return [...ledgerRows, ...paymentRows]
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 12);
+}
+
 export default function BillingAccessPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -91,6 +179,7 @@ export default function BillingAccessPage() {
     accessSummary,
     packages,
     paymentIntents,
+    ledgerEntries,
     purchaseLoading,
     apiUnavailable,
     purchasePackage,
@@ -113,6 +202,13 @@ export default function BillingAccessPage() {
     accessSummary?.free_topics_remaining ??
     accessSummary?.quota?.free_topics_remaining ??
     "—";
+
+  const billingActivity = buildBillingActivity({
+    t,
+    language: i18n.language,
+    paymentIntents,
+    ledgerEntries,
+  });
 
   const handlePackagePurchase = async (pkg) => {
     setPurchaseNotice(null);
@@ -265,7 +361,7 @@ export default function BillingAccessPage() {
             </div>
           </div>
 
-          <div className="BillingAccess-tableWrap">
+          <div className="BillingAccess-tableWrap BillingAccess-activityTableWrap">
             <Table responsive hover className="BillingAccess-table">
               <thead>
                 <tr>
@@ -276,12 +372,12 @@ export default function BillingAccessPage() {
                 </tr>
               </thead>
               <tbody>
-                {paymentIntents.length > 0 ? paymentIntents.map((intent) => (
-                  <tr key={intent.id || intent.intent_id || intent.created_at}>
-                    <td>{intent.package?.name || intent.package_name || intent.gateway || "—"}</td>
-                    <td>{intent.status || "—"}</td>
-                    <td>{formatPaymentAmount(intent, i18n.language)}</td>
-                    <td>{formatIntentDate(intent.created_at)}</td>
+                {billingActivity.length > 0 ? billingActivity.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.kind}</td>
+                    <td>{item.status}</td>
+                    <td>{item.amount}</td>
+                    <td>{formatIntentDate(item.createdAt)}</td>
                   </tr>
                 )) : (
                   <tr><td colSpan="4">{t("billingAccess.noActivity")}</td></tr>
@@ -291,9 +387,6 @@ export default function BillingAccessPage() {
           </div>
         </section>
 
-        <section className="BillingAccess-note">
-          {t("billingAccess.publishFlowNote")}
-        </section>
       </Container>
     </main>
   );
