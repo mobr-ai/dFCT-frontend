@@ -49,7 +49,7 @@
   "topicRejected": "Topic rejected",
   "statusSyncTimeout": "On-chain verification is still in progress. Please retry after a short while",
   "publishTopic": "Publish topic",
-  "publishingTopic": "Verifying topic on-chain...",
+  "publishingTopic": "Publishing topic...",
   "verifyTopic": "Verify topic state",
   "proposalFailed": "Oops! Failed to propose topic. Please, try again later.",
   "topicApprovalPending": "Waiting for approval",
@@ -501,13 +501,13 @@
     "unnamedPackage": "Credit package",
     "noPackages": "No credit packages are available yet.",
     "activityTitle": "Billing activity",
-    "activitySubtitle": "Payment requests and credit ledger entries will appear here.",
-    "intentKind": "Package",
-    "intentStatus": "Status",
+    "activitySubtitle": "Credit grants, topic-publication debits, and payment requests appear here.",
+    "intentKind": "Activity",
+    "intentStatus": "Status / reason",
     "intentAmount": "Amount",
     "intentCreated": "Created",
     "noActivity": "No billing activity yet.",
-    "publishFlowNote": "Next slice: revamp topic publication so publishing can be free, credit-based, or paired with an optional reward pool.",
+    "publishFlowNote": "Basic topic publication now uses free quota or DFCT Credits. Reward pools and reward distribution will appear as dSM-Prov workflow steps.",
     "syncPreparing": "Preparing sync",
     "syncing": "Syncing credits…",
     "lastSynced": "Synced at {{time}}",
@@ -533,7 +533,14 @@
     "createPaymentIntent": "Get package",
     "purchaseCreating": "Creating request…",
     "purchaseIntentCreated": "Payment request created for {{packageName}}.",
-    "purchaseIntentFailed": "Could not create the payment request. Please try again."
+    "purchaseIntentFailed": "Could not create the payment request. Please try again.",
+    "activityTopicPublication": "Topic publication",
+    "activityTopicPublicationWithId": "Topic publication #{{topicId}}",
+    "activityCreditGrant": "Credit grant",
+    "activityPaymentFulfilled": "Payment fulfilled",
+    "activityPaymentRequest": "Payment request",
+    "activityLedgerEntry": "Credit ledger entry",
+    "activityCreditDebit": "Credit debit"
   },
   "adminBilling": {
     "nav": "Admin Billing",
@@ -690,5 +697,19 @@
       "failed": "Failed"
     },
     "paymentIntentStatsSearchCaption": "Within current text search"
-  }
+  },
+  "topicPublishedFreeQuota": "Topic published using free publication access.",
+  "topicPublishedWithCredits": "Topic published using {{count}} DFCT credit(s).",
+  "topicPublishAccessUnavailable": "Publication access is not available yet. Please try again shortly.",
+  "topicPublishMissingUser": "Unable to identify the topic owner for publication.",
+  "publicationAccessTitle": "Publication access",
+  "publicationAccessLoading": "Loading publication access...",
+  "publicationUsesFreeQuota": "This publication will use your free topic quota.",
+  "publicationUsesCredits": "This publication will use {{count}} DFCT credit(s).",
+  "publicationInsufficientCredits": "You do not have enough DFCT Credits to publish this topic.",
+  "publicationCreditCost": "Publication cost",
+  "publicationNoWalletRequired": "Basic topic publication does not require a wallet transaction.",
+  "publicationRewardPoolOptionalTitle": "Reward pool funding is optional",
+  "publicationRewardPoolOptionalText": "Reward pool creation and reward distribution are coming soon as dSM-Prov workflow steps.",
+  "confirmPublishButton": "Publish topic"
 }

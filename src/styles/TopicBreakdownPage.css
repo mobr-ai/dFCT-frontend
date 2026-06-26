@@ -104,7 +104,8 @@
   width: auto;
   height: auto;
   cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+  box-shadow:
+    rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
@@ -140,6 +141,10 @@
   font-size: 0.7rem;
   font-family: monospace;
 } */
+
+.Breakdown-topic-status {
+  text-transform: uppercase;
+}
 
 .Breakdown-topic-subheading {
   display: flex;
@@ -240,7 +245,8 @@
   cursor: pointer;
   margin-top: 1rem;
   margin-bottom: 2rem;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+  box-shadow:
+    rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 

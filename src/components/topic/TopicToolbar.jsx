@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
@@ -8,24 +8,76 @@ import Tooltip from "react-bootstrap/Tooltip";
 import ShareModal from "./../ShareModal";
 import PublishTopicModal from "./PublishTopicModal";
 import { useTranslation } from "react-i18next";
-import { useAuthRequest } from "./../../hooks/useAuthRequest";
-import { prepareTopicDatum } from "./../../chains/cardano/prepareTopicDatum";
-import { buildTopicTx } from "./../../chains/cardano/buildTopicTx";
-import { signAndSubmitTx } from "../../chains/cardano/signAndSubmitTx";
+import {
+  getApiErrorMessage,
+  useAuthRequest,
+} from "./../../hooks/useAuthRequest";
+import { useBillingStatus } from "./../../hooks/useBillingStatus";
+import { publishTopicWithBilling } from "./../../api/billingCredits";
 import publishIcon from "./../../icons/publish.svg";
 import deleteIcon from "./../../icons/delete.svg";
 import shareIcon from "./../../icons/share.svg";
-import {
-  DFCT_POLICY_ID,
-  DFCT_TOKEN_NAME,
-  PROV_SCRIPT_ADDRESS,
-} from "./../../chains/cardano/constants";
+
+const TOPIC_STATUS_BY_CODE = {
+  0: "PROPOSED",
+  1: "REVIEWED",
+  2: "ACTIVE",
+  3: "CLOSED",
+  4: "REJECTED",
+  5: "DRAFT",
+};
+
+function normalizeTopicStatus(status, fallback = "PROPOSED") {
+  if (status === undefined || status === null || status === "") return fallback;
+
+  const numericStatus = Number(status);
+  if (Number.isInteger(numericStatus) && TOPIC_STATUS_BY_CODE[numericStatus]) {
+    return TOPIC_STATUS_BY_CODE[numericStatus];
+  }
+
+  return String(status).toUpperCase();
+}
+
+function userIdFrom(user, fallbackUserId) {
+  return (
+    fallbackUserId ||
+    user?.user_id ||
+    user?.userId ||
+    user?.id ||
+    user?.sub ||
+    user?.identity
+  );
+}
+
+function normalizeTopicUpdate(topic = {}) {
+  return {
+    status: normalizeTopicStatus(topic.status),
+    updated_at:
+      topic.updated_at ||
+      topic.updatedAt ||
+      new Date().toISOString(),
+    transaction_hash:
+      topic.transaction_hash ||
+      topic.transactionHash ||
+      null,
+    reward_amount:
+      topic.reward_amount ??
+      topic.rewardAmount ??
+      0,
+    distribution_fee_amount:
+      topic.distribution_fee_amount ??
+      topic.distributionFeeAmount ??
+      0,
+  };
+}
 
 function TopicToolbar(props) {
   const { t: translate } = useTranslation();
-  const t = translate ?? ((key) => key); // fallback no-op if t is undefined
+  const t = translate ?? ((key) => key);
 
   const { authRequest } = useAuthRequest(props.user);
+  const billingStatus = useBillingStatus(props.user);
+
   const [loading, setLoading] = useState(false);
   const [publishModalShow, setPublishModalShow] = useState(false);
 
@@ -35,140 +87,77 @@ function TopicToolbar(props) {
     ACTIVE: "topicActivated",
     CLOSED: "topicClosed",
     REJECTED: "topicRejected",
-    DRAFT: "topicDraft", // fallback
+    DRAFT: "topicDraft",
   };
 
-  const statusKey = String(props.status ?? "DRAFT").toUpperCase();
+  const statusKey = normalizeTopicStatus(props.status, "DRAFT");
   const tooltipKey = statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT;
-  const [tooltipText, setTooltipText] = useState(t(tooltipKey));
   const statusClass = statusKey.toLowerCase();
 
-  const TOPIC_SYNCING_KEY = `dfct_topic_syncing_${props.topicId}`;
-  const isSyncing = () => sessionStorage.getItem(TOPIC_SYNCING_KEY) === "1";
-  const markSync = () => sessionStorage.setItem(TOPIC_SYNCING_KEY, "1");
-  const clearSync = () => sessionStorage.removeItem(TOPIC_SYNCING_KEY);
+  const handlePublishClick = async () => {
+    if (statusKey !== "DRAFT") return;
 
-  const handlePublishClick = () => {
-    if (isSyncing()) {
-      handlePublishConfirmed({
-        lovelace_amount: 0,
-        reward_amount: 0,
-        proposer_wallet_info: undefined,
-      });
-      return;
+    if (!billingStatus.loaded && !billingStatus.apiUnavailable) {
+      await billingStatus.refresh?.();
     }
+
     setPublishModalShow(true);
   };
 
-  const handlePublishConfirmed = async ({
-    lovelace_amount,
-    reward_amount,
-    proposer_wallet_info,
-  }) => {
+  const handlePublishConfirmed = async ({ rewardPoolEnabled = false } = {}) => {
+    const userId = userIdFrom(props.user, props.proposedBy);
+
+    if (!userId) {
+      props.showToast?.(t("topicPublishMissingUser"), "danger");
+      return;
+    }
+
     try {
       setLoading(true);
-      setTooltipText(t("publishingTopic"));
 
-      // If polling was previously exhausted, skip TX and retry polling
-      if (isSyncing()) {
-        await pollTopicStatus();
-        return;
-      }
+      const result = await publishTopicWithBilling(
+        authRequest,
+        userId,
+        props.topicId,
+        {
+          rewardPoolEnabled,
+        },
+      );
 
-      const walletApi = await window.cardano[
-        proposer_wallet_info.name
-      ].enable();
+      await billingStatus.refresh?.();
 
-      const datum = await prepareTopicDatum({
-        topicId: String(props.topicId),
-        proposerPubKeyHash: proposer_wallet_info.pub_key_hash,
-        lovelaceAmount: lovelace_amount,
-        dfctAmount: reward_amount,
+      window.dispatchEvent(
+        new CustomEvent("dfct:billing-updated", {
+          detail: {
+            source: "topic_publication",
+            topicId: props.topicId,
+          },
+        }),
+      );
+
+      const mode = result?.publication_access?.mode;
+      const cost = result?.publication_access?.topic_publish_credit_cost || 1;
+      const message =
+        mode === "credits"
+          ? t("topicPublishedWithCredits", { count: cost })
+          : t("topicPublishedFreeQuota");
+
+      props.onTopicUpdated?.({
+        message,
+        updatedTopic: normalizeTopicUpdate(result?.topic),
       });
 
-      const tx = await buildTopicTx({
-        walletApi,
-        outputAddress: PROV_SCRIPT_ADDRESS,
-        datumHex: datum.datumHex,
-        dfctPolicyId: DFCT_POLICY_ID,
-        dfctAssetName: DFCT_TOKEN_NAME,
-        dfctAmount: reward_amount,
-        lovelaceAmount: lovelace_amount,
-        changeAddressBech32: proposer_wallet_info.address,
-        metadata: null,
-      });
-
-      const txHash = await signAndSubmitTx(tx, walletApi);
-      props.showToast(t("publishingTopic"), "secondary");
-
-      await authRequest.post("/api/topic_tx_status").send({
-        topic_id: String(props.topicId),
-        transaction_hash: txHash,
-        reward_amount,
-        distribution_fee_amount: lovelace_amount,
-      });
-
-      markSync();
-      await pollTopicStatus();
+      props.showToast?.(message, "success");
+      setPublishModalShow(false);
     } catch (err) {
-      console.error("Topic proposal failed:", err);
-      props.showToast(t("proposalFailed"), "danger");
-      setTooltipText(t(tooltipKey));
+      props.showToast?.(
+        getApiErrorMessage(err, t("proposalFailed")),
+        "danger",
+      );
     } finally {
       setLoading(false);
     }
   };
-
-  const pollTopicStatus = async () => {
-    const maxAttempts = 12;
-    const delayMs = 10000;
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-
-      try {
-        const statusRes = await authRequest.get(
-          `/api/topic/${props.topicId}/status`
-        );
-        const topic = statusRes.body;
-
-        if (topic.status && topic.status !== "DRAFT") {
-          const newStatusKey = String(topic.status).toUpperCase();
-          setTooltipText(
-            t(statusToTooltipKey[newStatusKey] ?? statusToTooltipKey.DRAFT)
-          );
-
-          props.onTopicUpdated?.({
-            message: t("topicProposed"),
-            updatedTopic: topic,
-          });
-
-          clearSync(); // clear the syncing marker
-          return true;
-        }
-      } catch (pollErr) {
-        console.warn(`Polling attempt ${attempt + 1} failed`, pollErr);
-      }
-    }
-
-    // Polling exhausted
-    props.showToast(t("statusSyncTimeout"), "secondary");
-    setTooltipText(t("verifyTopic"));
-    return false;
-  };
-
-  useEffect(() => {
-    if (isSyncing()) {
-      if (import.meta.env.DEV) console.log("Previous topic status sync timed out. Retrying polling...");
-      // pollTopicStatus();
-      handlePublishConfirmed({
-        lovelace_amount: 0,
-        reward_amount: 0,
-        proposer_wallet_info: undefined,
-      });
-      // return;
-    }
-  }, []);
 
   return (
     <Container className="Breakdown-toolbar" fluid>
@@ -191,7 +180,7 @@ function TopicToolbar(props) {
                     loading ? "rotating" : ""
                   }`}
                   onClick={handlePublishClick}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: statusKey === "DRAFT" ? "pointer" : "default" }}
                 />
               </OverlayTrigger>
             </Col>
@@ -229,10 +218,13 @@ function TopicToolbar(props) {
         hashtags={props.hashtags}
         onHide={() => props.setShareModalShow(false)}
       />
+
       <PublishTopicModal
         show={statusKey === "DRAFT" && publishModalShow}
         onHide={() => setPublishModalShow(false)}
         onConfirm={handlePublishConfirmed}
+        billingStatus={billingStatus}
+        isPublishing={loading}
         showToast={props.showToast}
       />
     </Container>

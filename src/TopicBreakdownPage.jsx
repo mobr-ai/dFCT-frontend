@@ -28,7 +28,7 @@ function getHashtags(
   contentList,
   jsx = false,
   limit = 5,
-  onClickTag = () => {}
+  onClickTag = () => {},
 ) {
   let tags = [
     ...new Set(
@@ -45,10 +45,10 @@ function getHashtags(
               s
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join("")
+                .join(""),
             );
         })
-        .flat()
+        .flat(),
     ),
   ].slice(0, limit);
 
@@ -68,7 +68,6 @@ function getHashtags(
   }
   return tags;
 }
-
 
 function TopicDataResolver({
   parsedTopic,
@@ -142,7 +141,6 @@ const Topic = ({
   const navigate = useNavigate();
 
   const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
-    if (import.meta.env.DEV) console.log(message + " datum hash = " + datumHash);
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
     if (message) showToast(message, "success");
   };
@@ -185,7 +183,10 @@ const Topic = ({
         <span>
           {t("status")}:
           <b>
-            <TextTransition springConfig={presets.wobbly}>
+            <TextTransition
+              springConfig={presets.wobbly}
+              className="Breakdown-topic-status"
+            >
               {transactionHash ? (
                 <a
                   href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
@@ -229,6 +230,7 @@ const Topic = ({
         onTopicUpdated={handleTopicUpdate}
         topicId={topicId}
         status={currentStatus}
+        proposedBy={proposedBy}
       />
       {contentList && contentList.length > 0 && (
         <div style={{ marginBottom: "2rem" }}>
@@ -244,9 +246,9 @@ const Topic = ({
       >
         {createdAt !== updatedAt
           ? `${t("createdAt")}: ${new Date(createdAt).toLocaleString(
-              locale
+              locale,
             )} • ${t("updatedAt")}: ${new Date(updatedAt).toLocaleString(
-              locale
+              locale,
             )}`
           : `${t("createdAt")}: ${new Date(createdAt).toLocaleString(locale)}`}
       </small>
@@ -317,7 +319,8 @@ function TopicBreakdownPage() {
         <div className="Breakdown-middle-column">
           <Await resolve={topicPromise}>
             {(resolved) => {
-              const parsed = typeof resolved === "string" ? JSON.parse(resolved) : resolved;
+              const parsed =
+                typeof resolved === "string" ? JSON.parse(resolved) : resolved;
 
               return (
                 <TopicDataResolver

@@ -1244,3 +1244,66 @@
     justify-content: flex-end;
   }
 }
+
+/* Compact, pro-scroll Billing Activity table. */
+.BillingAccess-activityTableWrap {
+  max-height: clamp(24rem, 46vh, 34rem);
+  overflow-y: auto;
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition:
+    scrollbar-color 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.BillingAccess-activityTableWrap:hover,
+.BillingAccess-activityTableWrap:focus-within {
+  scrollbar-color:
+    color-mix(in srgb, var(--theme-primary, #2f80ed) 70%, transparent)
+    transparent;
+  box-shadow:
+    inset 0 -16px 22px -24px var(--theme-primary, #2f80ed),
+    inset 0 16px 22px -24px var(--theme-primary, #2f80ed);
+}
+
+.BillingAccess-activityTableWrap::-webkit-scrollbar {
+  width: 0.48rem;
+  height: 0.48rem;
+}
+
+.BillingAccess-activityTableWrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.BillingAccess-activityTableWrap::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.BillingAccess-activityTableWrap:hover::-webkit-scrollbar-thumb,
+.BillingAccess-activityTableWrap:focus-within::-webkit-scrollbar-thumb {
+  background:
+    color-mix(in srgb, var(--theme-primary, #2f80ed) 72%, transparent);
+}
+
+.BillingAccess-activityTableWrap:hover::-webkit-scrollbar-thumb:hover {
+  background:
+    color-mix(in srgb, var(--theme-primary, #2f80ed) 92%, transparent);
+}
+
+.BillingAccess-activityTableWrap .BillingAccess-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--theme-surface, #15171c);
+  box-shadow: 0 1px 0 var(--theme-border, rgba(255, 255, 255, 0.12));
+}
+
+[data-theme="paper"] .BillingAccess-activityTableWrap .BillingAccess-table thead th {
+  background: var(--theme-surface, #ffffff);
+}
