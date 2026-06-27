@@ -157,8 +157,48 @@ function ledgerActivityStatus(t, entry) {
   return formatActivityStatus(entry?.reason || entry?.source_type);
 }
 
+
+function paymentIntentCardanoMetadata(intent) {
+  const metadata = intent?.intent_metadata || intent?.metadata || intent?.metadata_json || {};
+  return metadata?.cardano_payment || metadata?.cardanoPayment || {};
+}
+
+function paymentIntentTxHash(intent) {
+  const cardano = paymentIntentCardanoMetadata(intent);
+
+  return (
+    intent?.tx_hash ||
+    intent?.txHash ||
+    intent?.transaction_hash ||
+    intent?.transactionHash ||
+    intent?.metadata?.tx_hash ||
+    intent?.metadata?.txHash ||
+    intent?.intent_metadata?.tx_hash ||
+    cardano?.tx_hash ||
+    cardano?.txHash ||
+    ""
+  );
+}
+
+function shouldShowPaymentIntentInActivity(intent) {
+  const status = String(intent?.status || "").toLowerCase();
+  const txHash = paymentIntentTxHash(intent);
+
+  // A pending Cardano payment with no tx hash is only a quote/request draft.
+  // It should not appear in the main activity feed.
+  if (status === "pending" && !txHash) return false;
+
+  // Expired quote-only requests are useful for admin/debug history,
+  // but they are not user-facing billing activity.
+  if (status === "expired" && !txHash) return false;
+
+  return true;
+}
+
 function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries = [] }) {
-  const paymentRows = paymentIntents.map((intent) => ({
+  const visiblePaymentIntents = paymentIntents.filter(shouldShowPaymentIntentInActivity);
+
+  const paymentRows = visiblePaymentIntents.map((intent) => ({
     id: `intent:${intent.payment_intent_id || intent.id || intent.created_at}`,
     kind: intent.package?.name || intent.package_name || intent.gateway || t("billingAccess.activityPaymentRequest"),
     status: formatActivityStatus(intent.status),
@@ -241,9 +281,8 @@ function PaymentRequestModal({
   show,
   onHide,
   t,
-  language,
-  intent,
   selectedPackage,
+  selectedPaymentIntent,
   cardanoQuote,
   walletSummaries = [],
   selectedWallet,
@@ -255,18 +294,56 @@ function PaymentRequestModal({
   checkoutStage = "",
   onPayCardano,
 }) {
-  if (!intent) return null;
+  const packageName =
+    selectedPackage?.name ||
+    selectedPaymentIntent?.package_name ||
+    selectedPaymentIntent?.package?.name ||
+    t("billingAccess.paymentModalDefaultPackage");
 
-  const amount = formatPaymentAmount(intent, language);
-  const packageName = paymentPackageName(t, intent, selectedPackage);
-  const credits = paymentCredits(intent, selectedPackage);
-  const method = paymentMethodLabel(t, intent);
-  const status = paymentIntentStatus(intent);
-  const reference = intent?.external_reference ||
-    intent?.reference ||
-    intent?.payment_reference ||
-    intent?.tx_reference ||
-    paymentIntentId(intent);
+  const credits = paymentCredits(selectedPaymentIntent, selectedPackage);
+  const displayCurrency = cardanoQuote?.display_currency || selectedPaymentIntent?.currency_code || "USD";
+  const displayAmount = cardanoQuote?.display_amount || selectedPaymentIntent?.amount_due;
+  const cardanoAmount = cardanoQuote?.amount_ada
+    ? `${cardanoQuote.amount_ada} ${cardanoQuote.asset_label || "ADA"}`
+    : t("billingAccess.paymentModalQuotePending");
+
+  const selectedWalletObject =
+    typeof selectedWallet === "string"
+      ? walletSummaries.find((wallet) => wallet.name === selectedWallet) || null
+      : selectedWallet;
+
+  const effectiveSelectedWallet =
+    selectedWalletObject ||
+    walletSummaries.find((wallet) => wallet.enabled || wallet.isLoginWallet) ||
+    walletSummaries[0] ||
+    null;
+
+  const selectedWalletLabel =
+    effectiveSelectedWallet?.displayName ||
+    effectiveSelectedWallet?.label ||
+    effectiveSelectedWallet?.name ||
+    t("billingAccess.paymentModalNoWalletSelected");
+
+  const canPay = Boolean(
+    cardanoQuote?.payment_address &&
+    cardanoQuote?.amount_lovelace &&
+    effectiveSelectedWallet?.name &&
+    !checkoutLoading,
+  );
+
+  const shortNetwork =
+    cardanoQuote?.network === "preview"
+      ? t("billingAccess.paymentModalNetworkPreview")
+      : cardanoQuote?.network === "preprod"
+        ? t("billingAccess.paymentModalNetworkPreprod")
+        : cardanoQuote?.network === "mainnet"
+          ? t("billingAccess.paymentModalNetworkMainnet")
+          : cardanoQuote?.network || "Cardano";
+
+  const handleWalletSelect = (wallet) => {
+    if (!wallet || typeof updateSelectedWallet !== "function") return;
+    updateSelectedWallet(wallet);
+  };
 
   return (
     <Modal
@@ -274,16 +351,21 @@ function PaymentRequestModal({
       onHide={onHide}
       centered
       scrollable
-      className="BillingPaymentModal"
+      className="BillingPaymentModal BillingPaymentModalProduct"
       backdropClassName="BillingPaymentModal-backdrop"
       contentClassName="BillingPaymentModal-content"
     >
       <Modal.Header>
-        <Modal.Title>{t("billingAccess.paymentModalTitle")}</Modal.Title>
+        <div className="BillingPaymentModalProduct-header">
+          <span className="BillingPaymentModalProduct-eyebrow">
+            {t("billingAccess.paymentModalHeroEyebrow")}
+          </span>
+          <Modal.Title>{t("billingAccess.paymentModalTitle")}</Modal.Title>
+        </div>
         <button
           type="button"
-          className="BillingPaymentModal-close"
-          aria-label={t("cancel")}
+          className="BillingPaymentModalProduct-close"
+          aria-label={t("billingAccess.paymentModalClose")}
           onClick={onHide}
           disabled={checkoutLoading}
         >
@@ -292,94 +374,122 @@ function PaymentRequestModal({
       </Modal.Header>
 
       <Modal.Body>
-        <div className="BillingPaymentModal-hero">
-          <span>{t("billingAccess.paymentModalEyebrow")}</span>
-          <strong>{packageName}</strong>
-          <small>{t("billingAccess.paymentModalCreated")}</small>
-        </div>
+        <section className="BillingPaymentModalProduct-hero">
+          <div>
+            <span className="BillingPaymentModalProduct-pill">
+              {t("billingAccess.paymentModalInstantTopUp")}
+            </span>
+            <h3>
+              {t("billingAccess.paymentModalProductTitle", {
+                credits,
+                packageName,
+              })}
+            </h3>
+            <p>{t("billingAccess.paymentModalProductSubtitle")}</p>
+          </div>
 
-        <div className="BillingPaymentModal-grid">
-          <div>
-            <span>{t("billingAccess.paymentModalCredits")}</span>
-            <strong>{formatCredits(credits)} DFCT</strong>
+          <div className="BillingPaymentModalProduct-amountCard">
+            <span>{t("billingAccess.paymentModalPayToday")}</span>
+            <strong>{cardanoAmount}</strong>
+            {displayAmount ? (
+              <small>
+                {t("billingAccess.paymentModalEquivalentPrice", {
+                  amount: displayAmount,
+                  currency: displayCurrency,
+                })}
+              </small>
+            ) : null}
           </div>
-          <div>
-            <span>{t("billingAccess.paymentModalAmount")}</span>
-            <strong>{amount}</strong>
-          </div>
-          <div>
-            <span>{t("billingAccess.paymentModalMethod")}</span>
-            <strong>{method}</strong>
-          </div>
-          <div>
-            <span>{t("billingAccess.paymentModalStatus")}</span>
-            <strong>{status}</strong>
-          </div>
-        </div>
+        </section>
 
-        {cardanoQuote ? (
-          <div className="BillingPaymentModal-quote">
+        <section className="BillingPaymentModalProduct-trustStrip">
+          <span>{t("billingAccess.paymentModalTrustWallet")}</span>
+          <span>{t("billingAccess.paymentModalTrustVerification")}</span>
+          <span>{shortNetwork}</span>
+        </section>
+
+        <section className="BillingPaymentModalProduct-journey">
+          <h4>{t("billingAccess.paymentModalJourneyTitle")}</h4>
+          <div className="BillingPaymentModalProduct-steps">
             <div>
-              <span>{t("billingAccess.paymentModalCardanoAmount")}</span>
-              <strong>{cardanoQuote.amount_ada} ADA</strong>
+              <strong>1</strong>
+              <span>{t("billingAccess.paymentModalStepReviewTitle")}</span>
+              <p>{t("billingAccess.paymentModalStepReviewText")}</p>
             </div>
             <div>
-              <span>{t("billingAccess.paymentModalNetwork")}</span>
-              <strong>{cardanoQuote.network || "preview"}</strong>
+              <strong>2</strong>
+              <span>{t("billingAccess.paymentModalStepWalletTitle")}</span>
+              <p>{t("billingAccess.paymentModalStepWalletText")}</p>
             </div>
-            <div className="BillingPaymentModal-quoteWide">
-              <span>{t("billingAccess.paymentModalTreasuryAddress")}</span>
-              <code>{cardanoQuote.payment_address}</code>
+            <div>
+              <strong>3</strong>
+              <span>{t("billingAccess.paymentModalStepCreditsTitle")}</span>
+              <p>{t("billingAccess.paymentModalStepCreditsText")}</p>
             </div>
           </div>
-        ) : (
-          <div className="BillingPaymentModal-roadmap">
-            {t("billingAccess.paymentModalQuotePending")}
-          </div>
-        )}
+        </section>
 
-        <div className="BillingPaymentModal-reference">
-          <span>{t("billingAccess.paymentModalReference")}</span>
-          <code>{reference}</code>
-        </div>
-
-        <div className="BillingPaymentModal-walletBlock">
-          <div className="BillingPaymentModal-walletHeader">
-            <strong>{t("billingAccess.paymentModalWalletTitle")}</strong>
+        <section className="BillingPaymentModalProduct-wallet">
+          <div className="BillingPaymentModalProduct-sectionHeader">
+            <div>
+              <h4>{t("billingAccess.paymentModalChooseWalletTitle")}</h4>
+              <p>{t("billingAccess.paymentModalChooseWalletSubtitle")}</p>
+            </div>
             <span>
-              {selectedWallet
-                ? t("billingAccess.paymentModalSelectedWallet", { wallet: selectedWallet.name })
-                : t("billingAccess.paymentModalSelectWallet")}
+              {t("billingAccess.paymentModalSelectedWallet", {
+                wallet: selectedWalletLabel,
+              })}
             </span>
           </div>
 
-          <div className="BillingPaymentModal-walletList">
-            {isLoadingWallet ? (
-              <div className="BillingPaymentModal-walletEmpty">
-                {t("billingAccess.paymentModalWalletLoading")}
-              </div>
-            ) : walletSummaries.length > 0 ? walletSummaries.map((wallet) => (
-              <button
-                type="button"
-                key={wallet.name}
-                className={`BillingPaymentModal-walletOption ${
-                  selectedWallet?.name === wallet.name ? "is-active" : ""
-                }`}
-                onClick={() => updateSelectedWallet?.(wallet)}
-              >
-                {wallet.icon ? <img src={wallet.icon} alt="" /> : null}
-                <span>
-                  <strong>{wallet.name}</strong>
-                  <small>{wallet.displayADA || wallet.displayDFCT || wallet.warning || "Cardano wallet"}</small>
-                </span>
-              </button>
-            )) : (
-              <div className="BillingPaymentModal-walletEmpty">
-                {t("billingAccess.paymentModalNoWallets")}
-              </div>
-            )}
-          </div>
-        </div>
+          {isLoadingWallet ? (
+            <div className="BillingPaymentModal-walletEmpty">
+              {t("billingAccess.paymentModalWalletLoading")}
+            </div>
+          ) : walletSummaries.length ? (
+            <div className="BillingPaymentModalProduct-walletList">
+              {walletSummaries.map((wallet) => {
+                const walletName = wallet.name;
+                const walletLabel =
+                  wallet.displayName ||
+                  wallet.label ||
+                  wallet.name ||
+                  t("billingAccess.paymentModalWallet");
+                const isSelected = walletName === effectiveSelectedWallet?.name;
+                const statusLabel = wallet.isLoginWallet
+                  ? t("billingAccess.paymentModalWalletLastUsed")
+                  : wallet.enabled
+                    ? t("billingAccess.paymentModalWalletConnected")
+                    : t("billingAccess.paymentModalWalletDetected");
+
+                return (
+                  <button
+                    type="button"
+                    key={walletName || walletLabel}
+                    className={`BillingPaymentModalProduct-walletOption ${isSelected ? "is-selected" : ""}`}
+                    onClick={() => handleWalletSelect(wallet)}
+                  >
+                    {wallet.icon ? (
+                      <img src={wallet.icon} alt="" aria-hidden="true" />
+                    ) : (
+                      <span className="BillingPaymentModalProduct-walletFallback">
+                        {String(walletLabel).slice(0, 1).toUpperCase()}
+                      </span>
+                    )}
+                    <span>
+                      <strong>{walletLabel}</strong>
+                      <small>{statusLabel}</small>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="BillingPaymentModal-walletEmpty">
+              {t("billingAccess.paymentModalNoWallets")}
+            </div>
+          )}
+        </section>
 
         {checkoutStage ? (
           <div className="BillingPaymentModal-alert is-info">{checkoutStage}</div>
@@ -393,30 +503,49 @@ function PaymentRequestModal({
           <div className="BillingPaymentModal-alert is-success">{checkoutSuccess}</div>
         ) : null}
 
-        <div className="BillingPaymentModal-instructions">
-          <strong>{t("billingAccess.paymentModalNextStepsTitle")}</strong>
-          <p>{t("billingAccess.paymentModalNextStepsText")}</p>
-          <p>{t("billingAccess.paymentModalVerificationText")}</p>
-        </div>
+        <details className="BillingPaymentModalProduct-details">
+          <summary>{t("billingAccess.paymentModalAdvancedDetails")}</summary>
+          <div className="BillingPaymentModalProduct-detailsGrid">
+            <div>
+              <span>{t("billingAccess.paymentModalNetwork")}</span>
+              <code>{shortNetwork}</code>
+            </div>
+            <div>
+              <span>{t("billingAccess.paymentModalRequestReference")}</span>
+              <code>{cardanoQuote?.external_reference || selectedPaymentIntent?.external_reference || "—"}</code>
+            </div>
+            <div className="is-wide">
+              <span>{t("billingAccess.paymentModalTreasuryAddress")}</span>
+              <code>{cardanoQuote?.payment_address || "—"}</code>
+            </div>
+          </div>
+        </details>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide} disabled={checkoutLoading}>
-          {t("billingAccess.paymentModalClose")}
-        </Button>
-        <Button
-          variant="primary"
-          onClick={onPayCardano}
-          disabled={checkoutLoading || !selectedWallet}
+        <button
+          type="button"
+          className="BillingPaymentModalProduct-secondary"
+          onClick={onHide}
+          disabled={checkoutLoading}
+        >
+          {t("common.close", t("billingAccess.paymentModalClose"))}
+        </button>
+        <button
+          type="button"
+          className="BillingPaymentModalProduct-primary"
+          onClick={() => onPayCardano?.(effectiveSelectedWallet)}
+          disabled={!canPay}
         >
           {checkoutLoading
-            ? t("billingAccess.paymentModalPaying")
-            : t("billingAccess.paymentModalPayWithCardano")}
-        </Button>
+            ? t("billingAccess.paymentModalPrimaryCtaLoading")
+            : t("billingAccess.paymentModalPrimaryCta")}
+        </button>
       </Modal.Footer>
     </Modal>
   );
 }
+
 
 export default function BillingAccessPage() {
   const { t, i18n } = useTranslation();
@@ -523,9 +652,10 @@ export default function BillingAccessPage() {
     }
   };
 
-  const handleCardanoPayment = async () => {
+  const handleCardanoPayment = async (walletOverride = null) => {
     if (!selectedPaymentIntent) return;
 
+    const checkoutWallet = walletOverride?.name ? walletOverride : selectedWallet;
     const intentId = selectedPaymentIntent.payment_intent_id || selectedPaymentIntent.id;
 
     if (!intentId) {
@@ -533,7 +663,7 @@ export default function BillingAccessPage() {
       return;
     }
 
-    if (!selectedWallet?.name) {
+    if (!checkoutWallet?.name) {
       setCheckoutError(t("billingAccess.paymentModalSelectWallet"));
       return;
     }
@@ -566,8 +696,8 @@ export default function BillingAccessPage() {
       }
 
       setStep("billingAccess.paymentModalStepWallet");
-      const walletApi = await enableWalletForAction(selectedWallet.name);
-      const walletInfo = await getWalletInfo(selectedWallet.name, walletApi);
+      const walletApi = await enableWalletForAction(checkoutWallet.name);
+      const walletInfo = await getWalletInfo(checkoutWallet.name, walletApi);
 
       setStep("billingAccess.paymentModalStepBuildTx");
       const tx = await buildAdaPaymentTx({
@@ -593,7 +723,7 @@ export default function BillingAccessPage() {
       const payload = await submitCardanoPayment(authRequest, intentId, {
         tx_hash: txHash,
         wallet_address: walletInfo?.address,
-        wallet_name: selectedWallet.name,
+        wallet_name: checkoutWallet.name,
         metadata: {
           external_reference: quote.external_reference,
           network: quote.network,

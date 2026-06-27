@@ -1744,3 +1744,500 @@
     max-height: calc(100dvh - 5.9rem);
   }
 }
+
+/* Product-oriented Cardano checkout experience. */
+.BillingPaymentModalProduct .modal-dialog {
+  max-width: min(760px, calc(100vw - 1.5rem));
+}
+
+.BillingPaymentModalProduct .modal-header {
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.14)) 70%, transparent);
+}
+
+.BillingPaymentModalProduct-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.BillingPaymentModalProduct-eyebrow,
+.BillingPaymentModalProduct-pill {
+  color: var(--theme-primary, #2f80ed);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.BillingPaymentModalProduct-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(210px, 0.75fr);
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.9rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 24%, var(--theme-border, rgba(255, 255, 255, 0.14)));
+  border-radius: 1.1rem;
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--theme-primary, #2f80ed) 24%, transparent), transparent 42%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+}
+
+.BillingPaymentModalProduct-hero h3 {
+  margin: 0.45rem 0 0.35rem;
+  color: var(--theme-text, #f8fafc);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.08;
+}
+
+.BillingPaymentModalProduct-hero p {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.72));
+  line-height: 1.45;
+}
+
+.BillingPaymentModalProduct-amountCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.28rem;
+  min-height: 9rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.14)) 80%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--theme-surface, #15171c) 78%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.BillingPaymentModalProduct-amountCard span,
+.BillingPaymentModalProduct-amountCard small {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.68));
+  font-size: 0.82rem;
+}
+
+.BillingPaymentModalProduct-amountCard strong {
+  color: var(--theme-text, #f8fafc);
+  font-size: clamp(1.55rem, 4vw, 2.35rem);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.BillingPaymentModalProduct-trustStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+.BillingPaymentModalProduct-trustStrip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 20%, transparent);
+  border-radius: 999px;
+  color: var(--theme-text, #f8fafc);
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 10%, transparent);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.BillingPaymentModalProduct-journey,
+.BillingPaymentModalProduct-wallet,
+.BillingPaymentModalProduct-details {
+  padding: 0.9rem;
+  margin-bottom: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.14)) 78%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--theme-surface-2, #202228) 64%, transparent);
+}
+
+.BillingPaymentModalProduct-journey h4,
+.BillingPaymentModalProduct-wallet h4 {
+  margin: 0;
+  color: var(--theme-text, #f8fafc);
+  font-size: 1rem;
+}
+
+.BillingPaymentModalProduct-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.BillingPaymentModalProduct-steps div {
+  padding: 0.72rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.BillingPaymentModalProduct-steps strong {
+  display: inline-grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  margin-bottom: 0.55rem;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 18%, transparent);
+  color: var(--theme-primary, #2f80ed);
+  font-size: 0.86rem;
+}
+
+.BillingPaymentModalProduct-steps span {
+  display: block;
+  color: var(--theme-text, #f8fafc);
+  font-weight: 800;
+}
+
+.BillingPaymentModalProduct-steps p,
+.BillingPaymentModalProduct-sectionHeader p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.66));
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.BillingPaymentModalProduct-sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.BillingPaymentModalProduct-sectionHeader > span {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.68));
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.BillingPaymentModalProduct-walletList {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.BillingPaymentModalProduct-walletOption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.14)) 80%, transparent);
+  border-radius: 0.9rem;
+  color: var(--theme-text, #f8fafc);
+  background: color-mix(in srgb, var(--theme-surface, #15171c) 68%, transparent);
+  text-align: left;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.BillingPaymentModalProduct-walletOption:hover,
+.BillingPaymentModalProduct-walletOption.is-selected {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--theme-primary, #2f80ed) 58%, transparent);
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 12%, var(--theme-surface, #15171c));
+}
+
+.BillingPaymentModalProduct-walletOption img,
+.BillingPaymentModalProduct-walletFallback {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.7rem;
+  object-fit: contain;
+}
+
+.BillingPaymentModalProduct-walletFallback {
+  display: inline-grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 18%, transparent);
+  color: var(--theme-primary, #2f80ed);
+  font-weight: 900;
+}
+
+.BillingPaymentModalProduct-walletOption span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.BillingPaymentModalProduct-walletOption strong {
+  color: var(--theme-text, #f8fafc);
+}
+
+.BillingPaymentModalProduct-walletOption small {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.66));
+}
+
+.BillingPaymentModalProduct-details summary {
+  cursor: pointer;
+  color: var(--theme-text, #f8fafc);
+  font-weight: 800;
+}
+
+.BillingPaymentModalProduct-detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.BillingPaymentModalProduct-detailsGrid .is-wide {
+  grid-column: 1 / -1;
+}
+
+.BillingPaymentModalProduct-detailsGrid div {
+  min-width: 0;
+  padding: 0.65rem;
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.BillingPaymentModalProduct-detailsGrid span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.BillingPaymentModalProduct-detailsGrid code {
+  display: block;
+  max-width: 100%;
+  color: var(--theme-text, #f8fafc);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.BillingPaymentModalProduct-primary,
+.BillingPaymentModalProduct-secondary {
+  min-height: 2.5rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 0.7rem;
+  font-weight: 800;
+}
+
+.BillingPaymentModalProduct-primary {
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 70%, transparent);
+  color: #fff;
+  background:
+    linear-gradient(135deg, var(--theme-primary, #2f80ed), color-mix(in srgb, var(--theme-primary, #2f80ed) 72%, #8b5cf6));
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--theme-primary, #2f80ed) 26%, transparent);
+}
+
+.BillingPaymentModalProduct-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.BillingPaymentModalProduct-secondary {
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.14));
+  color: var(--theme-text, #f8fafc);
+  background: transparent;
+}
+
+[data-theme="paper"] .BillingPaymentModalProduct-hero,
+[data-theme="paper"] .BillingPaymentModalProduct-journey,
+[data-theme="paper"] .BillingPaymentModalProduct-wallet,
+[data-theme="paper"] .BillingPaymentModalProduct-details {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 720px) {
+  .BillingPaymentModalProduct-hero,
+  .BillingPaymentModalProduct-steps,
+  .BillingPaymentModalProduct-detailsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .BillingPaymentModalProduct-sectionHeader {
+    flex-direction: column;
+  }
+}
+
+/* Product checkout polish: glass modal surface + theme-aware close button. */
+.BillingPaymentModalProduct .modal-content,
+[data-theme] .BillingPaymentModalProduct .BillingPaymentModal-content {
+  background:
+    radial-gradient(circle at 14% 0%, color-mix(in srgb, var(--theme-primary, #2f80ed) 20%, transparent), transparent 34%),
+    radial-gradient(circle at 96% 12%, rgba(139, 92, 246, 0.14), transparent 32%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #15171c) 82%, transparent),
+      color-mix(in srgb, var(--theme-surface-2, #202228) 66%, transparent)
+    ) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.16)) 82%, transparent) !important;
+  box-shadow:
+    0 34px 110px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+}
+
+.BillingPaymentModalProduct .modal-header,
+.BillingPaymentModalProduct .modal-footer {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #15171c) 72%, transparent),
+      color-mix(in srgb, var(--theme-surface-2, #202228) 56%, transparent)
+    );
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+}
+
+.BillingPaymentModalProduct .btn-close {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.18)) 85%, transparent);
+  border-radius: 0.75rem;
+  background-color: color-mix(in srgb, var(--theme-surface-2, #202228) 72%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+  filter: invert(1) grayscale(1);
+  opacity: 0.72;
+  transition: opacity 160ms ease, transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.BillingPaymentModalProduct .btn-close:hover,
+.BillingPaymentModalProduct .btn-close:focus {
+  opacity: 1;
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--theme-primary, #2f80ed) 58%, transparent);
+  background-color: color-mix(in srgb, var(--theme-primary, #2f80ed) 18%, var(--theme-surface-2, #202228));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    0 14px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="paper"] .BillingPaymentModalProduct .modal-content,
+[data-theme="paper"] .BillingPaymentModalProduct .BillingPaymentModal-content {
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--theme-primary, #2f80ed) 18%, transparent), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.76)) !important;
+}
+
+[data-theme="paper"] .BillingPaymentModalProduct .btn-close {
+  filter: none;
+  background-color: rgba(255, 255, 255, 0.68);
+}
+
+.BillingPaymentModalProduct-backdrop.show,
+.BillingPaymentModal-backdrop.show {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 22% 16%, color-mix(in srgb, var(--theme-primary, #2f80ed) 22%, transparent), transparent 34%),
+    radial-gradient(circle at 78% 10%, rgba(139, 92, 246, 0.18), transparent 34%),
+    rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* Checkout UX correction: neutral theme glass and custom close button. */
+.BillingPaymentModalProduct .modal-content,
+[data-theme] .BillingPaymentModalProduct .BillingPaymentModal-content {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #15171c) 90%, transparent),
+      color-mix(in srgb, var(--theme-surface-2, #202228) 78%, transparent)
+    ) !important;
+  border-color: color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.16)) 82%, transparent) !important;
+  box-shadow:
+    0 30px 95px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(24px) saturate(132%);
+  -webkit-backdrop-filter: blur(24px) saturate(132%);
+}
+
+.BillingPaymentModalProduct .modal-header,
+.BillingPaymentModalProduct .modal-footer {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #15171c) 88%, transparent),
+      color-mix(in srgb, var(--theme-surface-2, #202228) 76%, transparent)
+    );
+  backdrop-filter: blur(18px) saturate(124%);
+  -webkit-backdrop-filter: blur(18px) saturate(124%);
+}
+
+.BillingPaymentModalProduct .modal-header {
+  position: relative;
+  align-items: flex-start;
+  padding-right: 4rem;
+}
+
+.BillingPaymentModalProduct .btn-close {
+  display: none !important;
+}
+
+.BillingPaymentModalProduct-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(255, 255, 255, 0.16)) 82%, transparent);
+  border-radius: 0.75rem;
+  color: var(--theme-text, #f8fafc);
+  background: color-mix(in srgb, var(--theme-surface-2, #202228) 80%, transparent);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.82;
+  transition: opacity 160ms ease, transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.BillingPaymentModalProduct-close:hover,
+.BillingPaymentModalProduct-close:focus {
+  opacity: 1;
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--theme-primary, #2f80ed) 50%, var(--theme-border, rgba(255, 255, 255, 0.16)));
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 12%, var(--theme-surface-2, #202228));
+}
+
+.BillingPaymentModalProduct-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.BillingPaymentModal-backdrop.show {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.64);
+  backdrop-filter: blur(7px) saturate(110%);
+  -webkit-backdrop-filter: blur(7px) saturate(110%);
+}
+
+[data-theme="paper"] .BillingPaymentModalProduct .modal-content,
+[data-theme="paper"] .BillingPaymentModalProduct .BillingPaymentModal-content {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(248, 250, 252, 0.78)
+    ) !important;
+}
+
+[data-theme="paper"] .BillingPaymentModalProduct-close {
+  color: var(--theme-text, #111827);
+  background: rgba(255, 255, 255, 0.75);
+}
