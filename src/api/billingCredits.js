@@ -38,6 +38,12 @@ export const fetchMyCreditLedger = (authRequest, params = {}) =>
 export const createBillingPaymentIntent = (authRequest, payload = {}) =>
   post(authRequest, "/api/billing/payment-intents", payload);
 
+export const fetchCardanoPaymentQuote = (authRequest, paymentIntentId) =>
+  get(authRequest, `/api/billing/payment-intents/${paymentIntentId}/cardano/quote`);
+
+export const submitCardanoPayment = (authRequest, paymentIntentId, payload = {}) =>
+  post(authRequest, `/api/billing/payment-intents/${paymentIntentId}/cardano/submit`, payload);
+
 export const publishTopicWithBilling = (authRequest, userId, topicId, payload = {}) =>
   post(authRequest, `/api/topic/${userId}/${topicId}/publish`, payload);
 
@@ -87,4 +93,6 @@ export const getCreditPackages = fetchBillingCreditPackages;
 export const getMyPaymentIntents = fetchMyBillingPaymentIntents;
 export const getMyCreditLedger = fetchMyCreditLedger;
 export const createPaymentIntent = createBillingPaymentIntent;
+export const getCardanoPaymentQuote = fetchCardanoPaymentQuote;
+export const submitCardanoPaymentTx = submitCardanoPayment;
 export const publishTopic = publishTopicWithBilling;
