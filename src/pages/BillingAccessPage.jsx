@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -277,10 +277,58 @@ function describeCheckoutError(err, fallback, step = "") {
   return step ? `${step}: ${detail}` : detail;
 }
 
+
+function parseCheckoutNumber(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const normalized = typeof value === "string"
+    ? value.replace(",", ".")
+    : value;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatCheckoutNumber(value, language, options = {}) {
+  const parsed = parseCheckoutNumber(value);
+  if (parsed === null) return "";
+
+  return new Intl.NumberFormat(language || undefined, {
+    minimumFractionDigits: options.minimumFractionDigits ?? 0,
+    maximumFractionDigits: options.maximumFractionDigits ?? 2,
+  }).format(parsed);
+}
+
+function formatCheckoutFiat(value, language) {
+  return formatCheckoutNumber(value, language, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatCheckoutAda(value, language) {
+  return formatCheckoutNumber(value, language, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  });
+}
+
+function formatCheckoutRate(value, language) {
+  return formatCheckoutNumber(value, language, {
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
+}
+
+function formatCheckoutCurrencyLabel(currency) {
+  const normalized = String(currency || "").trim().toUpperCase();
+  if (normalized === "ADA" || normalized === "LOVELACE") return "₳DA";
+  return normalized || "—";
+}
+
 function PaymentRequestModal({
   show,
   onHide,
   t,
+  language = "en",
   selectedPackage,
   selectedPaymentIntent,
   cardanoQuote,
@@ -303,9 +351,44 @@ function PaymentRequestModal({
   const credits = paymentCredits(selectedPaymentIntent, selectedPackage);
   const displayCurrency = cardanoQuote?.display_currency || selectedPaymentIntent?.currency_code || "USD";
   const displayAmount = cardanoQuote?.display_amount || selectedPaymentIntent?.amount_due;
-  const cardanoAmount = cardanoQuote?.amount_ada
-    ? `${cardanoQuote.amount_ada} ${cardanoQuote.asset_label || "ADA"}`
-    : t("billingAccess.paymentModalQuotePending");
+  const displayCurrencyLabel = formatCheckoutCurrencyLabel(displayCurrency);
+  const formattedDisplayAmount = formatCheckoutFiat(displayAmount, language);
+  const formattedCardanoAmount = formatCheckoutAda(cardanoQuote?.amount_ada, language);
+  const cardanoCurrencyLabel = formatCheckoutCurrencyLabel(cardanoQuote?.asset_label || "ADA");
+  const marketRate = formatCheckoutRate(cardanoQuote?.market_price, language);
+  const marketRateCurrency = formatCheckoutCurrencyLabel(
+    String(displayCurrency || "").toUpperCase() === "USD" &&
+      String(cardanoQuote?.market_quote_asset || "").toUpperCase() === "USDT"
+      ? "USD"
+      : cardanoQuote?.market_quote_asset || displayCurrency,
+  );
+  const equivalentText = formattedDisplayAmount
+    ? marketRate
+      ? t("billingAccess.paymentModalEquivalentPriceWithRate", {
+          amount: formattedDisplayAmount,
+          currency: displayCurrencyLabel,
+          rate: marketRate,
+          rateCurrency: marketRateCurrency,
+        })
+      : t("billingAccess.paymentModalEquivalentPrice", {
+          amount: formattedDisplayAmount,
+          currency: displayCurrencyLabel,
+        })
+    : "";
+  const checkoutSuccessRef = useRef(null);
+
+  useEffect(() => {
+    if (!checkoutSuccess) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      checkoutSuccessRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 80);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [checkoutSuccess]);
 
   const selectedWalletObject =
     typeof selectedWallet === "string"
@@ -390,15 +473,34 @@ function PaymentRequestModal({
 
           <div className="BillingPaymentModalProduct-amountCard">
             <span>{t("billingAccess.paymentModalPayToday")}</span>
-            <strong>{cardanoAmount}</strong>
-            {displayAmount ? (
-              <small>
-                {t("billingAccess.paymentModalEquivalentPrice", {
-                  amount: displayAmount,
-                  currency: displayCurrency,
-                })}
-              </small>
-            ) : null}
+            {formattedCardanoAmount ? (
+              <>
+                <strong className="BillingPaymentModalProduct-adaAmount">
+                  <span>{formattedCardanoAmount}</span>
+                  <span className="BillingPaymentModalProduct-adaCurrency">
+                    {cardanoCurrencyLabel}
+                  </span>
+                </strong>
+                {equivalentText ? (
+                  <small className="BillingPaymentModalProduct-rateLine">
+                    {equivalentText}
+                  </small>
+                ) : null}
+              </>
+            ) : (
+              <div
+                className="BillingPaymentModalProduct-quoteLoader"
+                role="status"
+                aria-live="polite"
+              >
+                <span>{t("billingAccess.paymentModalQuotePendingShort")}</span>
+                <span className="BillingPaymentModalProduct-quoteDots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+            )}
           </div>
         </section>
 
@@ -500,7 +602,9 @@ function PaymentRequestModal({
         ) : null}
 
         {checkoutSuccess ? (
-          <div className="BillingPaymentModal-alert is-success">{checkoutSuccess}</div>
+          <div ref={checkoutSuccessRef} className="BillingPaymentModal-alert is-success">
+            {checkoutSuccess}
+          </div>
         ) : null}
 
         <details className="BillingPaymentModalProduct-details">
@@ -582,6 +686,26 @@ export default function BillingAccessPage() {
   const [checkoutSuccess, setCheckoutSuccess] = useState("");
   const [checkoutStage, setCheckoutStage] = useState("");
 
+  const closePaymentModal = () => {
+    setSelectedPaymentIntent(null);
+    setSelectedPaymentPackage(null);
+    setCardanoQuote(null);
+    setCheckoutLoading(false);
+    setCheckoutError("");
+    setCheckoutSuccess("");
+    setCheckoutStage("");
+  };
+
+  const scrollBillingActivityIntoView = () => {
+    if (typeof window === "undefined") return;
+
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector("#billing-activity")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
   useEffect(() => {
     if (!user?.access_token) navigate("/login");
   }, [navigate, user?.access_token]);
@@ -638,12 +762,8 @@ export default function BillingAccessPage() {
         }
       }
 
-      setPurchaseNotice({
-        variant: "success",
-        message: t("billingAccess.purchaseIntentCreated", {
-          packageName: packageDisplayName(t, pkg),
-        }),
-      });
+      // Keep successful payment-intent creation silent.
+      // Opening the Cardano checkout modal is the user-facing state here.
     } catch (err) {
       setPurchaseNotice({
         variant: "secondary",
@@ -770,6 +890,13 @@ export default function BillingAccessPage() {
       );
 
       setCheckoutStage("");
+
+      if (typeof window !== "undefined") {
+        window.setTimeout(() => {
+          closePaymentModal();
+          scrollBillingActivityIntoView();
+        }, isPendingVerification ? 1800 : 1100);
+      }
     } catch (err) {
       setCheckoutError(
         describeCheckoutError(
@@ -905,7 +1032,7 @@ export default function BillingAccessPage() {
           </div>
         </section>
 
-        <section className="BillingAccess-section">
+        <section className="BillingAccess-section" id="billing-activity">
           <div className="BillingAccess-sectionHeader">
             <div>
               <h2>{t("billingAccess.activityTitle")}</h2>
@@ -941,7 +1068,7 @@ export default function BillingAccessPage() {
 
         <PaymentRequestModal
           show={Boolean(selectedPaymentIntent)}
-          onHide={() => setSelectedPaymentIntent(null)}
+          onHide={closePaymentModal}
           t={t}
           language={i18n.language}
           intent={selectedPaymentIntent}
