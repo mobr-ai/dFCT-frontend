@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import { useTranslation } from "react-i18next";
@@ -168,6 +169,138 @@ function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries 
     .slice(0, 12);
 }
 
+function paymentIntentId(intent) {
+  return intent?.payment_intent_id || intent?.id || intent?.intent_id || "—";
+}
+
+function paymentIntentStatus(intent) {
+  return formatActivityStatus(intent?.status || "pending");
+}
+
+function paymentMethodLabel(t, intent) {
+  const gateway = String(intent?.gateway || intent?.payment_method || "manual").toLowerCase();
+
+  if (gateway === "cardano") return "Cardano";
+  if (gateway === "manual_grant" || gateway === "manual") return t("billingAccess.paymentMethodManual");
+  if (gateway === "credit_card") return t("billingAccess.paymentMethodCreditCard");
+  if (gateway === "stablecoin") return t("billingAccess.paymentMethodStablecoin");
+  if (gateway === "pix") return "Pix";
+
+  return formatActivityStatus(gateway);
+}
+
+function paymentPackageName(t, intent, fallbackPackage) {
+  return (
+    intent?.package?.name ||
+    intent?.package_name ||
+    fallbackPackage?.name ||
+    packageDisplayName(t, fallbackPackage) ||
+    t("billingAccess.unnamedPackage")
+  );
+}
+
+function paymentCredits(intent, fallbackPackage) {
+  return (
+    intent?.credits ||
+    intent?.credit_amount ||
+    intent?.credits_amount ||
+    intent?.package?.credits ||
+    fallbackPackage?.credits ||
+    fallbackPackage?.credits_amount ||
+    fallbackPackage?.credit_amount ||
+    0
+  );
+}
+
+function PaymentRequestModal({
+  show,
+  onHide,
+  t,
+  language,
+  intent,
+  selectedPackage,
+}) {
+  if (!intent) return null;
+
+  const amount = formatPaymentAmount(intent, language);
+  const packageName = paymentPackageName(t, intent, selectedPackage);
+  const credits = paymentCredits(intent, selectedPackage);
+  const method = paymentMethodLabel(t, intent);
+  const status = paymentIntentStatus(intent);
+  const reference = intent?.reference || intent?.payment_reference || intent?.tx_reference || paymentIntentId(intent);
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      scrollable
+      className="BillingPaymentModal"
+      contentClassName="BillingPaymentModal-content"
+    >
+      <Modal.Header>
+        <Modal.Title>{t("billingAccess.paymentModalTitle")}</Modal.Title>
+        <button
+          type="button"
+          className="BillingPaymentModal-close"
+          aria-label={t("cancel")}
+          onClick={onHide}
+        >
+          ×
+        </button>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div className="BillingPaymentModal-hero">
+          <span>{t("billingAccess.paymentModalEyebrow")}</span>
+          <strong>{packageName}</strong>
+          <small>{t("billingAccess.paymentModalCreated")}</small>
+        </div>
+
+        <div className="BillingPaymentModal-grid">
+          <div>
+            <span>{t("billingAccess.paymentModalCredits")}</span>
+            <strong>{formatCredits(credits)} DFCT</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.paymentModalAmount")}</span>
+            <strong>{amount}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.paymentModalMethod")}</span>
+            <strong>{method}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.paymentModalStatus")}</span>
+            <strong>{status}</strong>
+          </div>
+        </div>
+
+        <div className="BillingPaymentModal-reference">
+          <span>{t("billingAccess.paymentModalReference")}</span>
+          <code>{reference}</code>
+        </div>
+
+        <div className="BillingPaymentModal-instructions">
+          <strong>{t("billingAccess.paymentModalNextStepsTitle")}</strong>
+          <p>{t("billingAccess.paymentModalNextStepsText")}</p>
+          <p>{t("billingAccess.paymentModalAdminText")}</p>
+        </div>
+
+        <div className="BillingPaymentModal-roadmap">
+          {t("billingAccess.paymentModalRoadmap")}
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          {t("billingAccess.paymentModalClose")}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
 export default function BillingAccessPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -186,6 +319,8 @@ export default function BillingAccessPage() {
   } = useBillingCredits(user);
 
   const [purchaseNotice, setPurchaseNotice] = useState(null);
+  const [selectedPaymentIntent, setSelectedPaymentIntent] = useState(null);
+  const [selectedPaymentPackage, setSelectedPaymentPackage] = useState(null);
 
   useEffect(() => {
     if (!user?.access_token) navigate("/login");
@@ -214,9 +349,13 @@ export default function BillingAccessPage() {
     setPurchaseNotice(null);
 
     try {
-      await purchasePackage(pkg, {
+      const intent = await purchasePackage(pkg, {
         preferredCurrency: preferredCurrencyForLanguage(i18n.language),
       });
+
+      setSelectedPaymentIntent(intent);
+      setSelectedPaymentPackage(pkg);
+
       setPurchaseNotice({
         variant: "success",
         message: t("billingAccess.purchaseIntentCreated", {
@@ -386,6 +525,15 @@ export default function BillingAccessPage() {
             </Table>
           </div>
         </section>
+
+        <PaymentRequestModal
+          show={Boolean(selectedPaymentIntent)}
+          onHide={() => setSelectedPaymentIntent(null)}
+          t={t}
+          language={i18n.language}
+          intent={selectedPaymentIntent}
+          selectedPackage={selectedPaymentPackage}
+        />
 
       </Container>
     </main>

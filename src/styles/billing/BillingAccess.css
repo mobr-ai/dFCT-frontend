@@ -1307,3 +1307,147 @@
 [data-theme="paper"] .BillingAccess-activityTableWrap .BillingAccess-table thead th {
   background: var(--theme-surface, #ffffff);
 }
+
+/* User payment request modal for package checkout handoff. */
+[data-theme] .BillingPaymentModal-content {
+  background: var(--theme-surface, #15171c) !important;
+  color: var(--theme-text, #f5f4f0) !important;
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.14)) !important;
+  border-radius: 1rem;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+}
+
+[data-theme] .BillingPaymentModal-content .modal-header,
+[data-theme] .BillingPaymentModal-content .modal-footer {
+  border-color: var(--theme-border, rgba(255, 255, 255, 0.14)) !important;
+}
+
+[data-theme] .BillingPaymentModal-content .modal-title {
+  color: var(--theme-text, #f5f4f0) !important;
+}
+
+[data-theme] .BillingPaymentModal-close {
+  appearance: none;
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.16));
+  border-radius: 0.55rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  background: var(--theme-surface-soft, rgba(255, 255, 255, 0.08));
+  color: var(--theme-text, #f5f4f0);
+  font-size: 1.35rem;
+  line-height: 1;
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+[data-theme] .BillingPaymentModal-close:hover {
+  opacity: 1;
+  background: var(--theme-surface-2, rgba(255, 255, 255, 0.14));
+}
+
+[data-theme="paper"] .BillingPaymentModal-close {
+  color: var(--theme-text, #111827);
+  background: rgba(17, 24, 39, 0.04);
+}
+
+.BillingPaymentModal-hero {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 40%, transparent);
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary, #2f80ed) 12%, transparent),
+      rgba(255, 255, 255, 0.025)
+    );
+}
+
+.BillingPaymentModal-hero span,
+.BillingPaymentModal-grid span,
+.BillingPaymentModal-reference span {
+  color: var(--theme-text-soft, rgba(245, 244, 240, 0.64));
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.BillingPaymentModal-hero strong {
+  color: var(--theme-text, #f5f4f0);
+  font-size: 1.35rem;
+  font-weight: 850;
+}
+
+.BillingPaymentModal-hero small {
+  color: var(--theme-text-muted, rgba(245, 244, 240, 0.68));
+}
+
+.BillingPaymentModal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.BillingPaymentModal-grid > div,
+.BillingPaymentModal-reference,
+.BillingPaymentModal-instructions,
+.BillingPaymentModal-roadmap {
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  border-radius: 0.85rem;
+  background: var(--theme-surface-soft, rgba(255, 255, 255, 0.05));
+  padding: 0.85rem;
+}
+
+.BillingPaymentModal-grid strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--theme-text, #f5f4f0);
+  font-size: 1rem;
+}
+
+.BillingPaymentModal-reference {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.BillingPaymentModal-reference code {
+  color: var(--theme-text, #f5f4f0);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  overflow-wrap: anywhere;
+}
+
+.BillingPaymentModal-instructions {
+  margin-bottom: 0.75rem;
+}
+
+.BillingPaymentModal-instructions strong {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.BillingPaymentModal-instructions p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-text-muted, rgba(245, 244, 240, 0.72));
+}
+
+.BillingPaymentModal-roadmap {
+  color: var(--theme-text-muted, rgba(245, 244, 240, 0.66));
+  font-size: 0.88rem;
+}
+
+@media (max-width: 640px) {
+  .BillingPaymentModal-grid {
+    grid-template-columns: 1fr;
+  }
+}
