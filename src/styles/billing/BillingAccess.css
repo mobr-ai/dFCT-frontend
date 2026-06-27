@@ -2241,3 +2241,183 @@
   color: var(--theme-text, #111827);
   background: rgba(255, 255, 255, 0.75);
 }
+
+/* Cardano checkout quote polish: compact loading, formatted ADA, and theme-aware rate line. */
+.BillingPaymentModalProduct-amountCard {
+  min-width: min(15rem, 100%);
+  overflow-wrap: normal;
+}
+
+.BillingPaymentModalProduct-adaAmount {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 0.38rem;
+  margin-top: 0.3rem;
+  font-size: clamp(1.8rem, 3.6vw, 2.55rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  white-space: normal;
+  word-break: normal;
+}
+
+.BillingPaymentModalProduct-adaCurrency {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.12rem 0.42rem;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 32%, transparent);
+  background: color-mix(in srgb, var(--theme-primary, #2f80ed) 9%, transparent);
+  color: color-mix(in srgb, var(--theme-primary, #2f80ed) 86%, var(--theme-text, #111827));
+  font-size: 0.48em;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.BillingPaymentModalProduct-rateLine {
+  display: block;
+  margin-top: 0.5rem;
+  color: color-mix(in srgb, var(--theme-text, #111827) 72%, transparent);
+  font-size: 0.83rem;
+  line-height: 1.35;
+}
+
+.BillingPaymentModalProduct-quoteLoader {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.55rem;
+  min-height: 2.2rem;
+  border-radius: 999px;
+  padding: 0.56rem 0.74rem;
+  border: 1px solid color-mix(in srgb, var(--theme-primary, #2f80ed) 24%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #ffffff) 88%, transparent),
+      color-mix(in srgb, var(--theme-primary, #2f80ed) 10%, transparent)
+    );
+  color: var(--theme-text, #111827);
+  font-size: 0.82rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.BillingPaymentModalProduct-quoteDots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.BillingPaymentModalProduct-quoteDots i {
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 999px;
+  background: var(--theme-primary, #2f80ed);
+  opacity: 0.36;
+  animation: billingCheckoutQuoteDot 1s ease-in-out infinite;
+}
+
+.BillingPaymentModalProduct-quoteDots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.BillingPaymentModalProduct-quoteDots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes billingCheckoutQuoteDot {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.34;
+  }
+
+  40% {
+    transform: translateY(-0.18rem);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .BillingPaymentModalProduct-adaAmount {
+    font-size: clamp(1.55rem, 8vw, 2.15rem);
+  }
+
+  .BillingPaymentModalProduct-rateLine {
+    font-size: 0.78rem;
+  }
+}
+
+/* Cardano checkout ADA amount final sizing override. */
+.BillingPaymentModalProduct-amountCard {
+  container-type: inline-size;
+  min-width: min(14.5rem, 100%);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaAmount {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: clamp(0.16rem, 1.5cqw, 0.34rem);
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(1.55rem, 15.2cqw, 2.85rem);
+  line-height: 0.96;
+  letter-spacing: -0.052em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaAmount > span:first-child {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  overflow: hidden;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaCurrency {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  color: var(--theme-text, #111827);
+  font-size: clamp(0.72rem, 4.8cqw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-rateLine {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@container (max-width: 11.5rem) {
+  .BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaAmount {
+    font-size: clamp(1.35rem, 13.8cqw, 2.1rem);
+    letter-spacing: -0.058em;
+  }
+
+  .BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaCurrency {
+    font-size: clamp(0.68rem, 4.3cqw, 0.88rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .BillingPaymentModalProduct-amountCard .BillingPaymentModalProduct-adaAmount {
+    font-size: clamp(1.45rem, 14cqw, 2.25rem);
+  }
+}
+/* End Cardano checkout ADA amount final sizing override. */
