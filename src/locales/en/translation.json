@@ -580,7 +580,9 @@
     "paymentModalStepBuildTx": "Building Cardano payment transaction",
     "paymentModalStepSubmitChain": "Submitting transaction to Cardano",
     "paymentModalStepSubmitBackend": "Confirming payment with d-FCT",
-    "paymentModalStepRefresh": "Refreshing billing balance"
+    "paymentModalStepRefresh": "Refreshing billing balance",
+    "paymentModalVerificationStarted": "Transaction submitted: {{txHash}}. On-chain verification is running in the background.",
+    "cardanoPaymentVerificationStarted": "Cardano payment submitted. DFCT Credits will be added after on-chain verification."
   },
   "adminBilling": {
     "nav": "Admin Billing",

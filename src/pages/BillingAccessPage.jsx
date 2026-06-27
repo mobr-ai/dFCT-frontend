@@ -601,12 +601,29 @@ export default function BillingAccessPage() {
       });
 
       setSelectedPaymentIntent(payload?.payment_intent || selectedPaymentIntent);
+
+      const verificationStatus =
+        payload?.verification?.status ||
+        payload?.payment_intent?.metadata?.cardano_payment?.verification_status ||
+        payload?.payment_intent?.intent_metadata?.cardano_payment?.verification_status;
+
+      const isPendingVerification = verificationStatus === "pending_verification";
+
       setCheckoutSuccess(
-        t("billingAccess.paymentModalCheckoutSuccess", { txHash }),
+        t(
+          isPendingVerification
+            ? "billingAccess.paymentModalVerificationStarted"
+            : "billingAccess.paymentModalCheckoutSuccess",
+          { txHash },
+        ),
       );
       setPurchaseNotice({
         variant: "success",
-        message: t("billingAccess.cardanoPaymentSubmitted"),
+        message: t(
+          isPendingVerification
+            ? "billingAccess.cardanoPaymentVerificationStarted"
+            : "billingAccess.cardanoPaymentSubmitted",
+        ),
       });
 
       setStep("billingAccess.paymentModalStepRefresh");
