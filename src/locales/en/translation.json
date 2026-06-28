@@ -650,7 +650,16 @@
     "statusPaymentSubmitted": "Payment submitted",
     "statusRequiresPayment": "Awaiting payment",
     "statusVerificationStarted": "Verification started",
-    "statusVerifying": "Verifying"
+    "statusVerifying": "Verifying",
+    "paymentModalQuoteExpiresAt": "Quote expires at {{date}}",
+    "paymentModalQuoteExpired": "Quote expired",
+    "paymentModalQuoteExpiredAction": "This Cardano quote expired. Close this modal and start a new payment request to get an updated ADA amount.",
+    "paymentModalQuoteExpiredSubmitError": "This Cardano quote expired. Start a new payment request to get an updated ADA amount.",
+    "paymentModalPrimaryCtaExpired": "Quote expired",
+    "paymentModalQuoteRefreshing": "Refreshing quote…",
+    "paymentModalQuoteRefreshingAction": "Refreshing the Cardano quote and ADA amount.",
+    "paymentModalQuoteRefreshFailed": "Unable to refresh the Cardano quote.",
+    "paymentModalPrimaryCtaRefreshingQuote": "Refreshing quote…"
   },
   "adminBilling": {
     "nav": "Admin Billing",

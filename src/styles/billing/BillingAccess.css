@@ -2782,3 +2782,15 @@ button.DfctBillingAdmin-toggle:disabled {
     margin-left: auto;
   }
 }
+
+.BillingPaymentModalProduct-trustStrip .is-expired {
+  background: color-mix(in srgb, var(--theme-danger, #dc2626) 14%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-danger, #dc2626) 36%, var(--theme-border)) !important;
+  color: var(--theme-danger, #dc2626) !important;
+}
+
+@media (max-width: 576px), (max-height: 760px) {
+  .BillingPaymentModalProduct-trustStrip .is-expired {
+    width: 100%;
+  }
+}
