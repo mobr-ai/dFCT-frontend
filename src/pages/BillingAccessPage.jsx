@@ -180,6 +180,192 @@ function paymentIntentTxHash(intent) {
   );
 }
 
+
+function cardanoExplorerUrl(network, txHash) {
+  if (!txHash) return "";
+
+  const normalizedNetwork = String(network || "preview").toLowerCase();
+
+  if (normalizedNetwork === "mainnet" || normalizedNetwork === "main") {
+    return `https://cardanoscan.io/transaction/${txHash}`;
+  }
+
+  if (normalizedNetwork === "preprod") {
+    return `https://preprod.cardanoscan.io/transaction/${txHash}`;
+  }
+
+  return `https://preview.cardanoscan.io/transaction/${txHash}`;
+}
+
+function shortTxHash(txHash) {
+  if (!txHash) return "—";
+
+  const value = String(txHash);
+  if (value.length <= 24) return value;
+
+  return `${value.slice(0, 14)}…${value.slice(-10)}`;
+}
+
+function billingActivityPaymentIntent(activity) {
+  if (activity?.sourceType === "payment_intent") return activity.source || null;
+  return activity?.relatedPaymentIntent || null;
+}
+
+function billingActivityLedgerEntry(activity) {
+  if (activity?.sourceType === "ledger") return activity.source || null;
+  return null;
+}
+
+function BillingActivityDetailsModal({ t, activity, onHide }) {
+  const [copied, setCopied] = useState(false);
+
+  if (!activity) return null;
+
+  const intent = billingActivityPaymentIntent(activity);
+  const ledgerEntry = billingActivityLedgerEntry(activity);
+  const cardano = paymentIntentCardanoMetadata(intent);
+  const txHash = paymentIntentTxHash(intent);
+  const network = cardano?.network || "";
+  const explorerUrl = cardanoExplorerUrl(network, txHash);
+
+  const copyHash = async () => {
+    if (!txHash || !navigator?.clipboard) return;
+
+    try {
+      await navigator.clipboard.writeText(txHash);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const overviewRows = [
+    [t("billingAccess.transactionDetailsActivity"), activity.kind],
+    [t("billingAccess.transactionDetailsStatus"), activity.status],
+    [t("billingAccess.transactionDetailsAmount"), activity.amount],
+    [t("billingAccess.transactionDetailsCreated"), formatIntentDate(activity.createdAt)],
+    intent ? [t("billingAccess.transactionDetailsPaymentIntentId"), paymentIntentId(intent)] : null,
+    ledgerEntry?.ledger_entry_id
+      ? [t("billingAccess.transactionDetailsLedgerEntryId"), ledgerEntry.ledger_entry_id]
+      : null,
+  ].filter(Boolean);
+
+  const cardanoRows = intent
+    ? [
+        [t("billingAccess.transactionDetailsGateway"), intent.gateway || "cardano"],
+        [t("billingAccess.transactionDetailsNetwork"), network || "—"],
+        [t("billingAccess.transactionDetailsAdaAmount"), cardano?.amount_ada ? `${cardano.amount_ada} ADA` : "—"],
+        [t("billingAccess.transactionDetailsReference"), cardano?.external_reference || "—"],
+        [t("billingAccess.transactionDetailsQuote"), cardano?.quote_rate_source || cardano?.pricing_provider || "—"],
+      ]
+    : [];
+
+  return (
+    <Modal
+      show
+      scrollable
+      size="lg"
+      onHide={onHide}
+      className="BillingTransactionModal"
+      backdropClassName="BillingPaymentModal-backdrop"
+      contentClassName="BillingTransactionModal-content"
+    >
+      <Modal.Header>
+        <div>
+          <span className="BillingTransactionModal-eyebrow">
+            {t("billingAccess.transactionDetailsEyebrow")}
+          </span>
+          <Modal.Title>{t("billingAccess.transactionDetailsTitle")}</Modal.Title>
+          <p>{t("billingAccess.transactionDetailsSubtitle")}</p>
+        </div>
+
+        <button
+          type="button"
+          className="BillingPaymentModalProduct-close"
+          aria-label={t("billingAccess.transactionDetailsClose")}
+          onClick={onHide}
+        >
+          ×
+        </button>
+      </Modal.Header>
+
+      <Modal.Body>
+        <section className="BillingTransactionModal-summary">
+          <div>
+            <span>{t("billingAccess.transactionDetailsActivity")}</span>
+            <strong>{activity.kind}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.transactionDetailsStatus")}</span>
+            <strong>{activity.status}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.transactionDetailsAmount")}</span>
+            <strong>{activity.amount}</strong>
+          </div>
+        </section>
+
+        <section className="BillingTransactionModal-section">
+          <h4>{t("billingAccess.transactionDetailsOverview")}</h4>
+          <div className="BillingTransactionModal-grid">
+            {overviewRows.map(([label, value]) => (
+              <div className="BillingTransactionModal-field" key={label}>
+                <span>{label}</span>
+                <strong>{value || "—"}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="BillingTransactionModal-section">
+          <h4>{t("billingAccess.transactionDetailsCardano")}</h4>
+
+          {intent ? (
+            <>
+              <div className="BillingTransactionModal-grid">
+                {cardanoRows.map(([label, value]) => (
+                  <div className="BillingTransactionModal-field" key={label}>
+                    <span>{label}</span>
+                    <strong>{value || "—"}</strong>
+                  </div>
+                ))}
+              </div>
+
+              {txHash ? (
+                <div className="BillingTransactionModal-hashBox">
+                  <span>{t("billingAccess.transactionDetailsTxHash")}</span>
+                  <code title={txHash}>{shortTxHash(txHash)}</code>
+
+                  <div className="BillingTransactionModal-actions">
+                    <button type="button" onClick={copyHash}>
+                      {copied
+                        ? t("billingAccess.transactionDetailsCopied")
+                        : t("billingAccess.transactionDetailsCopy")}
+                    </button>
+
+                    <a href={explorerUrl} target="_blank" rel="noreferrer">
+                      {t("billingAccess.transactionDetailsOpenExplorer")}
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="BillingTransactionModal-empty">
+                  {t("billingAccess.transactionDetailsNoExplorer")}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="BillingTransactionModal-empty">
+              {t("billingAccess.transactionDetailsNoPaymentIntent")}
+            </div>
+          )}
+        </section>
+      </Modal.Body>
+    </Modal>
+  );
+}
+
 function shouldShowPaymentIntentInActivity(intent) {
   const status = String(intent?.status || "").toLowerCase();
   const txHash = paymentIntentTxHash(intent);
@@ -197,9 +383,14 @@ function shouldShowPaymentIntentInActivity(intent) {
 
 function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries = [] }) {
   const visiblePaymentIntents = paymentIntents.filter(shouldShowPaymentIntentInActivity);
+  const paymentIntentById = new Map(
+    visiblePaymentIntents.map((intent) => [String(paymentIntentId(intent)), intent])
+  );
 
   const paymentRows = visiblePaymentIntents.map((intent) => ({
     id: `intent:${intent.payment_intent_id || intent.id || intent.created_at}`,
+    sourceType: "payment_intent",
+    source: intent,
     kind: intent.package?.name || intent.package_name || intent.gateway || t("billingAccess.activityPaymentRequest"),
     status: formatActivityStatus(intent.status),
     amount: formatPaymentAmount(intent, language),
@@ -207,14 +398,25 @@ function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries 
     timestamp: activityTimestamp(intent),
   }));
 
-  const ledgerRows = ledgerEntries.map((entry) => ({
-    id: `ledger:${entry.ledger_entry_id || entry.id || entry.created_at}`,
-    kind: ledgerActivityLabel(t, entry),
-    status: ledgerActivityStatus(t, entry),
-    amount: formatCreditAmount(entry.amount),
-    createdAt: entry.created_at,
-    timestamp: activityTimestamp(entry),
-  }));
+  const ledgerRows = ledgerEntries.map((entry) => {
+    const sourceType = String(entry?.source_type || "").toLowerCase();
+    const relatedPaymentIntent =
+      sourceType === "billing_payment_intent"
+        ? paymentIntentById.get(String(entry?.source_id))
+        : null;
+
+    return {
+      id: `ledger:${entry.ledger_entry_id || entry.id || entry.created_at}`,
+      sourceType: "ledger",
+      source: entry,
+      relatedPaymentIntent,
+      kind: ledgerActivityLabel(t, entry),
+      status: ledgerActivityStatus(t, entry),
+      amount: formatCreditAmount(entry.amount),
+      createdAt: entry.created_at,
+      timestamp: activityTimestamp(entry),
+    };
+  });
 
   return [...ledgerRows, ...paymentRows]
     .sort((a, b) => b.timestamp - a.timestamp)
@@ -685,6 +887,7 @@ export default function BillingAccessPage() {
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutSuccess, setCheckoutSuccess] = useState("");
   const [checkoutStage, setCheckoutStage] = useState("");
+  const [selectedBillingActivity, setSelectedBillingActivity] = useState(null);
 
   const closePaymentModal = () => {
     setSelectedPaymentIntent(null);
@@ -1052,7 +1255,19 @@ export default function BillingAccessPage() {
               </thead>
               <tbody>
                 {billingActivity.length > 0 ? billingActivity.map((item) => (
-                  <tr key={item.id}>
+                  <tr
+                    key={item.id}
+                    className="BillingAccess-activityRow"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedBillingActivity(item)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedBillingActivity(item);
+                      }
+                    }}
+                  >
                     <td>{item.kind}</td>
                     <td>{item.status}</td>
                     <td>{item.amount}</td>
@@ -1065,6 +1280,12 @@ export default function BillingAccessPage() {
             </Table>
           </div>
         </section>
+
+        <BillingActivityDetailsModal
+          t={t}
+          activity={selectedBillingActivity}
+          onHide={() => setSelectedBillingActivity(null)}
+        />
 
         <PaymentRequestModal
           show={Boolean(selectedPaymentIntent)}
