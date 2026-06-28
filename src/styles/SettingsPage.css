@@ -119,3 +119,37 @@
   margin-top: 2rem;
   text-align: center;
 }
+
+
+/* Theme-aware shell */
+[data-theme] .Settings-body {
+  background: var(--theme-page-gradient);
+  color: var(--theme-text);
+}
+
+[data-theme] .Settings-container {
+  background: var(--theme-surface-glass);
+  border: 1px solid var(--theme-border);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+[data-theme] .Settings-title,
+[data-theme] .Settings-container label,
+[data-theme] .Settings-container h5 {
+  color: var(--theme-text);
+}
+
+[data-theme] .Settings-username-wallet,
+[data-theme] .Settings-referral-row {
+  color: var(--theme-text-muted);
+}
+
+[data-theme] .Settings-referral-link {
+  color: var(--theme-primary-hover);
+}
+
+[data-theme] .Settings-danger-zone {
+  background: color-mix(in srgb, var(--theme-danger, #ef4444) 10%, var(--theme-surface));
+  border: 1px solid color-mix(in srgb, var(--theme-danger, #ef4444) 30%, var(--theme-border));
+  border-radius: var(--theme-radius-lg);
+}

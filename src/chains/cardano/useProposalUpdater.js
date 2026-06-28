@@ -7,11 +7,21 @@ import { signAndSubmitTx } from "@/chains/cardano/signAndSubmitTx";
 import { GOV_SCRIPT_ADDRESS } from "@/chains/cardano/constants";
 import { createLucid } from "@/chains/cardano/useLucidClient";
 import { paymentCredentialOf } from "@/lib/lucid/mod.js";
+import { enableWalletForAction, getWalletErrorMessage } from "@/chains/cardano/walletUtils";
 
 export function useProposalUpdater({ user, showToast, authRequest }) {
   const { t } = useTranslation();
   const [optimisticProposal, setOptimisticProposal] = useState(null);
   const [pendingField, setPendingField] = useState(null);
+
+  const normalizeAuthorizedPkhs = (value) => {
+    if (!value) return {};
+    if (Array.isArray(value)) {
+      return Object.fromEntries(value.map((pkh) => [pkh, 1]));
+    }
+    if (typeof value === "object") return value;
+    return {};
+  };
 
   const markProposalSync = (proposalId) =>
     sessionStorage.setItem(`dfct_proposal_syncing_${proposalId}`, "1");
@@ -65,11 +75,24 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
       voting_start: overrideFields.voting_start ?? proposal.voting_start,
       voting_end: overrideFields.voting_end ?? proposal.voting_end,
       min_voting_tokens: overrideFields.min_voting_tokens ?? proposal.min_voting_tokens,
-      authorized_pkhs: overrideFields.authorized_pkhs ?? proposal.authorized_pkhs,
+      authorized_pkhs: overrideFields.authorized_pkhs ?? normalizeAuthorizedPkhs(proposal.authorized_pkhs),
     });
   };
 
   const showError = (err, src) => {
+    const walletMessage = getWalletErrorMessage(err, selectedWalletNameFromError(src));
+
+    if (
+      err?.code === -3 ||
+      /wallet is locked/i.test(walletMessage) ||
+      /please unlock/i.test(walletMessage) ||
+      /timed out/i.test(walletMessage)
+    ) {
+      showToast(walletMessage, "warning");
+      console.warn("Wallet interaction failed", src, err);
+      return;
+    }
+
     const match = err.message?.match(/Trace (\d+)|vv(\d+)/);
     if (match) {
       const traceKey = match[1] ? `proposalPlutus.trace${match[1]}` : `proposalPlutus.vv${match[2]}`;
@@ -79,6 +102,8 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
       console.error("Error updating proposal", src, err.message);
     }
   };
+
+  const selectedWalletNameFromError = () => "Wallet";
 
   const submitProposalUpdate = async ({
     proposal,
@@ -90,7 +115,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
     setShowModal,
     fieldKey
   }) => {
-    const walletApi = await window.cardano[selectedWallet.name].enable();
+    const walletApi = await enableWalletForAction(selectedWallet.name);
     const lucid = await createLucid();
     await lucid.selectWalletFromApi(walletApi);
 
@@ -158,7 +183,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
     setShowMinTokensModal,
   }) => {
     try {
-      const walletApi = await window.cardano[selectedWallet.name].enable();
+      const walletApi = await enableWalletForAction(selectedWallet.name);
       const lucid = await createLucid();
       await lucid.selectWalletFromApi(walletApi);
       const walletAddr = await lucid.wallet.address();
@@ -169,7 +194,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
         ownerPkh: walletPKH,
         proposerPkh: proposal.proposer_pkh,
         minVotingTokens: Number(newMinTokens),
-        authorizedPKHs: proposal.authorized_pkhs,
+        authorizedPKHs: normalizeAuthorizedPkhs(proposal.authorized_pkhs),
         status: proposal.status,
         votingStart: proposal.voting_start,
         votingEnd: proposal.voting_end,
@@ -206,7 +231,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
     try {
       const votingStart = new Date(newVotingStart).getTime();
       const votingEnd = new Date(newVotingEnd).getTime();
-      const walletApi = await window.cardano[selectedWallet.name].enable();
+      const walletApi = await enableWalletForAction(selectedWallet.name);
       const lucid = await createLucid();
       await lucid.selectWalletFromApi(walletApi);
       const walletPKH = paymentCredentialOf(await lucid.wallet.address()).hash;
@@ -216,7 +241,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
         ownerPkh: walletPKH,
         proposerPkh: proposal.proposer_pkh,
         minVotingTokens: proposal.min_voting_tokens,
-        authorizedPKHs: proposal.authorized_pkhs,
+        authorizedPKHs: normalizeAuthorizedPkhs(proposal.authorized_pkhs),
         status: proposal.status,
         votingStart,
         votingEnd,
@@ -254,7 +279,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
     setShowPKHModal,
   }) => {
     try {
-      const walletApi = await window.cardano[selectedWallet.name].enable();
+      const walletApi = await enableWalletForAction(selectedWallet.name);
       const lucid = await createLucid();
       await lucid.selectWalletFromApi(walletApi);
       const walletPKH = paymentCredentialOf(await lucid.wallet.address()).hash;
@@ -292,32 +317,44 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
 
   const confirmVote = async ({ proposal, voteValue, selectedWallet, onSubmitted, setShowVoteModal }) => {
     try {
-      const walletApi = await window.cardano[selectedWallet.name].enable();
+      const walletApi = await enableWalletForAction(selectedWallet.name);
       const lucid = await createLucid();
       await lucid.selectWalletFromApi(walletApi);
-      const walletPKH = paymentCredentialOf(await lucid.wallet.address()).hash;
+
+      const walletAddress = await lucid.wallet.address();
+      const voterPkh = paymentCredentialOf(walletAddress).hash;
+
+      const normalizedVote = Number(voteValue);
+      const dfcAmount = Number(proposal.min_voting_tokens ?? 0);
 
       const { datum } = prepareProposalUpdateDatum({
         proposal,
         ownerPkh: proposal.owner_pkh,
-        proposerPkh: walletPKH,
+        proposerPkh: proposal.proposer_pkh,
         minVotingTokens: proposal.min_voting_tokens,
-        authorizedPKHs: proposal.authorized_pkhs,
+        authorizedPKHs: normalizeAuthorizedPkhs(proposal.authorized_pkhs),
+        vote: normalizedVote,
+        voterPkh,
+        dfcAmount,
         status: proposal.status,
         votingStart: proposal.voting_start,
         votingEnd: proposal.voting_end,
       });
 
       const redeemer = prepareProposalRedeemer({
-        action: "Vote",
-        data: { vote: voteValue }
+        action: "VoteOnProposal",
+        data: {
+          proposalId: proposal.proposal_id,
+          vote: normalizedVote,
+          dfcAmount,
+        },
       });
 
       await submitProposalUpdate({
         proposal,
         updatedDatum: datum,
         redeemerPlutusData: redeemer,
-        updatedFields: {}, // no db change expected directly
+        updatedFields: {}, // vote is represented on-chain; backend sync may update later
         selectedWallet,
         onSubmitted,
         setShowModal: setShowVoteModal,
@@ -330,7 +367,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
 
   const confirmFinalize = async ({ proposal, selectedWallet, onSubmitted, setShowFinalizeModal }) => {
     try {
-      const redeemer = prepareProposalRedeemer({ action: "Finalize", data: {} });
+      const redeemer = prepareProposalRedeemer({ action: "FinalizeProposal", data: { proposalId: proposal.proposal_id, outcome: proposal.status === 2 ? 1 : 0 } });
 
       await submitProposalUpdate({
         proposal,
@@ -349,7 +386,7 @@ export function useProposalUpdater({ user, showToast, authRequest }) {
 
   const confirmExecute = async ({ proposal, selectedWallet, onSubmitted, setShowExecuteModal }) => {
     try {
-      const redeemer = prepareProposalRedeemer({ action: "Execute", data: {} });
+      const redeemer = prepareProposalRedeemer({ action: "ExecuteProposal", data: { proposalId: proposal.proposal_id } });
 
       await submitProposalUpdate({
         proposal,

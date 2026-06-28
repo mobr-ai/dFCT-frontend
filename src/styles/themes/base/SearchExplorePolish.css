@@ -1,0 +1,76 @@
+/* Smooth search transitions */
+[data-theme] .Landing-body-explore .Topic-explore-grid {
+  position: relative;
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+[data-theme] .Landing-body-explore.Landing-search-settling .Topic-explore-grid {
+  opacity: 0.72;
+  filter: blur(2px) saturate(0.92);
+  transform: translateY(2px);
+  pointer-events: none;
+}
+
+[data-theme] .Landing-body-explore.Landing-search-settling .Topic-explore-grid::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem;
+  z-index: 5;
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface-glass) 78%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 58%, transparent)
+    );
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+[data-theme] .Landing-body-explore .Topic-explore-card {
+  will-change: transform, opacity;
+}
+
+[data-theme] .Landing-body-explore:not(.Landing-search-settling) .Topic-explore-card {
+  animation: TopicExplore-reveal 240ms ease both;
+  animation-delay: calc(min(var(--topic-index, 0), 8) * 18ms);
+}
+
+@keyframes TopicExplore-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Better blank-state treatment for slow video/image media */
+[data-theme] .Topic-card.is-media-loading {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 88%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    ) !important;
+}
+
+[data-theme] .Topic-card.is-media-loading .Topic-card-img {
+  min-height: 220px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme] .Landing-body-explore .Topic-explore-grid,
+  [data-theme] .Landing-body-explore.Landing-search-settling .Topic-explore-grid,
+  [data-theme] .Landing-body-explore:not(.Landing-search-settling) .Topic-explore-card {
+    transition: none;
+    animation: none;
+    filter: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,50 @@
+/* Hardening for topic control icons rendered as <img>. */
+[data-theme] .Breakdown-toolbar-icon,
+[data-theme] img.Breakdown-toolbar-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  opacity: 0.78;
+  transition:
+    opacity 160ms ease,
+    filter 160ms ease,
+    transform 160ms ease;
+}
+
+/* Dark themes can keep white/light SVG icons. */
+[data-theme="dfct-dark"] .Breakdown-toolbar-icon,
+[data-theme="graphite"] .Breakdown-toolbar-icon,
+[data-theme="midnight"] .Breakdown-toolbar-icon,
+[data-theme="terminal"] .Breakdown-toolbar-icon {
+  filter: none !important;
+}
+
+/* Paper needs white SVG assets converted to readable dark icons. */
+[data-theme="paper"] .Breakdown-toolbar-icon,
+[data-theme="paper"] img.Breakdown-toolbar-icon {
+  filter: brightness(0) saturate(100%) opacity(0.78) !important;
+}
+
+/* Hover/focus feedback for img icons. */
+[data-theme] .Breakdown-toolbar-icon:hover,
+[data-theme] button:hover .Breakdown-toolbar-icon,
+[data-theme] a:hover .Breakdown-toolbar-icon {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+[data-theme="paper"] .Breakdown-toolbar-icon:hover,
+[data-theme="paper"] button:hover .Breakdown-toolbar-icon,
+[data-theme="paper"] a:hover .Breakdown-toolbar-icon {
+  filter: brightness(0) saturate(100%) opacity(1) !important;
+}
+
+/* Some toolbar controls are bare columns/divs with img children. */
+[data-theme] .Breakdown-toolbar .col,
+[data-theme] .Breakdown-toolbar [class*="col"] {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme="paper"] .Breakdown-toolbar .col,
+[data-theme="paper"] .Breakdown-toolbar [class*="col"] {
+  color: var(--theme-text-muted) !important;
+}

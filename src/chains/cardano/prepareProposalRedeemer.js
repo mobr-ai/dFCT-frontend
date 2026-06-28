@@ -5,7 +5,7 @@ import { Constr, Data, fromText } from "@/lib/lucid/mod.js";
  * Returns a CBOR hex string (via Data.to), as required by Lucid's `.collectFrom(..., redeemer)`
  */
 export function prepareProposalRedeemer({ action, data }) {
-    console.log("Preparing redeemer for action", action, data);
+    if (import.meta.env.DEV) console.log("Preparing redeemer for action", action, data);
 
     let redeemer;
 
@@ -82,7 +82,7 @@ export function prepareProposalRedeemer({ action, data }) {
             throw new Error(`Unknown action "${action}"`);
     }
 
-    console.log("Redeemer raw Constr:", redeemer);
+    if (import.meta.env.DEV) console.log("Redeemer raw Constr:", redeemer);
 
     const cbor = Data.to(redeemer);
 
@@ -90,6 +90,6 @@ export function prepareProposalRedeemer({ action, data }) {
         throw new Error("Invalid CBOR: odd-length hex string: " + cbor);
     }
 
-    console.log("Redeemer CBOR:", cbor);
+    if (import.meta.env.DEV) console.log("Redeemer CBOR:", cbor);
     return cbor;
 }

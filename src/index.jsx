@@ -1,15 +1,20 @@
+import TopicReviewWorkbench from "./workflows/topicReview/TopicReviewWorkbench.jsx";
 import "./styles/index.css";
+import "./styles/theme-tokens.css";
+import "./styles/theme-overrides.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom/client";
-import LandingPage from "./LandingPage";
-import Header from "./Header";
-import ErrorPage from "./ErrorPage";
+import LandingPage from "./pages/LandingPage";
+import Header from "./components/layout/Header";
+import ErrorPage from "./pages/ErrorPage";
 import reportWebVitals from "./reportWebVitals";
-import TopicBreakdownPage from "./TopicBreakdownPage";
-import TopicSubmissionPage from "./TopicSubmissionPage";
-import AuthPage from "./AuthPage";
-import WaitingList from "./WaitingListPage";
-import SettingsPage from "./SettingsPage";
+import TopicBreakdownPage from "./pages/TopicBreakdownPage";
+import TopicSubmissionPage from "./pages/TopicSubmissionPage";
+import AuthPage from "./pages/AuthPage";
+import WaitingList from "./pages/WaitingListPage";
+import SettingsPage from "./pages/SettingsPage";
+import BillingAccessPage from "./pages/BillingAccessPage.jsx";
+import AdminBillingCreditsPage from "./pages/AdminBillingCreditsPage.jsx";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -20,12 +25,16 @@ import {
   Outlet,
   defer,
   useNavigate,
+  useOutletContext,
 } from "react-router-dom";
-import GovernancePage from "./GovernancePage";
-import ProposalPage from "./ProposalPage";
+import GovernancePage from "./pages/GovernancePage";
+import ProposalPage from "./pages/ProposalPage";
+import WelcomePage from "./pages/WelcomePage";
+import { installThemeRouteSync } from "./theme/themeStorage";
 
 import { Buffer } from "buffer";
 window.Buffer = Buffer;
+installThemeRouteSync();
 
 function Layout() {
   const { t } = useTranslation();
@@ -44,7 +53,16 @@ function Layout() {
   const navigate = useNavigate();
 
   const showToast = (message, variant = "success") => {
-    setToast({ show: true, message, variant });
+    if (message && typeof message === "object") {
+      setToast({
+        show: true,
+        message: message.message || "",
+        variant: message.variant || message.type || variant,
+      });
+      return;
+    }
+
+    setToast({ show: true, message: String(message || ""), variant });
   };
 
   const handleLogin = useCallback(
@@ -95,7 +113,7 @@ function Layout() {
           autohide
         >
           <Toast.Body className="text-white">
-            {toast.message.split("\n").map((line, idx) => (
+            {String(toast.message || "").split("\n").map((line, idx) => (
               <div key={idx}>{line}</div>
             ))}
           </Toast.Body>
@@ -103,6 +121,17 @@ function Layout() {
       </ToastContainer>
     </GoogleOAuthProvider>
   );
+}
+
+
+function HomePage() {
+  const { user } = useOutletContext();
+
+  if (user) {
+    return <LandingPage type="all" />;
+  }
+
+  return <WelcomePage />;
 }
 
 const fetchAllTopics = async () => {
@@ -118,6 +147,14 @@ const fetchAllTopics = async () => {
 const allTopicsLoader = async () => {
   const allTopicsPromise = fetchAllTopics();
   return defer({ allTopicsPromise });
+};
+
+const homeLoader = async () => {
+  if (!window.localStorage.userData) {
+    return {};
+  }
+
+  return allTopicsLoader();
 };
 
 const fetchGovProposals = async (userData) => {
@@ -188,11 +225,43 @@ const userTopicsLoader = async () => {
   return {};
 };
 
+const normalizeTopicPayload = (payload) => {
+  if (!payload || typeof payload !== "object" || payload.error) {
+    return null;
+  }
+
+  return {
+    ...payload,
+    claims: Array.isArray(payload.claims) ? payload.claims : [],
+    content: Array.isArray(payload.content) ? payload.content : [],
+    contents: Array.isArray(payload.contents) ? payload.contents : [],
+  };
+};
+
 const fetchTopic = async (userId, topicId, signal) => {
-  const response = await fetch(`/topic/full/${userId}/${topicId}`, {
+  const response = await fetch(`/api/topic/full/${userId}/${topicId}`, {
     signal: signal,
   });
-  return await response.json();
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Response(payload?.error || "Topic not found", {
+      status: response.status,
+      statusText: response.statusText || "Topic not found",
+    });
+  }
+
+  const topic = normalizeTopicPayload(payload);
+
+  if (!topic) {
+    throw new Response("Invalid topic payload", {
+      status: 502,
+      statusText: "Invalid topic payload",
+    });
+  }
+
+  return topic;
 };
 
 const topicLoader = async (dynData) => {
@@ -212,6 +281,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <HomePage />,
+        loader: homeLoader,
+      },
+      {
+        path: "/topics",
         element: <LandingPage type="all" />,
         loader: allTopicsLoader,
       },
@@ -223,6 +297,14 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "/billing",
+        element: <BillingAccessPage />,
+      },
+      {
+        path: "/admin/billing",
+        element: <AdminBillingCreditsPage />,
       },
       {
         path: "/gov",
@@ -249,6 +331,10 @@ const router = createBrowserRouter([
         path: "/submit",
         element: <TopicSubmissionPage />,
         loader: userTopicsLoader,
+      },
+      {
+        path: "/workbench/topic-review",
+        element: <TopicReviewWorkbench />,
       },
       {
         path: "/t/:userId/:topicId",

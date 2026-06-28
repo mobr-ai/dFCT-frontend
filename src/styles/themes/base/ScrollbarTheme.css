@@ -1,0 +1,68 @@
+/* Theme-aware scrollbars */
+[data-theme] {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+[data-theme]:hover,
+[data-theme]:focus-within {
+  scrollbar-color: var(--theme-border-strong) transparent;
+}
+
+[data-theme] body,
+[data-theme] .Landing-middle-column,
+[data-theme] .bm-menu,
+[data-theme] .Breakdown-body,
+[data-theme] .Submission-body,
+[data-theme] .Settings-body {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+[data-theme] body:hover,
+[data-theme] .Landing-middle-column:hover,
+[data-theme] .bm-menu:hover,
+[data-theme] .Breakdown-body:hover,
+[data-theme] .Submission-body:hover,
+[data-theme] .Settings-body:hover {
+  scrollbar-color: var(--theme-border-strong) transparent;
+}
+
+[data-theme] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme] ::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+[data-theme]:hover ::-webkit-scrollbar-thumb,
+[data-theme] .Landing-middle-column:hover::-webkit-scrollbar-thumb,
+[data-theme] .bm-menu:hover::-webkit-scrollbar-thumb,
+[data-theme] .Breakdown-body:hover::-webkit-scrollbar-thumb,
+[data-theme] .Submission-body:hover::-webkit-scrollbar-thumb,
+[data-theme] .Settings-body:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--theme-border-strong) 76%, transparent);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+[data-theme] ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--theme-accent) 70%, transparent);
+  background-clip: padding-box;
+}
+
+@media (max-width: 768px) {
+  [data-theme] ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}

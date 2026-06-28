@@ -1,0 +1,81 @@
+/* Exact submit page hardening */
+[data-theme] .Navbar-toggle-btn {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow-soft);
+}
+
+[data-theme] .Navbar-toggle-btn svg,
+[data-theme] .Navbar-toggle-btn path {
+  color: var(--theme-text) !important;
+  fill: currentColor !important;
+}
+
+[data-theme] .Navbar-toggle-btn:hover {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-accent-hover) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme="paper"] .Navbar-toggle-btn {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Submission-body {
+  min-height: calc(100dvh - 56px);
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Submission-middle-column {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Submission-page-logo {
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.18));
+}
+
+[data-theme] .Submission-drop,
+[data-theme] .Submission-input-url,
+[data-theme] .Submission-input-group,
+[data-theme] .Submission-body .input-group,
+[data-theme] .Submission-body .form-control,
+[data-theme] .Submission-body .input-group-text {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Submission-drop {
+  box-shadow: var(--theme-shadow-soft);
+}
+
+[data-theme] .Submission-body .form-control::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] .Submission-body .btn,
+[data-theme] .Submission-body button {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Submission-body .btn:hover,
+[data-theme] .Submission-body button:hover {
+  background: var(--theme-surface-3) !important;
+  border-color: var(--theme-accent) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme="paper"] .Submission-drop,
+[data-theme="paper"] .Submission-input-url,
+[data-theme="paper"] .Submission-input-group,
+[data-theme="paper"] .Submission-body .input-group,
+[data-theme="paper"] .Submission-body .form-control,
+[data-theme="paper"] .Submission-body .input-group-text {
+  background: rgba(255, 255, 255, 0.82) !important;
+}

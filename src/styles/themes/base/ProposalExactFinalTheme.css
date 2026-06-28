@@ -1,0 +1,286 @@
+/* Exact final bridge for ProposalContainer + ProposalSubmissionModal */
+
+/* -------------------------------------------------- */
+/* /proposal/:id exact page classes                   */
+/* -------------------------------------------------- */
+
+html[data-theme] body .ProposalPage {
+  min-height: calc(100dvh - 56px) !important;
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .ProposalContainer,
+html[data-theme] body .ProposalContainer.container,
+html[data-theme] body div.ProposalContainer.container {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 94%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 88%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+html[data-theme] body .ProposalContainer *,
+html[data-theme] body .ProposalPage * {
+  border-color: var(--theme-border);
+}
+
+html[data-theme] body .ProposalHeader,
+html[data-theme] body .ProposalContainer .ProposalHeader {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary) 48%, var(--theme-surface-2)),
+      color-mix(in srgb, var(--theme-accent) 32%, var(--theme-surface-2))
+    ) !important;
+  color: #ffffff !important;
+  border: 1px solid color-mix(in srgb, #ffffff 16%, transparent) !important;
+  border-radius: var(--theme-radius-md) !important;
+}
+
+html[data-theme] body .ProposalHeader *,
+html[data-theme] body .ProposalContainer .ProposalHeader * {
+  color: #ffffff !important;
+}
+
+html[data-theme] body .ProposalDescription,
+html[data-theme] body .ProposalMeta,
+html[data-theme] body .ProposalActionsCard,
+html[data-theme] body .ProposalContainer .ProposalDescription,
+html[data-theme] body .ProposalContainer .ProposalMeta,
+html[data-theme] body .ProposalContainer .ProposalActionsCard {
+  background: transparent !important;
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body .ProposalContainer h1,
+html[data-theme] body .ProposalContainer h2,
+html[data-theme] body .ProposalContainer h3,
+html[data-theme] body .ProposalContainer h4,
+html[data-theme] body .ProposalContainer h5,
+html[data-theme] body .ProposalPage h1,
+html[data-theme] body .ProposalPage h2,
+html[data-theme] body .ProposalPage h3,
+html[data-theme] body .ProposalPage h4,
+html[data-theme] body .ProposalPage h5 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .ProposalContainer p,
+html[data-theme] body .ProposalContainer small,
+html[data-theme] body .ProposalContainer span,
+html[data-theme] body .ProposalContainer label,
+html[data-theme] body .ProposalContainer li,
+html[data-theme] body .ProposalPage p,
+html[data-theme] body .ProposalPage small,
+html[data-theme] body .ProposalPage span,
+html[data-theme] body .ProposalPage label,
+html[data-theme] body .ProposalPage li {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body .ProposalContainer a,
+html[data-theme] body .ProposalPage a {
+  color: var(--theme-primary-hover) !important;
+}
+
+html[data-theme] body .ProposalContainer .btn,
+html[data-theme] body .ProposalContainer button,
+html[data-theme] body .ProposalPage .btn,
+html[data-theme] body .ProposalPage button {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .ProposalContainer .btn:hover,
+html[data-theme] body .ProposalContainer button:hover,
+html[data-theme] body .ProposalPage .btn:hover,
+html[data-theme] body .ProposalPage button:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .ProposalContainer .alert,
+html[data-theme] body .ProposalPage .alert,
+html[data-theme] body .ProposalActionsCard {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="paper"] body .ProposalContainer,
+html[data-theme="paper"] body .ProposalContainer.container,
+html[data-theme="paper"] body div.ProposalContainer.container {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(248, 250, 252, 0.92)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="paper"] body .ProposalHeader,
+html[data-theme="paper"] body .ProposalContainer .ProposalHeader {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary) 64%, #ffffff),
+      color-mix(in srgb, var(--theme-accent) 54%, #ffffff)
+    ) !important;
+  color: #ffffff !important;
+}
+
+/* -------------------------------------------------- */
+/* ProposalSubmissionModal exact classes              */
+/* -------------------------------------------------- */
+
+html[data-theme] body .modal-content.ProposalSubmissionModal,
+html[data-theme] body .ProposalSubmissionModal,
+html[data-theme] body div.ProposalSubmissionModal {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 96%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 92%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .modal-header,
+html[data-theme] body .ProposalSubmissionModal .modal-body,
+html[data-theme] body .ProposalSubmissionModal .modal-footer {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal h1,
+html[data-theme] body .ProposalSubmissionModal h2,
+html[data-theme] body .ProposalSubmissionModal h3,
+html[data-theme] body .ProposalSubmissionModal h4,
+html[data-theme] body .ProposalSubmissionModal h5,
+html[data-theme] body .ProposalSubmissionModal h6,
+html[data-theme] body .ProposalSubmissionModal .modal-title {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal p,
+html[data-theme] body .ProposalSubmissionModal small,
+html[data-theme] body .ProposalSubmissionModal span,
+html[data-theme] body .ProposalSubmissionModal label,
+html[data-theme] body .ProposalSubmissionModal div {
+  color: var(--theme-text-soft);
+}
+
+html[data-theme] body .ProposalSubmissionModal .ProposalCardInput,
+html[data-theme] body .ProposalSubmissionModal .ProposalCardInput.card,
+html[data-theme] body .ProposalSubmissionModal div.ProposalCardInput.card {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface-2) 86%, transparent),
+      color-mix(in srgb, var(--theme-surface) 92%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-md) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .ProposalCardInput *,
+html[data-theme] body .ProposalSubmissionModal .card-body,
+html[data-theme] body .ProposalSubmissionModal .card-body * {
+  color: var(--theme-text-soft);
+}
+
+html[data-theme] body .ProposalSubmissionModal input,
+html[data-theme] body .ProposalSubmissionModal textarea,
+html[data-theme] body .ProposalSubmissionModal select,
+html[data-theme] body .ProposalSubmissionModal .form-control,
+html[data-theme] body .ProposalSubmissionModal .form-select,
+html[data-theme] body .ProposalSubmissionModal .input-group-text {
+  background: var(--theme-bg-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal input::placeholder,
+html[data-theme] body .ProposalSubmissionModal textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal input[type="range"] {
+  accent-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .ProposalGrid,
+html[data-theme] body .ProposalSubmissionModal [class*="Grid"] {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal button,
+html[data-theme] body .ProposalSubmissionModal .btn {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .btn-secondary,
+html[data-theme] body .ProposalSubmissionModal .btn-dark,
+html[data-theme] body .ProposalSubmissionModal button[type="button"] {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .btn-primary,
+html[data-theme] body .ProposalSubmissionModal .btn-success,
+html[data-theme] body .ProposalSubmissionModal button[type="submit"] {
+  background: var(--theme-accent) !important;
+  color: #ffffff !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .ProposalSubmissionModal .btn-close {
+  opacity: 0.82 !important;
+  filter: invert(1) grayscale(100%) brightness(140%) !important;
+}
+
+html[data-theme="paper"] body .ProposalSubmissionModal,
+html[data-theme="paper"] body .modal-content.ProposalSubmissionModal,
+html[data-theme="paper"] body div.ProposalSubmissionModal {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(248, 250, 252, 0.96)
+    ) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="paper"] body .ProposalSubmissionModal .ProposalCardInput,
+html[data-theme="paper"] body .ProposalSubmissionModal .ProposalCardInput.card,
+html[data-theme="paper"] body .ProposalSubmissionModal div.ProposalCardInput.card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(241, 245, 249, 0.96),
+      rgba(226, 232, 240, 0.86)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="paper"] body .ProposalSubmissionModal .btn-close {
+  filter: none !important;
+}

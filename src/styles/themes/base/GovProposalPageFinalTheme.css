@@ -1,0 +1,118 @@
+/* Exact theme bridge for /proposal/:id pages */
+html[data-theme] body .ProposalPage {
+  min-height: calc(100dvh - 56px) !important;
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .Proposal,
+html[data-theme] body div.Proposal {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 94%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 88%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-lg) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+html[data-theme] body .Proposal *,
+html[data-theme] body .ProposalPage * {
+  border-color: var(--theme-border);
+}
+
+html[data-theme] body .Proposal h1,
+html[data-theme] body .Proposal h2,
+html[data-theme] body .Proposal h3,
+html[data-theme] body .Proposal h4,
+html[data-theme] body .Proposal h5,
+html[data-theme] body .ProposalPage h1,
+html[data-theme] body .ProposalPage h2,
+html[data-theme] body .ProposalPage h3,
+html[data-theme] body .ProposalPage h4,
+html[data-theme] body .ProposalPage h5 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .Proposal p,
+html[data-theme] body .Proposal small,
+html[data-theme] body .Proposal span,
+html[data-theme] body .Proposal label,
+html[data-theme] body .Proposal li,
+html[data-theme] body .ProposalPage p,
+html[data-theme] body .ProposalPage small,
+html[data-theme] body .ProposalPage span,
+html[data-theme] body .ProposalPage label,
+html[data-theme] body .ProposalPage li {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body .Proposal a,
+html[data-theme] body .ProposalPage a {
+  color: var(--theme-primary-hover) !important;
+}
+
+html[data-theme] body .Proposal .btn,
+html[data-theme] body .Proposal button,
+html[data-theme] body .ProposalPage .btn,
+html[data-theme] body .ProposalPage button {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .Proposal .btn:hover,
+html[data-theme] body .Proposal button:hover,
+html[data-theme] body .ProposalPage .btn:hover,
+html[data-theme] body .ProposalPage button:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .Proposal input,
+html[data-theme] body .Proposal textarea,
+html[data-theme] body .Proposal select,
+html[data-theme] body .Proposal .form-control,
+html[data-theme] body .Proposal .form-select,
+html[data-theme] body .ProposalPage input,
+html[data-theme] body .ProposalPage textarea,
+html[data-theme] body .ProposalPage select,
+html[data-theme] body .ProposalPage .form-control,
+html[data-theme] body .ProposalPage .form-select {
+  background: var(--theme-bg-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .Proposal [class*="status"],
+html[data-theme] body .Proposal [class*="Status"],
+html[data-theme] body .ProposalPage [class*="status"],
+html[data-theme] body .ProposalPage [class*="Status"] {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="paper"] body .Proposal,
+html[data-theme="paper"] body div.Proposal {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(248, 250, 252, 0.92)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Make "No available actions" readable in Paper and dark themes. */
+html[data-theme] body .Proposal .alert,
+html[data-theme] body .ProposalPage .alert,
+html[data-theme] body .Proposal [class*="Action"],
+html[data-theme] body .ProposalPage [class*="Action"] {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}

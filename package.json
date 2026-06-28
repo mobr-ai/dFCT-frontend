@@ -13,7 +13,6 @@
     "@testing-library/user-event": "^13.5.0",
     "assert": "^2.1.0",
     "bootstrap": "^5.3.3",
-    "crypto-browserify": "^3.12.1",
     "i18next": "^24.0.0",
     "i18next-browser-languagedetector": "^8.0.0",
     "linkify-react": "^4.1.4",
@@ -69,5 +68,8 @@
     "vite": "^6.3.5",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-wasm": "^3.4.1"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
   }
 }

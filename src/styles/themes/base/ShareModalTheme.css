@@ -1,0 +1,58 @@
+/* Share modal theme bridge */
+[data-theme] .modal-content {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow-large) !important;
+  backdrop-filter: blur(18px);
+}
+
+[data-theme] .modal-header,
+[data-theme] .modal-footer {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-title,
+[data-theme] .modal-content h1,
+[data-theme] .modal-content h2,
+[data-theme] .modal-content h3,
+[data-theme] .modal-content h4,
+[data-theme] .modal-content h5,
+[data-theme] .modal-content h6 {
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-content p,
+[data-theme] .modal-content small,
+[data-theme] .modal-content label,
+[data-theme] .modal-content span {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] .modal-content .btn-close {
+  filter: none !important;
+  opacity: 0.75;
+}
+
+[data-theme="paper"] .modal-content .btn-close {
+  filter: none !important;
+}
+
+[data-theme] .modal-content .btn,
+[data-theme] .modal-content button {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .modal-content .btn-secondary {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .modal-content .btn-primary {
+  background: var(--theme-primary) !important;
+  color: #fff !important;
+}
+
+[data-theme] .modal-backdrop.show {
+  opacity: 0.48 !important;
+}

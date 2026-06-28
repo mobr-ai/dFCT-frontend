@@ -1,0 +1,201 @@
+/* Final specificity fix for GovernanceContainer + burger/menu button */
+
+/* ----------------------------- */
+/* Burger / react-burger button  */
+/* ----------------------------- */
+
+html[data-theme] body button.Navbar-toggle-btn,
+html[data-theme] body .Navbar-toggle-btn,
+html[data-theme] body .bm-burger-button,
+html[data-theme] body .bm-burger-button button {
+  background:
+    color-mix(in srgb, var(--theme-surface) 88%, transparent) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+  outline: none !important;
+}
+
+html[data-theme] body button.Navbar-toggle-btn svg,
+html[data-theme] body button.Navbar-toggle-btn svg *,
+html[data-theme] body button.Navbar-toggle-btn path,
+html[data-theme] body .Navbar-toggle-btn svg,
+html[data-theme] body .Navbar-toggle-btn svg *,
+html[data-theme] body .Navbar-toggle-btn path,
+html[data-theme] body .bm-burger-button svg,
+html[data-theme] body .bm-burger-button svg *,
+html[data-theme] body .bm-burger-button path {
+  color: var(--theme-text) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme] body button.Navbar-toggle-btn:hover,
+html[data-theme] body button.Navbar-toggle-btn:focus,
+html[data-theme] body .Navbar-toggle-btn:hover,
+html[data-theme] body .Navbar-toggle-btn:focus,
+html[data-theme] body .bm-burger-button:hover,
+html[data-theme] body .bm-burger-button:focus {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-accent-hover) !important;
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 3px var(--theme-accent-soft) !important;
+}
+
+html[data-theme="paper"] body button.Navbar-toggle-btn,
+html[data-theme="paper"] body .Navbar-toggle-btn,
+html[data-theme="paper"] body .bm-burger-button,
+html[data-theme="paper"] body .bm-burger-button button {
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.18) !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="paper"] body button.Navbar-toggle-btn svg,
+html[data-theme="paper"] body button.Navbar-toggle-btn svg *,
+html[data-theme="paper"] body button.Navbar-toggle-btn path,
+html[data-theme="paper"] body .Navbar-toggle-btn svg,
+html[data-theme="paper"] body .Navbar-toggle-btn svg *,
+html[data-theme="paper"] body .Navbar-toggle-btn path {
+  color: var(--theme-text) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* ----------------------------- */
+/* Governance exact containers   */
+/* ----------------------------- */
+
+html[data-theme] body .GovernancePage {
+  min-height: calc(100dvh - 56px) !important;
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .GovernanceContainer,
+html[data-theme] body .GovernanceContainer.container,
+html[data-theme] body div.GovernanceContainer.container {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 94%, transparent),
+      color-mix(in srgb, var(--theme-surface-2) 88%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--theme-radius-xl) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+html[data-theme] body .GovernanceContainer *,
+html[data-theme] body .GovernanceContainer.container * {
+  border-color: var(--theme-border);
+}
+
+html[data-theme] body .GovernanceTitle,
+html[data-theme] body .GovernancePage h1,
+html[data-theme] body .GovernancePage h2,
+html[data-theme] body .GovernancePage h3,
+html[data-theme] body .GovernancePage h4,
+html[data-theme] body .GovernanceContainer h1,
+html[data-theme] body .GovernanceContainer h2,
+html[data-theme] body .GovernanceContainer h3,
+html[data-theme] body .GovernanceContainer h4 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .GovernancePage p,
+html[data-theme] body .GovernancePage small,
+html[data-theme] body .GovernancePage label,
+html[data-theme] body .GovernancePage span,
+html[data-theme] body .GovernanceContainer p,
+html[data-theme] body .GovernanceContainer small,
+html[data-theme] body .GovernanceContainer label,
+html[data-theme] body .GovernanceContainer span {
+  color: var(--theme-text-soft) !important;
+}
+
+html[data-theme] body .ProposalGrid,
+html[data-theme] body .GovernanceContainer .ProposalGrid {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme] body .GovernanceContainer .ProposalCard,
+html[data-theme] body .GovernanceContainer [class*="ProposalCard"],
+html[data-theme] body .GovernanceContainer .card,
+html[data-theme] body .GovernanceContainer [class*="card"] {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 96%, transparent),
+      color-mix(in srgb, var(--theme-bg-soft) 88%, transparent)
+    ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow-soft) !important;
+}
+
+html[data-theme] body .GovernanceContainer .ProposalCardHeader,
+html[data-theme] body .GovernanceContainer [class*="ProposalCardHeader"],
+html[data-theme] body .GovernanceContainer [class*="Header"] {
+  background: var(--theme-primary-soft) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] body .GovernanceContainer a,
+html[data-theme] body .GovernancePage a {
+  color: var(--theme-primary-hover) !important;
+}
+
+html[data-theme] body .GovernancePage .ProposalButton,
+html[data-theme] body .GovernancePage button.ProposalButton,
+html[data-theme] body .GovernanceContainer button,
+html[data-theme] body .GovernanceContainer .btn {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme] body .GovernancePage .ProposalButton:hover,
+html[data-theme] body .GovernancePage button.ProposalButton:hover,
+html[data-theme] body .GovernanceContainer button:hover,
+html[data-theme] body .GovernanceContainer .btn:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+html[data-theme] body .GovernanceContainer select,
+html[data-theme] body .GovernanceContainer .form-select,
+html[data-theme] body .GovernanceContainer input,
+html[data-theme] body .GovernanceContainer .form-control {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="paper"] body .GovernanceContainer,
+html[data-theme="paper"] body .GovernanceContainer.container,
+html[data-theme="paper"] body div.GovernanceContainer.container {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(248, 250, 252, 0.9)
+    ) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html[data-theme="paper"] body .GovernanceContainer .ProposalCard,
+html[data-theme="paper"] body .GovernanceContainer [class*="ProposalCard"],
+html[data-theme="paper"] body .GovernanceContainer .card,
+html[data-theme="paper"] body .GovernanceContainer [class*="card"] {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--theme-text) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}

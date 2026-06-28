@@ -1,0 +1,83 @@
+/* Exact theme bridge for current submit page classes */
+[data-theme] .Submission-body {
+  background: var(--theme-page-gradient) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme] .Submission-body *,
+[data-theme] [class*="Submission"] {
+  border-color: var(--theme-border);
+}
+
+[data-theme] .Submission-body h1,
+[data-theme] .Submission-body h2,
+[data-theme] .Submission-body h3,
+[data-theme] .Submission-body h4,
+[data-theme] .Submission-body h5,
+[data-theme] .Submission-body p,
+[data-theme] .Submission-body small,
+[data-theme] .Submission-body label,
+[data-theme] [class*="Submission"] h1,
+[data-theme] [class*="Submission"] h2,
+[data-theme] [class*="Submission"] h3,
+[data-theme] [class*="Submission"] p,
+[data-theme] [class*="Submission"] small,
+[data-theme] [class*="Submission"] label {
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme] .Submission-body input,
+[data-theme] .Submission-body textarea,
+[data-theme] .Submission-body .form-control,
+[data-theme] .Submission-body .input-group-text,
+[data-theme] [class*="Submission"] input,
+[data-theme] [class*="Submission"] textarea,
+[data-theme] [class*="Submission"] .form-control,
+[data-theme] [class*="Submission"] .input-group-text {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Submission-body input::placeholder,
+[data-theme] .Submission-body textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme] .Submission-body button,
+[data-theme] .Submission-body .btn,
+[data-theme] [class*="Submission"] button,
+[data-theme] [class*="Submission"] .btn {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .Submission-body button:hover,
+[data-theme] .Submission-body .btn:hover,
+[data-theme] [class*="Submission"] button:hover,
+[data-theme] [class*="Submission"] .btn:hover {
+  background: var(--theme-surface-3) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme] .Submission-body [class*="Dropzone"],
+[data-theme] .Submission-body .StyledDropzone,
+[data-theme] .Submission-body .dropzone {
+  background: var(--theme-surface-glass) !important;
+  color: var(--theme-text-soft) !important;
+  border-color: var(--theme-border-strong) !important;
+}
+
+[data-theme] .Submission-body svg,
+[data-theme] .Submission-body svg *,
+[data-theme] .Submission-body path {
+  color: var(--theme-accent) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+[data-theme="paper"] .Submission-body {
+  background: var(--theme-page-gradient) !important;
+}
