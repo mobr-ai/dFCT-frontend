@@ -20,6 +20,10 @@ function post(authRequest, url, payload = {}) {
   return authRequest.post(url).send(payload).then(unwrap);
 }
 
+function put(authRequest, url, payload = {}) {
+  return authRequest.put(url).send(payload).then(unwrap);
+}
+
 export const fetchBillingCreditBalance = (authRequest) =>
   get(authRequest, "/api/billing/credits/balance");
 
@@ -71,6 +75,12 @@ export const fetchAdminGateways = (authRequest) =>
 export const fetchAdminAccessTiers = (authRequest) =>
   get(authRequest, "/api/admin/billing/access-tiers");
 
+export const fetchAdminBillingNotificationSettings = (authRequest) =>
+  get(authRequest, "/api/admin/billing/notification-settings");
+
+export const updateAdminBillingNotificationSettings = (authRequest, payload = {}) =>
+  put(authRequest, "/api/admin/billing/notification-settings", payload);
+
 // Backward-compatible aliases for hooks/pages that may already import these names.
 export const getBillingCreditBalance = fetchBillingCreditBalance;
 export const getBillingAccess = fetchBillingAccess;
@@ -85,6 +95,8 @@ export const markAdminPaymentIntentPaid = fulfillAdminPaymentIntent;
 export const listAdminCreditPackages = fetchAdminCreditPackages;
 export const listAdminGateways = fetchAdminGateways;
 export const listAdminAccessTiers = fetchAdminAccessTiers;
+export const listAdminBillingNotificationSettings = fetchAdminBillingNotificationSettings;
+export const saveAdminBillingNotificationSettings = updateAdminBillingNotificationSettings;
 
 // Compatibility aliases used by the user-facing billing hook.
 export const getMyCreditBalance = fetchBillingCreditBalance;

@@ -264,6 +264,29 @@ function BillingActionModal({ t, row, action, onClose, onGrantCredits }) {
   );
 }
 
+const BILLING_NOTIFICATION_ROWS = [
+  {
+    key: "credit_granted",
+    labelKey: "notifyCreditGranted",
+    descriptionKey: "notifyCreditGrantedDescription",
+  },
+  {
+    key: "payment_submitted",
+    labelKey: "notifyPaymentCreated",
+    descriptionKey: "notifyPaymentCreatedDescription",
+  },
+  {
+    key: "payment_confirmed",
+    labelKey: "notifyPaymentConfirmed",
+    descriptionKey: "notifyPaymentConfirmedDescription",
+  },
+  {
+    key: "access_changed",
+    labelKey: "notifyAccessChanged",
+    descriptionKey: "notifyAccessChangedDescription",
+  },
+];
+
 function AdminStat({ label, value, caption, tone }) {
   return (
     <div className={`DfctBillingAdmin-stat ${tone ? `DfctBillingAdmin-stat--${tone}` : ""}`}>
@@ -274,17 +297,33 @@ function AdminStat({ label, value, caption, tone }) {
   );
 }
 
-function ToggleRow({ label, description, enabled }) {
+function ToggleRow({
+  label,
+  description,
+  enabled,
+  disabled,
+  updating,
+  status,
+  onToggle,
+  onLabel,
+  offLabel,
+}) {
   return (
-    <div className="DfctBillingAdmin-toggleRow">
+    <div className={`DfctBillingAdmin-toggleRow ${disabled ? "is-disabled" : ""}`}>
       <div>
         <strong>{label}</strong>
         <p>{description}</p>
+        {status ? <small className="DfctBillingAdmin-toggleStatus">{status}</small> : null}
       </div>
-      <span className={`DfctBillingAdmin-toggle ${enabled ? "is-on" : ""}`}>
+      <button
+        type="button"
+        className={`DfctBillingAdmin-toggle ${enabled ? "is-on" : ""}`}
+        disabled={disabled || updating}
+        onClick={onToggle}
+      >
         <span />
-        {enabled ? "On" : "Off"}
-      </span>
+        {updating ? "..." : enabled ? onLabel : offLabel}
+      </button>
     </div>
   );
 }
@@ -308,9 +347,11 @@ export default function AdminBillingCreditsPage() {
     apiUnavailable,
     error,
     lastUpdatedAt,
+    notificationSettings,
     loadPaymentIntents,
     grantCredits,
     fulfillPaymentIntent,
+    updateNotificationSetting,
   } = useAdminBillingCredits(user);
 
   const [activeTab, setActiveTab] = useState("billing");
@@ -339,6 +380,18 @@ export default function AdminBillingCreditsPage() {
     } catch (err) {
       showToast?.(
         err?.message || t("adminBilling.fulfillPaymentIntentError"),
+        "danger",
+      );
+    }
+  };
+
+  const handleNotificationToggle = async (key, enabled) => {
+    try {
+      await updateNotificationSetting(key, enabled);
+      showToast?.(t("adminBilling.notificationSettingsSaved"), "success");
+    } catch (err) {
+      showToast?.(
+        err?.message || t("adminBilling.notificationSettingsSaveError"),
         "danger",
       );
     }
@@ -754,26 +807,33 @@ export default function AdminBillingCreditsPage() {
                 <p>{t("adminBilling.notificationsSubtitle")}</p>
               </div>
 
-              <ToggleRow
-                label={t("adminBilling.notifyCreditGranted")}
-                description={t("adminBilling.notifyCreditGrantedDescription")}
-                enabled
-              />
-              <ToggleRow
-                label={t("adminBilling.notifyPaymentCreated")}
-                description={t("adminBilling.notifyPaymentCreatedDescription")}
-                enabled={false}
-              />
-              <ToggleRow
-                label={t("adminBilling.notifyPaymentConfirmed")}
-                description={t("adminBilling.notifyPaymentConfirmedDescription")}
-                enabled={false}
-              />
-              <ToggleRow
-                label={t("adminBilling.notifyAccessChanged")}
-                description={t("adminBilling.notifyAccessChangedDescription")}
-                enabled
-              />
+              {BILLING_NOTIFICATION_ROWS.map((item) => {
+                const setting = notificationSettings?.[item.key] || {};
+                const enabled = Boolean(setting.enabled);
+                const implemented = setting.implemented !== false;
+                const updating = actionLoading === `notificationSetting:${item.key}`;
+
+                return (
+                  <ToggleRow
+                    key={item.key}
+                    label={t(`adminBilling.${item.labelKey}`)}
+                    description={t(`adminBilling.${item.descriptionKey}`)}
+                    enabled={enabled}
+                    updating={updating}
+                    disabled={!implemented}
+                    status={
+                      updating
+                        ? t("adminBilling.notificationSaving")
+                        : implemented
+                          ? t("adminBilling.notificationStatusLive")
+                          : t("adminBilling.notificationStatusPlanned")
+                    }
+                    onToggle={() => handleNotificationToggle(item.key, !enabled)}
+                    onLabel={t("adminBilling.notificationOn")}
+                    offLabel={t("adminBilling.notificationOff")}
+                  />
+                );
+              })}
             </section>
           </Tab>
 
