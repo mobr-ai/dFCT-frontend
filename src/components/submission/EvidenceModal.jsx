@@ -1,17 +1,17 @@
-import "../styles/TopicBreakdownPage.css";
+import "../../styles/TopicBreakdownPage.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import i18n from "../i18n";
+import i18n from "../../i18n";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { useS3Upload } from "../hooks/useS3Upload.js";
-import URLCardList from "./URLCardList.jsx";
+import { useS3Upload } from "../../hooks/useS3Upload.js";
+import URLCardList from "../content/URLCardList.jsx";
 import FileUploadArea from "./FileUploadArea.jsx";
 import URLInputField from "./URLInputField.jsx";
 import ContextInputField from "./ContextInputField.jsx";
 import SubmissionControls from "./SubmissionControls.jsx";
-import { useAuthRequest } from "../hooks/useAuthRequest";
+import { useAuthRequest } from "../../hooks/useAuthRequest";
 
 function EvidenceModal(props) {
   const { t } = useTranslation();

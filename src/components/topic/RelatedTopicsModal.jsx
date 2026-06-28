@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import TopicList from "./topic/TopicList";
-import "../styles/TopicSubmission.css";
+import TopicList from "./TopicList";
+import "../../styles/TopicSubmission.css";
 
 const RelatedTopicsModal = ({ show, onClose, onProceed, topics }) => {
   const { t } = useTranslation();

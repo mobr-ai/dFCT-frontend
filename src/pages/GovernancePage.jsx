@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import "../styles/GovernancePage.css";
 import LoadingPage from "./LoadingPage";
-import ProposalSubmissionModal from "../components/ProposalSubmissionModal";
+import ProposalSubmissionModal from "../components/governance/ProposalSubmissionModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useAuthRequest } from "../hooks/useAuthRequest";

@@ -1,5 +1,5 @@
 import Carousel from 'react-bootstrap/Carousel';
-import '../styles/ContentCarousel.css';
+import '../../styles/ContentCarousel.css';
 
 function ContentCarousel({ contentList, onItemClick }) {
     const mediaItems = contentList.slice(0, 4);
