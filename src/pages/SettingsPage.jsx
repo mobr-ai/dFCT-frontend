@@ -1,7 +1,7 @@
 // SettingsPage.js
 import React, { useState, useEffect, useRef } from "react";
 import "../styles/SettingsPage.css";
-import ShareModal from "../components/share/ShareModal";
+import { ShareModal } from "../components/share";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Image } from "react-bootstrap";
 import { useTranslation } from "react-i18next";

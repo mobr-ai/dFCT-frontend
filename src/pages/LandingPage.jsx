@@ -6,7 +6,7 @@ import "../styles/landing/FeedSnap.css";
 import "../styles/NavigationSidebar.css";
 import i18n from "../i18n";
 import logo from "../icons/logo.svg";
-import TopicList from "../components/topic/TopicList.jsx";
+import { TopicList } from "../components/topic";
 import LandingSnapTopicFeed from "../components/landing/LandingSnapTopicFeed.jsx";
 import { LandingCompactTopicGrid, LandingCompactTopicList } from "../components/landing/LandingTopicViews.jsx";
 import LoadingPage from "./LoadingPage.jsx";

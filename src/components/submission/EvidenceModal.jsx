@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useS3Upload } from "../../hooks/useS3Upload.js";
-import URLCardList from "../content/URLCardList.jsx";
+import { URLCardList } from "../content";
 import FileUploadArea from "./FileUploadArea.jsx";
 import URLInputField from "./URLInputField.jsx";
 import ContextInputField from "./ContextInputField.jsx";
