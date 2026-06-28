@@ -99,17 +99,42 @@ function formatCreditAmount(amount) {
   return `${sign}${formatCredits(numeric)} DFCT`;
 }
 
-function formatActivityStatus(status) {
-  const value = String(status || "—").trim();
+function formatActivityStatus(tOrStatus, maybeStatus) {
+  const hasTranslator = typeof tOrStatus === "function";
+  const t = hasTranslator ? tOrStatus : null;
+  const rawStatus = hasTranslator ? maybeStatus : tOrStatus;
+  const value = String(rawStatus || "—").trim();
 
   if (!value || value === "—") return "—";
 
-  return value
+  const normalized = value.toLowerCase().replace(/[_\s-]+/g, "_");
+  const fallback = value
     .replace(/[_-]+/g, " ")
     .split(" ")
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ");
+
+  const statusKeyMap = {
+    paid: "statusPaid",
+    pending: "statusPending",
+    expired: "statusExpired",
+    canceled: "statusCanceled",
+    cancelled: "statusCanceled",
+    failed: "statusFailed",
+    submitted: "statusSubmitted",
+    confirmed: "statusConfirmed",
+    fulfilled: "statusFulfilled",
+    payment_fulfilled: "statusPaymentFulfilled",
+    payment_submitted: "statusPaymentSubmitted",
+    requires_payment: "statusRequiresPayment",
+    verification_started: "statusVerificationStarted",
+    verifying: "statusVerifying",
+  };
+
+  const i18nKey = statusKeyMap[normalized];
+
+  return t && i18nKey ? t(`billingAccess.${i18nKey}`, fallback) : fallback;
 }
 
 function activityTimestamp(item) {
@@ -154,7 +179,7 @@ function ledgerActivityStatus(t, entry) {
     return t("billingAccess.activityCreditGrant");
   }
 
-  return formatActivityStatus(entry?.reason || entry?.source_type);
+  return formatActivityStatus(t, entry?.reason || entry?.source_type);
 }
 
 
@@ -392,7 +417,7 @@ function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries 
     sourceType: "payment_intent",
     source: intent,
     kind: intent.package?.name || intent.package_name || intent.gateway || t("billingAccess.activityPaymentRequest"),
-    status: formatActivityStatus(intent.status),
+    status: formatActivityStatus(t, intent.status),
     amount: formatPaymentAmount(intent, language),
     createdAt: intent.created_at,
     timestamp: activityTimestamp(intent),

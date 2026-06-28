@@ -637,7 +637,20 @@
     "transactionDetailsOpenExplorer": "Open explorer",
     "transactionDetailsNoExplorer": "No blockchain transaction is linked to this activity yet.",
     "transactionDetailsNoPaymentIntent": "This credit movement is not linked to a payment intent in the current activity window.",
-    "transactionDetailsClose": "Close transaction details"
+    "transactionDetailsClose": "Close transaction details",
+    "statusPaid": "Paid",
+    "statusPending": "Pending",
+    "statusExpired": "Expired",
+    "statusCanceled": "Canceled",
+    "statusFailed": "Failed",
+    "statusSubmitted": "Submitted",
+    "statusConfirmed": "Confirmed",
+    "statusFulfilled": "Fulfilled",
+    "statusPaymentFulfilled": "Payment fulfilled",
+    "statusPaymentSubmitted": "Payment submitted",
+    "statusRequiresPayment": "Awaiting payment",
+    "statusVerificationStarted": "Verification started",
+    "statusVerifying": "Verifying"
   },
   "adminBilling": {
     "nav": "Admin Billing",

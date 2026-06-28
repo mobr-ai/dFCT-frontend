@@ -2736,3 +2736,49 @@ button.DfctBillingAdmin-toggle:disabled {
     font-size: 0.68rem;
   }
 }
+
+/* PT-BR-safe quote loader sizing inside the Cardano checkout amount card. */
+.BillingPaymentModalProduct-amountCard {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.BillingPaymentModalProduct-quoteLoader {
+  align-items: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 0.35rem;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.BillingPaymentModalProduct-quoteLoader > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.BillingPaymentModalProduct-quoteDots {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.22rem;
+  margin-left: 0.1rem;
+  max-width: 2rem;
+}
+
+.BillingPaymentModalProduct-quoteDots i {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 576px), (max-height: 760px) {
+  .BillingPaymentModalProduct-quoteLoader {
+    width: 100%;
+  }
+
+  .BillingPaymentModalProduct-quoteDots {
+    margin-left: auto;
+  }
+}
