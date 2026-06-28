@@ -1,7 +1,7 @@
-import "./../styles/TopicBreakdownPage.css";
+import "../styles/TopicBreakdownPage.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import i18n from "./../i18n";
+import i18n from "../i18n";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";

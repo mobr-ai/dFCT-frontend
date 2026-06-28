@@ -1,14 +1,14 @@
-import "./styles/TopicBreakdownPage.css";
-import "./styles/NavigationSidebar.css";
-import TopicSidebar from "./components/topic/TopicSidebar";
-import TopicToolbar from "./components/topic/TopicToolbar";
-import EvidenceModal from "./components/EvidenceModal";
+import "../styles/TopicBreakdownPage.css";
+import "../styles/NavigationSidebar.css";
+import TopicSidebar from "../components/topic/TopicSidebar";
+import TopicToolbar from "../components/topic/TopicToolbar";
+import EvidenceModal from "../components/EvidenceModal";
 import Badge from "react-bootstrap/Badge";
 import LoadingPage from "./LoadingPage";
-import ContentList from "./components/ContentList";
-import ClaimList from "./components/ClaimList";
-import ContentCarousel from "./components/ContentCarousel";
-import i18n from "./i18n";
+import ContentList from "../components/ContentList";
+import ClaimList from "../components/ClaimList";
+import ContentCarousel from "../components/ContentCarousel";
+import i18n from "../i18n";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
@@ -22,7 +22,7 @@ import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef } from "react";
 import TextTransition, { presets } from "react-text-transition";
-import { CARDANO_EXPLORER_URL } from "./chains/cardano/constants";
+import { CARDANO_EXPLORER_URL } from "../chains/cardano/constants";
 
 function getHashtags(
   contentList,

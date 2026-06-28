@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import logo from "./icons/logo.svg";
-import "./styles/WaitingListPage.css";
+import logo from "../icons/logo.svg";
+import "../styles/WaitingListPage.css";
 import { useTranslation } from "react-i18next";
 import request from "superagent";
 import { useSearchParams } from "react-router-dom";
-import i18n from "./i18n";
+import i18n from "../i18n";
 
 const WaitingList = () => {
   const [email, setEmail] = useState("");

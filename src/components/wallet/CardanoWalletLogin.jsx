@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import Button from "react-bootstrap/Button";
-import "./../../styles/AuthPage.css";
-import { getWalletInfo } from "./../../chains/cardano/walletUtils";
+import "../../styles/AuthPage.css";
+import { getWalletInfo } from "../../chains/cardano/walletUtils";
 import {
   SUPPORTED_WALLETS,
   WALLET_ICONS,
-} from "./../../chains/cardano/constants";
+} from "../../chains/cardano/constants";
 
 function CardanoWalletLogin({ onLogin, showToast }) {
   const { t } = useTranslation();

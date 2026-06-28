@@ -4,15 +4,15 @@ import "./styles/theme-tokens.css";
 import "./styles/theme-overrides.css";
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom/client";
-import LandingPage from "./LandingPage";
-import Header from "./Header";
-import ErrorPage from "./ErrorPage";
+import LandingPage from "./pages/LandingPage";
+import Header from "./components/layout/Header";
+import ErrorPage from "./pages/ErrorPage";
 import reportWebVitals from "./reportWebVitals";
-import TopicBreakdownPage from "./TopicBreakdownPage";
-import TopicSubmissionPage from "./TopicSubmissionPage";
-import AuthPage from "./AuthPage";
-import WaitingList from "./WaitingListPage";
-import SettingsPage from "./SettingsPage";
+import TopicBreakdownPage from "./pages/TopicBreakdownPage";
+import TopicSubmissionPage from "./pages/TopicSubmissionPage";
+import AuthPage from "./pages/AuthPage";
+import WaitingList from "./pages/WaitingListPage";
+import SettingsPage from "./pages/SettingsPage";
 import BillingAccessPage from "./pages/BillingAccessPage.jsx";
 import AdminBillingCreditsPage from "./pages/AdminBillingCreditsPage.jsx";
 import i18n from "./i18n";
@@ -27,9 +27,9 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
-import GovernancePage from "./GovernancePage";
-import ProposalPage from "./ProposalPage";
-import WelcomePage from "./WelcomePage";
+import GovernancePage from "./pages/GovernancePage";
+import ProposalPage from "./pages/ProposalPage";
+import WelcomePage from "./pages/WelcomePage";
 import { installThemeRouteSync } from "./theme/themeStorage";
 
 import { Buffer } from "buffer";

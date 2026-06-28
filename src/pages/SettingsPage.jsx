@@ -1,7 +1,7 @@
 // SettingsPage.js
 import React, { useState, useEffect, useRef } from "react";
-import "./styles/SettingsPage.css";
-import ShareModal from "./components/ShareModal";
+import "../styles/SettingsPage.css";
+import ShareModal from "../components/ShareModal";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Image } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
@@ -14,12 +14,12 @@ import {
   faUpload,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuthRequest } from "./hooks/useAuthRequest";
-import { useS3Upload } from "./hooks/useS3Upload";
-import { resizeImage } from "./helpers/resizeImage"; // helper class
-import useOnClickOutside from "./hooks/useOnClickOutside"; // custom hook
-import avatarImg from "./icons/avatar.png";
-import ThemeSelector from "./components/settings/ThemeSelector";
+import { useAuthRequest } from "../hooks/useAuthRequest";
+import { useS3Upload } from "../hooks/useS3Upload";
+import { resizeImage } from "../utils/resizeImage"; // helper class
+import useOnClickOutside from "../hooks/useOnClickOutside"; // custom hook
+import avatarImg from "../icons/avatar.png";
+import ThemeSelector from "../components/settings/ThemeSelector";
 
 function SettingsPage() {
   const { t, i18n } = useTranslation();

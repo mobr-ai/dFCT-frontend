@@ -9,12 +9,12 @@ import {
   Await,
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import "./styles/GovernancePage.css";
+import "../styles/GovernancePage.css";
 import LoadingPage from "./LoadingPage";
-import ProposalSubmissionModal from "./components/ProposalSubmissionModal";
+import ProposalSubmissionModal from "../components/ProposalSubmissionModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { useAuthRequest } from "./hooks/useAuthRequest";
+import { useAuthRequest } from "../hooks/useAuthRequest";
 
 const statusColors = {
   0: "ProposalStatus-proposed",

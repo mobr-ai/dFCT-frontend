@@ -1,17 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/TopicSubmission.css";
-import "./styles/TopicList.css";
-import "./styles/NavigationSidebar.css";
-import TopicSidebar from "./components/topic/TopicSidebar.jsx";
-import URLCardList from "./components/URLCardList.jsx";
-import FileUploadArea from "./components/FileUploadArea.jsx";
-import URLInputField from "./components/URLInputField.jsx";
-import ContextInputField from "./components/ContextInputField.jsx";
-import SubmissionControls from "./components/SubmissionControls.jsx";
-import RelatedTopicsModal from "./components/RelatedTopicsModal.jsx";
-import logo from "./icons/logo.svg";
+import "../styles/TopicSubmission.css";
+import "../styles/TopicList.css";
+import "../styles/NavigationSidebar.css";
+import TopicSidebar from "../components/topic/TopicSidebar.jsx";
+import URLCardList from "../components/URLCardList.jsx";
+import FileUploadArea from "../components/FileUploadArea.jsx";
+import URLInputField from "../components/URLInputField.jsx";
+import ContextInputField from "../components/ContextInputField.jsx";
+import SubmissionControls from "../components/SubmissionControls.jsx";
+import RelatedTopicsModal from "../components/RelatedTopicsModal.jsx";
+import logo from "../icons/logo.svg";
 import Form from "react-bootstrap/Form";
-import i18n from "./i18n";
+import i18n from "../i18n";
 import {
   useOutletContext,
   useLocation,
@@ -21,8 +21,8 @@ import {
 } from "react-router-dom";
 import { useState, useEffect, Suspense, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useS3Upload } from "./hooks/useS3Upload.js";
-import { useAuthRequest } from "./hooks/useAuthRequest";
+import { useS3Upload } from "../hooks/useS3Upload.js";
+import { useAuthRequest } from "../hooks/useAuthRequest";
 
 function TopicSubmissionPage() {
   const { t } = useTranslation();

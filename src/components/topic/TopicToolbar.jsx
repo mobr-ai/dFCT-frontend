@@ -5,15 +5,15 @@ import Image from "react-bootstrap/Image";
 import Row from "react-bootstrap/Row";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import ShareModal from "./../ShareModal";
+import ShareModal from "../ShareModal";
 import PublishTopicModal from "./PublishTopicModal";
 import { useTranslation } from "react-i18next";
 import {
   getApiErrorMessage,
   useAuthRequest,
-} from "./../../hooks/useAuthRequest";
-import { useBillingStatus } from "./../../hooks/useBillingStatus";
-import { publishTopicWithBilling } from "./../../api/billingCredits";
+} from "../../hooks/useAuthRequest";
+import { useBillingStatus } from "../../hooks/useBillingStatus";
+import { publishTopicWithBilling } from "../../api/billingCredits";
 import publishIcon from "./../../icons/publish.svg";
 import deleteIcon from "./../../icons/delete.svg";
 import shareIcon from "./../../icons/share.svg";

@@ -1,4 +1,4 @@
-import "./../styles/NavBar.css";
+import "../../styles/NavBar.css";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Nav from "react-bootstrap/Nav";
@@ -21,12 +21,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import i18n from "./../i18n";
-import avatarImg from "./../icons/avatar.png";
-import AnimatedBrand from "./branding/AnimatedBrand";
-import GlobalTopicSearch from "./search/GlobalTopicSearch";
-import { useAdminAccess } from "../hooks/useAdminAccess";
-import { useBillingStatus } from "../hooks/useBillingStatus";
+import i18n from "../../i18n";
+import avatarImg from "../../icons/avatar.png";
+import AnimatedBrand from "../branding/AnimatedBrand";
+import GlobalTopicSearch from "../search/GlobalTopicSearch";
+import { useAdminAccess } from "../../hooks/useAdminAccess";
+import { useBillingStatus } from "../../hooks/useBillingStatus";
 
 function numberFrom(...values) {
   for (const value of values) {

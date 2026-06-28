@@ -1,7 +1,7 @@
-import "./styles/WelcomePage.css";
-import logo from "./icons/logo.svg";
+import "../styles/WelcomePage.css";
+import logo from "../icons/logo.svg";
 import AuthPage from "./AuthPage";
-import useRevealOnScroll from "./hooks/useRevealOnScroll";
+import useRevealOnScroll from "../hooks/useRevealOnScroll";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useOutletContext } from "react-router-dom";
 

@@ -15,9 +15,9 @@ import {
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
-import "./../styles/NavigationSidebar.css";
-import GlobalTopicSearch from "./search/GlobalTopicSearch";
-import { useAdminAccess } from "../hooks/useAdminAccess";
+import "../../styles/NavigationSidebar.css";
+import GlobalTopicSearch from "../search/GlobalTopicSearch";
+import { useAdminAccess } from "../../hooks/useAdminAccess";
 
 const SIDEBAR_DESKTOP_QUERY = "(min-width: 1024px)";
 

@@ -34,12 +34,12 @@ import {
 
 import { useProposalUpdater } from "@/chains/cardano/useProposalUpdater";
 import { getSessionWalletHandlers } from "@/chains/cardano/walletUtils";
-import { useAuthRequest } from "./hooks/useAuthRequest";
+import { useAuthRequest } from "../hooks/useAuthRequest";
 
-import "./styles/ProposalPage.css";
-import "./styles/GovernancePage.css";
-import "./styles/ProposalSubmissionModal.css";
-import "./styles/Wallet.css";
+import "../styles/ProposalPage.css";
+import "../styles/GovernancePage.css";
+import "../styles/ProposalSubmissionModal.css";
+import "../styles/Wallet.css";
 
 export default function ProposalPage() {
   const sessionUser = useMemo(() => {

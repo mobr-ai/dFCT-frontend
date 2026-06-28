@@ -1,6 +1,6 @@
-import './styles/LandingPage.css';
+import '../styles/LandingPage.css';
 import { useRouteError } from "react-router-dom";
-import logo from './icons/logo.svg';
+import logo from '../icons/logo.svg';
 import { useTranslation } from "react-i18next";
 
 export default function ErrorPage() {

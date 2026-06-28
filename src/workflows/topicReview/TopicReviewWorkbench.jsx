@@ -8,7 +8,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   LifecycleTaskList,
   TaskDecisionPanel,
-} from "../../components/dsm";
+} from "../../components/dsm/index";
 import { useTopicReviewTasks } from "../../hooks/useTopicReviewTasks";
 import { useAutoRefresh } from "../../hooks/useAutoRefresh";
 import "../../styles/dsm/Workbench.css";

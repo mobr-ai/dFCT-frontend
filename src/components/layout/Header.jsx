@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import "./styles/NavigationSidebar.css";
-import NavigationSidebar from "./components/NavigationSidebar.jsx";
-import NavBar from "./components/NavBar.jsx";
+import "../../styles/NavigationSidebar.css";
+import NavigationSidebar from "./NavigationSidebar.jsx";
+import NavBar from "./NavBar.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 

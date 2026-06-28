@@ -1,5 +1,5 @@
-import logo from './icons/logo.svg';
-import "./styles/LoadingPage.css"
+import logo from '../icons/logo.svg';
+import "../styles/LoadingPage.css"
 
 function LoadingPage(props) {
 

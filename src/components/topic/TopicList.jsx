@@ -1,12 +1,12 @@
-import "./../../styles/TopicList.css";
-import "./../../styles/landing/FeedCards.css";
+import "../../styles/TopicList.css";
+import "../../styles/landing/FeedCards.css";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRef, useEffect, useState } from "react";
-import { useAuthRequest } from "./../../hooks/useAuthRequest";
+import { useAuthRequest } from "../../hooks/useAuthRequest";
 
 function TopicList({ content, type, showSideBar }) {
   const [visibleTopics, setVisibleTopics] = useState(content);

@@ -27,15 +27,15 @@ import { createLucid } from "../chains/cardano/useLucidClient";
 import {
   checkWalletHasSufficientFeeFunds,
   getSessionWalletHandlers,
-} from "./../chains/cardano/walletUtils";
-import { prepareProposalDatum } from "./../chains/cardano/prepareProposalDatum";
-import { buildProposalTx } from "./../chains/cardano/buildProposalTx";
-import { signAndSubmitTx } from "./../chains/cardano/signAndSubmitTx";
-import { GOV_SCRIPT_ADDRESS } from "./../chains/cardano/constants";
+} from "../chains/cardano/walletUtils";
+import { prepareProposalDatum } from "../chains/cardano/prepareProposalDatum";
+import { buildProposalTx } from "../chains/cardano/buildProposalTx";
+import { signAndSubmitTx } from "../chains/cardano/signAndSubmitTx";
+import { GOV_SCRIPT_ADDRESS } from "../chains/cardano/constants";
 import { useAuthRequest } from "../hooks/useAuthRequest";
-import LoadingPage from "./../LoadingPage";
-import "./../styles/ProposalSubmissionModal.css";
-import "./../styles/Wallet.css";
+import LoadingPage from "../pages/LoadingPage";
+import "../styles/ProposalSubmissionModal.css";
+import "../styles/Wallet.css";
 
 export default function ProposalSubmissionModal({
   user,

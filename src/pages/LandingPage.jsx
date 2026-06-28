@@ -1,16 +1,16 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/LandingPage.css";
-import "./styles/landing/FeedLayout.css";
-import "./styles/landing/FeedCards.css";
-import "./styles/landing/FeedSnap.css";
-import "./styles/NavigationSidebar.css";
-import i18n from "./i18n";
-import logo from "./icons/logo.svg";
-import TopicList from "./components/topic/TopicList.jsx";
-import LandingSnapTopicFeed from "./components/landing/LandingSnapTopicFeed.jsx";
-import { LandingCompactTopicGrid, LandingCompactTopicList } from "./components/landing/LandingTopicViews.jsx";
+import "../styles/LandingPage.css";
+import "../styles/landing/FeedLayout.css";
+import "../styles/landing/FeedCards.css";
+import "../styles/landing/FeedSnap.css";
+import "../styles/NavigationSidebar.css";
+import i18n from "../i18n";
+import logo from "../icons/logo.svg";
+import TopicList from "../components/topic/TopicList.jsx";
+import LandingSnapTopicFeed from "../components/landing/LandingSnapTopicFeed.jsx";
+import { LandingCompactTopicGrid, LandingCompactTopicList } from "../components/landing/LandingTopicViews.jsx";
 import LoadingPage from "./LoadingPage.jsx";
-import { useAuthRequest } from "./hooks/useAuthRequest";
+import { useAuthRequest } from "../hooks/useAuthRequest";
 import { Button, Container, Spinner } from "react-bootstrap";
 import {
   useOutletContext,

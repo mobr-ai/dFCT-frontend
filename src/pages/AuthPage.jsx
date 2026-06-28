@@ -1,4 +1,4 @@
-import i18n from "./i18n";
+import i18n from "../i18n";
 import { useState, useEffect, useCallback, Suspense } from "react";
 import reactStringReplace from "react-string-replace";
 import Image from "react-bootstrap/Image";
@@ -16,8 +16,8 @@ import {
 import { useGoogleLogin } from "@react-oauth/google";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import "./styles/AuthPage.css";
-import CardanoWalletLogin from "./components/wallet/CardanoWalletLogin";
+import "../styles/AuthPage.css";
+import CardanoWalletLogin from "../components/wallet/CardanoWalletLogin";
 import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
