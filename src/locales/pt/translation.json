@@ -650,7 +650,16 @@
     "statusPaymentSubmitted": "Pagamento enviado",
     "statusRequiresPayment": "Aguardando pagamento",
     "statusVerificationStarted": "Verificação iniciada",
-    "statusVerifying": "Verificando"
+    "statusVerifying": "Verificando",
+    "paymentModalQuoteExpiresAt": "Cotação expira em {{date}}",
+    "paymentModalQuoteExpired": "Cotação expirada",
+    "paymentModalQuoteExpiredAction": "Esta cotação Cardano expirou. Feche este modal e inicie uma nova solicitação de pagamento para obter um valor atualizado em ADA.",
+    "paymentModalQuoteExpiredSubmitError": "Esta cotação Cardano expirou. Inicie uma nova solicitação de pagamento para obter um valor atualizado em ADA.",
+    "paymentModalPrimaryCtaExpired": "Cotação expirada",
+    "paymentModalQuoteRefreshing": "Atualizando cotação…",
+    "paymentModalQuoteRefreshingAction": "Atualizando a cotação Cardano e o valor em ADA.",
+    "paymentModalQuoteRefreshFailed": "Não foi possível atualizar a cotação Cardano.",
+    "paymentModalPrimaryCtaRefreshingQuote": "Atualizando cotação…"
   },
   "adminBilling": {
     "nav": "Admin Cobrança",

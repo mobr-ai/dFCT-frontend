@@ -491,11 +491,20 @@ function paymentCredits(intent, fallbackPackage) {
   );
 }
 
-function describeCheckoutError(err, fallback, step = "") {
+function describeCheckoutError(err, fallback, step = "", t = null) {
   const body = err?.response?.body || {};
+  const isQuoteExpired =
+    body.code === "quote_expired" ||
+    body.error === "quoteExpired";
+
+  if (isQuoteExpired && typeof t === "function") {
+    const detail = t("billingAccess.paymentModalQuoteExpiredSubmitError");
+    return step ? `${step}: ${detail}` : detail;
+  }
+
   const detail =
-    body.error ||
     body.message ||
+    body.error ||
     body.detail ||
     err?.response?.text ||
     err?.message ||
@@ -551,6 +560,33 @@ function formatCheckoutCurrencyLabel(currency) {
   return normalized || "—";
 }
 
+function parseCheckoutDate(value) {
+  if (!value) return null;
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isCheckoutQuoteExpired(cardanoQuote, nowMs = Date.now()) {
+  if (!cardanoQuote) return false;
+  if (cardanoQuote.quote_expired === true) return true;
+
+  const expiresAt = parseCheckoutDate(cardanoQuote.quote_expires_at);
+  if (!expiresAt) return false;
+
+  return nowMs >= expiresAt.getTime();
+}
+
+function formatCheckoutDateTime(value, language) {
+  const parsed = parseCheckoutDate(value);
+  if (!parsed) return "";
+
+  return new Intl.DateTimeFormat(language || undefined, {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(parsed);
+}
+
 function PaymentRequestModal({
   show,
   onHide,
@@ -567,6 +603,8 @@ function PaymentRequestModal({
   checkoutError = "",
   checkoutSuccess = "",
   checkoutStage = "",
+  quoteRefreshing = false,
+  onRefreshCardanoQuote,
   onPayCardano,
 }) {
   const packageName =
@@ -603,6 +641,61 @@ function PaymentRequestModal({
         })
     : "";
   const checkoutSuccessRef = useRef(null);
+  const autoRefreshQuoteKeyRef = useRef("");
+  const [quoteClockMs, setQuoteClockMs] = useState(() => Date.now());
+
+  const quoteExpired = isCheckoutQuoteExpired(cardanoQuote, quoteClockMs);
+  const formattedQuoteExpiry = formatCheckoutDateTime(cardanoQuote?.quote_expires_at, language);
+  const quoteExpiryText = cardanoQuote?.quote_expires_at
+    ? quoteRefreshing
+      ? t("billingAccess.paymentModalQuoteRefreshing")
+      : quoteExpired
+        ? t("billingAccess.paymentModalQuoteExpired")
+        : t("billingAccess.paymentModalQuoteExpiresAt", {
+            date: formattedQuoteExpiry,
+          })
+    : "";
+  const quoteStatusExpired = quoteExpired && !quoteRefreshing;
+
+  useEffect(() => {
+    if (!cardanoQuote?.quote_expires_at) return undefined;
+
+    setQuoteClockMs(Date.now());
+
+    const intervalId = window.setInterval(() => {
+      setQuoteClockMs(Date.now());
+    }, 15000);
+
+    return () => window.clearInterval(intervalId);
+  }, [cardanoQuote?.quote_expires_at]);
+
+  useEffect(() => {
+    if (!quoteExpired || quoteRefreshing) return undefined;
+    if (typeof onRefreshCardanoQuote !== "function") return undefined;
+
+    const quoteKey = [
+      cardanoQuote?.payment_intent_id || selectedPaymentIntent?.payment_intent_id || selectedPaymentIntent?.id,
+      cardanoQuote?.quote_expires_at,
+    ].filter(Boolean).join(":");
+
+    if (!quoteKey || autoRefreshQuoteKeyRef.current === quoteKey) return undefined;
+
+    autoRefreshQuoteKeyRef.current = quoteKey;
+
+    const timeoutId = window.setTimeout(() => {
+      onRefreshCardanoQuote({ reason: "expired" });
+    }, 650);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    cardanoQuote?.payment_intent_id,
+    cardanoQuote?.quote_expires_at,
+    onRefreshCardanoQuote,
+    quoteExpired,
+    quoteRefreshing,
+    selectedPaymentIntent?.id,
+    selectedPaymentIntent?.payment_intent_id,
+  ]);
 
   useEffect(() => {
     if (!checkoutSuccess) return undefined;
@@ -638,7 +731,9 @@ function PaymentRequestModal({
     cardanoQuote?.payment_address &&
     cardanoQuote?.amount_lovelace &&
     effectiveSelectedWallet?.name &&
-    !checkoutLoading,
+    !checkoutLoading &&
+    !quoteRefreshing &&
+    !quoteExpired,
   );
 
   const shortNetwork =
@@ -735,6 +830,11 @@ function PaymentRequestModal({
           <span>{t("billingAccess.paymentModalTrustWallet")}</span>
           <span>{t("billingAccess.paymentModalTrustVerification")}</span>
           <span>{shortNetwork}</span>
+          {quoteExpiryText ? (
+            <span className={quoteStatusExpired ? "is-expired" : undefined}>
+              {quoteExpiryText}
+            </span>
+          ) : null}
         </section>
 
         <section className="BillingPaymentModalProduct-journey">
@@ -820,6 +920,16 @@ function PaymentRequestModal({
           )}
         </section>
 
+        {quoteRefreshing ? (
+          <div className="BillingPaymentModal-alert is-info">
+            {t("billingAccess.paymentModalQuoteRefreshingAction")}
+          </div>
+        ) : quoteExpired ? (
+          <div className="BillingPaymentModal-alert is-error">
+            {t("billingAccess.paymentModalQuoteExpiredAction")}
+          </div>
+        ) : null}
+
         {checkoutStage ? (
           <div className="BillingPaymentModal-alert is-info">{checkoutStage}</div>
         ) : null}
@@ -868,9 +978,13 @@ function PaymentRequestModal({
           onClick={() => onPayCardano?.(effectiveSelectedWallet)}
           disabled={!canPay}
         >
-          {checkoutLoading
-            ? t("billingAccess.paymentModalPrimaryCtaLoading")
-            : t("billingAccess.paymentModalPrimaryCta")}
+          {quoteRefreshing
+            ? t("billingAccess.paymentModalPrimaryCtaRefreshingQuote")
+            : quoteExpired
+              ? t("billingAccess.paymentModalPrimaryCtaExpired")
+              : checkoutLoading
+                ? t("billingAccess.paymentModalPrimaryCtaLoading")
+                : t("billingAccess.paymentModalPrimaryCta")}
         </button>
       </Modal.Footer>
     </Modal>
@@ -909,6 +1023,7 @@ export default function BillingAccessPage() {
   const [selectedPaymentPackage, setSelectedPaymentPackage] = useState(null);
   const [cardanoQuote, setCardanoQuote] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [quoteRefreshing, setQuoteRefreshing] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutSuccess, setCheckoutSuccess] = useState("");
   const [checkoutStage, setCheckoutStage] = useState("");
@@ -919,6 +1034,7 @@ export default function BillingAccessPage() {
     setSelectedPaymentPackage(null);
     setCardanoQuote(null);
     setCheckoutLoading(false);
+    setQuoteRefreshing(false);
     setCheckoutError("");
     setCheckoutSuccess("");
     setCheckoutStage("");
@@ -997,6 +1113,46 @@ export default function BillingAccessPage() {
         variant: "secondary",
         message: t("billingAccess.purchaseIntentFailed"),
       });
+    }
+  };
+
+  const refreshCardanoQuote = async () => {
+    const intentId = paymentIntentId(selectedPaymentIntent);
+
+    if (!authRequest || !intentId || intentId === "—") return null;
+
+    setQuoteRefreshing(true);
+    setCheckoutError("");
+    setCheckoutStage(t("billingAccess.paymentModalQuoteRefreshing"));
+
+    try {
+      const payload = await fetchCardanoPaymentQuote(authRequest, intentId);
+      const nextQuote = payload?.cardano_quote || payload?.quote || null;
+      const nextIntent = payload?.payment_intent || payload?.intent || null;
+
+      if (nextQuote) {
+        setCardanoQuote(nextQuote);
+      }
+
+      if (nextIntent) {
+        setSelectedPaymentIntent(nextIntent);
+      }
+
+      setCheckoutStage("");
+      return nextQuote;
+    } catch (err) {
+      setCheckoutError(
+        describeCheckoutError(
+          err,
+          t("billingAccess.paymentModalQuoteRefreshFailed"),
+          "",
+          t,
+        ),
+      );
+      setCheckoutStage("");
+      return null;
+    } finally {
+      setQuoteRefreshing(false);
     }
   };
 
@@ -1131,6 +1287,7 @@ export default function BillingAccessPage() {
           err,
           getApiErrorMessage(err, t("billingAccess.paymentModalCheckoutFailed")),
           checkoutStep,
+          t,
         ),
       );
     } finally {
@@ -1328,6 +1485,8 @@ export default function BillingAccessPage() {
           checkoutError={checkoutError}
           checkoutSuccess={checkoutSuccess}
           checkoutStage={checkoutStage}
+          quoteRefreshing={quoteRefreshing}
+          onRefreshCardanoQuote={refreshCardanoQuote}
           onPayCardano={handleCardanoPayment}
         />
 
