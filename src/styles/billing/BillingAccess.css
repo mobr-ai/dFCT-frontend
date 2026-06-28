@@ -2421,3 +2421,24 @@
   }
 }
 /* End Cardano checkout ADA amount final sizing override. */
+
+button.DfctBillingAdmin-toggle {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.DfctBillingAdmin-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.DfctBillingAdmin-toggleRow.is-disabled {
+  opacity: 0.82;
+}
+
+.DfctBillingAdmin-toggleStatus {
+  display: block;
+  margin-top: 0.25rem;
+  opacity: 0.72;
+}
