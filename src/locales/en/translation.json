@@ -659,7 +659,16 @@
     "paymentModalQuoteRefreshing": "Refreshing quote…",
     "paymentModalQuoteRefreshingAction": "Refreshing the Cardano quote and ADA amount.",
     "paymentModalQuoteRefreshFailed": "Unable to refresh the Cardano quote.",
-    "paymentModalPrimaryCtaRefreshingQuote": "Refreshing quote…"
+    "paymentModalPrimaryCtaRefreshingQuote": "Refreshing quote…",
+    "transactionDetailsDsmMachine": "dSM machine",
+    "transactionDetailsDsmAction": "Lifecycle action",
+    "transactionDetailsDsmEntity": "Lifecycle entity",
+    "transactionDetailsDsmSource": "Lifecycle source",
+    "transactionDetailsLifecycleTask": "Lifecycle task",
+    "transactionDetailsStateEvent": "State event",
+    "dsmActionSubmitTopic": "Submit topic",
+    "dsmActionReviewTopic": "Review topic",
+    "dsmActionRejectTopic": "Reject topic"
   },
   "adminBilling": {
     "nav": "Admin Billing",
