@@ -3,6 +3,7 @@ import "../styles/NavigationSidebar.css";
 import { TopicSidebar } from "../components/topic";
 import { TopicToolbar } from "../components/topic";
 import { EvidenceModal } from "../components/submission";
+import { TopicLifecycleAuditTrail } from "../components/dsm";
 import Badge from "react-bootstrap/Badge";
 import LoadingPage from "./LoadingPage";
 import { ContentList } from "../components/content";
@@ -346,7 +347,15 @@ function TopicBreakdownPage() {
             <FontAwesomeIcon icon={faArrowUp} />
           </Button>
         </div>
-        <div className="Breakdown-right-column"></div>
+        <div className="Breakdown-right-column">
+          {topicData?.topic_id && (
+            <TopicLifecycleAuditTrail
+              user={user}
+              topic={topicData}
+              topicId={topicData.topic_id}
+            />
+          )}
+        </div>
       </Suspense>
       {user && (
         <Suspense>

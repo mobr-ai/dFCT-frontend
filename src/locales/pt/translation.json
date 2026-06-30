@@ -458,8 +458,106 @@
     },
     "refreshing": "Atualizando tarefas...",
     "lastUpdated": "Atualizado às {{time}}",
-    "waitingForRefresh": "Sincronizando estado das tarefas...",
-    "refreshBackoff": "Falha temporária de sincronização. Tentando novamente automaticamente."
+    "waitingForRefresh": "Aguardando atualização automática",
+    "refreshBackoff": "Falha temporária de sincronização. Tentando novamente automaticamente.",
+    "audit": {
+      "eyebrow": "dSM-Prov",
+      "title": "Trilha de auditoria do ciclo de vida",
+      "subtitle": "Transições de estado deste tópico preparadas para ancoragem. Dados de prova na Cardano aparecem aqui quando a ancoragem for enviada ou confirmada.",
+      "loading": "Carregando eventos do ciclo de vida...",
+      "empty": "Nenhum evento de ciclo de vida registrado ainda.",
+      "machine": "Máquina",
+      "eventId": "ID do evento",
+      "source": "Origem",
+      "payloadHash": "Hash do payload",
+      "chain": "Rede",
+      "txHash": "Transação",
+      "actions": {
+        "submit_topic": "Publicar tópico",
+        "review_topic": "Revisar tópico",
+        "reject_topic": "Rejeitar tópico"
+      },
+      "states": {
+        "initial": "Inicial",
+        "topic_proposed": "Proposto",
+        "topic_reward_available": "Recompensa disponível",
+        "topic_reviewed": "Revisado",
+        "topic_rejected": "Rejeitado",
+        "topic_active": "Ativo",
+        "topic_closed": "Encerrado"
+      },
+      "anchorStatuses": {
+        "not_requested": "Não ancorado",
+        "pending": "Pendente",
+        "submitted": "Enviado",
+        "confirmed": "Confirmado",
+        "failed": "Falhou",
+        "skipped": "Ignorado"
+      },
+      "journeyTitle": "A jornada do tópico d-FCT: da proposta à proveniência",
+      "statusLabel": "Status",
+      "current": "Atual",
+      "locked": "Bloqueado",
+      "signInHint": "Entre para carregar as provas dos eventos registrados.",
+      "actorUser": "Usuário #{{userId}}",
+      "relativeSeconds": "há {{count}}s",
+      "relativeMinutes": "há {{count}}min",
+      "relativeHours": "há {{count}}h",
+      "relativeDays": "há {{count}}d",
+      "relativeYears": "há {{count}}a",
+      "journeyStatus": {
+        "draft": "Rascunho, ainda não proposto",
+        "proposed": "Proposto e aguardando revisão",
+        "reviewed": "Revisado e preparando ativação",
+        "active": "Ativo e aceitando contribuições",
+        "rejected": "Rejeitado após revisão"
+      },
+      "stages": {
+        "publication": {
+          "title": "Publicação",
+          "stateHint": "(Tópico proposto)",
+          "description": "A proposta inicial do tópico é enviada para validação.",
+          "waiting": "Aguardando publicação do tópico.",
+          "locked": "A publicação precisa acontecer antes dos próximos estágios dSM-Prov."
+        },
+        "review": {
+          "title": "Revisão",
+          "stateHint": "(Revisado/Rejeitado)",
+          "description": "O tópico sai de Proposto para revisão especializada, garantindo relevância e validade.",
+          "waiting": "Aguardando decisão do revisor.",
+          "locked": "A revisão desbloqueia após a publicação."
+        },
+        "activation": {
+          "title": "Ativação",
+          "stateHint": "(Ativo/Pool disponível)",
+          "description": "O tópico entra em estado ativo; pool de recompensas e regras de contribuição podem ser verificados.",
+          "waiting": "Aguardando ativação do tópico.",
+          "locked": "A ativação desbloqueia após a revisão."
+        },
+        "contributions": {
+          "title": "Contribuições",
+          "stateHint": "(Propostas/Verificadas/Disputadas)",
+          "description": "A comunidade propõe evidências, que podem ser verificadas, atualizadas ou disputadas.",
+          "waiting": "Aguardando eventos de contribuição.",
+          "locked": "Contribuições desbloqueiam após a ativação."
+        },
+        "rewards": {
+          "title": "Recompensas",
+          "stateHint": "(Avaliadas/Distribuídas/Esgotadas)",
+          "description": "Contribuições são avaliadas por impacto; recompensas são distribuídas antes do fechamento.",
+          "waiting": "Aguardando avaliação de recompensas.",
+          "locked": "Recompensas desbloqueiam após a verificação de contribuições."
+        },
+        "closure": {
+          "title": "Fechamento",
+          "stateHint": "(Encerrado)",
+          "description": "Arquivamento final do tópico e dos dados de proveniência na Cardano ou em outra rede suportada.",
+          "waiting": "Aguardando fechamento do tópico.",
+          "locked": "O fechamento acontece após contribuições e recompensas."
+        }
+      },
+      "topicBreakdown": "Detalhamento do tópico"
+    }
   },
   "topicReview": {
     "nav": "Revisão de Tópicos",
@@ -846,5 +944,6 @@
   "publicationNoWalletRequired": "A publicação básica de tópicos não exige transação com carteira.",
   "publicationRewardPoolOptionalTitle": "O financiamento do pool de recompensa é opcional",
   "publicationRewardPoolOptionalText": "A criação de pools de recompensa e a distribuição de recompensas chegarão em breve como etapas do fluxo dSM-Prov.",
-  "confirmPublishButton": "Publicar tópico"
+  "confirmPublishButton": "Publicar tópico",
+  "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho"
 }

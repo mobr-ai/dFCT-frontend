@@ -289,7 +289,6 @@ function paymentIntentCardanoMetadata(intent) {
 }
 
 function paymentIntentTxHash(intent) {
-  const dsmRows = ledgerEntry ? ledgerDsmDetailRows(t, ledgerEntry) : [];
   const cardano = paymentIntentCardanoMetadata(intent);
 
   return (
@@ -349,6 +348,7 @@ function BillingActivityDetailsModal({ t, activity, onHide }) {
 
   const intent = billingActivityPaymentIntent(activity);
   const ledgerEntry = billingActivityLedgerEntry(activity);
+  const dsmRows = ledgerEntry ? ledgerDsmDetailRows(t, ledgerEntry) : [];
   const cardano = paymentIntentCardanoMetadata(intent);
   const txHash = paymentIntentTxHash(intent);
   const network = cardano?.network || "";
