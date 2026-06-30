@@ -143,42 +143,142 @@ function activityTimestamp(item) {
   return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
 }
 
-function ledgerActivityLabel(t, entry) {
-  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
 
-  if (reason.includes("topic_publication")) {
-    const topicId = entry?.source_id || entry?.metadata?.topic_id;
+function ledgerEntryMetadata(entry) {
+  return (
+    entry?.metadata ||
+    entry?.metadata_json ||
+    entry?.entry_metadata ||
+    entry?.ledger_metadata ||
+    {}
+  );
+}
+
+function ledgerDsmContext(entry) {
+  const metadata = ledgerEntryMetadata(entry);
+  const nested = metadata?.dsm || metadata?.dsm_context || {};
+  return {
+    schema: nested.schema || metadata.dsm_schema || "",
+    machine: nested.machine || metadata.dsm_machine || "",
+    action: nested.action || metadata.dsm_action || "",
+    entityKind: nested.entity_kind || metadata.dsm_entity_kind || "",
+    entityId: nested.entity_id || metadata.dsm_entity_id || "",
+    topicId: nested.topic_id || metadata.dsm_topic_id || metadata.topic_id || "",
+    lifecycleTaskId: nested.lifecycle_task_id || metadata.dsm_lifecycle_task_id || "",
+    stateEventId: nested.state_event_id || metadata.dsm_state_event_id || "",
+    source: nested.source || metadata.dsm_source || "",
+  };
+}
+
+function normalizeActivityValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s-]+/g, "_");
+}
+
+function humanizeActivityValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "—";
+  return raw
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function dsmActionLabel(t, action) {
+  const normalized = normalizeActivityValue(action);
+  const keyMap = {
+    submit_topic: "dsmActionSubmitTopic",
+    review_topic: "dsmActionReviewTopic",
+    reject_topic: "dsmActionRejectTopic",
+  };
+  const i18nKey = keyMap[normalized];
+  return i18nKey
+    ? t(`billingAccess.${i18nKey}`, humanizeActivityValue(action))
+    : humanizeActivityValue(action);
+}
+
+function ledgerDsmDetailRows(t, entry) {
+  const dsm = ledgerDsmContext(entry);
+  const hasDsmContext = Boolean(
+    dsm.machine ||
+      dsm.action ||
+      dsm.entityKind ||
+      dsm.entityId ||
+      dsm.topicId ||
+      dsm.lifecycleTaskId ||
+      dsm.stateEventId ||
+      dsm.source,
+  );
+
+  if (!hasDsmContext) return [];
+
+  const entityId = dsm.topicId || dsm.entityId;
+  const entity = [humanizeActivityValue(dsm.entityKind), entityId ? `#${entityId}` : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  return [
+    [t("billingAccess.transactionDetailsDsmMachine"), dsm.machine || "—"],
+    [t("billingAccess.transactionDetailsDsmAction"), dsmActionLabel(t, dsm.action)],
+    entity ? [t("billingAccess.transactionDetailsDsmEntity"), entity] : null,
+    dsm.source ? [t("billingAccess.transactionDetailsDsmSource"), humanizeActivityValue(dsm.source)] : null,
+    dsm.lifecycleTaskId
+      ? [t("billingAccess.transactionDetailsLifecycleTask"), dsm.lifecycleTaskId]
+      : null,
+    dsm.stateEventId
+      ? [t("billingAccess.transactionDetailsStateEvent"), dsm.stateEventId]
+      : null,
+  ].filter(Boolean);
+}
+
+function ledgerActivityLabel(t, entry) {
+  const dsm = ledgerDsmContext(entry);
+  const dsmAction = normalizeActivityValue(dsm.action);
+  const dsmEntityKind = normalizeActivityValue(dsm.entityKind);
+  if (dsmEntityKind === "topic" && dsmAction === "submit_topic") {
+    const topicId = dsm.topicId || dsm.entityId || entry?.source_id || ledgerEntryMetadata(entry)?.topic_id;
     return topicId
       ? t("billingAccess.activityTopicPublicationWithId", { topicId })
       : t("billingAccess.activityTopicPublication");
   }
 
+  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
+  if (reason.includes("topic_publication")) {
+    const topicId = entry?.source_id || ledgerEntryMetadata(entry)?.topic_id;
+    return topicId
+      ? t("billingAccess.activityTopicPublicationWithId", { topicId })
+      : t("billingAccess.activityTopicPublication");
+  }
   if (reason.includes("payment_fulfilled")) {
     return t("billingAccess.activityPaymentFulfilled");
   }
-
   if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
     return t("billingAccess.activityCreditGrant");
   }
-
   return entry?.reason || entry?.source_type || t("billingAccess.activityLedgerEntry");
 }
 
 function ledgerActivityStatus(t, entry) {
-  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
-
-  if (reason.includes("topic_publication")) {
+  const dsm = ledgerDsmContext(entry);
+  const dsmAction = normalizeActivityValue(dsm.action);
+  if (dsmAction === "submit_topic") {
     return t("billingAccess.activityCreditDebit");
   }
 
+  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
+  if (reason.includes("topic_publication")) {
+    return t("billingAccess.activityCreditDebit");
+  }
   if (reason.includes("payment_fulfilled")) {
     return t("billingAccess.activityPaymentFulfilled");
   }
-
   if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
     return t("billingAccess.activityCreditGrant");
   }
-
   return formatActivityStatus(t, entry?.reason || entry?.source_type);
 }
 
@@ -189,6 +289,7 @@ function paymentIntentCardanoMetadata(intent) {
 }
 
 function paymentIntentTxHash(intent) {
+  const dsmRows = ledgerEntry ? ledgerDsmDetailRows(t, ledgerEntry) : [];
   const cardano = paymentIntentCardanoMetadata(intent);
 
   return (
@@ -274,6 +375,7 @@ function BillingActivityDetailsModal({ t, activity, onHide }) {
     ledgerEntry?.ledger_entry_id
       ? [t("billingAccess.transactionDetailsLedgerEntryId"), ledgerEntry.ledger_entry_id]
       : null,
+    ...dsmRows,
   ].filter(Boolean);
 
   const cardanoRows = intent

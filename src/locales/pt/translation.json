@@ -659,7 +659,16 @@
     "paymentModalQuoteRefreshing": "Atualizando cotação…",
     "paymentModalQuoteRefreshingAction": "Atualizando a cotação Cardano e o valor em ADA.",
     "paymentModalQuoteRefreshFailed": "Não foi possível atualizar a cotação Cardano.",
-    "paymentModalPrimaryCtaRefreshingQuote": "Atualizando cotação…"
+    "paymentModalPrimaryCtaRefreshingQuote": "Atualizando cotação…",
+    "transactionDetailsDsmMachine": "Máquina dSM",
+    "transactionDetailsDsmAction": "Ação do ciclo de vida",
+    "transactionDetailsDsmEntity": "Entidade do ciclo de vida",
+    "transactionDetailsDsmSource": "Origem do ciclo de vida",
+    "transactionDetailsLifecycleTask": "Tarefa do ciclo de vida",
+    "transactionDetailsStateEvent": "Evento de estado",
+    "dsmActionSubmitTopic": "Publicar tópico",
+    "dsmActionReviewTopic": "Revisar tópico",
+    "dsmActionRejectTopic": "Rejeitar tópico"
   },
   "adminBilling": {
     "nav": "Admin Cobrança",
