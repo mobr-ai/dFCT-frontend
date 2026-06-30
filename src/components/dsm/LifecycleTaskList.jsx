@@ -9,6 +9,7 @@ export default function LifecycleTaskList({
   emptyKey = "dsm.noTasks",
   mode,
   actionTaskId,
+  highlightedTaskId,
   onAccept,
   renderTaskActions,
 }) {
@@ -37,6 +38,7 @@ export default function LifecycleTaskList({
             task={task}
             mode={mode}
             actionTaskId={actionTaskId}
+            highlighted={highlightedTaskId === taskId}
             onAccept={onAccept}
           >
             {renderTaskActions?.(task)}

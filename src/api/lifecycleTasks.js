@@ -5,11 +5,28 @@ const LIFECYCLE_REQUEST_TIMEOUT = {
   deadline: 20000,
 };
 
+function normalizeAcceptedAssignment(item) {
+  if (!item?.task || !item?.assignment) return null;
+
+  return {
+    ...item.task,
+    assignment: item.assignment,
+    assignmentId: item.assignment.assignmentId,
+    assignmentStatus: item.assignment.status,
+    acceptedAt: item.assignment.acceptedAt,
+    assignmentExpiresAt: item.assignment.expiresAt,
+  };
+}
+
 function normalizeTaskList(body) {
-  if (Array.isArray(body)) return body;
   if (Array.isArray(body?.tasks)) return body.tasks;
-  if (Array.isArray(body?.items)) return body.items;
-  if (Array.isArray(body?.data)) return body.data;
+
+  if (Array.isArray(body?.assignments)) {
+    return body.assignments
+      .map(normalizeAcceptedAssignment)
+      .filter(Boolean);
+  }
+
   return [];
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
 import Tab from "react-bootstrap/Tab";
@@ -13,6 +13,20 @@ import { useTopicReviewTasks } from "../../hooks/useTopicReviewTasks";
 import { useAutoRefresh } from "../../hooks/useAutoRefresh";
 import "../../styles/dsm/Workbench.css";
 
+function getTaskTopicId(task) {
+  return task?.topic?.topicId;
+}
+
+function dispatchTopicLifecycleUpdated(topicId) {
+  if (!topicId || typeof window === "undefined") return;
+
+  window.dispatchEvent(
+    new CustomEvent("dfct:topic-lifecycle-updated", {
+      detail: { topicId },
+    })
+  );
+}
+
 export default function TopicReviewWorkbench() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -23,8 +37,10 @@ export default function TopicReviewWorkbench() {
   const {
     openTasks,
     myTasks,
+    completedTasks,
     loadingOpen,
     loadingMine,
+    loadingCompleted,
     actionTaskId,
     error,
     refresh,
@@ -34,6 +50,8 @@ export default function TopicReviewWorkbench() {
 
   const initialLoadTokenRef = useRef("");
   const accessToken = user?.access_token || "";
+  const [activeTab, setActiveTab] = useState("available");
+  const [highlightedTaskId, setHighlightedTaskId] = useState(null);
 
   useEffect(() => {
     if (!accessToken) {
@@ -41,13 +59,9 @@ export default function TopicReviewWorkbench() {
     }
   }, [accessToken, navigate]);
 
-  const {
-    isRefreshing,
-    lastUpdatedAt,
-    consecutiveFailures,
-  } = useAutoRefresh({
+  const { consecutiveFailures } = useAutoRefresh({
     enabled: Boolean(accessToken),
-    refresh,
+    refresh: () => refresh({ silent: true }),
     intervalMs: 45000,
     maxIntervalMs: 300000,
     refreshWhenHidden: false,
@@ -67,11 +81,19 @@ export default function TopicReviewWorkbench() {
 
   const handleAccept = async (taskId) => {
     await acceptTask(taskId);
+    setHighlightedTaskId(taskId);
+    setActiveTab("mine");
     showToast?.(t("topicReview.acceptedToast"), "success");
   };
 
-  const handleComplete = async (taskId, payload) => {
-    await completeTask(taskId, payload);
+  const handleComplete = async (task, taskId, payload) => {
+    const result = await completeTask(taskId, payload);
+    const topicId = getTaskTopicId(result) || getTaskTopicId(task);
+
+    dispatchTopicLifecycleUpdated(topicId);
+    setHighlightedTaskId(taskId);
+    setActiveTab("completed");
+
     showToast?.(
       payload.decision === "reject"
         ? t("topicReview.rejectedToast")
@@ -84,62 +106,88 @@ export default function TopicReviewWorkbench() {
     <main className="DsmWorkbenchPage">
       <Container className="DsmWorkbench">
         <div className="DsmWorkbench-header">
-        <h1>{t("topicReview.title")}</h1>
-        <p>{t("topicReview.subtitle")}</p>
-      </div>
-
-      <div className="DsmWorkbench-actions" aria-live="polite">
-        <span className="DsmWorkbench-refreshState">
-          {isRefreshing
-            ? t("dsm.refreshing")
-            : lastUpdatedAt
-              ? t("dsm.lastUpdated", {
-                  time: lastUpdatedAt.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }),
-                })
-              : t("dsm.waitingForRefresh")}
-        </span>
+          <span className="DsmWorkbench-eyebrow">
+            {t("topicReview.eyebrow")}
+          </span>
+          <h1>{t("topicReview.title")}</h1>
+          <p>{t("topicReview.subtitle")}</p>
+        </div>
 
         {consecutiveFailures > 0 && (
-          <span className="DsmWorkbench-refreshWarning">
-            {t("dsm.refreshBackoff")}
-          </span>
+          <div className="DsmWorkbench-actions" aria-live="polite">
+            <span className="DsmWorkbench-refreshWarning">
+              {t("dsm.refreshBackoff")}
+            </span>
+          </div>
         )}
-      </div>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
 
-      <Tabs defaultActiveKey="available" className="mb-3">
-        <Tab eventKey="available" title={t("topicReview.availableTasks")}>
-          <LifecycleTaskList
-            tasks={openTasks}
-            loading={loadingOpen}
-            mode="available"
-            emptyKey="topicReview.noAvailableTasks"
-            actionTaskId={actionTaskId}
-            onAccept={handleAccept}
-          />
-        </Tab>
+        <Tabs
+          activeKey={activeTab}
+          onSelect={(key) => {
+            if (key) setActiveTab(key);
+          }}
+          className="DsmWorkbench-tabs mb-3"
+        >
+          <Tab
+            eventKey="available"
+            title={t("topicReview.availableTasksCount", {
+              count: openTasks.length,
+            })}
+          >
+            <LifecycleTaskList
+              tasks={openTasks}
+              loading={loadingOpen}
+              mode="available"
+              emptyKey="topicReview.noAvailableTasks"
+              actionTaskId={actionTaskId}
+              highlightedTaskId={highlightedTaskId}
+              onAccept={handleAccept}
+            />
+          </Tab>
 
-        <Tab eventKey="mine" title={t("topicReview.myAcceptedTasks")}>
-          <LifecycleTaskList
-            tasks={myTasks}
-            loading={loadingMine}
-            mode="mine"
-            emptyKey="topicReview.noAcceptedTasks"
-            actionTaskId={actionTaskId}
-            renderTaskActions={(task) => (
-              <TaskDecisionPanel
-                task={task}
-                actionTaskId={actionTaskId}
-                onComplete={handleComplete}
-              />
-            )}
-          />
-        </Tab>
-      </Tabs>
+          <Tab
+            eventKey="mine"
+            title={t("topicReview.myAcceptedTasksCount", {
+              count: myTasks.length,
+            })}
+          >
+            <LifecycleTaskList
+              tasks={myTasks}
+              loading={loadingMine}
+              mode="mine"
+              emptyKey="topicReview.noAcceptedTasks"
+              actionTaskId={actionTaskId}
+              highlightedTaskId={highlightedTaskId}
+              renderTaskActions={(task) => (
+                <TaskDecisionPanel
+                  task={task}
+                  actionTaskId={actionTaskId}
+                  onComplete={(taskId, payload) =>
+                    handleComplete(task, taskId, payload)
+                  }
+                />
+              )}
+            />
+          </Tab>
+
+          <Tab
+            eventKey="completed"
+            title={t("topicReview.completedTasksCount", {
+              count: completedTasks.length,
+            })}
+          >
+            <LifecycleTaskList
+              tasks={completedTasks}
+              loading={loadingCompleted}
+              mode="completed"
+              emptyKey="topicReview.noCompletedTasks"
+              actionTaskId={actionTaskId}
+              highlightedTaskId={highlightedTaskId}
+            />
+          </Tab>
+        </Tabs>
       </Container>
     </main>
   );

@@ -16,8 +16,10 @@ export function useLifecycleTasks(user, {
 
   const [openTasks, setOpenTasks] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
   const [loadingOpen, setLoadingOpen] = useState(false);
   const [loadingMine, setLoadingMine] = useState(false);
+  const [loadingCompleted, setLoadingCompleted] = useState(false);
   const [actionTaskId, setActionTaskId] = useState(null);
   const [error, setError] = useState("");
 
@@ -27,29 +29,40 @@ export function useLifecycleTasks(user, {
     authRequestRef.current = authRequest;
   }, [authRequest]);
 
-  const loadOpenTasks = useCallback(async () => {
+  const loadOpenTasks = useCallback(async ({ silent = false } = {}) => {
     if (!canLoad) return [];
 
-    setLoadingOpen(true);
-    setError("");
+    if (!silent) {
+      setLoadingOpen(true);
+      setError("");
+    }
 
     try {
       const tasks = await getOpenLifecycleTasks(authRequestRef.current, { taskType });
       setOpenTasks(tasks);
       return tasks;
     } catch (err) {
-      setError(err?.message || "Failed to load lifecycle tasks.");
+      if (!silent) {
+        setError(err?.message || "Failed to load lifecycle tasks.");
+      }
       throw err;
     } finally {
-      setLoadingOpen(false);
+      if (!silent) {
+        setLoadingOpen(false);
+      }
     }
   }, [canLoad, taskType]);
 
-  const loadMyTasks = useCallback(async (status = myStatus) => {
+  const loadMyTasks = useCallback(async (
+    status = myStatus,
+    { silent = false } = {}
+  ) => {
     if (!canLoad) return [];
 
-    setLoadingMine(true);
-    setError("");
+    if (!silent) {
+      setLoadingMine(true);
+      setError("");
+    }
 
     try {
       const tasks = await getMyLifecycleTasks(authRequestRef.current, {
@@ -59,21 +72,57 @@ export function useLifecycleTasks(user, {
       setMyTasks(tasks);
       return tasks;
     } catch (err) {
-      setError(err?.message || "Failed to load your lifecycle tasks.");
+      if (!silent) {
+        setError(err?.message || "Failed to load your lifecycle tasks.");
+      }
       throw err;
     } finally {
-      setLoadingMine(false);
+      if (!silent) {
+        setLoadingMine(false);
+      }
     }
   }, [canLoad, myStatus, taskType]);
 
-  const refresh = useCallback(async () => {
-    const [nextOpen, nextMine] = await Promise.all([
-      loadOpenTasks(),
-      loadMyTasks(myStatus),
+  const loadCompletedTasks = useCallback(async ({ silent = false } = {}) => {
+    if (!canLoad) return [];
+
+    if (!silent) {
+      setLoadingCompleted(true);
+      setError("");
+    }
+
+    try {
+      const tasks = await getMyLifecycleTasks(authRequestRef.current, {
+        status: "completed",
+        taskType,
+      });
+      setCompletedTasks(tasks);
+      return tasks;
+    } catch (err) {
+      if (!silent) {
+        setError(err?.message || "Failed to load completed lifecycle tasks.");
+      }
+      throw err;
+    } finally {
+      if (!silent) {
+        setLoadingCompleted(false);
+      }
+    }
+  }, [canLoad, taskType]);
+
+  const refresh = useCallback(async ({ silent = false } = {}) => {
+    const [nextOpen, nextMine, nextCompleted] = await Promise.all([
+      loadOpenTasks({ silent }),
+      loadMyTasks(myStatus, { silent }),
+      loadCompletedTasks({ silent }),
     ]);
 
-    return { openTasks: nextOpen, myTasks: nextMine };
-  }, [loadMyTasks, loadOpenTasks, myStatus]);
+    return {
+      openTasks: nextOpen,
+      myTasks: nextMine,
+      completedTasks: nextCompleted,
+    };
+  }, [loadCompletedTasks, loadMyTasks, loadOpenTasks, myStatus]);
 
   const acceptTask = useCallback(async (taskId) => {
     setActionTaskId(taskId);
@@ -114,25 +163,31 @@ export function useLifecycleTasks(user, {
   return useMemo(() => ({
     openTasks,
     myTasks,
+    completedTasks,
     loadingOpen,
     loadingMine,
-    loading: loadingOpen || loadingMine,
+    loadingCompleted,
+    loading: loadingOpen || loadingMine || loadingCompleted,
     actionTaskId,
     error,
     loadOpenTasks,
     loadMyTasks,
+    loadCompletedTasks,
     refresh,
     acceptTask,
     completeTask,
   }), [
     openTasks,
     myTasks,
+    completedTasks,
     loadingOpen,
     loadingMine,
+    loadingCompleted,
     actionTaskId,
     error,
     loadOpenTasks,
     loadMyTasks,
+    loadCompletedTasks,
     refresh,
     acceptTask,
     completeTask,
