@@ -458,8 +458,106 @@
     },
     "refreshing": "Refreshing tasks...",
     "lastUpdated": "Updated {{time}}",
-    "waitingForRefresh": "Syncing task state...",
-    "refreshBackoff": "Temporary sync issue. Retrying automatically."
+    "waitingForRefresh": "Waiting for automatic refresh",
+    "refreshBackoff": "Temporary sync issue. Retrying automatically.",
+    "audit": {
+      "eyebrow": "dSM-Prov",
+      "title": "Lifecycle audit trail",
+      "subtitle": "Anchor-ready state transitions for this topic. Cardano proof data appears here when anchoring is submitted or confirmed.",
+      "loading": "Loading lifecycle events...",
+      "empty": "No lifecycle events recorded yet.",
+      "machine": "Machine",
+      "eventId": "Event ID",
+      "source": "Source",
+      "payloadHash": "Payload hash",
+      "chain": "Chain",
+      "txHash": "Transaction",
+      "actions": {
+        "submit_topic": "Submit topic",
+        "review_topic": "Review topic",
+        "reject_topic": "Reject topic"
+      },
+      "states": {
+        "initial": "Initial",
+        "topic_proposed": "Proposed",
+        "topic_reward_available": "Reward available",
+        "topic_reviewed": "Reviewed",
+        "topic_rejected": "Rejected",
+        "topic_active": "Active",
+        "topic_closed": "Closed"
+      },
+      "anchorStatuses": {
+        "not_requested": "Not anchored",
+        "pending": "Pending",
+        "submitted": "Submitted",
+        "confirmed": "Confirmed",
+        "failed": "Failed",
+        "skipped": "Skipped"
+      },
+      "journeyTitle": "The d-FCT Topic Journey: From Proposal to Provenance",
+      "statusLabel": "Status",
+      "current": "Current",
+      "locked": "Locked",
+      "signInHint": "Sign in to load recorded event proofs.",
+      "actorUser": "User #{{userId}}",
+      "relativeSeconds": "{{count}}s ago",
+      "relativeMinutes": "{{count}}m ago",
+      "relativeHours": "{{count}}h ago",
+      "relativeDays": "{{count}}d ago",
+      "relativeYears": "{{count}}y ago",
+      "journeyStatus": {
+        "draft": "Draft, not yet proposed",
+        "proposed": "Proposed and waiting for review",
+        "reviewed": "Reviewed and preparing activation",
+        "active": "Active and accepting contributions",
+        "rejected": "Rejected after review"
+      },
+      "stages": {
+        "publication": {
+          "title": "Publication",
+          "stateHint": "(Topic Proposed)",
+          "description": "Initial topic proposal is submitted for validation.",
+          "waiting": "Waiting for topic publication.",
+          "locked": "Publication must happen before the next dSM-Prov stages."
+        },
+        "review": {
+          "title": "Review",
+          "stateHint": "(Reviewed/Rejected)",
+          "description": "Topic moves from Proposed to expert review to ensure relevance and validity.",
+          "waiting": "Waiting for reviewer decision.",
+          "locked": "Review unlocks after publication."
+        },
+        "activation": {
+          "title": "Activation",
+          "stateHint": "(Active/Pool Available)",
+          "description": "Topic enters the active state; reward pool and contribution rules can be checked.",
+          "waiting": "Waiting for topic activation.",
+          "locked": "Activation unlocks after review."
+        },
+        "contributions": {
+          "title": "Contributions",
+          "stateHint": "(Proposed/Verified/Disputed)",
+          "description": "Community members propose evidence, which can be verified, updated, or disputed.",
+          "waiting": "Waiting for contribution events.",
+          "locked": "Contributions unlock after activation."
+        },
+        "rewards": {
+          "title": "Rewards",
+          "stateHint": "(Evaluated/Distributed/Depleted)",
+          "description": "Contributions are evaluated for impact; rewards are distributed before closure.",
+          "waiting": "Waiting for reward evaluation.",
+          "locked": "Rewards unlock after contribution verification."
+        },
+        "closure": {
+          "title": "Closure",
+          "stateHint": "(Closed)",
+          "description": "Final archival of topic and provenance data on Cardano or another supported chain.",
+          "waiting": "Waiting for topic closure.",
+          "locked": "Closure happens after contribution and reward settlement."
+        }
+      },
+      "topicBreakdown": "Topic Breakdown"
+    }
   },
   "topicReview": {
     "nav": "Topic Review",
@@ -846,5 +944,6 @@
   "publicationNoWalletRequired": "Basic topic publication does not require a wallet transaction.",
   "publicationRewardPoolOptionalTitle": "Reward pool funding is optional",
   "publicationRewardPoolOptionalText": "Reward pool creation and reward distribution are coming soon as dSM-Prov workflow steps.",
-  "confirmPublishButton": "Publish topic"
+  "confirmPublishButton": "Publish topic",
+  "topicPublishOwnerOnly": "Only the topic owner can publish this draft"
 }

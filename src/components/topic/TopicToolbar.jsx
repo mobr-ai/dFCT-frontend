@@ -38,15 +38,20 @@ function normalizeTopicStatus(status, fallback = "PROPOSED") {
   return String(status).toUpperCase();
 }
 
-function userIdFrom(user, fallbackUserId) {
+function userIdFrom(user) {
   return (
-    fallbackUserId ||
     user?.user_id ||
     user?.userId ||
     user?.id ||
     user?.sub ||
     user?.identity
   );
+}
+
+function idsMatch(left, right) {
+  if (left === undefined || left === null || left === "") return false;
+  if (right === undefined || right === null || right === "") return false;
+  return String(left) === String(right);
 }
 
 function normalizeTopicUpdate(topic = {}) {
@@ -91,11 +96,17 @@ function TopicToolbar(props) {
   };
 
   const statusKey = normalizeTopicStatus(props.status, "DRAFT");
-  const tooltipKey = statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT;
+  const currentUserId = userIdFrom(props.user);
+  const topicOwnerId = props.proposedBy;
+  const canManageTopic = idsMatch(currentUserId, topicOwnerId);
+  const canPublishTopic = canManageTopic && statusKey === "DRAFT";
+  const tooltipKey = canManageTopic
+    ? statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT
+    : "topicPublishOwnerOnly";
   const statusClass = statusKey.toLowerCase();
 
   const handlePublishClick = async () => {
-    if (statusKey !== "DRAFT") return;
+    if (!canPublishTopic) return;
 
     if (!billingStatus.loaded && !billingStatus.apiUnavailable) {
       await billingStatus.refresh?.();
@@ -105,7 +116,7 @@ function TopicToolbar(props) {
   };
 
   const handlePublishConfirmed = async ({ rewardPoolEnabled = false } = {}) => {
-    const userId = userIdFrom(props.user, props.proposedBy);
+    const userId = userIdFrom(props.user);
 
     if (!userId) {
       props.showToast?.(t("topicPublishMissingUser"), "danger");
@@ -128,6 +139,15 @@ function TopicToolbar(props) {
 
       window.dispatchEvent(
         new CustomEvent("dfct:billing-updated", {
+          detail: {
+            source: "topic_publication",
+            topicId: props.topicId,
+          },
+        }),
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("dfct:topic-lifecycle-updated", {
           detail: {
             source: "topic_publication",
             topicId: props.topicId,
