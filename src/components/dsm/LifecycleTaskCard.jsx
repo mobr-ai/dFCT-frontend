@@ -20,128 +20,119 @@ const TASK_STATE_KEYS = {
   cancelled: "cancelled",
 };
 
-const CONTRIBUTION_STATUS_KEYS = {
-  0: "proposed",
-  1: "reviewed",
-  2: "disputed",
-  3: "updated",
-  4: "rejected",
-  5: "verified",
-  6: "evaluated",
-  7: "rewardsDistributed",
-  8: "poolEvaluated",
-};
-
 const REVIEW_DECISION_KEYS = {
   1: "approved",
   4: "rejected",
 };
 
-function normalizeTaskType(task) {
-  return String(task?.taskType || task?.task_type || "topic_review");
-}
-
-function parseContributionContent(contribution) {
-  const raw = contribution?.content;
-
-  if (!raw) return {};
-  if (typeof raw === "object") return raw;
-
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return {
-      description: String(raw),
-    };
-  }
-}
-
-function firstTextValue(...values) {
+function firstValue(...values) {
   for (const value of values) {
-    if (value === undefined || value === null) continue;
-
-    const text = String(value).trim();
-    if (text) return text;
+    if (value === undefined || value === null || value === "") continue;
+    return value;
   }
 
   return "";
 }
 
-function topicTitleFrom(task, topic) {
-  return firstTextValue(
-    topic.title,
-    topic.topicTitle,
-    topic.topic_title,
-    topic.contentTitle,
-    topic.content_title,
-    topic.articleTitle,
-    topic.article_title,
-    task.title,
-    task.topicTitle,
-    task.topic_title,
-    task.entityTitle,
-    task.entity_title,
-    task.metadata?.topicTitle,
-    task.metadata?.topic_title,
-    task.metadata?.topic?.title,
-    task.metadata?.topic?.topicTitle,
-    task.metadata?.topic?.topic_title,
-  );
-}
+function normalizedTopicFromTask(task = {}) {
+  const source = task.topic || {};
+  const metadataTopic = task.metadata?.topic || {};
 
-function topicDescriptionFrom(task, topic) {
-  return firstTextValue(
-    topic.description,
-    topic.topicDescription,
-    topic.topic_description,
-    topic.summary,
-    topic.article,
-    topic.content,
-    task.description,
-    task.topicDescription,
-    task.topic_description,
-    task.entityDescription,
-    task.entity_description,
-    task.metadata?.topicDescription,
-    task.metadata?.topic_description,
-    task.metadata?.topic?.description,
-    task.metadata?.topic?.topicDescription,
-    task.metadata?.topic?.topic_description,
-    task.metadata?.topic?.summary,
-    task.metadata?.topic?.article,
-  );
-}
-
-function contributionTitleFrom(task, contribution, contributionContent) {
-  return firstTextValue(
-    contributionContent.contentTitle,
-    contributionContent.content_title,
-    contributionContent.title,
-    contribution.title,
-    contribution.contentTitle,
-    contribution.content_title,
-    task.title,
-    task.entityTitle,
-    task.entity_title,
-  );
-}
-
-function contributionDescriptionFrom(task, contribution, contributionContent) {
-  return firstTextValue(
-    contributionContent.description,
-    contributionContent.providedContext,
-    contributionContent.provided_context,
-    contributionContent.statement,
-    contributionContent.content,
-    contributionContent.contentId,
-    contributionContent.content_id,
-    contribution.description,
-    contribution.providedContext,
-    contribution.provided_context,
-    task.description,
-    task.entityDescription,
-    task.entity_description,
-  );
+  return {
+    ...source,
+    topicId: firstValue(
+      source.topicId,
+      source.topic_id,
+      task.topicId,
+      task.topic_id,
+      task.entityId,
+      task.entity_id,
+      metadataTopic.topicId,
+      metadataTopic.topic_id,
+    ),
+    proposedBy: firstValue(
+      source.proposedBy,
+      source.proposed_by,
+      source.userId,
+      source.user_id,
+      task.topicUserId,
+      task.topic_user_id,
+      task.proposedBy,
+      task.proposed_by,
+      metadataTopic.proposedBy,
+      metadataTopic.proposed_by,
+    ),
+    title: firstValue(
+      source.title,
+      source.topicTitle,
+      source.topic_title,
+      task.title,
+      task.topicTitle,
+      task.topic_title,
+      task.entityTitle,
+      task.entity_title,
+      task.metadata?.title,
+      task.metadata?.topicTitle,
+      task.metadata?.topic_title,
+      metadataTopic.title,
+      metadataTopic.topicTitle,
+      metadataTopic.topic_title,
+    ),
+    description: firstValue(
+      source.description,
+      source.topicDescription,
+      source.topic_description,
+      source.summary,
+      task.description,
+      task.topicDescription,
+      task.topic_description,
+      task.entityDescription,
+      task.entity_description,
+      task.metadata?.description,
+      task.metadata?.topicDescription,
+      task.metadata?.topic_description,
+      metadataTopic.description,
+      metadataTopic.topicDescription,
+      metadataTopic.topic_description,
+      metadataTopic.summary,
+    ),
+    language: firstValue(
+      source.language,
+      task.language,
+      task.metadata?.language,
+      metadataTopic.language,
+    ),
+    coverUrl: firstValue(
+      source.coverUrl,
+      source.cover_url,
+      task.coverUrl,
+      task.cover_url,
+      task.metadata?.coverUrl,
+      task.metadata?.cover_url,
+      metadataTopic.coverUrl,
+      metadataTopic.cover_url,
+    ),
+    coverContentType: firstValue(
+      source.coverContentType,
+      source.cover_content_type,
+      task.coverContentType,
+      task.cover_content_type,
+      task.metadata?.coverContentType,
+      task.metadata?.cover_content_type,
+      metadataTopic.coverContentType,
+      metadataTopic.cover_content_type,
+    ),
+    coverTitle: firstValue(
+      source.coverTitle,
+      source.cover_title,
+      task.coverTitle,
+      task.cover_title,
+      task.metadata?.coverTitle,
+      task.metadata?.cover_title,
+      metadataTopic.coverTitle,
+      metadataTopic.cover_title,
+    ),
+  };
 }
 
 function formatDate(value) {
@@ -176,54 +167,22 @@ export default function LifecycleTaskCard({
 }) {
   const { t } = useTranslation();
 
-  const taskType = normalizeTaskType(task);
-  const isContributionReview = taskType === "contribution_review";
-  const topic = task.topic || {};
-  const contribution = task.contribution || {};
-  const contributionContent = parseContributionContent(contribution);
-
-  const taskId = task.taskId;
-  const topicId = topic.topicId || task.topicId || contribution.topicId;
-  const topicUserId = topic.proposedBy || task.topicUserId;
+  const topic = normalizedTopicFromTask(task);
+  const taskId = task.taskId ?? task.task_id ?? task.id;
+  const topicId = topic.topicId;
+  const topicUserId = topic.proposedBy;
   const isBusy = actionTaskId === taskId;
 
   const taskStateKey = TASK_STATE_KEYS[task.status] || "available";
   const topicStatusKey = TOPIC_STATUS_KEYS[topic.status] || "proposed";
-  const contributionStatusKey =
-    CONTRIBUTION_STATUS_KEYS[contribution.status] || "proposed";
-  const reviewDecisionSource = isContributionReview
-    ? contribution.status
-    : topic.status;
   const reviewDecisionKey =
-    mode === "completed" ? REVIEW_DECISION_KEYS[reviewDecisionSource] : null;
-
-  const mediaUrl = isContributionReview
-    ? contributionContent.localUrl || contributionContent.srcUrl
-    : topic.coverUrl;
-  const mediaContentType = isContributionReview
-    ? contributionContent.contentType
-    : topic.coverContentType;
-  const hasCover = Boolean(mediaUrl);
-  const isVideoCover = mediaContentType === "video";
+    mode === "completed" ? REVIEW_DECISION_KEYS[topic.status] : null;
+  const hasCover = Boolean(topic.coverUrl);
+  const isVideoCover = topic.coverContentType === "video";
   const formattedDate = formatDate(task.createdAt);
 
   const showBreakdownLink = Boolean(topicId && topicUserId);
   const rewardAmount = Number(topic.rewardAmount || 0);
-  const cardTitle = isContributionReview
-    ? contributionTitleFrom(task, contribution, contributionContent) ||
-      t("topicReview.untitledContribution", {
-        contributionId: contribution.contributionId || task.entityId || taskId,
-      })
-    : topicTitleFrom(task, topic) ||
-      t("topicReview.untitledTopic", {
-        topicId: topicId || task.entityId || taskId,
-      });
-  const cardDescription = isContributionReview
-    ? contributionDescriptionFrom(task, contribution, contributionContent)
-    : topicDescriptionFrom(task, topic);
-  const eyebrowKey = isContributionReview
-    ? "topicReview.cardEyebrowContribution"
-    : "topicReview.cardEyebrow";
 
   return (
     <Card
@@ -236,21 +195,21 @@ export default function LifecycleTaskCard({
           <div className="DsmTaskCard-media">
             {hasCover && isVideoCover ? (
               <video
-                src={mediaUrl}
+                src={topic.coverUrl}
                 muted
                 playsInline
                 preload="metadata"
-                aria-label={contributionContent.contentTitle || topic.coverTitle || cardTitle}
+                aria-label={topic.coverTitle || topic.title}
               />
             ) : hasCover ? (
               <img
-                src={mediaUrl}
+                src={topic.coverUrl}
                 alt={topic.coverTitle || topic.title}
                 loading="lazy"
               />
             ) : (
               <div className="DsmTaskCard-mediaFallback" aria-hidden="true">
-                <span>{topicInitials(cardTitle)}</span>
+                <span>{topicInitials(topic.title)}</span>
               </div>
             )}
 
@@ -268,7 +227,7 @@ export default function LifecycleTaskCard({
             <div className="DsmTaskCard-topline">
               <div>
                 <span className="DsmTaskCard-eyebrow">
-                  {t(eyebrowKey)}
+                  {t("topicReview.cardEyebrow")}
                 </span>
                 {reviewDecisionKey ? (
                   <span
@@ -289,12 +248,12 @@ export default function LifecycleTaskCard({
             </div>
 
             <Card.Title className="DsmTaskCard-title">
-              {cardTitle}
+              {topic.title}
             </Card.Title>
 
-            {cardDescription && (
+            {topic.description && (
               <Card.Text className="DsmTaskCard-description">
-                {cardDescription}
+                {topic.description}
               </Card.Text>
             )}
 
@@ -303,56 +262,19 @@ export default function LifecycleTaskCard({
               aria-label={t("topicReview.taskMetadata")}
             >
               <span className="DsmTaskCard-metaPill">
-                <strong>{t("topicReview.taskType")}</strong>
-                {t(`dsm.taskTypes.${taskType}`)}
+                <strong>{t("topicReview.topicId")}</strong>
+                {topicId}
               </span>
 
-              {topicId && (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.topicId")}</strong>
-                  {topicId}
-                </span>
-              )}
+              <span className="DsmTaskCard-metaPill">
+                <strong>{t("topicReview.language")}</strong>
+                {String(topic.language || "").toUpperCase()}
+              </span>
 
-              {isContributionReview && contribution.contributionId && (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.contributionId")}</strong>
-                  {contribution.contributionId}
-                </span>
-              )}
-
-              {isContributionReview && contribution.submittedBy && (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.submittedBy")}</strong>
-                  {contribution.submittedBy}
-                </span>
-              )}
-
-              {isContributionReview && contributionContent.contentType && (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.contentType")}</strong>
-                  {String(contributionContent.contentType).toUpperCase()}
-                </span>
-              )}
-
-              {topic.language && (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.language")}</strong>
-                  {String(topic.language || "").toUpperCase()}
-                </span>
-              )}
-
-              {isContributionReview ? (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.contributionStatus")}</strong>
-                  {t(`topicReview.contributionStatuses.${contributionStatusKey}`)}
-                </span>
-              ) : (
-                <span className="DsmTaskCard-metaPill">
-                  <strong>{t("topicReview.topicStatus")}</strong>
-                  {t(`topicReview.topicStatuses.${topicStatusKey}`)}
-                </span>
-              )}
+              <span className="DsmTaskCard-metaPill">
+                <strong>{t("topicReview.topicStatus")}</strong>
+                {t(`topicReview.topicStatuses.${topicStatusKey}`)}
+              </span>
 
               {rewardAmount > 0 && (
                 <span className="DsmTaskCard-metaPill">
