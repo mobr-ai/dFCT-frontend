@@ -653,7 +653,8 @@
       "evaluated": "Avaliada",
       "rewardsDistributed": "Recompensas distribuídas",
       "poolEvaluated": "Pool avaliado"
-    }
+    },
+    "untitledTopic": "Tópico {{topicId}}"
   },
   "closeModal": "Fechar modal",
   "billingAccess": {

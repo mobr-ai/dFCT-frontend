@@ -653,7 +653,8 @@
       "evaluated": "Evaluated",
       "rewardsDistributed": "Rewards distributed",
       "poolEvaluated": "Pool evaluated"
-    }
+    },
+    "untitledTopic": "Topic {{topicId}}"
   },
   "closeModal": "Close modal",
   "billingAccess": {

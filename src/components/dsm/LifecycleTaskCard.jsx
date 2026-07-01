@@ -56,6 +56,94 @@ function parseContributionContent(contribution) {
   }
 }
 
+function firstTextValue(...values) {
+  for (const value of values) {
+    if (value === undefined || value === null) continue;
+
+    const text = String(value).trim();
+    if (text) return text;
+  }
+
+  return "";
+}
+
+function topicTitleFrom(task, topic) {
+  return firstTextValue(
+    topic.title,
+    topic.topicTitle,
+    topic.topic_title,
+    topic.contentTitle,
+    topic.content_title,
+    topic.articleTitle,
+    topic.article_title,
+    task.title,
+    task.topicTitle,
+    task.topic_title,
+    task.entityTitle,
+    task.entity_title,
+    task.metadata?.topicTitle,
+    task.metadata?.topic_title,
+    task.metadata?.topic?.title,
+    task.metadata?.topic?.topicTitle,
+    task.metadata?.topic?.topic_title,
+  );
+}
+
+function topicDescriptionFrom(task, topic) {
+  return firstTextValue(
+    topic.description,
+    topic.topicDescription,
+    topic.topic_description,
+    topic.summary,
+    topic.article,
+    topic.content,
+    task.description,
+    task.topicDescription,
+    task.topic_description,
+    task.entityDescription,
+    task.entity_description,
+    task.metadata?.topicDescription,
+    task.metadata?.topic_description,
+    task.metadata?.topic?.description,
+    task.metadata?.topic?.topicDescription,
+    task.metadata?.topic?.topic_description,
+    task.metadata?.topic?.summary,
+    task.metadata?.topic?.article,
+  );
+}
+
+function contributionTitleFrom(task, contribution, contributionContent) {
+  return firstTextValue(
+    contributionContent.contentTitle,
+    contributionContent.content_title,
+    contributionContent.title,
+    contribution.title,
+    contribution.contentTitle,
+    contribution.content_title,
+    task.title,
+    task.entityTitle,
+    task.entity_title,
+  );
+}
+
+function contributionDescriptionFrom(task, contribution, contributionContent) {
+  return firstTextValue(
+    contributionContent.description,
+    contributionContent.providedContext,
+    contributionContent.provided_context,
+    contributionContent.statement,
+    contributionContent.content,
+    contributionContent.contentId,
+    contributionContent.content_id,
+    contribution.description,
+    contribution.providedContext,
+    contribution.provided_context,
+    task.description,
+    task.entityDescription,
+    task.entity_description,
+  );
+}
+
 function formatDate(value) {
   if (!value) return null;
 
@@ -122,17 +210,17 @@ export default function LifecycleTaskCard({
   const showBreakdownLink = Boolean(topicId && topicUserId);
   const rewardAmount = Number(topic.rewardAmount || 0);
   const cardTitle = isContributionReview
-    ? contributionContent.contentTitle ||
+    ? contributionTitleFrom(task, contribution, contributionContent) ||
       t("topicReview.untitledContribution", {
         contributionId: contribution.contributionId || task.entityId || taskId,
       })
-    : topic.title;
+    : topicTitleFrom(task, topic) ||
+      t("topicReview.untitledTopic", {
+        topicId: topicId || task.entityId || taskId,
+      });
   const cardDescription = isContributionReview
-    ? contributionContent.description ||
-      contributionContent.providedContext ||
-      contributionContent.contentId ||
-      ""
-    : topic.description;
+    ? contributionDescriptionFrom(task, contribution, contributionContent)
+    : topicDescriptionFrom(task, topic);
   const eyebrowKey = isContributionReview
     ? "topicReview.cardEyebrowContribution"
     : "topicReview.cardEyebrow";
