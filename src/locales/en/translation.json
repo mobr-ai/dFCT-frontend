@@ -1028,5 +1028,10 @@
   "publicationRewardPoolOptionalTitle": "Reward pool funding is optional",
   "publicationRewardPoolOptionalText": "Reward pool creation and reward distribution are coming soon as dSM-Prov workflow steps.",
   "confirmPublishButton": "Publish topic",
-  "topicPublishOwnerOnly": "Only the topic owner can publish this draft"
+  "topicPublishOwnerOnly": "Only the topic owner can publish this draft",
+  "activateTopic": "Activate topic",
+  "activatingTopic": "Activating topic...",
+  "topicActivatedToast": "Topic activated.",
+  "topicActivationFailed": "Failed to activate topic.",
+  "topicActivateOwnerOnly": "Only the topic owner, a moderator, or an admin can activate this reviewed topic."
 }

@@ -41,3 +41,12 @@ export async function fetchTopicLifecycleEvents(authRequest, topicId, {
 
   return normalizeLifecyclePayload(res.body);
 }
+
+
+export async function activateTopic(authRequest, topicId) {
+  const res = await authRequest
+    .post(`/api/topics/${topicId}/activate`)
+    .timeout(TOPIC_LIFECYCLE_TIMEOUT);
+
+  return res.body || {};
+}

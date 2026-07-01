@@ -1028,5 +1028,10 @@
   "publicationRewardPoolOptionalTitle": "O financiamento do pool de recompensa é opcional",
   "publicationRewardPoolOptionalText": "A criação de pools de recompensa e a distribuição de recompensas chegarão em breve como etapas do fluxo dSM-Prov.",
   "confirmPublishButton": "Publicar tópico",
-  "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho"
+  "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho",
+  "activateTopic": "Ativar tópico",
+  "activatingTopic": "Ativando tópico...",
+  "topicActivatedToast": "Tópico ativado.",
+  "topicActivationFailed": "Falha ao ativar tópico.",
+  "topicActivateOwnerOnly": "Apenas o dono do tópico, um moderador ou um admin pode ativar este tópico revisado."
 }
