@@ -1,14 +1,30 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuthRequest } from "./useAuthRequest";
 import {
+  TOPIC_REVIEW_TASK_TYPE,
   acceptLifecycleTask,
   completeLifecycleTask,
   getMyLifecycleTasks,
   getOpenLifecycleTasks,
 } from "../api/lifecycleTasks";
 
+function uniqueTasksById(tasks) {
+  const seen = new Set();
+
+  return tasks.filter((task) => {
+    const taskId = task?.taskId ?? task?.task_id ?? task?.id;
+    const key = String(taskId || "");
+
+    if (!key || seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  });
+}
+
 export function useLifecycleTasks(user, {
   taskType,
+  taskTypes,
   myStatus = "accepted",
 } = {}) {
   const { authRequest } = useAuthRequest(user);
@@ -24,6 +40,15 @@ export function useLifecycleTasks(user, {
   const [error, setError] = useState("");
 
   const canLoad = Boolean(user?.access_token);
+  const taskTypeList = useMemo(() => {
+    const rawTypes = Array.isArray(taskTypes) && taskTypes.length
+      ? taskTypes
+      : [taskType || TOPIC_REVIEW_TASK_TYPE];
+
+    return rawTypes.filter(Boolean);
+  }, [taskType, taskTypes]);
+
+  const taskTypeSignature = taskTypeList.join("|");
 
   useEffect(() => {
     authRequestRef.current = authRequest;
@@ -38,7 +63,12 @@ export function useLifecycleTasks(user, {
     }
 
     try {
-      const tasks = await getOpenLifecycleTasks(authRequestRef.current, { taskType });
+      const taskLists = await Promise.all(
+        taskTypeList.map((nextTaskType) =>
+          getOpenLifecycleTasks(authRequestRef.current, { taskType: nextTaskType })
+        )
+      );
+      const tasks = uniqueTasksById(taskLists.flat());
       setOpenTasks(tasks);
       return tasks;
     } catch (err) {
@@ -51,7 +81,7 @@ export function useLifecycleTasks(user, {
         setLoadingOpen(false);
       }
     }
-  }, [canLoad, taskType]);
+  }, [canLoad, taskTypeList]);
 
   const loadMyTasks = useCallback(async (
     status = myStatus,
@@ -65,10 +95,15 @@ export function useLifecycleTasks(user, {
     }
 
     try {
-      const tasks = await getMyLifecycleTasks(authRequestRef.current, {
-        status,
-        taskType,
-      });
+      const taskLists = await Promise.all(
+        taskTypeList.map((nextTaskType) =>
+          getMyLifecycleTasks(authRequestRef.current, {
+            status,
+            taskType: nextTaskType,
+          })
+        )
+      );
+      const tasks = uniqueTasksById(taskLists.flat());
       setMyTasks(tasks);
       return tasks;
     } catch (err) {
@@ -81,7 +116,7 @@ export function useLifecycleTasks(user, {
         setLoadingMine(false);
       }
     }
-  }, [canLoad, myStatus, taskType]);
+  }, [canLoad, myStatus, taskTypeList]);
 
   const loadCompletedTasks = useCallback(async ({ silent = false } = {}) => {
     if (!canLoad) return [];
@@ -92,10 +127,15 @@ export function useLifecycleTasks(user, {
     }
 
     try {
-      const tasks = await getMyLifecycleTasks(authRequestRef.current, {
-        status: "completed",
-        taskType,
-      });
+      const taskLists = await Promise.all(
+        taskTypeList.map((nextTaskType) =>
+          getMyLifecycleTasks(authRequestRef.current, {
+            status: "completed",
+            taskType: nextTaskType,
+          })
+        )
+      );
+      const tasks = uniqueTasksById(taskLists.flat());
       setCompletedTasks(tasks);
       return tasks;
     } catch (err) {
@@ -108,7 +148,7 @@ export function useLifecycleTasks(user, {
         setLoadingCompleted(false);
       }
     }
-  }, [canLoad, taskType]);
+  }, [canLoad, taskTypeList]);
 
   const refresh = useCallback(async ({ silent = false } = {}) => {
     const [nextOpen, nextMine, nextCompleted] = await Promise.all([
@@ -164,6 +204,7 @@ export function useLifecycleTasks(user, {
     openTasks,
     myTasks,
     completedTasks,
+    taskTypes: taskTypeList,
     loadingOpen,
     loadingMine,
     loadingCompleted,
@@ -180,6 +221,7 @@ export function useLifecycleTasks(user, {
     openTasks,
     myTasks,
     completedTasks,
+    taskTypes: taskTypeList,
     loadingOpen,
     loadingMine,
     loadingCompleted,

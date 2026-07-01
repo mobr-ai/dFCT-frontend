@@ -1,10 +1,8 @@
-import { TOPIC_REVIEW_TASK_TYPE } from "../api/lifecycleTasks";
+import { REVIEW_TASK_TYPES } from "../api/lifecycleTasks";
 import { useLifecycleTasks } from "./useLifecycleTasks";
 
-export function useTopicReviewTasks(user, options = {}) {
+export function useTopicReviewTasks(user) {
   return useLifecycleTasks(user, {
-    taskType: TOPIC_REVIEW_TASK_TYPE,
-    myStatus: "accepted",
-    ...options,
+    taskTypes: REVIEW_TASK_TYPES,
   });
 }

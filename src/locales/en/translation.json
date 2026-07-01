@@ -454,7 +454,8 @@
       "rejected": "Rejected"
     },
     "taskTypes": {
-      "topic_review": "Topic review"
+      "topic_review": "Topic review",
+      "contribution_review": "Contribution review"
     },
     "refreshing": "Refreshing tasks...",
     "lastUpdated": "Updated {{time}}",
@@ -578,7 +579,8 @@
     "reviewDecisionTitle": "Record reviewer decision",
     "reviewDecisionHelp": "Approve or reject this topic. The decision will be recorded in the topic’s timeline.",
     "reasonHelp": "Optional for approvals; required for rejections.",
-    "reasonRequired": "A rejection reason is required."
+    "reasonRequired": "A rejection reason is required.",
+    "reviewDecisionHelpContribution": "Approve or reject this contribution. The decision will be recorded in the contribution timeline."
   },
   "topicReview": {
     "nav": "Topic Review",
@@ -627,6 +629,30 @@
     "reviewDecisions": {
       "approved": "Approved",
       "rejected": "Rejected"
+    },
+    "cardEyebrowContribution": "Contribution review",
+    "noAvailableReviewTasks": "No topic or contribution review tasks are currently available.",
+    "noAcceptedReviewTasks": "You do not have accepted topic or contribution review tasks.",
+    "noCompletedReviewTasks": "Completed topic and contribution reviews will appear here.",
+    "contributionApprovedToast": "Contribution review approved.",
+    "contributionRejectedToast": "Contribution review rejected.",
+    "taskType": "Task",
+    "contributionId": "Contribution",
+    "submittedBy": "Submitted by",
+    "contentType": "Content",
+    "contributionStatus": "Contribution status",
+    "mediaContribution": "Contribution",
+    "untitledContribution": "Contribution {{contributionId}}",
+    "contributionStatuses": {
+      "proposed": "Proposed",
+      "reviewed": "Reviewed",
+      "disputed": "Disputed",
+      "updated": "Updated",
+      "rejected": "Rejected",
+      "verified": "Verified",
+      "evaluated": "Evaluated",
+      "rewardsDistributed": "Rewards distributed",
+      "poolEvaluated": "Pool evaluated"
     }
   },
   "closeModal": "Close modal",

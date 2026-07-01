@@ -20,10 +20,41 @@ const TASK_STATE_KEYS = {
   cancelled: "cancelled",
 };
 
+const CONTRIBUTION_STATUS_KEYS = {
+  0: "proposed",
+  1: "reviewed",
+  2: "disputed",
+  3: "updated",
+  4: "rejected",
+  5: "verified",
+  6: "evaluated",
+  7: "rewardsDistributed",
+  8: "poolEvaluated",
+};
+
 const REVIEW_DECISION_KEYS = {
   1: "approved",
   4: "rejected",
 };
+
+function normalizeTaskType(task) {
+  return String(task?.taskType || task?.task_type || "topic_review");
+}
+
+function parseContributionContent(contribution) {
+  const raw = contribution?.content;
+
+  if (!raw) return {};
+  if (typeof raw === "object") return raw;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {
+      description: String(raw),
+    };
+  }
+}
 
 function formatDate(value) {
   if (!value) return null;
@@ -57,22 +88,54 @@ export default function LifecycleTaskCard({
 }) {
   const { t } = useTranslation();
 
+  const taskType = normalizeTaskType(task);
+  const isContributionReview = taskType === "contribution_review";
   const topic = task.topic || {};
+  const contribution = task.contribution || {};
+  const contributionContent = parseContributionContent(contribution);
+
   const taskId = task.taskId;
-  const topicId = topic.topicId;
-  const topicUserId = topic.proposedBy;
+  const topicId = topic.topicId || task.topicId || contribution.topicId;
+  const topicUserId = topic.proposedBy || task.topicUserId;
   const isBusy = actionTaskId === taskId;
 
   const taskStateKey = TASK_STATE_KEYS[task.status] || "available";
   const topicStatusKey = TOPIC_STATUS_KEYS[topic.status] || "proposed";
+  const contributionStatusKey =
+    CONTRIBUTION_STATUS_KEYS[contribution.status] || "proposed";
+  const reviewDecisionSource = isContributionReview
+    ? contribution.status
+    : topic.status;
   const reviewDecisionKey =
-    mode === "completed" ? REVIEW_DECISION_KEYS[topic.status] : null;
-  const hasCover = Boolean(topic.coverUrl);
-  const isVideoCover = topic.coverContentType === "video";
+    mode === "completed" ? REVIEW_DECISION_KEYS[reviewDecisionSource] : null;
+
+  const mediaUrl = isContributionReview
+    ? contributionContent.localUrl || contributionContent.srcUrl
+    : topic.coverUrl;
+  const mediaContentType = isContributionReview
+    ? contributionContent.contentType
+    : topic.coverContentType;
+  const hasCover = Boolean(mediaUrl);
+  const isVideoCover = mediaContentType === "video";
   const formattedDate = formatDate(task.createdAt);
 
   const showBreakdownLink = Boolean(topicId && topicUserId);
   const rewardAmount = Number(topic.rewardAmount || 0);
+  const cardTitle = isContributionReview
+    ? contributionContent.contentTitle ||
+      t("topicReview.untitledContribution", {
+        contributionId: contribution.contributionId || task.entityId || taskId,
+      })
+    : topic.title;
+  const cardDescription = isContributionReview
+    ? contributionContent.description ||
+      contributionContent.providedContext ||
+      contributionContent.contentId ||
+      ""
+    : topic.description;
+  const eyebrowKey = isContributionReview
+    ? "topicReview.cardEyebrowContribution"
+    : "topicReview.cardEyebrow";
 
   return (
     <Card
@@ -85,21 +148,21 @@ export default function LifecycleTaskCard({
           <div className="DsmTaskCard-media">
             {hasCover && isVideoCover ? (
               <video
-                src={topic.coverUrl}
+                src={mediaUrl}
                 muted
                 playsInline
                 preload="metadata"
-                aria-label={topic.coverTitle || topic.title}
+                aria-label={contributionContent.contentTitle || topic.coverTitle || cardTitle}
               />
             ) : hasCover ? (
               <img
-                src={topic.coverUrl}
+                src={mediaUrl}
                 alt={topic.coverTitle || topic.title}
                 loading="lazy"
               />
             ) : (
               <div className="DsmTaskCard-mediaFallback" aria-hidden="true">
-                <span>{topicInitials(topic.title)}</span>
+                <span>{topicInitials(cardTitle)}</span>
               </div>
             )}
 
@@ -117,7 +180,7 @@ export default function LifecycleTaskCard({
             <div className="DsmTaskCard-topline">
               <div>
                 <span className="DsmTaskCard-eyebrow">
-                  {t("topicReview.cardEyebrow")}
+                  {t(eyebrowKey)}
                 </span>
                 {reviewDecisionKey ? (
                   <span
@@ -138,12 +201,12 @@ export default function LifecycleTaskCard({
             </div>
 
             <Card.Title className="DsmTaskCard-title">
-              {topic.title}
+              {cardTitle}
             </Card.Title>
 
-            {topic.description && (
+            {cardDescription && (
               <Card.Text className="DsmTaskCard-description">
-                {topic.description}
+                {cardDescription}
               </Card.Text>
             )}
 
@@ -152,19 +215,56 @@ export default function LifecycleTaskCard({
               aria-label={t("topicReview.taskMetadata")}
             >
               <span className="DsmTaskCard-metaPill">
-                <strong>{t("topicReview.topicId")}</strong>
-                {topicId}
+                <strong>{t("topicReview.taskType")}</strong>
+                {t(`dsm.taskTypes.${taskType}`)}
               </span>
 
-              <span className="DsmTaskCard-metaPill">
-                <strong>{t("topicReview.language")}</strong>
-                {String(topic.language || "").toUpperCase()}
-              </span>
+              {topicId && (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.topicId")}</strong>
+                  {topicId}
+                </span>
+              )}
 
-              <span className="DsmTaskCard-metaPill">
-                <strong>{t("topicReview.topicStatus")}</strong>
-                {t(`topicReview.topicStatuses.${topicStatusKey}`)}
-              </span>
+              {isContributionReview && contribution.contributionId && (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.contributionId")}</strong>
+                  {contribution.contributionId}
+                </span>
+              )}
+
+              {isContributionReview && contribution.submittedBy && (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.submittedBy")}</strong>
+                  {contribution.submittedBy}
+                </span>
+              )}
+
+              {isContributionReview && contributionContent.contentType && (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.contentType")}</strong>
+                  {String(contributionContent.contentType).toUpperCase()}
+                </span>
+              )}
+
+              {topic.language && (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.language")}</strong>
+                  {String(topic.language || "").toUpperCase()}
+                </span>
+              )}
+
+              {isContributionReview ? (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.contributionStatus")}</strong>
+                  {t(`topicReview.contributionStatuses.${contributionStatusKey}`)}
+                </span>
+              ) : (
+                <span className="DsmTaskCard-metaPill">
+                  <strong>{t("topicReview.topicStatus")}</strong>
+                  {t(`topicReview.topicStatuses.${topicStatusKey}`)}
+                </span>
+              )}
 
               {rewardAmount > 0 && (
                 <span className="DsmTaskCard-metaPill">

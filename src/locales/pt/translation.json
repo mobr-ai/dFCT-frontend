@@ -454,7 +454,8 @@
       "rejected": "Rejeitada"
     },
     "taskTypes": {
-      "topic_review": "Revisão de tópico"
+      "topic_review": "Revisão de tópico",
+      "contribution_review": "Revisão de contribuição"
     },
     "refreshing": "Atualizando tarefas...",
     "lastUpdated": "Atualizado às {{time}}",
@@ -578,7 +579,8 @@
     "reviewDecisionTitle": "Registrar decisão do revisor",
     "reviewDecisionHelp": "Aprove ou rejeite este tópico. A decisão será registrada na linha do tempo do tópico.",
     "reasonHelp": "Opcional para aprovações; obrigatório para rejeições.",
-    "reasonRequired": "Um motivo de rejeição é obrigatório."
+    "reasonRequired": "Um motivo de rejeição é obrigatório.",
+    "reviewDecisionHelpContribution": "Aprove ou rejeite esta contribuição. A decisão será registrada na linha do tempo da contribuição."
   },
   "topicReview": {
     "nav": "Revisão de Tópicos",
@@ -627,6 +629,30 @@
     "reviewDecisions": {
       "approved": "Aprovado",
       "rejected": "Rejeitado"
+    },
+    "cardEyebrowContribution": "Revisão de contribuição",
+    "noAvailableReviewTasks": "Nenhuma tarefa de revisão de tópico ou contribuição está disponível no momento.",
+    "noAcceptedReviewTasks": "Você não tem tarefas aceitas de revisão de tópico ou contribuição.",
+    "noCompletedReviewTasks": "Revisões concluídas de tópicos e contribuições aparecerão aqui.",
+    "contributionApprovedToast": "Revisão de contribuição aprovada.",
+    "contributionRejectedToast": "Revisão de contribuição rejeitada.",
+    "taskType": "Tarefa",
+    "contributionId": "Contribuição",
+    "submittedBy": "Enviado por",
+    "contentType": "Conteúdo",
+    "contributionStatus": "Status da contribuição",
+    "mediaContribution": "Contribuição",
+    "untitledContribution": "Contribuição {{contributionId}}",
+    "contributionStatuses": {
+      "proposed": "Proposta",
+      "reviewed": "Revisada",
+      "disputed": "Contestada",
+      "updated": "Atualizada",
+      "rejected": "Rejeitada",
+      "verified": "Verificada",
+      "evaluated": "Avaliada",
+      "rewardsDistributed": "Recompensas distribuídas",
+      "poolEvaluated": "Pool avaliado"
     }
   },
   "closeModal": "Fechar modal",
