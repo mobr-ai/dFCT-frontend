@@ -440,7 +440,7 @@
     "approve": "Aprovar",
     "reject": "Rejeitar",
     "reason": "Motivo",
-    "reasonPlaceholder": "Motivo curto para esta decisão",
+    "reasonPlaceholder": "Obrigatório ao rejeitar; opcional ao aprovar",
     "notes": "Observações",
     "notesPlaceholder": "Observações opcionais da revisão",
     "submitDecision": "Enviar decisão",
@@ -557,20 +557,63 @@
         }
       },
       "topicBreakdown": "Detalhamento do tópico"
-    }
+    },
+    "required": "Obrigatório",
+    "yes": "Sim",
+    "no": "Não",
+    "reviewDecisionTitle": "Registrar decisão do revisor",
+    "reviewDecisionHelp": "Aprove ou rejeite este tópico. A decisão será registrada na linha do tempo do tópico.",
+    "reasonHelp": "Opcional para aprovações; obrigatório para rejeições.",
+    "reasonRequired": "Um motivo de rejeição é obrigatório."
   },
   "topicReview": {
     "nav": "Revisão de Tópicos",
-    "title": "Workbench de Revisão de Tópicos",
-    "subtitle": "Revise tópicos propostos no d-FCT e registre decisões do workflow.",
+    "title": "Fila de Revisão de Tópicos",
+    "subtitle": "Revise tópicos propostos, aprove submissões válidas ou rejeite tópicos que precisam de ajustes.",
     "availableTasks": "Tarefas disponíveis",
     "myAcceptedTasks": "Minhas tarefas aceitas",
     "noAvailableTasks": "Nenhuma tarefa de revisão de tópico está disponível no momento.",
     "noAcceptedTasks": "Você não possui tarefas de revisão de tópico aceitas.",
     "topicId": "ID do tópico",
     "acceptedToast": "Tarefa de revisão de tópico aceita.",
-    "approvedToast": "Tópico aprovado.",
-    "rejectedToast": "Tópico rejeitado."
+    "approvedToast": "Tópico aprovado e ciclo de vida atualizado.",
+    "rejectedToast": "Tópico rejeitado e ciclo de vida atualizado.",
+    "eyebrow": "Fluxo do revisor",
+    "availableTasksCount": "Tarefas disponíveis ({{count}})",
+    "myAcceptedTasksCount": "Minhas tarefas aceitas ({{count}})",
+    "cardEyebrow": "Atribuição de revisão",
+    "taskMetadata": "Metadados da tarefa",
+    "language": "Idioma",
+    "topicStatus": "Status",
+    "reward": "Recompensa",
+    "proof": "Prova",
+    "viewBreakdown": "Ver detalhamento do tópico",
+    "startReview": "Iniciar revisão",
+    "rewardValue": "{{value}} lovelace",
+    "mediaVideo": "Evidência em vídeo",
+    "mediaImage": "Evidência visual",
+    "mediaFallback": "Resumo de revisão",
+    "taskStates": {
+      "available": "Disponível para revisão",
+      "inQueue": "Na sua fila de revisão",
+      "completed": "Revisão concluída",
+      "expired": "Expirada",
+      "cancelled": "Cancelada"
+    },
+    "topicStatuses": {
+      "draft": "Rascunho",
+      "proposed": "Proposto",
+      "reviewed": "Revisado",
+      "active": "Ativo",
+      "closed": "Encerrado",
+      "rejected": "Rejeitado"
+    },
+    "completedTasksCount": "Revisadas ({{count}})",
+    "noCompletedTasks": "As revisões concluídas aparecerão aqui.",
+    "reviewDecisions": {
+      "approved": "Aprovado",
+      "rejected": "Rejeitado"
+    }
   },
   "closeModal": "Fechar modal",
   "billingAccess": {

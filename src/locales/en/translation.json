@@ -440,7 +440,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "reason": "Reason",
-    "reasonPlaceholder": "Short reason for this decision",
+    "reasonPlaceholder": "Required when rejecting; optional when approving",
     "notes": "Notes",
     "notesPlaceholder": "Optional review notes",
     "submitDecision": "Submit decision",
@@ -557,20 +557,63 @@
         }
       },
       "topicBreakdown": "Topic Breakdown"
-    }
+    },
+    "required": "Required",
+    "yes": "Yes",
+    "no": "No",
+    "reviewDecisionTitle": "Record reviewer decision",
+    "reviewDecisionHelp": "Approve or reject this topic. The decision will be recorded in the topic’s timeline.",
+    "reasonHelp": "Optional for approvals; required for rejections.",
+    "reasonRequired": "A rejection reason is required."
   },
   "topicReview": {
     "nav": "Topic Review",
-    "title": "Topic Review Workbench",
-    "subtitle": "Review proposed d-FCT topics and record workflow decisions.",
+    "title": "Topic Review Queue",
+    "subtitle": "Review proposed topics, approve valid submissions, or reject topics that need rework.",
     "availableTasks": "Available tasks",
     "myAcceptedTasks": "My accepted tasks",
     "noAvailableTasks": "No topic review tasks are currently available.",
     "noAcceptedTasks": "You do not have accepted topic review tasks.",
     "topicId": "Topic ID",
     "acceptedToast": "Topic review task accepted.",
-    "approvedToast": "Topic approved.",
-    "rejectedToast": "Topic rejected."
+    "approvedToast": "Topic approved and lifecycle updated.",
+    "rejectedToast": "Topic rejected and lifecycle updated.",
+    "eyebrow": "Reviewer workflow",
+    "availableTasksCount": "Available tasks ({{count}})",
+    "myAcceptedTasksCount": "My accepted tasks ({{count}})",
+    "cardEyebrow": "Review assignment",
+    "taskMetadata": "Task metadata",
+    "language": "Language",
+    "topicStatus": "Status",
+    "reward": "Reward",
+    "proof": "Proof",
+    "viewBreakdown": "View topic breakdown",
+    "startReview": "Start review",
+    "rewardValue": "{{value}} lovelace",
+    "mediaVideo": "Video evidence",
+    "mediaImage": "Visual evidence",
+    "mediaFallback": "Review brief",
+    "taskStates": {
+      "available": "Available for review",
+      "inQueue": "In your review queue",
+      "completed": "Review completed",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "topicStatuses": {
+      "draft": "Draft",
+      "proposed": "Proposed",
+      "reviewed": "Reviewed",
+      "active": "Active",
+      "closed": "Closed",
+      "rejected": "Rejected"
+    },
+    "completedTasksCount": "Reviewed ({{count}})",
+    "noCompletedTasks": "Completed reviews will appear here.",
+    "reviewDecisions": {
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
   },
   "closeModal": "Close modal",
   "billingAccess": {
