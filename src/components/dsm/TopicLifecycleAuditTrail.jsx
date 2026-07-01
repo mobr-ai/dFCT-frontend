@@ -39,18 +39,38 @@ const JOURNEY_STAGES = [
     key: "contributions",
     icon: faUsers,
     states: [
-      "contribution_proposed",
-      "contribution_verified",
-      "contribution_disputed",
+      "contrib_proposed",
+      "contrib_reviewed",
+      "contrib_rejected",
+      "contrib_verified",
+      "contrib_disputed",
     ],
-    actions: ["submit_evidence", "verify_evidence", "dispute_evidence"],
+    actions: [
+      "submit_contribution",
+      "review_contribution",
+      "reject_contribution",
+      "verify_contribution",
+      "dispute_contribution",
+    ],
     fuzzy: ["contribution", "evidence"],
   },
   {
     key: "rewards",
     icon: faTrophy,
-    states: ["reward_evaluated", "reward_distributed", "reward_depleted"],
-    actions: ["evaluate_reward", "distribute_reward", "deplete_reward"],
+    states: [
+      "contribution_evaluated",
+      "rewards_distributed",
+      "reward_evaluated",
+      "reward_distributed",
+      "reward_depleted",
+    ],
+    actions: [
+      "evaluate_contribution",
+      "distribute_rewards",
+      "evaluate_reward",
+      "distribute_reward",
+      "deplete_reward",
+    ],
     fuzzy: ["reward"],
   },
   {
@@ -67,6 +87,20 @@ function normalizeKey(value) {
     .trim()
     .toLowerCase()
     .replace(/[\s-]+/g, "_");
+}
+
+const TOPIC_STATUS_BY_CODE = {
+  0: "proposed",
+  1: "reviewed",
+  2: "active",
+  3: "closed",
+  4: "rejected",
+  5: "draft",
+};
+
+function normalizeTopicStatus(value) {
+  const key = normalizeKey(value);
+  return TOPIC_STATUS_BY_CODE[key] || key;
 }
 
 function humanize(value) {
@@ -198,7 +232,26 @@ function latestEventForStage(stage, events) {
   );
 }
 
-function deriveCurrentStageIndex(stages) {
+function journeyHasRejected(topic, stages) {
+  const topicStatus = normalizeTopicStatus(topic?.status);
+
+  return (
+    topicStatus === "rejected" ||
+    topicStatus === "topic_rejected" ||
+    stages.some(
+      (stage) =>
+        normalizeKey(stage.event?.action) === "reject_topic" ||
+        normalizeKey(stage.event?.toState) === "topic_rejected",
+    )
+  );
+}
+
+function deriveCurrentStageIndex(stages, topic) {
+  if (journeyHasRejected(topic, stages)) {
+    const reviewIndex = stages.findIndex((stage) => stage.key === "review");
+    return reviewIndex >= 0 ? reviewIndex : 0;
+  }
+
   const lastCompleted = stages.reduce(
     (latest, stage, index) => (stage.event ? index : latest),
     -1,
@@ -210,16 +263,10 @@ function deriveCurrentStageIndex(stages) {
 }
 
 function deriveJourneyStatus(t, topic, stages) {
-  const topicStatus = normalizeKey(topic?.status);
-  const hasRejected = stages.some(
-    (stage) =>
-      normalizeKey(stage.event?.action) === "reject_topic" ||
-      normalizeKey(stage.event?.toState) === "topic_rejected" ||
-      topicStatus === "rejected" ||
-      topicStatus === "topic_rejected",
-  );
+  const topicStatus = normalizeTopicStatus(topic?.status);
 
-  if (hasRejected) return t("dsm.audit.journeyStatus.rejected");
+  if (journeyHasRejected(topic, stages))
+    return t("dsm.audit.journeyStatus.rejected");
 
   if (
     topicStatus.includes("active") ||
@@ -398,7 +445,7 @@ export default function TopicLifecycleAuditTrail({
     ...stage,
     event: latestEventForStage(stage, events),
   }));
-  const currentStageIndex = deriveCurrentStageIndex(stages);
+  const currentStageIndex = deriveCurrentStageIndex(stages, topic);
   const journeyStatus = deriveJourneyStatus(t, topic, stages);
 
   return (

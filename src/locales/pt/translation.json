@@ -475,7 +475,14 @@
       "actions": {
         "submit_topic": "Publicar tópico",
         "review_topic": "Revisar tópico",
-        "reject_topic": "Rejeitar tópico"
+        "reject_topic": "Rejeitar tópico",
+        "submit_contribution": "Contribuição enviada",
+        "review_contribution": "Contribuição revisada",
+        "reject_contribution": "Contribuição rejeitada",
+        "verify_contribution": "Contribuição verificada",
+        "dispute_contribution": "Contribuição contestada",
+        "evaluate_contribution": "Contribuição avaliada",
+        "distribute_rewards": "Recompensas distribuídas"
       },
       "states": {
         "initial": "Inicial",
@@ -484,7 +491,14 @@
         "topic_reviewed": "Revisado",
         "topic_rejected": "Rejeitado",
         "topic_active": "Ativo",
-        "topic_closed": "Encerrado"
+        "topic_closed": "Encerrado",
+        "contrib_proposed": "Proposta",
+        "contrib_reviewed": "Revisada",
+        "contrib_rejected": "Rejeitada",
+        "contrib_verified": "Verificada",
+        "contrib_disputed": "Contestada",
+        "contribution_evaluated": "Avaliada",
+        "rewards_distributed": "Recompensas distribuídas"
       },
       "anchorStatuses": {
         "not_requested": "Não ancorado",
