@@ -13,8 +13,33 @@ import { useTopicReviewTasks } from "../../hooks/useTopicReviewTasks";
 import { useAutoRefresh } from "../../hooks/useAutoRefresh";
 import "../../styles/dsm/Workbench.css";
 
+function getTaskType(task) {
+  return task?.taskType || task?.task_type || "";
+}
+
+function isContributionReviewTask(task) {
+  return getTaskType(task) === "contribution_review";
+}
+
 function getTaskTopicId(task) {
-  return task?.topic?.topicId;
+  return (
+    task?.topic?.topicId ||
+    task?.topicId ||
+    task?.contribution?.topicId ||
+    null
+  );
+}
+
+function taskToastKey(task, decision) {
+  if (isContributionReviewTask(task)) {
+    return decision === "reject"
+      ? "topicReview.contributionRejectedToast"
+      : "topicReview.contributionApprovedToast";
+  }
+
+  return decision === "reject"
+    ? "topicReview.rejectedToast"
+    : "topicReview.approvedToast";
 }
 
 function dispatchTopicLifecycleUpdated(topicId) {
@@ -95,9 +120,7 @@ export default function TopicReviewWorkbench() {
     setActiveTab("completed");
 
     showToast?.(
-      payload.decision === "reject"
-        ? t("topicReview.rejectedToast")
-        : t("topicReview.approvedToast"),
+      t(taskToastKey(task, payload.decision)),
       payload.decision === "reject" ? "danger" : "success"
     );
   };
@@ -140,7 +163,7 @@ export default function TopicReviewWorkbench() {
               tasks={openTasks}
               loading={loadingOpen}
               mode="available"
-              emptyKey="topicReview.noAvailableTasks"
+              emptyKey="topicReview.noAvailableReviewTasks"
               actionTaskId={actionTaskId}
               highlightedTaskId={highlightedTaskId}
               onAccept={handleAccept}
@@ -157,7 +180,7 @@ export default function TopicReviewWorkbench() {
               tasks={myTasks}
               loading={loadingMine}
               mode="mine"
-              emptyKey="topicReview.noAcceptedTasks"
+              emptyKey="topicReview.noAcceptedReviewTasks"
               actionTaskId={actionTaskId}
               highlightedTaskId={highlightedTaskId}
               renderTaskActions={(task) => (
@@ -182,7 +205,7 @@ export default function TopicReviewWorkbench() {
               tasks={completedTasks}
               loading={loadingCompleted}
               mode="completed"
-              emptyKey="topicReview.noCompletedTasks"
+              emptyKey="topicReview.noCompletedReviewTasks"
               actionTaskId={actionTaskId}
               highlightedTaskId={highlightedTaskId}
             />

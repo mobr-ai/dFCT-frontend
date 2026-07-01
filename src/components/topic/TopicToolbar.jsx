@@ -14,6 +14,7 @@ import {
 } from "../../hooks/useAuthRequest";
 import { useBillingStatus } from "../../hooks/useBillingStatus";
 import { publishTopicWithBilling } from "../../api/billingCredits";
+import { activateTopic } from "../../api/topicLifecycle";
 import publishIcon from "./../../icons/publish.svg";
 import deleteIcon from "./../../icons/delete.svg";
 import shareIcon from "./../../icons/share.svg";
@@ -52,6 +53,47 @@ function idsMatch(left, right) {
   if (left === undefined || left === null || left === "") return false;
   if (right === undefined || right === null || right === "") return false;
   return String(left) === String(right);
+}
+
+function normalizeRoleKey(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+}
+
+function userRolesFrom(user = {}) {
+  const roleSources = [
+    user.roles,
+    user.roleKeys,
+    user.role_keys,
+    user.permissions,
+    user.claims?.roles,
+    user.claims?.roleKeys,
+    user.profile?.roles,
+  ];
+
+  const roles = roleSources.flatMap((source) => {
+    if (!source) return [];
+    if (Array.isArray(source)) return source;
+    if (typeof source === "object") return Object.values(source);
+    return [source];
+  });
+
+  for (const key of ["role", "roleKey", "role_key"]) {
+    if (user[key]) roles.push(user[key]);
+  }
+
+  return roles.map(normalizeRoleKey).filter(Boolean);
+}
+
+function userCanActivateReviewedTopic(user = {}) {
+  if (user.is_admin || user.isAdmin || user.admin) return true;
+
+  const roles = userRolesFrom(user);
+  return roles.some((role) =>
+    ["admin", "system_admin", "moderator"].includes(role)
+  );
 }
 
 function normalizeTopicUpdate(topic = {}) {
@@ -100,10 +142,21 @@ function TopicToolbar(props) {
   const topicOwnerId = props.proposedBy;
   const canManageTopic = idsMatch(currentUserId, topicOwnerId);
   const canPublishTopic = canManageTopic && statusKey === "DRAFT";
-  const tooltipKey = canManageTopic
-    ? statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT
-    : "topicPublishOwnerOnly";
+  const canActivateTopic =
+    statusKey === "REVIEWED" &&
+    (canManageTopic || userCanActivateReviewedTopic(props.user));
+  const canRunStatusAction = canPublishTopic || canActivateTopic;
+  const tooltipKey = canPublishTopic
+    ? "publishTopic"
+    : canActivateTopic
+      ? "activateTopic"
+      : statusKey === "DRAFT"
+        ? "topicPublishOwnerOnly"
+        : statusKey === "REVIEWED"
+          ? "topicActivateOwnerOnly"
+          : statusToTooltipKey[statusKey] ?? statusToTooltipKey.DRAFT;
   const statusClass = statusKey.toLowerCase();
+  const loadingTooltipKey = canActivateTopic ? "activatingTopic" : "publishingTopic";
 
   const handlePublishClick = async () => {
     if (!canPublishTopic) return;
@@ -113,6 +166,55 @@ function TopicToolbar(props) {
     }
 
     setPublishModalShow(true);
+  };
+
+  const handleActivateClick = async () => {
+    if (!canActivateTopic) return;
+
+    try {
+      setLoading(true);
+
+      const result = await activateTopic(authRequest, props.topicId);
+      const message = t("topicActivatedToast");
+
+      window.dispatchEvent(
+        new CustomEvent("dfct:topic-lifecycle-updated", {
+          detail: {
+            source: "topic_activation",
+            topicId: props.topicId,
+          },
+        }),
+      );
+
+      props.onTopicUpdated?.({
+        updatedTopic: result?.topic
+          ? normalizeTopicUpdate(result.topic)
+          : {
+              status: "ACTIVE",
+              updated_at: new Date().toISOString(),
+            },
+      });
+
+      props.showToast?.(message, "success");
+    } catch (err) {
+      props.showToast?.(
+        getApiErrorMessage(err, t("topicActivationFailed")),
+        "danger",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusActionClick = async () => {
+    if (canPublishTopic) {
+      await handlePublishClick();
+      return;
+    }
+
+    if (canActivateTopic) {
+      await handleActivateClick();
+    }
   };
 
   const handlePublishConfirmed = async ({ rewardPoolEnabled = false } = {}) => {
@@ -190,7 +292,7 @@ function TopicToolbar(props) {
                 placement="top"
                 overlay={
                   <Tooltip id="tooltip-publish">
-                    {loading ? t("publishingTopic") : t(tooltipKey)}
+                    {loading ? t(loadingTooltipKey) : t(tooltipKey)}
                   </Tooltip>
                 }
               >
@@ -199,8 +301,8 @@ function TopicToolbar(props) {
                   className={`Breakdown-toolbar-icon status-${statusClass} ${
                     loading ? "rotating" : ""
                   }`}
-                  onClick={handlePublishClick}
-                  style={{ cursor: statusKey === "DRAFT" ? "pointer" : "default" }}
+                  onClick={handleStatusActionClick}
+                  style={{ cursor: canRunStatusAction ? "pointer" : "default" }}
                 />
               </OverlayTrigger>
             </Col>

@@ -454,7 +454,8 @@
       "rejected": "Rejeitada"
     },
     "taskTypes": {
-      "topic_review": "Revisão de tópico"
+      "topic_review": "Revisão de tópico",
+      "contribution_review": "Revisão de contribuição"
     },
     "refreshing": "Atualizando tarefas...",
     "lastUpdated": "Atualizado às {{time}}",
@@ -475,7 +476,14 @@
       "actions": {
         "submit_topic": "Publicar tópico",
         "review_topic": "Revisar tópico",
-        "reject_topic": "Rejeitar tópico"
+        "reject_topic": "Rejeitar tópico",
+        "submit_contribution": "Contribuição enviada",
+        "review_contribution": "Contribuição revisada",
+        "reject_contribution": "Contribuição rejeitada",
+        "verify_contribution": "Contribuição verificada",
+        "dispute_contribution": "Contribuição contestada",
+        "evaluate_contribution": "Contribuição avaliada",
+        "distribute_rewards": "Recompensas distribuídas"
       },
       "states": {
         "initial": "Inicial",
@@ -484,7 +492,14 @@
         "topic_reviewed": "Revisado",
         "topic_rejected": "Rejeitado",
         "topic_active": "Ativo",
-        "topic_closed": "Encerrado"
+        "topic_closed": "Encerrado",
+        "contrib_proposed": "Proposta",
+        "contrib_reviewed": "Revisada",
+        "contrib_rejected": "Rejeitada",
+        "contrib_verified": "Verificada",
+        "contrib_disputed": "Contestada",
+        "contribution_evaluated": "Avaliada",
+        "rewards_distributed": "Recompensas distribuídas"
       },
       "anchorStatuses": {
         "not_requested": "Não ancorado",
@@ -564,7 +579,8 @@
     "reviewDecisionTitle": "Registrar decisão do revisor",
     "reviewDecisionHelp": "Aprove ou rejeite este tópico. A decisão será registrada na linha do tempo do tópico.",
     "reasonHelp": "Opcional para aprovações; obrigatório para rejeições.",
-    "reasonRequired": "Um motivo de rejeição é obrigatório."
+    "reasonRequired": "Um motivo de rejeição é obrigatório.",
+    "reviewDecisionHelpContribution": "Aprove ou rejeite esta contribuição. A decisão será registrada na linha do tempo da contribuição."
   },
   "topicReview": {
     "nav": "Revisão de Tópicos",
@@ -613,6 +629,30 @@
     "reviewDecisions": {
       "approved": "Aprovado",
       "rejected": "Rejeitado"
+    },
+    "cardEyebrowContribution": "Revisão de contribuição",
+    "noAvailableReviewTasks": "Nenhuma tarefa de revisão de tópico ou contribuição está disponível no momento.",
+    "noAcceptedReviewTasks": "Você não tem tarefas aceitas de revisão de tópico ou contribuição.",
+    "noCompletedReviewTasks": "Revisões concluídas de tópicos e contribuições aparecerão aqui.",
+    "contributionApprovedToast": "Revisão de contribuição aprovada.",
+    "contributionRejectedToast": "Revisão de contribuição rejeitada.",
+    "taskType": "Tarefa",
+    "contributionId": "Contribuição",
+    "submittedBy": "Enviado por",
+    "contentType": "Conteúdo",
+    "contributionStatus": "Status da contribuição",
+    "mediaContribution": "Contribuição",
+    "untitledContribution": "Contribuição {{contributionId}}",
+    "contributionStatuses": {
+      "proposed": "Proposta",
+      "reviewed": "Revisada",
+      "disputed": "Contestada",
+      "updated": "Atualizada",
+      "rejected": "Rejeitada",
+      "verified": "Verificada",
+      "evaluated": "Avaliada",
+      "rewardsDistributed": "Recompensas distribuídas",
+      "poolEvaluated": "Pool avaliado"
     }
   },
   "closeModal": "Fechar modal",
@@ -988,5 +1028,10 @@
   "publicationRewardPoolOptionalTitle": "O financiamento do pool de recompensa é opcional",
   "publicationRewardPoolOptionalText": "A criação de pools de recompensa e a distribuição de recompensas chegarão em breve como etapas do fluxo dSM-Prov.",
   "confirmPublishButton": "Publicar tópico",
-  "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho"
+  "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho",
+  "activateTopic": "Ativar tópico",
+  "activatingTopic": "Ativando tópico...",
+  "topicActivatedToast": "Tópico ativado.",
+  "topicActivationFailed": "Falha ao ativar tópico.",
+  "topicActivateOwnerOnly": "Apenas o dono do tópico, um moderador ou um admin pode ativar este tópico revisado."
 }

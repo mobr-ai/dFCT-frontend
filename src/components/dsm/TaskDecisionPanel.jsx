@@ -18,6 +18,10 @@ export default function TaskDecisionPanel({
   const [notes, setNotes] = useState("");
 
   const taskId = task?.id ?? task?.task_id ?? task?.taskId;
+  const taskType = task?.taskType || task?.task_type || "topic_review";
+  const helpKey = taskType === "contribution_review"
+    ? "dsm.reviewDecisionHelpContribution"
+    : "dsm.reviewDecisionHelp";
   const isBusy = actionTaskId === taskId;
   const requiresReason = decision === "reject";
   const trimmedReason = reason.trim();
@@ -48,7 +52,7 @@ export default function TaskDecisionPanel({
     <Form className="DsmDecisionPanel" onSubmit={handleSubmit}>
       <div className="DsmDecisionPanel-intro">
         <strong>{t("dsm.reviewDecisionTitle")}</strong>
-        <span>{t("dsm.reviewDecisionHelp")}</span>
+        <span>{t(helpKey)}</span>
       </div>
 
       <Form.Group className="mb-3">

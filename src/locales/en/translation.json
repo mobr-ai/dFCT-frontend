@@ -454,7 +454,8 @@
       "rejected": "Rejected"
     },
     "taskTypes": {
-      "topic_review": "Topic review"
+      "topic_review": "Topic review",
+      "contribution_review": "Contribution review"
     },
     "refreshing": "Refreshing tasks...",
     "lastUpdated": "Updated {{time}}",
@@ -475,7 +476,14 @@
       "actions": {
         "submit_topic": "Submit topic",
         "review_topic": "Review topic",
-        "reject_topic": "Reject topic"
+        "reject_topic": "Reject topic",
+        "submit_contribution": "Contribution submitted",
+        "review_contribution": "Contribution reviewed",
+        "reject_contribution": "Contribution rejected",
+        "verify_contribution": "Contribution verified",
+        "dispute_contribution": "Contribution disputed",
+        "evaluate_contribution": "Contribution evaluated",
+        "distribute_rewards": "Rewards distributed"
       },
       "states": {
         "initial": "Initial",
@@ -484,7 +492,14 @@
         "topic_reviewed": "Reviewed",
         "topic_rejected": "Rejected",
         "topic_active": "Active",
-        "topic_closed": "Closed"
+        "topic_closed": "Closed",
+        "contrib_proposed": "Proposed",
+        "contrib_reviewed": "Reviewed",
+        "contrib_rejected": "Rejected",
+        "contrib_verified": "Verified",
+        "contrib_disputed": "Disputed",
+        "contribution_evaluated": "Evaluated",
+        "rewards_distributed": "Rewards distributed"
       },
       "anchorStatuses": {
         "not_requested": "Not anchored",
@@ -564,7 +579,8 @@
     "reviewDecisionTitle": "Record reviewer decision",
     "reviewDecisionHelp": "Approve or reject this topic. The decision will be recorded in the topic’s timeline.",
     "reasonHelp": "Optional for approvals; required for rejections.",
-    "reasonRequired": "A rejection reason is required."
+    "reasonRequired": "A rejection reason is required.",
+    "reviewDecisionHelpContribution": "Approve or reject this contribution. The decision will be recorded in the contribution timeline."
   },
   "topicReview": {
     "nav": "Topic Review",
@@ -613,6 +629,30 @@
     "reviewDecisions": {
       "approved": "Approved",
       "rejected": "Rejected"
+    },
+    "cardEyebrowContribution": "Contribution review",
+    "noAvailableReviewTasks": "No topic or contribution review tasks are currently available.",
+    "noAcceptedReviewTasks": "You do not have accepted topic or contribution review tasks.",
+    "noCompletedReviewTasks": "Completed topic and contribution reviews will appear here.",
+    "contributionApprovedToast": "Contribution review approved.",
+    "contributionRejectedToast": "Contribution review rejected.",
+    "taskType": "Task",
+    "contributionId": "Contribution",
+    "submittedBy": "Submitted by",
+    "contentType": "Content",
+    "contributionStatus": "Contribution status",
+    "mediaContribution": "Contribution",
+    "untitledContribution": "Contribution {{contributionId}}",
+    "contributionStatuses": {
+      "proposed": "Proposed",
+      "reviewed": "Reviewed",
+      "disputed": "Disputed",
+      "updated": "Updated",
+      "rejected": "Rejected",
+      "verified": "Verified",
+      "evaluated": "Evaluated",
+      "rewardsDistributed": "Rewards distributed",
+      "poolEvaluated": "Pool evaluated"
     }
   },
   "closeModal": "Close modal",
@@ -988,5 +1028,10 @@
   "publicationRewardPoolOptionalTitle": "Reward pool funding is optional",
   "publicationRewardPoolOptionalText": "Reward pool creation and reward distribution are coming soon as dSM-Prov workflow steps.",
   "confirmPublishButton": "Publish topic",
-  "topicPublishOwnerOnly": "Only the topic owner can publish this draft"
+  "topicPublishOwnerOnly": "Only the topic owner can publish this draft",
+  "activateTopic": "Activate topic",
+  "activatingTopic": "Activating topic...",
+  "topicActivatedToast": "Topic activated.",
+  "topicActivationFailed": "Failed to activate topic.",
+  "topicActivateOwnerOnly": "Only the topic owner, a moderator, or an admin can activate this reviewed topic."
 }

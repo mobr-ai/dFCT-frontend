@@ -38,15 +38,39 @@ const JOURNEY_STAGES = [
   {
     key: "contributions",
     icon: faUsers,
-    states: ["contribution_proposed", "contribution_verified", "contribution_disputed"],
-    actions: ["submit_evidence", "verify_evidence", "dispute_evidence"],
+    states: [
+      "contrib_proposed",
+      "contrib_reviewed",
+      "contrib_rejected",
+      "contrib_verified",
+      "contrib_disputed",
+    ],
+    actions: [
+      "submit_contribution",
+      "review_contribution",
+      "reject_contribution",
+      "verify_contribution",
+      "dispute_contribution",
+    ],
     fuzzy: ["contribution", "evidence"],
   },
   {
     key: "rewards",
     icon: faTrophy,
-    states: ["reward_evaluated", "reward_distributed", "reward_depleted"],
-    actions: ["evaluate_reward", "distribute_reward", "deplete_reward"],
+    states: [
+      "contribution_evaluated",
+      "rewards_distributed",
+      "reward_evaluated",
+      "reward_distributed",
+      "reward_depleted",
+    ],
+    actions: [
+      "evaluate_contribution",
+      "distribute_rewards",
+      "evaluate_reward",
+      "distribute_reward",
+      "deplete_reward",
+    ],
     fuzzy: ["reward"],
   },
   {
@@ -63,6 +87,20 @@ function normalizeKey(value) {
     .trim()
     .toLowerCase()
     .replace(/[\s-]+/g, "_");
+}
+
+const TOPIC_STATUS_BY_CODE = {
+  0: "proposed",
+  1: "reviewed",
+  2: "active",
+  3: "closed",
+  4: "rejected",
+  5: "draft",
+};
+
+function normalizeTopicStatus(value) {
+  const key = normalizeKey(value);
+  return TOPIC_STATUS_BY_CODE[key] || key;
 }
 
 function humanize(value) {
@@ -85,7 +123,9 @@ function shortHash(value, head = 10, tail = 6) {
 }
 
 function eventHash(event) {
-  return event?.anchorPayloadHash || event?.payloadHash || event?.payload_hash || "";
+  return (
+    event?.anchorPayloadHash || event?.payloadHash || event?.payload_hash || ""
+  );
 }
 
 function eventDate(event, locale) {
@@ -102,10 +142,15 @@ function relativeEventDate(event, t) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
 
-  const diffSeconds = Math.max(1, Math.round((Date.now() - date.getTime()) / 1000));
-  if (diffSeconds < 60) return t("dsm.audit.relativeSeconds", { count: diffSeconds });
+  const diffSeconds = Math.max(
+    1,
+    Math.round((Date.now() - date.getTime()) / 1000),
+  );
+  if (diffSeconds < 60)
+    return t("dsm.audit.relativeSeconds", { count: diffSeconds });
   const diffMinutes = Math.round(diffSeconds / 60);
-  if (diffMinutes < 60) return t("dsm.audit.relativeMinutes", { count: diffMinutes });
+  if (diffMinutes < 60)
+    return t("dsm.audit.relativeMinutes", { count: diffMinutes });
   const diffHours = Math.round(diffMinutes / 60);
   if (diffHours < 24) return t("dsm.audit.relativeHours", { count: diffHours });
   const diffDays = Math.round(diffHours / 24);
@@ -126,7 +171,10 @@ function stateLabel(t, state) {
 
 function anchorStatusLabel(t, status) {
   const key = normalizeKey(status || "not_requested");
-  return t(`dsm.audit.anchorStatuses.${key}`, humanize(status || "not_requested"));
+  return t(
+    `dsm.audit.anchorStatuses.${key}`,
+    humanize(status || "not_requested"),
+  );
 }
 
 function anchorStatusVariant(status) {
@@ -163,23 +211,47 @@ function stageMatchesEvent(stage, event) {
   const source = normalizeKey(eventSource(event));
 
   if (stage.actions.includes(action)) return true;
-  if (stage.states.includes(toState) || stage.states.includes(fromState)) return true;
+  if (stage.states.includes(toState) || stage.states.includes(fromState))
+    return true;
 
-  return (stage.fuzzy || []).some((token) =>
-    action.includes(token) ||
-    toState.includes(token) ||
-    fromState.includes(token) ||
-    machine.includes(token) ||
-    entityKind.includes(token) ||
-    source.includes(token)
+  return (stage.fuzzy || []).some(
+    (token) =>
+      action.includes(token) ||
+      toState.includes(token) ||
+      fromState.includes(token) ||
+      machine.includes(token) ||
+      entityKind.includes(token) ||
+      source.includes(token),
   );
 }
 
 function latestEventForStage(stage, events) {
-  return [...events].reverse().find((event) => stageMatchesEvent(stage, event)) || null;
+  return (
+    [...events].reverse().find((event) => stageMatchesEvent(stage, event)) ||
+    null
+  );
 }
 
-function deriveCurrentStageIndex(stages) {
+function journeyHasRejected(topic, stages) {
+  const topicStatus = normalizeTopicStatus(topic?.status);
+
+  return (
+    topicStatus === "rejected" ||
+    topicStatus === "topic_rejected" ||
+    stages.some(
+      (stage) =>
+        normalizeKey(stage.event?.action) === "reject_topic" ||
+        normalizeKey(stage.event?.toState) === "topic_rejected",
+    )
+  );
+}
+
+function deriveCurrentStageIndex(stages, topic) {
+  if (journeyHasRejected(topic, stages)) {
+    const reviewIndex = stages.findIndex((stage) => stage.key === "review");
+    return reviewIndex >= 0 ? reviewIndex : 0;
+  }
+
   const lastCompleted = stages.reduce(
     (latest, stage, index) => (stage.event ? index : latest),
     -1,
@@ -191,18 +263,15 @@ function deriveCurrentStageIndex(stages) {
 }
 
 function deriveJourneyStatus(t, topic, stages) {
-  const topicStatus = normalizeKey(topic?.status);
-  const hasRejected = stages.some(
-    (stage) =>
-      normalizeKey(stage.event?.action) === "reject_topic" ||
-      normalizeKey(stage.event?.toState) === "topic_rejected" ||
-      topicStatus === "rejected" ||
-      topicStatus === "topic_rejected",
-  );
+  const topicStatus = normalizeTopicStatus(topic?.status);
 
-  if (hasRejected) return t("dsm.audit.journeyStatus.rejected");
+  if (journeyHasRejected(topic, stages))
+    return t("dsm.audit.journeyStatus.rejected");
 
-  if (topicStatus.includes("active") || stages.some((stage) => stage.key === "activation" && stage.event)) {
+  if (
+    topicStatus.includes("active") ||
+    stages.some((stage) => stage.key === "activation" && stage.event)
+  ) {
     return t("dsm.audit.journeyStatus.active");
   }
 
@@ -236,7 +305,9 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
         isCompleted ? "is-completed" : "",
         isCurrent ? "is-current" : "",
         isLocked ? "is-locked" : "",
-      ].filter(Boolean).join(" ")}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <div className="TopicJourney-connectorNode">
         {isCompleted ? "✓" : isLocked ? "🔒" : "•"}
@@ -258,7 +329,13 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
             </div>
 
             <Badge
-              bg={isCompleted ? anchorStatusVariant(event?.anchorStatus) : isLocked ? "secondary" : "info"}
+              bg={
+                isCompleted
+                  ? anchorStatusVariant(event?.anchorStatus)
+                  : isLocked
+                    ? "secondary"
+                    : "info"
+              }
               className="TopicJourney-badge"
             >
               {isCompleted
@@ -279,8 +356,14 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
 
               <div className="TopicJourney-meta">
                 <span>{actionLabel(t, event.action)}</span>
-                {relativeEventDate(event, t) && <span>{relativeEventDate(event, t)}</span>}
-                {event.actorUserId && <span>{t("dsm.audit.actorUser", { userId: event.actorUserId })}</span>}
+                {relativeEventDate(event, t) && (
+                  <span>{relativeEventDate(event, t)}</span>
+                )}
+                {event.actorUserId && (
+                  <span>
+                    {t("dsm.audit.actorUser", { userId: event.actorUserId })}
+                  </span>
+                )}
               </div>
 
               <div className="TopicJourney-proof">
@@ -289,8 +372,16 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
                     {t("dsm.audit.payloadHash")}: {shortHash(hash)}
                   </span>
                 )}
-                {source && <span>{t("dsm.audit.source")}: {humanize(source)}</span>}
-                {event.anchorChain && <span>{t("dsm.audit.chain")}: {humanize(event.anchorChain)}</span>}
+                {source && (
+                  <span>
+                    {t("dsm.audit.source")}: {humanize(source)}
+                  </span>
+                )}
+                {event.anchorChain && (
+                  <span>
+                    {t("dsm.audit.chain")}: {humanize(event.anchorChain)}
+                  </span>
+                )}
                 {event.anchorTxHash && (
                   <span title={event.anchorTxHash}>
                     {t("dsm.audit.txHash")}:{" "}
@@ -303,7 +394,9 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
                     )}
                   </span>
                 )}
-                {eventDate(event, locale) && <span>{eventDate(event, locale)}</span>}
+                {eventDate(event, locale) && (
+                  <span>{eventDate(event, locale)}</span>
+                )}
               </div>
             </>
           ) : (
@@ -319,25 +412,28 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
   );
 }
 
-export default function TopicLifecycleAuditTrail({ user, topic, topicId, limit = 50 }) {
+export default function TopicLifecycleAuditTrail({
+  user,
+  topic,
+  topicId,
+  limit = 50,
+}) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language || navigator.language || "en-US";
   const isAuthenticated = Boolean(user?.access_token);
 
-  const {
-    events,
-    loading,
-    error,
-    canLoad,
-    refresh,
-  } = useTopicLifecycleEvents(user, topicId, {
-    limit,
-    enabled: isAuthenticated,
-  });
+  const { events, loading, error, canLoad, refresh } = useTopicLifecycleEvents(
+    user,
+    topicId,
+    {
+      limit,
+      enabled: isAuthenticated,
+    },
+  );
 
   useAutoRefresh({
     enabled: canLoad,
-    refresh,
+    refresh: () => refresh({ silent: true }),
     intervalMs: 45000,
     maxIntervalMs: 300000,
     refreshWhenHidden: false,
@@ -349,7 +445,7 @@ export default function TopicLifecycleAuditTrail({ user, topic, topicId, limit =
     ...stage,
     event: latestEventForStage(stage, events),
   }));
-  const currentStageIndex = deriveCurrentStageIndex(stages);
+  const currentStageIndex = deriveCurrentStageIndex(stages, topic);
   const journeyStatus = deriveJourneyStatus(t, topic, stages);
 
   return (

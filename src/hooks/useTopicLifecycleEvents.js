@@ -29,7 +29,7 @@ export function useTopicLifecycleEvents(user, topicId, {
     authRequestRef.current = authRequest;
   }, [authRequest]);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async ({ silent = false } = {}) => {
     if (!canLoad) {
       setEvents([]);
       setPayload(null);
@@ -37,8 +37,10 @@ export function useTopicLifecycleEvents(user, topicId, {
       return null;
     }
 
-    setLoading(true);
-    setError("");
+    if (!silent) {
+      setLoading(true);
+      setError("");
+    }
 
     try {
       const nextPayload = await fetchTopicLifecycleEvents(
@@ -51,10 +53,14 @@ export function useTopicLifecycleEvents(user, topicId, {
       setEvents(nextEvents);
       return nextPayload;
     } catch (err) {
-      setError(getApiErrorMessage(err, "Unable to load topic lifecycle events."));
+      if (!silent) {
+        setError(getApiErrorMessage(err, "Unable to load topic lifecycle events."));
+      }
       throw err;
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, [canLoad, limit, topicId]);
 
@@ -68,7 +74,7 @@ export function useTopicLifecycleEvents(user, topicId, {
     const handleLifecycleUpdated = (event) => {
       const changedTopicId = event?.detail?.topicId;
       if (changedTopicId && String(changedTopicId) !== String(topicId)) return;
-      load().catch(() => {});
+      load({ silent: true }).catch(() => {});
     };
 
     window.addEventListener("dfct:topic-lifecycle-updated", handleLifecycleUpdated);
