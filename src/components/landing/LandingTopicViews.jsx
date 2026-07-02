@@ -807,6 +807,82 @@ function TopicAudio({ media, title }) {
   );
 }
 
+function TopicVisualBokeh({ media, backdropUrl, compact = false, active = true }) {
+  const imageBackdrop = normalizeUrl(backdropUrl);
+  const videoBackdrop =
+    media?.type === "video" && !compact ? normalizeUrl(media?.url) : "";
+  const poster =
+    media?.poster && !isPlaceholderUrl(media.poster) ? media.poster : undefined;
+
+  if (imageBackdrop) {
+    return (
+      <div
+        className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-image"
+        aria-hidden="true"
+      >
+        <img
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-fill"
+          src={imageBackdrop}
+          alt=""
+          loading={compact ? "lazy" : "eager"}
+          decoding="async"
+        />
+        <img
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-contain"
+          src={imageBackdrop}
+          alt=""
+          loading={compact ? "lazy" : "eager"}
+          decoding="async"
+        />
+      </div>
+    );
+  }
+
+  if (videoBackdrop) {
+    return (
+      <div
+        className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-video"
+        aria-hidden="true"
+      >
+        <video
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-fill"
+          src={videoBackdrop}
+          poster={poster}
+          preload={active ? "metadata" : "none"}
+          muted
+          loop
+          playsInline
+          autoPlay={active}
+          controls={false}
+          tabIndex={-1}
+          onLoadedMetadata={(event) => {
+            const video = event.currentTarget;
+
+            try {
+              if (
+                Number.isFinite(video.duration) &&
+                video.duration > 0 &&
+                video.currentTime < 0.05
+              ) {
+                video.currentTime = Math.min(0.16, video.duration / 4);
+              }
+            } catch {
+              // Some remote videos reject early seeking.
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-fallback"
+      aria-hidden="true"
+    />
+  );
+}
+
 function selectMediaForCard(mediaItems, variant, mediaIndex) {
   if (!mediaItems.length) return null;
 
@@ -838,13 +914,14 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
           ? displayMedia.backdropUrl
           : "";
 
-  const style = backdropUrl
-    ? { "--landing-topic-visual": `url("${backdropUrl.replace(/"/g, "%22")}")` }
-    : undefined;
-
   return (
-    <div className="Landing-topic-visual-frame" style={style}>
-      {backdropUrl && <div className="Landing-topic-visual-bokeh" />}
+    <div className="Landing-topic-visual-frame">
+      <TopicVisualBokeh
+        media={displayMedia}
+        backdropUrl={backdropUrl}
+        compact={compact}
+        active={active}
+      />
       <div className="Landing-topic-visual-inner">
         {displayMedia?.type === "audio" ? (
           <TopicAudio media={displayMedia} title={title} />

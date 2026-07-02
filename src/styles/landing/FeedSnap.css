@@ -630,7 +630,7 @@ html[data-theme] .Landing-compact-view {
     var(--bs-tertiary-bg)
   ) !important;
   color: var(--bs-body-color) !important;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12) !important;
+  /* box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12) !important; */
 }
 
 .Landing-topic-card-link,
@@ -1567,7 +1567,6 @@ html[data-theme="terminal"] .Landing-topic-visual-frame {
   }
 }
 
-
 /* ---- d-FCT topic timestamp + dynamic swipe polish ---- */
 .Landing-topic-card {
   position: relative !important;
@@ -1641,8 +1640,16 @@ html[data-theme="terminal"] .Landing-topic-visual-frame {
 html[data-theme="graphite"] .Landing-topic-timestamp,
 html[data-theme="midnight"] .Landing-topic-timestamp,
 html[data-theme="terminal"] .Landing-topic-timestamp {
-  background: color-mix(in srgb, var(--dfct-feed-panel, var(--bs-body-bg)) 82%, transparent);
-  color: color-mix(in srgb, var(--dfct-feed-text, var(--bs-body-color)) 78%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--dfct-feed-panel, var(--bs-body-bg)) 82%,
+    transparent
+  );
+  color: color-mix(
+    in srgb,
+    var(--dfct-feed-text, var(--bs-body-color)) 78%,
+    transparent
+  );
   border-color: var(--dfct-feed-border, var(--bs-border-color-translucent));
 }
 
@@ -1680,7 +1687,6 @@ html[data-theme="terminal"] .Landing-topic-timestamp {
     height: 0.62rem;
   }
 }
-
 
 /* ---- d-FCT final mobile/sidebar regression repair ---- */
 
@@ -1804,7 +1810,6 @@ button.Navbar-toggle-btn {
   }
 }
 
-
 /* ---- d-FCT sidebar toggle/passive wheel cleanup ---- */
 
 /* Restore desktop side-menu trigger shape without forcing it onto mobile. */
@@ -1872,7 +1877,6 @@ button.Navbar-toggle-btn {
 .Landing-view-controls {
   z-index: 40 !important;
 }
-
 
 /* ---- d-FCT stable sidebar toggle final override ---- */
 
@@ -1991,7 +1995,11 @@ button.Navbar-toggle-btn {
 
     border-radius: 0.75rem !important;
     border: 1px solid var(--bs-border-color-translucent) !important;
-    background: color-mix(in srgb, var(--bs-body-bg) 86%, transparent) !important;
+    background: color-mix(
+      in srgb,
+      var(--bs-body-bg) 86%,
+      transparent
+    ) !important;
     color: var(--bs-body-color) !important;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12) !important;
     backdrop-filter: blur(12px) saturate(1.05) !important;
@@ -2073,15 +2081,21 @@ button.Navbar-toggle-btn {
   z-index: 40 !important;
 }
 
-
-
 /* ---- d-FCT final timestamp/mobile glass polish ---- */
 
 /* Make the media-only glass/bokeh visible again, without affecting page background. */
 .Landing-topic-visual-frame {
   background:
-    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--bs-body-color) 10%, transparent), transparent 34%),
-    radial-gradient(circle at 82% 76%, color-mix(in srgb, var(--bs-body-color) 8%, transparent), transparent 36%),
+    radial-gradient(
+      circle at 18% 14%,
+      color-mix(in srgb, var(--bs-body-color) 10%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      color-mix(in srgb, var(--bs-body-color) 8%, transparent),
+      transparent 36%
+    ),
     color-mix(in srgb, var(--bs-tertiary-bg) 74%, var(--bs-body-bg)) !important;
 }
 
@@ -2105,7 +2119,11 @@ button.Navbar-toggle-btn {
 
 .Landing-topic-visual-bokeh::after {
   background:
-    radial-gradient(circle at center, transparent 0%, color-mix(in srgb, var(--bs-body-bg) 18%, transparent) 58%),
+    radial-gradient(
+      circle at center,
+      transparent 0%,
+      color-mix(in srgb, var(--bs-body-bg) 18%, transparent) 58%
+    ),
     color-mix(in srgb, var(--bs-body-bg) 28%, transparent) !important;
 }
 
@@ -2118,8 +2136,16 @@ html[data-theme="graphite"] .Landing-topic-visual-frame,
 html[data-theme="midnight"] .Landing-topic-visual-frame,
 html[data-theme="terminal"] .Landing-topic-visual-frame {
   background:
-    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--bs-body-color) 12%, transparent), transparent 34%),
-    radial-gradient(circle at 82% 76%, color-mix(in srgb, var(--bs-body-color) 9%, transparent), transparent 36%),
+    radial-gradient(
+      circle at 18% 14%,
+      color-mix(in srgb, var(--bs-body-color) 12%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      color-mix(in srgb, var(--bs-body-color) 9%, transparent),
+      transparent 36%
+    ),
     var(--dfct-feed-panel-soft, var(--bs-tertiary-bg)) !important;
 }
 
@@ -2159,12 +2185,13 @@ html[data-theme="terminal"] .Landing-topic-visual-bokeh {
   }
 }
 
-
 /* ---- d-FCT swipe timestamp media-frame alignment ---- */
 
 /* In swipe/spotlight mode, timestamp lives inside the visual frame.
    Align it with the video/audio badge, on the opposite side. */
-.Landing-topic-card-spotlight .Landing-topic-visual-inner > .Landing-topic-timestamp {
+.Landing-topic-card-spotlight
+  .Landing-topic-visual-inner
+  > .Landing-topic-timestamp {
   left: 0.55rem !important;
   right: auto !important;
   top: auto !important;
@@ -2175,7 +2202,9 @@ html[data-theme="terminal"] .Landing-topic-visual-bokeh {
 
 /* Keep the same media-frame alignment on mobile. */
 @media (max-width: 768px) {
-  .Landing-topic-card-spotlight .Landing-topic-visual-inner > .Landing-topic-timestamp {
+  .Landing-topic-card-spotlight
+    .Landing-topic-visual-inner
+    > .Landing-topic-timestamp {
     left: 0.5rem !important;
     right: auto !important;
     top: auto !important;
@@ -2193,7 +2222,6 @@ html[data-theme="terminal"] .Landing-topic-visual-bokeh {
     max-width: 42% !important;
   }
 }
-
 
 /* ---- d-FCT vertical feed final theme repair ---- */
 
@@ -2289,7 +2317,11 @@ html[data-theme="paper"] body .Landing-snap-feed,
 html[data-theme="paper"] body .Landing-snap-slide,
 html[data-theme="paper"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 16% 12%, rgba(226, 232, 240, 0.72), transparent 34%),
+    radial-gradient(
+      circle at 16% 12%,
+      rgba(226, 232, 240, 0.72),
+      transparent 34%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2301,7 +2333,11 @@ html[data-theme="dark"] body .Landing-snap-feed,
 html[data-theme="dark"] body .Landing-snap-slide,
 html[data-theme="dark"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 99, 235, 0.14), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(37, 99, 235, 0.14),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2312,7 +2348,11 @@ html[data-theme="graphite"] body .Landing-snap-feed,
 html[data-theme="graphite"] body .Landing-snap-slide,
 html[data-theme="graphite"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(71, 85, 105, 0.22), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(71, 85, 105, 0.22),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2323,7 +2363,11 @@ html[data-theme="midnight"] body .Landing-snap-feed,
 html[data-theme="midnight"] body .Landing-snap-slide,
 html[data-theme="midnight"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 99, 235, 0.22), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(37, 99, 235, 0.22),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2334,7 +2378,11 @@ html[data-theme="terminal"] body .Landing-snap-feed,
 html[data-theme="terminal"] body .Landing-snap-slide,
 html[data-theme="terminal"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(34, 197, 94, 0.16), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(34, 197, 94, 0.16),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2365,8 +2413,16 @@ html[data-theme] body .Landing-topic-card {
 
 html[data-theme] body .Landing-topic-visual-frame {
   background:
-    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--dfct-feed-text-final) 10%, transparent), transparent 34%),
-    radial-gradient(circle at 82% 76%, color-mix(in srgb, var(--dfct-feed-text-final) 8%, transparent), transparent 36%),
+    radial-gradient(
+      circle at 18% 14%,
+      color-mix(in srgb, var(--dfct-feed-text-final) 10%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      color-mix(in srgb, var(--dfct-feed-text-final) 8%, transparent),
+      transparent 36%
+    ),
     var(--dfct-feed-surface-soft-final) !important;
   border-color: var(--dfct-feed-border-final) !important;
 }
@@ -2399,19 +2455,28 @@ html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] {
 
 html[data-theme] body .Landing-view-control-btn.is-active svg,
 html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] svg,
-html[data-theme] body .Landing-view-control-btn.is-active .Landing-view-control-icon,
-html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] .Landing-view-control-icon {
+html[data-theme]
+  body
+  .Landing-view-control-btn.is-active
+  .Landing-view-control-icon,
+html[data-theme]
+  body
+  .Landing-view-control-btn[aria-pressed="true"]
+  .Landing-view-control-icon {
   color: var(--dfct-feed-control-active-text-final) !important;
   fill: var(--dfct-feed-control-active-text-final) !important;
 }
 
 /* Timestamp/readability. */
 html[data-theme] body .Landing-topic-timestamp {
-  background: color-mix(in srgb, var(--dfct-feed-surface-final) 86%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--dfct-feed-surface-final) 86%,
+    transparent
+  ) !important;
   color: var(--dfct-feed-muted-final) !important;
   border-color: var(--dfct-feed-border-final) !important;
 }
-
 
 /* ---- d-FCT vertical feed theme hardening final ---- */
 
@@ -2516,7 +2581,11 @@ html[data-theme="paper"] body .Landing-snap-feed,
 html[data-theme="paper"] body .Landing-snap-slide,
 html[data-theme="paper"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 16% 12%, rgba(226, 232, 240, 0.72), transparent 34%),
+    radial-gradient(
+      circle at 16% 12%,
+      rgba(226, 232, 240, 0.72),
+      transparent 34%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2527,7 +2596,11 @@ html[data-theme="dark"] body .Landing-snap-feed,
 html[data-theme="dark"] body .Landing-snap-slide,
 html[data-theme="dark"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 99, 235, 0.14), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(37, 99, 235, 0.14),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2538,7 +2611,11 @@ html[data-theme="graphite"] body .Landing-snap-feed,
 html[data-theme="graphite"] body .Landing-snap-slide,
 html[data-theme="graphite"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(71, 85, 105, 0.22), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(71, 85, 105, 0.22),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2549,7 +2626,11 @@ html[data-theme="midnight"] body .Landing-snap-feed,
 html[data-theme="midnight"] body .Landing-snap-slide,
 html[data-theme="midnight"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 99, 235, 0.22), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(37, 99, 235, 0.22),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2560,7 +2641,11 @@ html[data-theme="terminal"] body .Landing-snap-feed,
 html[data-theme="terminal"] body .Landing-snap-slide,
 html[data-theme="terminal"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(34, 197, 94, 0.16), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(34, 197, 94, 0.16),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-final) !important;
 }
 
@@ -2600,8 +2685,16 @@ html[data-theme] body .Landing-feed-meta {
 
 html[data-theme] body .Landing-topic-visual-frame {
   background:
-    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--dfct-feed-text-final) 10%, transparent), transparent 34%),
-    radial-gradient(circle at 82% 76%, color-mix(in srgb, var(--dfct-feed-text-final) 8%, transparent), transparent 36%),
+    radial-gradient(
+      circle at 18% 14%,
+      color-mix(in srgb, var(--dfct-feed-text-final) 10%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      color-mix(in srgb, var(--dfct-feed-text-final) 8%, transparent),
+      transparent 36%
+    ),
     var(--dfct-feed-panel-soft-final) !important;
   border-color: var(--dfct-feed-border-final) !important;
 }
@@ -2643,20 +2736,32 @@ html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] {
 html[data-theme] body .Landing-view-control-btn.is-active svg,
 html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] svg,
 html[data-theme] body .Landing-view-control-btn.is-active .svg-inline--fa,
-html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] .svg-inline--fa,
-html[data-theme] body .Landing-view-control-btn.is-active .Landing-view-control-icon,
-html[data-theme] body .Landing-view-control-btn[aria-pressed="true"] .Landing-view-control-icon {
+html[data-theme]
+  body
+  .Landing-view-control-btn[aria-pressed="true"]
+  .svg-inline--fa,
+html[data-theme]
+  body
+  .Landing-view-control-btn.is-active
+  .Landing-view-control-icon,
+html[data-theme]
+  body
+  .Landing-view-control-btn[aria-pressed="true"]
+  .Landing-view-control-icon {
   color: var(--dfct-feed-control-active-text-final) !important;
   fill: var(--dfct-feed-control-active-text-final) !important;
 }
 
 /* Timestamp readability. */
 html[data-theme] body .Landing-topic-timestamp {
-  background: color-mix(in srgb, var(--dfct-feed-panel-final) 88%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--dfct-feed-panel-final) 88%,
+    transparent
+  ) !important;
   color: var(--dfct-feed-muted-final) !important;
   border-color: var(--dfct-feed-border-final) !important;
 }
-
 
 /* ---- d-FCT original dark feed contrast final ---- */
 
@@ -2690,7 +2795,11 @@ html[data-theme="dark"] body .Landing-snap-feed,
 html[data-theme="dark"] body .Landing-snap-slide,
 html[data-theme="dark"] body .Landing-compact-view {
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 99, 235, 0.18), transparent 36%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(37, 99, 235, 0.18),
+      transparent 36%
+    ),
     var(--dfct-feed-bg-dark-final) !important;
   color: var(--dfct-feed-text-dark-final) !important;
 }
@@ -2724,8 +2833,16 @@ html[data-theme="dark"] body .Landing-feed-meta {
 
 html[data-theme="dark"] body .Landing-topic-visual-frame {
   background:
-    radial-gradient(circle at 18% 14%, rgba(237, 245, 255, 0.1), transparent 34%),
-    radial-gradient(circle at 82% 76%, rgba(96, 165, 250, 0.12), transparent 36%),
+    radial-gradient(
+      circle at 18% 14%,
+      rgba(237, 245, 255, 0.1),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      rgba(96, 165, 250, 0.12),
+      transparent 36%
+    ),
     var(--dfct-feed-panel-soft-dark-final) !important;
   border-color: var(--dfct-feed-border-dark-final) !important;
 }
@@ -2769,10 +2886,22 @@ html[data-theme="dark"] body .Landing-view-control-btn[aria-pressed="true"] {
 
 html[data-theme="dark"] body .Landing-view-control-btn.is-active svg,
 html[data-theme="dark"] body .Landing-view-control-btn[aria-pressed="true"] svg,
-html[data-theme="dark"] body .Landing-view-control-btn.is-active .svg-inline--fa,
-html[data-theme="dark"] body .Landing-view-control-btn[aria-pressed="true"] .svg-inline--fa,
-html[data-theme="dark"] body .Landing-view-control-btn.is-active .Landing-view-control-icon,
-html[data-theme="dark"] body .Landing-view-control-btn[aria-pressed="true"] .Landing-view-control-icon {
+html[data-theme="dark"]
+  body
+  .Landing-view-control-btn.is-active
+  .svg-inline--fa,
+html[data-theme="dark"]
+  body
+  .Landing-view-control-btn[aria-pressed="true"]
+  .svg-inline--fa,
+html[data-theme="dark"]
+  body
+  .Landing-view-control-btn.is-active
+  .Landing-view-control-icon,
+html[data-theme="dark"]
+  body
+  .Landing-view-control-btn[aria-pressed="true"]
+  .Landing-view-control-icon {
   color: var(--dfct-feed-control-active-text-dark-final) !important;
   fill: var(--dfct-feed-control-active-text-dark-final) !important;
 }
@@ -2822,15 +2951,17 @@ html[data-theme] body .Landing-snap-slide {
 /* Cards */
 html[data-theme] body .Landing-topic-card,
 html[data-theme] body article.Landing-topic-card {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-surface-glass) 94%, transparent),
-      color-mix(in srgb, var(--theme-surface-2) 84%, transparent)
-    ) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--theme-surface-glass) 94%, transparent),
+    color-mix(in srgb, var(--theme-surface-2) 84%, transparent)
+  ) !important;
   color: var(--theme-text) !important;
   border-color: var(--theme-border) !important;
-  box-shadow: var(--theme-shadow-soft, 0 18px 44px rgba(0, 0, 0, 0.18)) !important;
+  box-shadow: var(
+    --theme-shadow-soft,
+    0 18px 44px rgba(0, 0, 0, 0.18)
+  ) !important;
 }
 
 html[data-theme] body .Landing-topic-card-link,
@@ -2861,7 +2992,11 @@ html[data-theme] body .Landing-topic-visual-frame {
   background:
     radial-gradient(
       circle at 50% 35%,
-      color-mix(in srgb, var(--theme-primary-soft, var(--theme-accent-soft)) 72%, transparent),
+      color-mix(
+        in srgb,
+        var(--theme-primary-soft, var(--theme-accent-soft)) 72%,
+        transparent
+      ),
       transparent 42%
     ),
     linear-gradient(
@@ -2869,7 +3004,11 @@ html[data-theme] body .Landing-topic-visual-frame {
       color-mix(in srgb, var(--theme-surface-2) 90%, transparent),
       color-mix(in srgb, var(--theme-surface-3) 80%, transparent)
     ) !important;
-  border-color: color-mix(in srgb, var(--theme-border) 90%, transparent) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--theme-border) 90%,
+    transparent
+  ) !important;
 }
 
 html[data-theme] body .Landing-topic-visual-frame::after {
@@ -2892,16 +3031,27 @@ html[data-theme] body .Landing-topic-media-placeholder {
 }
 
 html[data-theme] body .Landing-topic-media-loader {
-  background: color-mix(in srgb, var(--theme-surface) 76%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-surface) 76%,
+    transparent
+  ) !important;
   color: var(--theme-text) !important;
   border-color: var(--theme-border) !important;
 }
 
 /* View mode controls */
 html[data-theme] body .Landing-view-control-inner {
-  background: color-mix(in srgb, var(--theme-surface) 88%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-surface) 88%,
+    transparent
+  ) !important;
   border-color: var(--theme-border-strong, var(--theme-border)) !important;
-  box-shadow: var(--theme-shadow-soft, 0 12px 30px rgba(0, 0, 0, 0.18)) !important;
+  box-shadow: var(
+    --theme-shadow-soft,
+    0 12px 30px rgba(0, 0, 0, 0.18)
+  ) !important;
 }
 
 html[data-theme] body .Landing-view-control-btn {
@@ -2920,15 +3070,24 @@ html[data-theme] body .Landing-view-control-icon {
 html[data-theme] body .Landing-view-control-btn:hover,
 html[data-theme] body .Landing-view-control-btn:focus-visible {
   color: var(--theme-text) !important;
-  background: color-mix(in srgb, var(--theme-surface-3) 72%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-surface-3) 72%,
+    transparent
+  ) !important;
   opacity: 1 !important;
 }
 
 html[data-theme] body .Landing-view-control-btn.is-active {
-  background: color-mix(in srgb, var(--theme-accent) 22%, var(--theme-surface-3)) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-accent) 22%,
+    var(--theme-surface-3)
+  ) !important;
   color: var(--theme-text) !important;
   opacity: 1 !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--theme-accent) 70%, transparent) !important;
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--theme-accent) 70%, transparent) !important;
 }
 
 /* Paper needs stronger active contrast because it is the light theme. */
@@ -2942,7 +3101,11 @@ html[data-theme] body .Landing-topic-timestamp,
 html[data-theme] body .Landing-topic-visual-type-badge {
   background: color-mix(in srgb, var(--theme-bg) 78%, transparent) !important;
   color: var(--theme-text-soft) !important;
-  border-color: color-mix(in srgb, var(--theme-border) 72%, transparent) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--theme-border) 72%,
+    transparent
+  ) !important;
 }
 
 /* Avoid unreadable dimming from older landing overrides. */
@@ -2953,7 +3116,6 @@ html[data-theme] body .Landing-view-controls * {
   filter: none;
   mix-blend-mode: normal;
 }
-
 
 /* ---- d-FCT landing compact view transparent final ---- */
 
@@ -2971,23 +3133,32 @@ html[data-theme] body .Landing-compact-list {
 
 /* Keep only the cards as surfaces. */
 html[data-theme] body .Landing-compact-view .Landing-topic-card {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-surface, var(--bs-body-bg)) 92%, transparent),
-      color-mix(in srgb, var(--theme-surface-2, var(--bs-body-bg)) 86%, transparent)
-    ) !important;
-  border-color: var(--theme-border, var(--bs-border-color-translucent)) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(
+      in srgb,
+      var(--theme-surface, var(--bs-body-bg)) 92%,
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--theme-surface-2, var(--bs-body-bg)) 86%,
+      transparent
+    )
+  ) !important;
+  border-color: var(
+    --theme-border,
+    var(--bs-border-color-translucent)
+  ) !important;
 }
 
 /* Graphite cards need a little lift, but not a separate container panel. */
 html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(24, 27, 34, 0.96),
-      rgba(18, 20, 26, 0.96)
-    ) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(24, 27, 34, 0.96),
+    rgba(18, 20, 26, 0.96)
+  ) !important;
   border-color: rgba(242, 244, 248, 0.14) !important;
 }
 
@@ -3022,9 +3193,7 @@ html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
   align-content: center !important;
   justify-content: center !important;
 
-  padding:
-    clamp(4.35rem, 7vh, 5.4rem)
-    clamp(1rem, 4vw, 3rem)
+  padding: clamp(4.35rem, 7vh, 5.4rem) clamp(1rem, 4vw, 3rem)
     clamp(1rem, 3vh, 2.25rem) !important;
 }
 
@@ -3072,7 +3241,8 @@ html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
 .Landing-body-feed
   .Landing-snap-slide
   .Landing-topic-card-spotlight
-  .Landing-topic-copy h3 {
+  .Landing-topic-copy
+  h3 {
   display: -webkit-box !important;
   overflow: hidden !important;
   -webkit-box-orient: vertical !important;
@@ -3082,16 +3252,14 @@ html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
 .Landing-body-feed
   .Landing-snap-slide
   .Landing-topic-card-spotlight
-  .Landing-topic-copy p {
+  .Landing-topic-copy
+  p {
   -webkit-line-clamp: 3 !important;
 }
 
 @media (max-width: 768px) {
   .Landing-body-feed .Landing-snap-slide {
-    padding:
-      0.45rem
-      0.72rem
-      0.9rem !important;
+    padding: 0.45rem 0.72rem 0.9rem !important;
   }
 
   .Landing-body-feed .Landing-snap-slide .Landing-topic-card-spotlight {
@@ -3103,8 +3271,160 @@ html[data-theme="graphite"] body .Landing-compact-view .Landing-topic-card {
   .Landing-body-feed
     .Landing-snap-slide
     .Landing-topic-card-spotlight
-    .Landing-topic-copy p {
+    .Landing-topic-copy
+    p {
     -webkit-line-clamp: 2 !important;
   }
 }
 
+/* Landing topic ambient bokeh polish v2 */
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-frame {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      rgba(102, 232, 244, 0.14),
+      transparent 34%
+    ),
+    linear-gradient(135deg, rgba(14, 20, 29, 0.96), rgba(42, 53, 68, 0.86)) !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-bokeh {
+  position: absolute !important;
+  inset: -2.25rem !important;
+  z-index: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  mix-blend-mode: normal !important;
+  background:
+    radial-gradient(
+      circle at 20% 12%,
+      rgba(97, 229, 241, 0.22),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(177, 125, 255, 0.16),
+      transparent 38%
+    ),
+    linear-gradient(135deg, rgba(12, 18, 26, 0.98), rgba(44, 55, 70, 0.84)) !important;
+  contain: paint !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-bokeh::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgba(255, 255, 255, 0.16),
+      transparent 26%
+    ),
+    linear-gradient(180deg, rgba(8, 12, 18, 0.1), rgba(8, 12, 18, 0.48)) !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-bokeh-media {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-position: center center !important;
+  image-rendering: auto !important;
+  backface-visibility: hidden !important;
+  transform: scale(1.04) translateZ(0) !important;
+  will-change: transform, filter !important;
+}
+
+html[data-theme]
+  body
+  .Landing-topic-card
+  .Landing-topic-visual-bokeh-media-fill {
+  object-fit: cover !important;
+  filter: blur(54px) saturate(1.28) contrast(1.03) brightness(0.82) !important;
+  opacity: 0.62 !important;
+}
+
+html[data-theme]
+  body
+  .Landing-topic-card
+  .Landing-topic-visual-bokeh-media-contain {
+  object-fit: contain !important;
+  filter: blur(34px) saturate(1.18) contrast(1.02) brightness(0.92) !important;
+  opacity: 0.42 !important;
+  transform: scale(1.18) translateZ(0) !important;
+}
+
+html[data-theme]
+  body
+  .Landing-topic-card
+  .Landing-topic-visual-bokeh-video
+  .Landing-topic-visual-bokeh-media-fill {
+  filter: blur(46px) saturate(1.22) contrast(1.04) brightness(0.78) !important;
+  opacity: 0.72 !important;
+  transform: scale(1.08) translateZ(0) !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-bokeh-fallback {
+  inset: 0 !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(78, 219, 232, 0.2),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 74% 78%,
+      rgba(129, 105, 255, 0.16),
+      transparent 40%
+    ),
+    linear-gradient(135deg, rgba(17, 24, 34, 0.96), rgba(48, 59, 72, 0.82)) !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-inner,
+html[data-theme] body .Landing-topic-card .Landing-topic-video-frame,
+html[data-theme] body .Landing-topic-card .Landing-topic-media-placeholder {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+html[data-theme] body .Landing-topic-card .Landing-topic-visual-media {
+  position: relative !important;
+  z-index: 2 !important;
+  /* box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34) !important; */
+}
+
+html[data-theme]
+  body
+  .Landing-topic-card-spotlight
+  .Landing-topic-visual-bokeh {
+  inset: -3rem !important;
+}
+
+@media (max-width: 720px) {
+  html[data-theme] body .Landing-topic-card .Landing-topic-visual-bokeh {
+    inset: -1.5rem !important;
+  }
+
+  html[data-theme]
+    body
+    .Landing-topic-card
+    .Landing-topic-visual-bokeh-media-fill {
+    filter: blur(42px) saturate(1.2) brightness(0.82) !important;
+  }
+
+  html[data-theme]
+    body
+    .Landing-topic-card
+    .Landing-topic-visual-bokeh-media-contain {
+    filter: blur(28px) saturate(1.12) brightness(0.9) !important;
+  }
+}
