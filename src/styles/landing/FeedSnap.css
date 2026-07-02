@@ -3551,3 +3551,1506 @@ html[data-theme]
     opacity: 1 !important;
   }
 }
+
+
+/* ---- d-FCT landing placeholder centering only ---- */
+/*
+  Placeholder overlay only.
+  Do not alter .Landing-topic-visual-inner, .Landing-topic-video-frame,
+  or real .Landing-topic-visual-media sizing/fit.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder,
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-loading,
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 4 !important;
+  display: flex !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder-img {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  margin: auto !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* Restore actual visual media to contained natural fit. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-media:not(.Landing-topic-visual-bokeh-media),
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-video {
+  width: auto !important;
+  height: auto !important;
+  max-width: calc(100% - 0.15rem) !important;
+  max-height: calc(100% - 0.15rem) !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* Placeholder sizes by mode. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-media-placeholder-img {
+  max-width: min(72%, 24rem) !important;
+  max-height: min(72%, 24rem) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-media-placeholder-img {
+  max-width: min(62%, 7.2rem) !important;
+  max-height: 66% !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-media-placeholder-img {
+  max-width: min(62%, 5.9rem) !important;
+  max-height: 66% !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-loading
+  .Landing-topic-media-placeholder-img {
+  opacity: 0.58 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  opacity: 0.86 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-media-placeholder-img {
+    max-width: min(74%, 18rem) !important;
+    max-height: 64% !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-media-placeholder-img {
+    max-width: min(58%, 5.8rem) !important;
+    max-height: 62% !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-media-placeholder-img {
+    max-width: min(58%, 4.8rem) !important;
+    max-height: 62% !important;
+  }
+}
+
+
+/* ---- d-FCT audio/no-visual placeholder final ---- */
+/*
+  Audio-only topics should not depend on /placeholder.png rendering.
+  This creates a stable centered visual placeholder only for audio cards,
+  without changing real image/video object-fit or dimensions.
+*/
+html[data-theme] body
+  .Landing-topic-audio-frame {
+  position: relative !important;
+  z-index: 2 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  place-items: center !important;
+  overflow: hidden !important;
+}
+
+html[data-theme] body
+  .Landing-topic-audio-frame
+  .Landing-topic-media-placeholder {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  place-items: center !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+/* Hide the broken /placeholder.png image only inside audio/no-visual cards. */
+html[data-theme] body
+  .Landing-topic-audio-frame
+  .Landing-topic-media-placeholder-img {
+  display: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-audio-mark {
+  position: relative !important;
+  z-index: 2 !important;
+  display: grid !important;
+  width: clamp(7.5rem, 18vw, 14rem) !important;
+  aspect-ratio: 1 !important;
+  place-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 78%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(
+      circle at 36% 26%,
+      color-mix(in srgb, var(--theme-accent, currentColor) 24%, transparent),
+      transparent 42%
+    ),
+    color-mix(in srgb, var(--theme-surface, var(--bs-body-bg)) 72%, transparent) !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 18px 46px rgba(0, 0, 0, 0.22) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+  backdrop-filter: blur(14px) saturate(1.08) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-audio-mark-icon {
+  display: block !important;
+  margin-top: -0.15em !important;
+  font-size: clamp(2.4rem, 6vw, 5rem) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  opacity: 0.9 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-audio-mark-label {
+  position: absolute !important;
+  bottom: 18% !important;
+  font-size: clamp(0.68rem, 1.3vw, 0.88rem) !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1 !important;
+  opacity: 0.72 !important;
+  text-transform: uppercase !important;
+}
+
+.Landing-topic-card-grid
+  .Landing-topic-audio-mark {
+  width: clamp(4.8rem, 8vw, 6.4rem) !important;
+}
+
+.Landing-topic-card-list
+  .Landing-topic-audio-mark {
+  width: clamp(4rem, 7vw, 5.3rem) !important;
+}
+
+.Landing-topic-card-grid
+  .Landing-topic-audio-mark-icon,
+.Landing-topic-card-list
+  .Landing-topic-audio-mark-icon {
+  font-size: clamp(1.75rem, 3vw, 2.55rem) !important;
+}
+
+.Landing-topic-card-grid
+  .Landing-topic-audio-mark-label,
+.Landing-topic-card-list
+  .Landing-topic-audio-mark-label {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-audio-mark {
+    width: clamp(8rem, 42vw, 13rem) !important;
+  }
+
+  .Landing-topic-card-grid
+    .Landing-topic-audio-mark {
+    width: clamp(4.2rem, 22vw, 5.6rem) !important;
+  }
+
+  .Landing-topic-card-list
+    .Landing-topic-audio-mark {
+    width: clamp(3.6rem, 18vw, 4.7rem) !important;
+  }
+}
+
+
+/* ---- d-FCT semantic no-visual/audio placeholder final ---- */
+/*
+  Audio/no-visual topics should render a CSS visual mark instead of depending
+  on /placeholder.png. This block only targets unavailable placeholder UI,
+  not real image/video media sizing or object-fit.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-frame.is-no-visual {
+  min-height: clamp(9rem, 18vw, 14rem) !important;
+}
+
+html[data-theme] body
+  .Landing-body-feed
+  .Landing-snap-slide
+  .Landing-topic-card-spotlight
+  .Landing-topic-visual-frame.is-no-visual {
+  min-height: clamp(18rem, 50dvh, 34rem) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 6 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: clamp(0.75rem, 2vw, 1.4rem) !important;
+  place-items: center !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-empty-visual {
+  display: grid !important;
+  width: clamp(7rem, 17vw, 13.5rem) !important;
+  aspect-ratio: 1 !important;
+  place-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 84%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(
+      circle at 34% 24%,
+      color-mix(in srgb, var(--theme-accent, currentColor) 24%, transparent),
+      transparent 44%
+    ),
+    color-mix(in srgb, var(--theme-surface, var(--bs-body-bg)) 76%, transparent) !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 18px 46px rgba(0, 0, 0, 0.22) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+  backdrop-filter: blur(14px) saturate(1.08) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-empty-visual-icon {
+  display: block !important;
+  margin-top: -0.16em !important;
+  font-size: clamp(2.4rem, 6vw, 5rem) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  opacity: 0.92 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-empty-visual-label {
+  position: absolute !important;
+  bottom: 18% !important;
+  font-size: clamp(0.68rem, 1.3vw, 0.88rem) !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1 !important;
+  opacity: 0.72 !important;
+  text-transform: uppercase !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-empty-visual {
+  width: clamp(4.7rem, 8vw, 6.2rem) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-empty-visual {
+  width: clamp(3.9rem, 7vw, 5.2rem) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-empty-visual-icon,
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-empty-visual-icon {
+  font-size: clamp(1.7rem, 3vw, 2.55rem) !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-empty-visual-label,
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-empty-visual-label {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-body-feed
+    .Landing-snap-slide
+    .Landing-topic-card-spotlight
+    .Landing-topic-visual-frame.is-no-visual {
+    min-height: clamp(14rem, 44dvh, 24rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-empty-visual {
+    width: clamp(8rem, 42vw, 13rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-empty-visual {
+    width: clamp(4.2rem, 22vw, 5.6rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-empty-visual {
+    width: clamp(3.6rem, 18vw, 4.7rem) !important;
+  }
+}
+
+
+/* ---- d-FCT real placeholder image restore final ---- */
+/*
+  Restore the actual /placeholder.png image for unavailable/audio/no-visual
+  topic cards. This does not change real image/video sizing or object-fit.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-empty-visual {
+  display: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 6 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: clamp(0.75rem, 2vw, 1.4rem) !important;
+  place-items: center !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 0.86 !important;
+  width: auto !important;
+  height: auto !important;
+  margin: auto !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* Swipe/spotlight placeholder size. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  max-width: min(72%, 24rem) !important;
+  max-height: min(72%, 24rem) !important;
+}
+
+/* Grid placeholder size. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  max-width: min(62%, 7.2rem) !important;
+  max-height: 66% !important;
+}
+
+/* List placeholder size. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  max-width: min(62%, 5.9rem) !important;
+  max-height: 66% !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-media-placeholder.is-unavailable
+    .Landing-topic-media-placeholder-img {
+    max-width: min(74%, 18rem) !important;
+    max-height: 64% !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-media-placeholder.is-unavailable
+    .Landing-topic-media-placeholder-img {
+    max-width: min(58%, 5.8rem) !important;
+    max-height: 62% !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-media-placeholder.is-unavailable
+    .Landing-topic-media-placeholder-img {
+    max-width: min(58%, 4.8rem) !important;
+    max-height: 62% !important;
+  }
+}
+
+
+/* ---- d-FCT placeholder image fit final ---- */
+/*
+  Make /placeholder.png use the available topic media frame without distortion.
+  This targets only unavailable placeholders, not real image/video media.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 6 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: clamp(0.35rem, 1.2vw, 1rem) !important;
+  place-items: center !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 0.86 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  margin: 0 !important;
+  border-radius: 0.55rem !important;
+  transform: none !important;
+}
+
+/* Swipe mode can use a little more breathing room around the placeholder. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-media-placeholder.is-unavailable {
+  padding: clamp(0.75rem, 2.2vw, 1.6rem) !important;
+}
+
+/* Grid/list stay tighter so the placeholder fills small frames better. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-media-placeholder.is-unavailable,
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-media-placeholder.is-unavailable {
+  padding: clamp(0.25rem, 0.8vw, 0.55rem) !important;
+}
+
+
+/* ---- d-FCT placeholder respects visual inner final ---- */
+/*
+  The placeholder is rendered inside .Landing-topic-visual-inner.
+  Keep it inside that inner padded box instead of absolute-positioning it
+  against the full visual frame.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-media-placeholder.is-unavailable {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 6 !important;
+
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  padding: 0 !important;
+  place-items: center !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+
+  background: transparent !important;
+  pointer-events: none !important;
+  box-sizing: border-box !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-media-placeholder.is-unavailable
+  .Landing-topic-media-placeholder-img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 0.86 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  margin: 0 !important;
+  border-radius: 0.55rem !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Keep loading placeholders as overlays, but unavailable/audio placeholders
+   should participate inside the visual inner sizing. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-media-placeholder.is-loading {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+
+/* ---- d-FCT audio topic visual overlay + badge final ---- */
+/*
+  Audio/no-visual topic cards keep the real /placeholder.png image, but get
+  a centered audio affordance and a visible type pill above the placeholder.
+*/
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-audio-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 8 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  place-items: center !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-audio-overlay
+  svg {
+  display: block !important;
+  width: clamp(2.5rem, 6vw, 5rem) !important;
+  height: clamp(2.5rem, 6vw, 5rem) !important;
+  padding: clamp(0.9rem, 2vw, 1.45rem) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 76%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(
+      circle at 32% 24%,
+      color-mix(in srgb, var(--theme-accent, currentColor) 28%, transparent),
+      transparent 46%
+    ),
+    color-mix(in srgb, var(--theme-bg, var(--bs-body-bg)) 72%, transparent) !important;
+  color: color-mix(in srgb, var(--theme-text, currentColor) 92%, transparent) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 18px 46px rgba(0, 0, 0, 0.28) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+  backdrop-filter: blur(14px) saturate(1.08) !important;
+}
+
+/* The placeholder image should sit behind the audio overlay. */
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-media-placeholder.is-unavailable {
+  z-index: 6 !important;
+}
+
+/* Audio pill: same placement/behavior as video, but guaranteed above placeholder. */
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-visual-type-badge,
+html[data-theme] body
+  .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 10 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-visual-type-badge-audio {
+  background: color-mix(in srgb, var(--theme-accent, var(--bs-emphasis-color)) 32%, var(--theme-bg, var(--bs-body-bg))) !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, currentColor) 56%, transparent) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.08) !important;
+  backdrop-filter: blur(10px) saturate(1.08) !important;
+}
+
+/* Compact card sizing. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.55rem, 3.2vw, 2.25rem) !important;
+  height: clamp(1.55rem, 3.2vw, 2.25rem) !important;
+  padding: 0.7rem !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.35rem, 2.8vw, 2rem) !important;
+  height: clamp(1.35rem, 2.8vw, 2rem) !important;
+  padding: 0.62rem !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(2.4rem, 12vw, 4.3rem) !important;
+    height: clamp(2.4rem, 12vw, 4.3rem) !important;
+    padding: clamp(0.85rem, 3.4vw, 1.25rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(1.4rem, 7vw, 2rem) !important;
+    height: clamp(1.4rem, 7vw, 2rem) !important;
+    padding: 0.58rem !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(1.2rem, 6vw, 1.75rem) !important;
+    height: clamp(1.2rem, 6vw, 1.75rem) !important;
+    padding: 0.52rem !important;
+  }
+}
+
+
+/* ---- d-FCT audio topic visual overlay + badge final ---- */
+/*
+  Audio/no-visual topic cards keep the real /placeholder.png image, but get
+  a centered audio affordance and a visible type pill above the placeholder.
+*/
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-audio-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 8 !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  place-items: center !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-audio-overlay
+  svg {
+  display: block !important;
+  width: clamp(2.5rem, 6vw, 5rem) !important;
+  height: clamp(2.5rem, 6vw, 5rem) !important;
+  padding: clamp(0.9rem, 2vw, 1.45rem) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 76%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(
+      circle at 32% 24%,
+      color-mix(in srgb, var(--theme-accent, currentColor) 28%, transparent),
+      transparent 46%
+    ),
+    color-mix(in srgb, var(--theme-bg, var(--bs-body-bg)) 72%, transparent) !important;
+  color: color-mix(in srgb, var(--theme-text, currentColor) 92%, transparent) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 18px 46px rgba(0, 0, 0, 0.28) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+  backdrop-filter: blur(14px) saturate(1.08) !important;
+}
+
+/* The placeholder image should sit behind the audio overlay. */
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-media-placeholder.is-unavailable {
+  z-index: 6 !important;
+}
+
+/* Audio pill: same placement/behavior as video, but guaranteed above placeholder. */
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-visual-type-badge,
+html[data-theme] body
+  .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 10 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-visual-type-badge-audio {
+  background: color-mix(in srgb, var(--theme-accent, var(--bs-emphasis-color)) 32%, var(--theme-bg, var(--bs-body-bg))) !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, currentColor) 56%, transparent) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.08) !important;
+  backdrop-filter: blur(10px) saturate(1.08) !important;
+}
+
+/* Compact card sizing. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.55rem, 3.2vw, 2.25rem) !important;
+  height: clamp(1.55rem, 3.2vw, 2.25rem) !important;
+  padding: 0.7rem !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.35rem, 2.8vw, 2rem) !important;
+  height: clamp(1.35rem, 2.8vw, 2rem) !important;
+  padding: 0.62rem !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(2.4rem, 12vw, 4.3rem) !important;
+    height: clamp(2.4rem, 12vw, 4.3rem) !important;
+    padding: clamp(0.85rem, 3.4vw, 1.25rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(1.4rem, 7vw, 2rem) !important;
+    height: clamp(1.4rem, 7vw, 2rem) !important;
+    padding: 0.58rem !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(1.2rem, 6vw, 1.75rem) !important;
+    height: clamp(1.2rem, 6vw, 1.75rem) !important;
+    padding: 0.52rem !important;
+  }
+}
+
+
+/* ---- d-FCT audio card compact polish final ---- */
+/*
+  Final audio-card refinements:
+  - keep audio badge visually aligned with Video badge
+  - reduce audio icon in grid/list
+  - slightly enlarge audio icon in swipe
+  - restore compact grid title visibility by constraining no-visual media height
+  - make audio icon more transparent/subtle
+*/
+
+/* Do not let no-visual min-height override compact grid/list media slots. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-frame.is-no-visual {
+  height: clamp(7.6rem, 14vw, 9.2rem) !important;
+  min-height: 0 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-frame.is-no-visual {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* Audio pill: inherit the same geometry as the default Video pill. */
+html[data-theme] body
+  .Landing-topic-visual-frame
+  .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 20 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0.28rem 0.5rem !important;
+  border-radius: 999px !important;
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1 !important;
+
+  background: color-mix(
+    in srgb,
+    var(--bs-emphasis-color, var(--theme-text)) 82%,
+    transparent
+  ) !important;
+  color: var(--bs-body-bg, var(--theme-bg)) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Audio overlay should be centered but subtle. */
+html[data-theme] body
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  z-index: 12 !important;
+  opacity: 0.72 !important;
+}
+
+/* Swipe/spotlight: slightly bigger, intended to sit inside the magnifier area. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(3.2rem, 7.4vw, 6.2rem) !important;
+  height: clamp(3.2rem, 7.4vw, 6.2rem) !important;
+  padding: clamp(0.95rem, 2.1vw, 1.55rem) !important;
+  opacity: 0.76 !important;
+}
+
+/* Grid: smaller icon so the title area remains dominant. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.05rem, 2.15vw, 1.65rem) !important;
+  height: clamp(1.05rem, 2.15vw, 1.65rem) !important;
+  padding: 0.5rem !important;
+  opacity: 0.7 !important;
+}
+
+/* List: smaller still, because the media column is narrow. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(0.95rem, 1.9vw, 1.45rem) !important;
+  height: clamp(0.95rem, 1.9vw, 1.45rem) !important;
+  padding: 0.44rem !important;
+  opacity: 0.7 !important;
+}
+
+/* Make audio pill visible and compact in list mode. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-type-badge-audio {
+  right: 0.42rem !important;
+  bottom: 0.42rem !important;
+  padding: 0.22rem 0.38rem !important;
+  font-size: 0.58rem !important;
+}
+
+/* Grid audio pill should match the compact Video pill scale. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-type-badge-audio {
+  right: 0.46rem !important;
+  bottom: 0.46rem !important;
+  padding: 0.23rem 0.4rem !important;
+  font-size: 0.6rem !important;
+}
+
+/* Keep placeholder image behind the icon. */
+html[data-theme] body
+  .Landing-topic-visual-frame.is-no-visual
+  .Landing-topic-media-placeholder-img {
+  opacity: 0.58 !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-spotlight
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(2.8rem, 14vw, 5rem) !important;
+    height: clamp(2.8rem, 14vw, 5rem) !important;
+    padding: clamp(0.82rem, 3.2vw, 1.25rem) !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(0.95rem, 5.5vw, 1.45rem) !important;
+    height: clamp(0.95rem, 5.5vw, 1.45rem) !important;
+    padding: 0.42rem !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(0.85rem, 5vw, 1.25rem) !important;
+    height: clamp(0.85rem, 5vw, 1.25rem) !important;
+    padding: 0.36rem !important;
+  }
+}
+
+
+/* ---- d-FCT audio badge/icon final tuning ---- */
+/*
+  Audio cards:
+  - badge/pill matches the dark Video pill
+  - grid/list icon is smaller
+  - icon is less transparent than before, but still subtle
+*/
+
+/* Match Video badge dark pill styling. */
+html[data-theme] body
+  .Landing-topic-visual-frame
+  .Landing-topic-visual-type-badge-audio,
+html[data-theme] body
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 20 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0.28rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  background: color-mix(
+    in srgb,
+    var(--theme-bg, #020617) 88%,
+    transparent
+  ) !important;
+  color: var(--theme-text, #fff) !important;
+
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1 !important;
+
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Audio overlay: less transparent than before. */
+html[data-theme] body
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  opacity: 0.86 !important;
+}
+
+/* Swipe: a touch stronger, still centered over the magnifier. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(3rem, 6.8vw, 5.7rem) !important;
+  height: clamp(3rem, 6.8vw, 5.7rem) !important;
+  padding: clamp(0.9rem, 2vw, 1.45rem) !important;
+  opacity: 0.84 !important;
+}
+
+/* Grid: much smaller. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(0.78rem, 1.45vw, 1.12rem) !important;
+  height: clamp(0.78rem, 1.45vw, 1.12rem) !important;
+  padding: 0.38rem !important;
+  opacity: 0.82 !important;
+}
+
+/* List: smaller than grid because the media cell is narrow. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-audio-overlay
+  svg {
+  width: clamp(0.72rem, 1.25vw, 1rem) !important;
+  height: clamp(0.72rem, 1.25vw, 1rem) !important;
+  padding: 0.32rem !important;
+  opacity: 0.82 !important;
+}
+
+/* Compact Audio badge should use same dark pill feel as compact Video. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-type-badge-audio {
+  right: 0.46rem !important;
+  bottom: 0.46rem !important;
+  padding: 0.23rem 0.4rem !important;
+  font-size: 0.6rem !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-type-badge-audio {
+  right: 0.42rem !important;
+  bottom: 0.42rem !important;
+  padding: 0.22rem 0.38rem !important;
+  font-size: 0.58rem !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(0.74rem, 4vw, 1rem) !important;
+    height: clamp(0.74rem, 4vw, 1rem) !important;
+    padding: 0.32rem !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-audio-overlay
+    svg {
+    width: clamp(0.68rem, 3.6vw, 0.92rem) !important;
+    height: clamp(0.68rem, 3.6vw, 0.92rem) !important;
+    padding: 0.28rem !important;
+  }
+}
+
+
+/* ---- d-FCT audio overlay real-size final override ---- */
+/*
+  Audio icon shell lives on .Landing-topic-audio-overlay.
+  SVG itself is only the glyph. This prevents padding on the SVG from
+  making the audio icon occupy the whole grid/list media slot.
+*/
+
+/* Base centered audio shell. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  inset: auto !important;
+  transform: translate(-50%, -50%) !important;
+
+  z-index: 12 !important;
+  display: grid !important;
+  place-items: center !important;
+
+  width: clamp(5.6rem, 9vw, 8.2rem) !important;
+  height: clamp(5.6rem, 9vw, 8.2rem) !important;
+  aspect-ratio: 1 / 1 !important;
+
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 82%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(
+      circle at 34% 24%,
+      color-mix(in srgb, var(--theme-accent, currentColor) 20%, transparent),
+      transparent 46%
+    ),
+    color-mix(in srgb, var(--theme-bg, var(--bs-body-bg)) 72%, transparent) !important;
+  color: color-mix(in srgb, var(--theme-text, currentColor) 96%, transparent) !important;
+
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 14px 34px rgba(0, 0, 0, 0.22) !important;
+
+  opacity: 0.92 !important;
+  pointer-events: none !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.08) !important;
+  backdrop-filter: blur(12px) saturate(1.08) !important;
+}
+
+/* SVG is only the icon, no circle/padding/background. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  display: block !important;
+  box-sizing: border-box !important;
+
+  width: 46% !important;
+  height: 46% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  color: currentColor !important;
+  fill: currentColor !important;
+  opacity: 0.98 !important;
+
+  transform: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Swipe: large enough to sit inside the placeholder magnifier. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  width: clamp(6.4rem, 10vw, 9rem) !important;
+  height: clamp(6.4rem, 10vw, 9rem) !important;
+  opacity: 0.9 !important;
+}
+
+/* Grid: small, no longer dominating the whole card. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  width: clamp(2.05rem, 3.1vw, 2.75rem) !important;
+  height: clamp(2.05rem, 3.1vw, 2.75rem) !important;
+  opacity: 0.94 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  width: 50% !important;
+  height: 50% !important;
+}
+
+/* List: slightly smaller than grid. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  width: clamp(1.8rem, 2.5vw, 2.35rem) !important;
+  height: clamp(1.8rem, 2.5vw, 2.35rem) !important;
+  opacity: 0.94 !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  width: 50% !important;
+  height: 50% !important;
+}
+
+/* Audio pill should keep the same dark look as Video. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 20 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0.28rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  background: color-mix(in srgb, var(--theme-bg, #020617) 88%, transparent) !important;
+  color: var(--theme-text, #fff) !important;
+
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1 !important;
+
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  right: 0.46rem !important;
+  bottom: 0.46rem !important;
+  padding: 0.23rem 0.4rem !important;
+  font-size: 0.6rem !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  right: 0.42rem !important;
+  bottom: 0.42rem !important;
+  padding: 0.22rem 0.38rem !important;
+  font-size: 0.58rem !important;
+}
+
+@media (max-width: 768px) {
+  html[data-theme] body
+    .Landing-topic-card-grid
+    .Landing-topic-visual-inner
+    > .Landing-topic-audio-overlay {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  html[data-theme] body
+    .Landing-topic-card-list
+    .Landing-topic-visual-inner
+    > .Landing-topic-audio-overlay {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+  }
+}
+
+
+/* ---- d-FCT audio overlay centering absolute final ---- */
+/*
+  Hard reset all previous audio overlay positioning.
+  The overlay now fills .Landing-topic-visual-inner and centers the icon
+  inside the exact same box used by the placeholder image.
+*/
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  transform: none !important;
+
+  z-index: 12 !important;
+  display: flex !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+  place-items: center !important;
+
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 0.96 !important;
+  pointer-events: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* The visible audio circle. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  display: block !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+
+  width: clamp(1.9rem, 3.2vw, 2.8rem) !important;
+  height: clamp(1.9rem, 3.2vw, 2.8rem) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  padding: 0.56rem !important;
+  margin: 0 !important;
+
+  border: 1px solid color-mix(in srgb, var(--theme-border, currentColor) 82%, transparent) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--theme-bg, #020617) 78%, transparent) !important;
+  color: color-mix(in srgb, var(--theme-text, #ffffff) 96%, transparent) !important;
+  fill: currentColor !important;
+
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--theme-text, currentColor) 8%, transparent),
+    0 10px 24px rgba(0, 0, 0, 0.24) !important;
+
+  opacity: 0.96 !important;
+  transform: none !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.08) !important;
+  backdrop-filter: blur(10px) saturate(1.08) !important;
+}
+
+/* Swipe: larger, but still truly centered. */
+html[data-theme] body
+  .Landing-topic-card-spotlight
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  width: clamp(4.8rem, 8vw, 6.8rem) !important;
+  height: clamp(4.8rem, 8vw, 6.8rem) !important;
+  padding: clamp(1rem, 1.8vw, 1.45rem) !important;
+}
+
+/* Grid: small and centered. */
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.55rem, 2.35vw, 2rem) !important;
+  height: clamp(1.55rem, 2.35vw, 2rem) !important;
+  padding: 0.42rem !important;
+}
+
+/* List: small and centered. */
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-inner
+  > .Landing-topic-audio-overlay
+  svg {
+  width: clamp(1.35rem, 2vw, 1.75rem) !important;
+  height: clamp(1.35rem, 2vw, 1.75rem) !important;
+  padding: 0.36rem !important;
+}
+
+/* Audio badge stays positioned like Video. */
+html[data-theme] body
+  .Landing-topic-card
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  position: absolute !important;
+  right: 0.55rem !important;
+  bottom: 0.55rem !important;
+  z-index: 20 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0.28rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  background: color-mix(in srgb, var(--theme-bg, #020617) 88%, transparent) !important;
+  color: var(--theme-text, #ffffff) !important;
+
+  font-size: 0.68rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1 !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-grid
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  right: 0.46rem !important;
+  bottom: 0.46rem !important;
+  padding: 0.23rem 0.4rem !important;
+  font-size: 0.6rem !important;
+}
+
+html[data-theme] body
+  .Landing-topic-card-list
+  .Landing-topic-visual-inner
+  > .Landing-topic-visual-type-badge-audio {
+  right: 0.42rem !important;
+  bottom: 0.42rem !important;
+  padding: 0.22rem 0.38rem !important;
+  font-size: 0.58rem !important;
+}
+

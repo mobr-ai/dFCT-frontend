@@ -78,25 +78,47 @@ function NavBar(props) {
     Boolean(props.userData) && billingStatus.loaded && !billingStatus.apiUnavailable;
 
   const topClick = useCallback(() => {
-    const clearSearchHome = () => {
-      navigate("/", { replace: true });
+    const scrollLandingToTop = () => {
+      window.dispatchEvent(new CustomEvent("dfct:landing-scroll-top"));
+      document.dispatchEvent(new CustomEvent("dfct:landing-scroll-top"));
+
+      document
+        .querySelector(".Landing-snap-feed")
+        ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      document
+        .getElementsByClassName("Landing-middle-column")[0]
+        ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      document
+        .getElementsByClassName("Landing-body")[0]
+        ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      document
+        .getElementsByClassName("bm-menu")[0]
+        ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    };
+
+    const runScrollToTop = () => {
       requestAnimationFrame(() => {
-        document
-          .getElementsByClassName("bm-menu")[0]
-          ?.scrollTo({ top: 0, behavior: "smooth" });
-        document
-          .getElementsByClassName("Landing-middle-column")[0]
-          ?.scrollTo({ top: 0, behavior: "smooth" });
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        scrollLandingToTop();
+        window.setTimeout(scrollLandingToTop, 80);
+        window.setTimeout(scrollLandingToTop, 220);
       });
     };
+
+    setExpanded(false);
 
     if (window.location.pathname.startsWith("/proposal")) {
       navigate("/gov");
       return;
     }
 
-    clearSearchHome();
+    if (window.location.pathname === "/") {
+      runScrollToTop();
+      return;
+    }
+
+    navigate("/", { replace: true });
+    runScrollToTop();
   }, [navigate]);
 
   const logout = () => {

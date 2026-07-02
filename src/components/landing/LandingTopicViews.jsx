@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarDays, faClock, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
 const PLACEHOLDER_IMAGE_URL = "/placeholder.png";
 
@@ -624,6 +624,19 @@ function MediaPlaceholder({ state = "unavailable", title }) {
   );
 }
 
+function TopicAudioAffordance({ label = "Audio" }) {
+  return (
+    <>
+      <span className="Landing-topic-audio-overlay" aria-hidden="true">
+        <FontAwesomeIcon icon={faVolumeHigh} />
+      </span>
+      <span className="Landing-topic-visual-type-badge Landing-topic-visual-type-badge-audio">
+        {label}
+      </span>
+    </>
+  );
+}
+
 function TopicImage({ src, fallbackSrc = PLACEHOLDER_IMAGE_URL, alt, compact }) {
   const imgRef = useRef(null);
   const initialSrc = normalizeUrl(src) || fallbackSrc || PLACEHOLDER_IMAGE_URL;
@@ -773,10 +786,12 @@ function TopicVideo({ media, title, active = true }) {
 }
 
 function TopicAudio({ media, title }) {
+  const audioTitle = media?.alt || title;
+
   return (
     <>
-      <MediaPlaceholder state="unavailable" title={media?.alt || title} />
-      <span className="Landing-topic-visual-type-badge">Audio</span>
+      <MediaPlaceholder state="unavailable" title={audioTitle} />
+      <TopicAudioAffordance label="Audio" />
     </>
   );
 }
@@ -888,8 +903,22 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
           ? displayMedia.backdropUrl
           : "";
 
+
+  const isNoVisualMedia =
+    displayMedia?.type === "audio" ||
+    displayMedia?.type === "placeholder" ||
+    !["image", "video"].includes(displayMedia?.type);
+
+  const isAudioLikeNoVisual =
+    isNoVisualMedia &&
+    /\b(audio|sound|mp3|wav|m4a|podcast|voice|music)\b/i.test(
+      [title, displayMedia?.alt, displayMedia?.url, displayMedia?.source]
+        .filter(Boolean)
+        .join(" ")
+    );
+
   return (
-    <div className="Landing-topic-visual-frame">
+    <div className={`Landing-topic-visual-frame ${isNoVisualMedia ? "is-no-visual" : ""}`}>
       <TopicVisualBokeh
         media={displayMedia}
         backdropUrl={backdropUrl}
@@ -913,7 +942,10 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
             compact={compact}
           />
         ) : (
-          <MediaPlaceholder state="unavailable" title={title} />
+          <>
+            <MediaPlaceholder state="unavailable" title={title} />
+            {isAudioLikeNoVisual && <TopicAudioAffordance label="Audio" />}
+          </>
         )}
         {timestampOverlay}
       </div>
