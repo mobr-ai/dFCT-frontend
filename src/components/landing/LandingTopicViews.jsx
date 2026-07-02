@@ -325,52 +325,38 @@ export const getTopicMediaItems = (topic) => {
   return normalized.sort((a, b) => mediaPriority(a) - mediaPriority(b));
 };
 
-function useDesktopHoverMode() {
-  const [desktopHover, setDesktopHover] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return undefined;
-
-    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const update = () => setDesktopHover(Boolean(query.matches));
-
-    update();
-
-    if (query.addEventListener) {
-      query.addEventListener("change", update);
-      return () => query.removeEventListener("change", update);
-    }
-
-    query.addListener(update);
-    return () => query.removeListener(update);
-  }, []);
-
-  return desktopHover;
-}
-
-function useVisiblePlayback(ref, enabled) {
+function useElementPresence(
+  ref,
+  enabled,
+  { minRatio = 0.55, rootMargin = "64px 0px" } = {}
+) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!enabled || !ref.current || typeof IntersectionObserver === "undefined") {
+    if (!enabled || !ref.current) {
       setVisible(false);
+      return undefined;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
       return undefined;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.55));
+        setVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio >= minRatio));
       },
       {
-        threshold: [0, 0.35, 0.55, 0.75, 1],
-        rootMargin: "80px 0px",
+        threshold: [0, 0.18, 0.35, 0.55, 0.75, 1],
+        rootMargin,
       }
     );
 
     observer.observe(ref.current);
 
     return () => observer.disconnect();
-  }, [enabled, ref]);
+  }, [enabled, minRatio, ref, rootMargin]);
 
   return visible;
 }
@@ -700,24 +686,17 @@ function TopicImage({ src, fallbackSrc = PLACEHOLDER_IMAGE_URL, alt, compact }) 
   );
 }
 
-function TopicVideo({ media, title, active = true, compact = false }) {
+function TopicVideo({ media, title, active = true }) {
   const frameRef = useRef(null);
   const videoRef = useRef(null);
-  const desktopHoverMode = useDesktopHoverMode();
-  const mobileVisible = useVisiblePlayback(frameRef, compact && !desktopHoverMode);
 
-  const [hovered, setHovered] = useState(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
 
   const fallbackSrc = media?.poster || media?.fallbackUrl || PLACEHOLDER_IMAGE_URL;
   const hasRealPoster = !isPlaceholderUrl(fallbackSrc);
 
-  const shouldPlay = compact
-    ? desktopHoverMode
-      ? hovered
-      : mobileVisible
-    : active;
+  const shouldPlay = Boolean(active);
 
   useEffect(() => {
     setFailed(false);
@@ -766,12 +745,7 @@ function TopicVideo({ media, title, active = true, compact = false }) {
   }
 
   return (
-    <div
-      className="Landing-topic-video-frame"
-      ref={frameRef}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <div className="Landing-topic-video-frame" ref={frameRef}>
       {!ready && <MediaPlaceholder state="loading" title={title} />}
 
       <video
@@ -779,11 +753,11 @@ function TopicVideo({ media, title, active = true, compact = false }) {
         className={`Landing-topic-visual-media Landing-topic-visual-video ${ready ? "is-ready" : "is-loading"}`}
         src={media.url}
         poster={hasRealPoster ? fallbackSrc : undefined}
-        preload="metadata"
+        preload={shouldPlay ? "auto" : "metadata"}
         muted
         loop
         playsInline
-        autoPlay={!compact && active}
+        autoPlay={shouldPlay}
         controls={false}
         aria-label={title}
         onLoadedMetadata={handleLoadedMetadata}
@@ -930,7 +904,6 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
             media={displayMedia}
             title={title}
             active={active}
-            compact={compact}
           />
         ) : displayMedia?.type === "image" && displayMedia?.url ? (
           <TopicImage
@@ -967,9 +940,27 @@ export function LandingTopicCard({
   const isList = variant === "list";
   const isCompact = isGrid || isList;
   const showDescription = variant === "spotlight" || isList;
+  const cardRef = useRef(null);
+  const cardInView = useElementPresence(cardRef, isCompact, {
+    minRatio: isList ? 0.42 : 0.5,
+    rootMargin: "72px 0px",
+  });
+  const cardScrollFocus = useElementPresence(cardRef, isCompact, {
+    minRatio: 0.08,
+    rootMargin: "-34% 0px -34% 0px",
+  });
+  const mediaActive = isCompact ? cardInView : active;
+  const cardClassName = [
+    "Landing-topic-card",
+    `Landing-topic-card-${variant}`,
+    isCompact && cardInView ? "is-in-view" : "",
+    isCompact && cardScrollFocus ? "is-scroll-focus" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <article className={`Landing-topic-card Landing-topic-card-${variant}`}>
+    <article ref={cardRef} className={cardClassName}>
       {variant !== "spotlight" && <TopicTimestampOverlay topic={topic} variant={variant} />}
       <Link
         className="Landing-topic-card-link"
@@ -980,7 +971,7 @@ export function LandingTopicCard({
           media={media}
           title={title}
           compact={isCompact}
-          active={active}
+          active={mediaActive}
           timestampOverlay={
             variant === "spotlight" ? (
               <TopicTimestampOverlay topic={topic} variant={variant} />
