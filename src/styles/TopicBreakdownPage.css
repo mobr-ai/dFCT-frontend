@@ -961,3 +961,75 @@
     transform: none;
   }
 }
+
+/* Claim verification voting experience */
+.Breakdown-claim-perception-card {
+  border: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.12));
+  background:
+    linear-gradient(
+      135deg,
+      var(--theme-surface-elevated, rgba(255, 255, 255, 0.08)),
+      var(--theme-surface, rgba(255, 255, 255, 0.03))
+    );
+  border-radius: 1rem;
+  padding: 0.85rem 0.95rem;
+  margin: 0.8rem 0 1rem;
+  box-shadow: var(--theme-shadow-sm, 0 10px 30px rgba(0, 0, 0, 0.18));
+}
+
+.Breakdown-claim-perception-copy {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.Breakdown-claim-perception-copy strong {
+  color: var(--theme-text, inherit);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.Breakdown-claim-perception-copy small,
+.Breakdown-claim-perception-eyebrow,
+.Breakdown-claim-perception-stats {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.72));
+  font-family: var(--theme-font-mono, monospace);
+  font-size: 0.72rem;
+}
+
+.Breakdown-claim-perception-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.Breakdown-claim-perception-meter {
+  height: 0.45rem;
+  width: 100%;
+  margin-top: 0.65rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--theme-surface-muted, rgba(255, 255, 255, 0.12));
+}
+
+.Breakdown-claim-perception-meter span {
+  display: block;
+  height: 100%;
+  min-width: 0.25rem;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--theme-accent, #55d6be),
+    var(--theme-accent-strong, #8ef7a7)
+  );
+  transition: width 220ms ease;
+}
+
+.Breakdown-claim-perception-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.45rem;
+}
+
+.Breakdown-claim-vote-group .btn {
+  min-width: 5.2rem;
+}

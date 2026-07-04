@@ -24,6 +24,11 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef } from "react";
 import TextTransition, { presets } from "react-text-transition";
 import { CARDANO_EXPLORER_URL } from "../chains/cardano/constants";
+import {
+  castClaimVote,
+  fetchTopicVerificationSummary,
+} from "../api/claimVerification";
+import { useAuthRequest } from "../hooks/useAuthRequest";
 
 function getHashtags(
   contentList,
@@ -68,6 +73,45 @@ function getHashtags(
     ));
   }
   return tags;
+}
+
+function mergeClaimVerificationSummary(current, claimSummary, topicId) {
+  if (!claimSummary?.claimId) return current;
+
+  const existingClaims = Array.isArray(current?.claims) ? current.claims : [];
+  let found = false;
+
+  const claims = existingClaims.map((item) => {
+    if (String(item.claimId) !== String(claimSummary.claimId)) return item;
+    found = true;
+    return {
+      ...item,
+      ...claimSummary,
+    };
+  });
+
+  if (!found) claims.push(claimSummary);
+
+  const agreeCount = claims.reduce(
+    (sum, item) => sum + Number(item.agreeCount || 0),
+    0,
+  );
+  const disagreeCount = claims.reduce(
+    (sum, item) => sum + Number(item.disagreeCount || 0),
+    0,
+  );
+  const totalVotes = agreeCount + disagreeCount;
+
+  return {
+    ...(current || {}),
+    topicId: Number(current?.topicId || topicId),
+    claims,
+    claimCount: claims.length,
+    agreeCount,
+    disagreeCount,
+    totalVotes,
+    agreeRatio: totalVotes ? agreeCount / totalVotes : 0,
+  };
 }
 
 function TopicDataResolver({
@@ -119,6 +163,7 @@ const Topic = ({
   setEvidenceModalShow,
 }) => {
   const { t } = useTranslation();
+  const { authRequest } = useAuthRequest(user);
   const {
     topic_id: topicId,
     title,
@@ -138,6 +183,8 @@ const Topic = ({
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
+  const [verificationSummary, setVerificationSummary] = useState(null);
+  const [votingClaimId, setVotingClaimId] = useState(null);
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
 
@@ -174,6 +221,60 @@ const Topic = ({
     const targetRef = contentRefs.current[localUrl];
     if (targetRef && targetRef.current) {
       targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!topicId || !user) {
+      setVerificationSummary(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    fetchTopicVerificationSummary(authRequest, topicId)
+      .then((summary) => {
+        if (!cancelled) setVerificationSummary(summary);
+      })
+      .catch(() => {
+        if (!cancelled) setVerificationSummary(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [topicId, user]);
+
+  const handleClaimVote = async (claimIdToVote, vote) => {
+    if (!user) {
+      showToast?.(t("claimVerification.loginRequired"), "warning");
+      return;
+    }
+
+    try {
+      setVotingClaimId(claimIdToVote);
+
+      const result = await castClaimVote(authRequest, claimIdToVote, vote);
+      setVerificationSummary((current) =>
+        mergeClaimVerificationSummary(current, result?.summary, topicId),
+      );
+
+      showToast?.(
+        result?.changed
+          ? t("claimVerification.voteSaved")
+          : t("claimVerification.voteUnchanged"),
+        "success",
+      );
+    } catch (err) {
+      const message =
+        err?.response?.body?.error ||
+        err?.message ||
+        t("claimVerification.voteFailed");
+      showToast?.(message, "danger");
+    } finally {
+      setVotingClaimId(null);
     }
   };
 
@@ -260,6 +361,10 @@ const Topic = ({
         content={claimList}
         showEvidenceModal={showEvidenceModal}
         topicId={topicId}
+        verificationSummary={verificationSummary}
+        onClaimVote={handleClaimVote}
+        votingClaimId={votingClaimId}
+        canVote={Boolean(user)}
       />
       <div className="Breakdown-topic-article">{article}</div>
       {contentList && contentList.length > 0 && (

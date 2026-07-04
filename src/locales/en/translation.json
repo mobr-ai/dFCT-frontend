@@ -1034,5 +1034,21 @@
   "activatingTopic": "Activating topic...",
   "topicActivatedToast": "Topic activated.",
   "topicActivationFailed": "Failed to activate topic.",
-  "topicActivateOwnerOnly": "Only the topic owner, a moderator, or an admin can activate this reviewed topic."
+  "topicActivateOwnerOnly": "Only the topic owner, a moderator, or an admin can activate this reviewed topic.",
+  "claimVerification": {
+    "communityPerception": "Community perception",
+    "agree": "Agree",
+    "disagree": "Disagree",
+    "agreed": "Agreed",
+    "disagreed": "Disagreed",
+    "agreeRatio": "{{percent}} agree",
+    "noVotesYet": "No perception votes yet",
+    "votesCount": "{{count}} votes",
+    "agreeCount": "{{count}} agree",
+    "disagreeCount": "{{count}} disagree",
+    "voteSaved": "Your perception vote was recorded.",
+    "voteUnchanged": "Your perception vote was already recorded.",
+    "voteFailed": "Could not record your perception vote.",
+    "loginRequired": "Sign in to vote on this claim."
+  }
 }

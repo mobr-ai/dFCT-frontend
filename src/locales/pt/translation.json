@@ -1034,5 +1034,21 @@
   "activatingTopic": "Ativando tópico...",
   "topicActivatedToast": "Tópico ativado.",
   "topicActivationFailed": "Falha ao ativar tópico.",
-  "topicActivateOwnerOnly": "Apenas o dono do tópico, um moderador ou um admin pode ativar este tópico revisado."
+  "topicActivateOwnerOnly": "Apenas o dono do tópico, um moderador ou um admin pode ativar este tópico revisado.",
+  "claimVerification": {
+    "communityPerception": "Percepção da comunidade",
+    "agree": "Concordo",
+    "disagree": "Discordo",
+    "agreed": "Você concordou",
+    "disagreed": "Você discordou",
+    "agreeRatio": "{{percent}} concordam",
+    "noVotesYet": "Nenhum voto de percepção ainda",
+    "votesCount": "{{count}} votos",
+    "agreeCount": "{{count}} concordam",
+    "disagreeCount": "{{count}} discordam",
+    "voteSaved": "Seu voto de percepção foi registrado.",
+    "voteUnchanged": "Seu voto de percepção já estava registrado.",
+    "voteFailed": "Não foi possível registrar seu voto de percepção.",
+    "loginRequired": "Entre para votar nesta alegação."
+  }
 }
