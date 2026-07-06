@@ -21,9 +21,18 @@ import {
 } from "react-router-dom";
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import TextTransition, { presets } from "react-text-transition";
 import { CARDANO_EXPLORER_URL } from "../chains/cardano/constants";
+import { useAuthRequest } from "../hooks/useAuthRequest";
+import {
+  fetchTopicVerificationSummary,
+  castClaimVote,
+} from "../api/claimVerification";
+
+function isActiveTopicStatus(status) {
+  return Number(status) === 2 || String(status || "").toLowerCase() === "active";
+}
 
 function getHashtags(
   contentList,
@@ -138,8 +147,17 @@ const Topic = ({
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
+  const [verificationSummary, setVerificationSummary] = useState(null);
+  const [verificationLoading, setVerificationLoading] = useState(false);
+  const [votingClaimId, setVotingClaimId] = useState(null);
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
+  const { authRequest } = useAuthRequest(user);
+  const authRequestRef = useRef(authRequest);
+
+  useEffect(() => {
+    authRequestRef.current = authRequest;
+  }, [authRequest]);
 
   const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
@@ -161,6 +179,60 @@ const Topic = ({
     setClaimId(claimId);
     setEvidenceModalShow(true);
   };
+
+  const loadVerificationSummary = useCallback(async ({ silent = false } = {}) => {
+    if (!topicId || !user?.access_token) {
+      setVerificationSummary(null);
+      return null;
+    }
+
+    if (!silent) setVerificationLoading(true);
+
+    try {
+      const summary = await fetchTopicVerificationSummary(
+        authRequestRef.current,
+        topicId,
+      );
+      setVerificationSummary(summary);
+      return summary;
+    } catch {
+      if (!silent) showToast?.(t("claimVoting.summaryFailed"), "secondary");
+      return null;
+    } finally {
+      if (!silent) setVerificationLoading(false);
+    }
+  }, [showToast, t, topicId, user?.access_token]);
+
+  useEffect(() => {
+    loadVerificationSummary({ silent: true });
+  }, [loadVerificationSummary]);
+
+  const handleClaimVote = useCallback(async (nextClaimId, vote) => {
+    if (!user?.access_token) {
+      showToast?.(t("claimVoting.loginRequired"), "secondary");
+      return;
+    }
+
+    if (!nextClaimId || votingClaimId) return;
+
+    setVotingClaimId(nextClaimId);
+
+    try {
+      const result = await castClaimVote(authRequestRef.current, nextClaimId, vote);
+      await loadVerificationSummary({ silent: true });
+
+      showToast?.(
+        result?.changed
+          ? t("claimVoting.voteUpdated")
+          : t("claimVoting.voteAlreadyCounted"),
+        result?.changed ? "success" : "secondary",
+      );
+    } catch {
+      showToast?.(t("claimVoting.voteFailed"), "danger");
+    } finally {
+      setVotingClaimId(null);
+    }
+  }, [loadVerificationSummary, showToast, t, user?.access_token, votingClaimId]);
 
   // Map refs for each content item
   const contentRefs = useRef({});
@@ -260,6 +332,11 @@ const Topic = ({
         content={claimList}
         showEvidenceModal={showEvidenceModal}
         topicId={topicId}
+        verificationSummary={verificationSummary}
+        verificationLoading={verificationLoading}
+        votingClaimId={votingClaimId}
+        votingEnabled={Boolean(user?.access_token && isActiveTopicStatus(currentStatus))}
+        onClaimVote={handleClaimVote}
       />
       <div className="Breakdown-topic-article">{article}</div>
       {contentList && contentList.length > 0 && (
