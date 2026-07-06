@@ -238,10 +238,37 @@ const normalizeTopicPayload = (payload) => {
   };
 };
 
+const getStoredUserData = () => {
+  try {
+    const raw = window.localStorage.getItem("userData");
+    if (!raw || raw === "null") return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
 const fetchTopic = async (userId, topicId, signal) => {
+  const userData = getStoredUserData();
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (userData?.access_token) {
+    headers.Authorization = `Bearer ${userData.access_token}`;
+  }
+
   const response = await fetch(`/api/topic/full/${userId}/${topicId}`, {
-    signal: signal,
+    method: "GET",
+    headers,
+    signal,
   });
+
+  if (response.status === 401) {
+    console.warn("Unauthorized: redirecting to /login");
+    window.localStorage.removeItem("userData");
+    window.location.href = "/login?sessionExpired=1";
+  }
 
   const payload = await response.json().catch(() => null);
 
