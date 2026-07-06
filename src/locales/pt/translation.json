@@ -1054,6 +1054,37 @@
       "eyebrow": "Acesse o d-FCT",
       "title": "Faça login para verificar, votar e governar",
       "body": "Use sua conta ou carteira Cardano para votar em alegações, contribuir com evidências e participar da validação descentralizada."
-    }
+    },
+    "reviewing": "Revisando…",
+    "reviewModalEyebrow": "Inteligência da comunidade",
+    "reviewModalTitle": "Construa o sinal da alegação",
+    "verdictLabel": "Veredito",
+    "confidenceLabel": "Confiança",
+    "confidenceHelp": "Pontuação opcional de confiança de 0 a 100.",
+    "rationaleLabel": "Justificativa",
+    "rationalePlaceholder": "Explique brevemente o que levou a este veredito.",
+    "submitReview": "Publicar revisão",
+    "reviewSaved": "Revisão da alegação publicada.",
+    "reviewAlreadySaved": "Sua revisão já estava atualizada.",
+    "reviewFailed": "Não foi possível publicar a revisão da alegação.",
+    "structuredReviews": "Sinal de revisão",
+    "totalReviews": "Revisões: {{count}}",
+    "latestReview": "Mais recente",
+    "yourReview": "Sua",
+    "verdicts": {
+      "true": "Verdadeira",
+      "mostly_true": "Quase verdadeira",
+      "partially_true": "Parcial",
+      "misleading": "Enganosa",
+      "false": "Falsa",
+      "unverified": "Precisa de evidências"
+    },
+    "reviewModalSubtitle": "Transforme seu julgamento em um sinal estruturado que outras pessoas possam entender, auditar, comparar e reutilizar como contexto curado para LLM após revisão.",
+    "claimUnderReview": "Alegação em revisão",
+    "verdictHelp": "Escolha o rótulo que melhor comunica sua avaliação.",
+    "confidenceValue": "{{value}}% de confiança",
+    "confidenceLow": "Exploratório",
+    "confidenceHigh": "Alta convicção",
+    "rationaleHelp": "Opcional, mas útil para transparência."
   }
 }

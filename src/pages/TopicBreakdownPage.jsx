@@ -12,7 +12,7 @@ import { ContentList } from "../components/content";
 import { ClaimList } from "../components/topic";
 import { ContentCarousel } from "../components/content";
 import i18n from "../i18n";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -30,10 +30,191 @@ import { useAuthRequest } from "../hooks/useAuthRequest";
 import {
   fetchTopicVerificationSummary,
   castClaimVote,
+  reviewClaim,
 } from "../api/claimVerification";
 
 function isActiveTopicStatus(status) {
   return Number(status) === 2 || String(status || "").toLowerCase() === "active";
+}
+
+const CLAIM_REVIEW_VERDICTS = [
+  "true",
+  "mostly_true",
+  "partially_true",
+  "misleading",
+  "false",
+  "unverified",
+];
+
+function normalizeTopicClaimId(value) {
+  if (value === undefined || value === null) return "";
+  return String(value);
+}
+
+function getTopicClaimId(claim) {
+  return claim?.claim_id ?? claim?.claimId;
+}
+
+function findClaimSummaryForClaim(verificationSummary, claim) {
+  const claimId = normalizeTopicClaimId(getTopicClaimId(claim));
+
+  return (verificationSummary?.claims || []).find(
+    (item) => normalizeTopicClaimId(item.claimId ?? item.claim_id) === claimId,
+  );
+}
+
+function ClaimReviewModal({
+  show,
+  onHide,
+  claim,
+  claimSummary,
+  onSubmit,
+  submitting = false,
+}) {
+  const { t } = useTranslation();
+  const currentReview = claimSummary?.reviewSummary?.currentUserReview;
+
+  const [verdictTag, setVerdictTag] = useState("unverified");
+  const [confidence, setConfidence] = useState(72);
+  const [rationale, setRationale] = useState("");
+
+  useEffect(() => {
+    if (!show) return;
+
+    setVerdictTag(currentReview?.verdictTag || "unverified");
+    setConfidence(
+      currentReview?.confidence === undefined || currentReview?.confidence === null
+        ? 72
+        : Number(currentReview.confidence),
+    );
+    setRationale(currentReview?.rationale || "");
+  }, [currentReview, show]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    onSubmit?.({
+      verdictTag,
+      confidence: Number(confidence),
+      rationale,
+    });
+  };
+
+  return (
+    <Modal
+      show={show}
+      onHide={submitting ? undefined : onHide}
+      centered
+      keyboard={!submitting}
+      backdrop={submitting ? "static" : true}
+      className="Breakdown-claim-review-modal"
+      contentClassName="Breakdown-claim-review-modalContent"
+    >
+      <Form onSubmit={handleSubmit}>
+        <Modal.Header>
+          <div className="Breakdown-claim-review-heading">
+            <span className="Breakdown-claim-review-modalEyebrow">
+              {t("claimVoting.reviewModalEyebrow")}
+            </span>
+            <Modal.Title>{t("claimVoting.reviewModalTitle")}</Modal.Title>
+            <p>{t("claimVoting.reviewModalSubtitle")}</p>
+          </div>
+
+          <button
+            type="button"
+            className="Breakdown-claim-review-close"
+            aria-label={t("close")}
+            onClick={onHide}
+            disabled={submitting}
+          >
+            ×
+          </button>
+        </Modal.Header>
+
+        <Modal.Body>
+          {claim?.statement && (
+            <div className="Breakdown-claim-review-claimBox">
+              <strong>{t("claimVoting.claimUnderReview")}</strong>
+              <p>{claim.statement}</p>
+            </div>
+          )}
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.verdictLabel")}</span>
+              <small>{t("claimVoting.verdictHelp")}</small>
+            </div>
+
+            <div className="Breakdown-claim-review-verdictGrid">
+              {CLAIM_REVIEW_VERDICTS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={submitting}
+                  className={[
+                    "Breakdown-claim-review-verdictPill",
+                    verdictTag === value && "is-selected",
+                  ].filter(Boolean).join(" ")}
+                  onClick={() => setVerdictTag(value)}
+                >
+                  <span>{t(`claimVoting.verdicts.${value}`)}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.confidenceLabel")}</span>
+              <strong>{t("claimVoting.confidenceValue", { value: confidence })}</strong>
+            </div>
+
+            <input
+              className="Breakdown-claim-review-confidenceRange"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={confidence}
+              disabled={submitting}
+              onChange={(event) => setConfidence(Number(event.target.value))}
+            />
+
+            <div className="Breakdown-claim-review-confidenceScale">
+              <span>{t("claimVoting.confidenceLow")}</span>
+              <span>{t("claimVoting.confidenceHigh")}</span>
+            </div>
+          </section>
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.rationaleLabel")}</span>
+              <small>{t("claimVoting.rationaleHelp")}</small>
+            </div>
+
+            <Form.Control
+              as="textarea"
+              rows={4}
+              maxLength={4000}
+              value={rationale}
+              disabled={submitting}
+              placeholder={t("claimVoting.rationalePlaceholder")}
+              onChange={(event) => setRationale(event.target.value)}
+            />
+          </section>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onHide} disabled={submitting}>
+            {t("cancel")}
+          </Button>
+          <Button type="submit" variant="primary" disabled={submitting || !verdictTag}>
+            {submitting ? t("claimVoting.reviewing") : t("claimVoting.submitReview")}
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  );
 }
 
 function TopicAuthPromptModal({ show, onHide }) {
@@ -192,6 +373,9 @@ const Topic = ({
   const [verificationSummary, setVerificationSummary] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [votingClaimId, setVotingClaimId] = useState(null);
+  const [reviewModalShow, setReviewModalShow] = useState(false);
+  const [reviewingClaim, setReviewingClaim] = useState(null);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [authPromptShow, setAuthPromptShow] = useState(false);
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
@@ -264,6 +448,71 @@ const Topic = ({
   useEffect(() => {
     loadVerificationSummary({ silent: true });
   }, [loadVerificationSummary]);
+
+  const getReviewingClaimSummary = useCallback(
+    () => findClaimSummaryForClaim(verificationSummary, reviewingClaim),
+    [reviewingClaim, verificationSummary],
+  );
+
+  const closeClaimReviewModal = useCallback(() => {
+    if (reviewSubmitting) return;
+    setReviewModalShow(false);
+    setReviewingClaim(null);
+  }, [reviewSubmitting]);
+
+  const handleOpenClaimReview = useCallback((nextClaim) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    if (!isActiveTopicStatus(currentStatus)) {
+      showToast?.(t("claimVoting.activeTopicRequired"), "secondary");
+      return;
+    }
+
+    setReviewingClaim(nextClaim);
+    setReviewModalShow(true);
+  }, [currentStatus, showAuthPrompt, showToast, t, user?.access_token]);
+
+  const handleClaimReview = useCallback(async (payload) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    const nextClaimId = getTopicClaimId(reviewingClaim);
+    if (!nextClaimId || reviewSubmitting) return;
+
+    setReviewSubmitting(true);
+
+    try {
+      const result = await reviewClaim(authRequestRef.current, nextClaimId, payload);
+      await loadVerificationSummary({ silent: true });
+
+      showToast?.(
+        result?.changed
+          ? t("claimVoting.reviewSaved")
+          : t("claimVoting.reviewAlreadySaved"),
+        result?.changed ? "success" : "secondary",
+      );
+
+      setReviewModalShow(false);
+      setReviewingClaim(null);
+    } catch {
+      showToast?.(t("claimVoting.reviewFailed"), "danger");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  }, [
+    loadVerificationSummary,
+    reviewSubmitting,
+    reviewingClaim,
+    showAuthPrompt,
+    showToast,
+    t,
+    user?.access_token,
+  ]);
 
   const handleClaimVote = useCallback(async (nextClaimId, vote) => {
     if (!user?.access_token) {
@@ -394,7 +643,18 @@ const Topic = ({
         verificationLoading={verificationLoading}
         votingClaimId={votingClaimId}
         votingEnabled={isActiveTopicStatus(currentStatus)}
+        reviewEnabled={isActiveTopicStatus(currentStatus)}
+        reviewingClaimId={getTopicClaimId(reviewingClaim)}
         onClaimVote={handleClaimVote}
+        onClaimReview={handleOpenClaimReview}
+      />
+      <ClaimReviewModal
+        show={reviewModalShow}
+        onHide={closeClaimReviewModal}
+        claim={reviewingClaim}
+        claimSummary={getReviewingClaimSummary()}
+        onSubmit={handleClaimReview}
+        submitting={reviewSubmitting}
       />
       <TopicAuthPromptModal
         show={authPromptShow}

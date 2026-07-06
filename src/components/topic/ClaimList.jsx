@@ -63,14 +63,18 @@ const ClaimItem = ({
   topicId,
   claimSummary,
   onClaimVote,
+  onClaimReview,
   votingClaimId,
+  reviewingClaimId,
   votingEnabled,
+  reviewEnabled,
 }) => {
   const { t } = useTranslation();
 
   const claimId = getClaimId(claim);
   const normalizedClaimId = normalizeClaimId(claimId);
   const isVoting = normalizeClaimId(votingClaimId) === normalizedClaimId;
+  const isReviewing = normalizeClaimId(reviewingClaimId) === normalizedClaimId;
 
   const agreeCount = Number(claimSummary?.agreeCount || 0);
   const disagreeCount = Number(claimSummary?.disagreeCount || 0);
@@ -79,6 +83,10 @@ const ClaimItem = ({
   const agreePct = votePercent(agreeCount, totalVotes);
   const disagreePct = votePercent(disagreeCount, totalVotes);
   const outputTags = normalizeTags(claimSummary?.verdictTag || claim.output_tags);
+  const reviewSummary = claimSummary?.reviewSummary || {};
+  const totalReviews = Number(reviewSummary.totalReviews || 0);
+  const latestReview = reviewSummary.latestReview || null;
+  const currentUserReview = reviewSummary.currentUserReview || null;
 
   return (
     <Accordion.Item eventKey={String(index)}>
@@ -133,6 +141,31 @@ const ClaimItem = ({
             </div>
           </div>
 
+          {(totalReviews > 0 || currentUserReview) && (
+            <div className="Breakdown-claim-reviewSummary">
+              <div className="Breakdown-claim-reviewSummaryHeader">
+                <span>{t("claimVoting.structuredReviews")}</span>
+                <small>{t("claimVoting.totalReviews", { count: totalReviews })}</small>
+              </div>
+
+              <div className="Breakdown-claim-reviewSummaryGrid">
+                {latestReview?.verdictTag && (
+                  <span>
+                    <strong>{t("claimVoting.latestReview")}:</strong>{" "}
+                    {t(`claimVoting.verdicts.${latestReview.verdictTag}`)}
+                  </span>
+                )}
+
+                {currentUserReview?.verdictTag && (
+                  <span>
+                    <strong>{t("claimVoting.yourReview")}:</strong>{" "}
+                    {t(`claimVoting.verdicts.${currentUserReview.verdictTag}`)}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="Breakdown-topic-claims-toolbar">
             <div className="Breakdown-claim-actionCluster Breakdown-claim-actionCluster--primary">
               <Button
@@ -169,10 +202,17 @@ const ClaimItem = ({
 
               <Button
                 variant="link"
+                disabled={!reviewEnabled || isReviewing || !claimId}
+                onClick={() => onClaimReview?.(claim)}
                 className={actionClass("Breakdown-claim-reviewButton", "is-review")}
               >
                 <FontAwesomeIcon icon={faSearch} />
-                <span>{t("reviewClaim")}</span>
+                <span>
+                  {isReviewing ? t("claimVoting.reviewing") : t("reviewClaim")}
+                </span>
+                {totalReviews > 0 && (
+                  <span className="Breakdown-claim-voteCount">{totalReviews}</span>
+                )}
               </Button>
             </div>
 
@@ -219,8 +259,11 @@ function ClaimList({
   verificationSummary,
   verificationLoading = false,
   votingClaimId,
+  reviewingClaimId,
   votingEnabled = false,
+  reviewEnabled = false,
   onClaimVote,
+  onClaimReview,
 }) {
   const { t } = useTranslation();
 
@@ -244,8 +287,11 @@ function ClaimList({
             topicId={topicId}
             claimSummary={getClaimSummary(verificationSummary, item)}
             votingClaimId={votingClaimId}
+            reviewingClaimId={reviewingClaimId}
             votingEnabled={votingEnabled}
+            reviewEnabled={reviewEnabled}
             onClaimVote={onClaimVote}
+            onClaimReview={onClaimReview}
           />
         ))}
       </Accordion>
