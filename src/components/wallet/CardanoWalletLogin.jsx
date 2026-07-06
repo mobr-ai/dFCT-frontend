@@ -135,14 +135,6 @@ function CardanoWalletLogin({ onLogin, showToast }) {
                   rel="noopener noreferrer"
                 />
               ),
-              flint: (
-                <a
-                  className="Auth-wallet-link"
-                  href="https://flint-wallet.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              ),
               eternl: (
                 <a
                   className="Auth-wallet-link"

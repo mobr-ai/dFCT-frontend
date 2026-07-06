@@ -90,7 +90,7 @@
   "signUpOR": "OR",
   "loginWithGoogle": "Login with Google",
   "loginWithWallet": "Login with Cardano wallet",
-  "walletNotFound": "Alternatively, connect a Cardano wallet like <lace>Lace</lace>, <flint>Flint</flint>, or <eternl>Eternl</eternl>.",
+  "walletNotFound": "Alternatively, connect a Cardano wallet like <lace>Lace</lace> or <eternl>Eternl</eternl>.",
   "noWalletsFound": "No supported wallets were found or connected.",
   "connectWallet": "Connect {{wallet}} Wallet",
   "connectedWallets": "Select wallet",
