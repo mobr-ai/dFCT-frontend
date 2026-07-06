@@ -961,3 +961,463 @@
     transform: none;
   }
 }
+
+/* Claim voting / community perception */
+.Breakdown-topic-claimsWrap {
+  width: 100%;
+}
+
+.Breakdown-claim-summaryLoading {
+  margin: 0.35rem 0 0.75rem;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.86rem;
+}
+
+.Breakdown-claim-perception {
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    var(--theme-surface-soft, rgba(255, 255, 255, 0.045));
+  padding: 0.7rem 0.8rem;
+  margin: 0.85rem 0 0.9rem;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.Breakdown-claim-perceptionHeader,
+.Breakdown-claim-perceptionLegend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.Breakdown-claim-perceptionHeader {
+  color: var(--theme-text, inherit);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+}
+
+.Breakdown-claim-perceptionHeader small,
+.Breakdown-claim-perceptionLegend {
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.62));
+  font-size: 0.76rem;
+}
+
+.Breakdown-claim-perceptionBar {
+  display: flex;
+  height: 0.45rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--theme-surface, rgba(255, 255, 255, 0.09));
+  margin: 0.55rem 0 0.45rem;
+}
+
+.Breakdown-claim-perceptionAgree,
+.Breakdown-claim-perceptionDisagree {
+  display: block;
+  min-width: 0;
+  transition: width 180ms ease;
+}
+
+.Breakdown-claim-perceptionAgree {
+  background: linear-gradient(90deg, #26d07c, #7cf6b5);
+}
+
+.Breakdown-claim-perceptionDisagree {
+  background: linear-gradient(90deg, #ff6b6b, #ff9f9f);
+}
+
+.Breakdown-claim-voteGroup {
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.Breakdown-claim-voteButton {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.42rem;
+  font-weight: 700 !important;
+}
+
+.Breakdown-claim-voteCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.36rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.18);
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.Breakdown-claim-votingHint {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--theme-text-muted, rgba(255, 255, 255, 0.58));
+  font-size: 0.76rem;
+}
+
+@media (max-width: 720px) {
+  .Breakdown-claim-perceptionHeader,
+  .Breakdown-claim-perceptionLegend {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .Breakdown-topic-claims-toolbar {
+    gap: 0.65rem;
+  }
+}
+
+/* Claim action toolbar polish */
+.Breakdown-topic-claims-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: space-between;
+  margin-top: 0.95rem;
+}
+
+.Breakdown-claim-actionCluster {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.Breakdown-claim-actionCluster--primary {
+  padding: 0.18rem;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    var(--theme-surface-soft, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1));
+}
+
+.Breakdown-claim-actionButton.btn,
+.Breakdown-claim-actionButton.btn-link {
+  align-items: center !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  gap: 0.42rem !important;
+  justify-content: center !important;
+  letter-spacing: -0.01em;
+  line-height: 1 !important;
+  min-height: 2.05rem !important;
+  overflow: visible !important;
+  padding: 0.52rem 0.72rem !important;
+  text-decoration: none !important;
+  text-transform: none;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+  white-space: nowrap !important;
+}
+
+.Breakdown-claim-actionButton.btn:hover,
+.Breakdown-claim-actionButton.btn:focus-visible {
+  text-decoration: none !important;
+  transform: translateY(-1px);
+}
+
+.Breakdown-claim-actionButton.btn:disabled {
+  opacity: 0.58;
+  transform: none;
+}
+
+.Breakdown-claim-actionButton svg {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+}
+
+.Breakdown-claim-voteCount {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.72rem;
+  height: 1.25rem;
+  justify-content: center;
+  line-height: 1;
+  min-width: 1.25rem;
+  padding: 0 0.34rem;
+}
+
+.Breakdown-claim-actionButton.is-agree {
+  color: #45dc93 !important;
+}
+
+.Breakdown-claim-actionButton.is-agree:hover,
+.Breakdown-claim-actionButton.is-agree.is-active {
+  background: linear-gradient(135deg, rgba(38, 208, 124, 0.95), rgba(27, 170, 105, 0.96)) !important;
+  border-color: rgba(124, 246, 181, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(38, 208, 124, 0.24) !important;
+}
+
+.Breakdown-claim-actionButton.is-disagree {
+  color: #ff6374 !important;
+}
+
+.Breakdown-claim-actionButton.is-disagree:hover,
+.Breakdown-claim-actionButton.is-disagree.is-active {
+  background: linear-gradient(135deg, rgba(236, 63, 91, 0.97), rgba(196, 37, 67, 0.97)) !important;
+  border-color: rgba(255, 145, 159, 0.42) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(236, 63, 91, 0.24) !important;
+}
+
+.Breakdown-claim-actionButton.is-review {
+  color: var(--theme-text, #eef3ff) !important;
+  background: rgba(0, 0, 0, 0.16) !important;
+  border-color: var(--theme-border, rgba(255, 255, 255, 0.12)) !important;
+}
+
+.Breakdown-claim-actionButton.is-review:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--theme-text, #ffffff) !important;
+}
+
+.Breakdown-claim-actionButton.is-evidencePro {
+  background: rgba(38, 208, 124, 0.13) !important;
+  border-color: rgba(38, 208, 124, 0.28) !important;
+  color: #52e59d !important;
+}
+
+.Breakdown-claim-actionButton.is-evidencePro:hover {
+  background: rgba(38, 208, 124, 0.95) !important;
+  color: #ffffff !important;
+}
+
+.Breakdown-claim-actionButton.is-evidenceCon {
+  background: rgba(236, 63, 91, 0.13) !important;
+  border-color: rgba(236, 63, 91, 0.28) !important;
+  color: #ff6d80 !important;
+}
+
+.Breakdown-claim-actionButton.is-evidenceCon:hover {
+  background: rgba(236, 63, 91, 0.97) !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 720px) {
+  .Breakdown-topic-claims-toolbar,
+  .Breakdown-claim-actionCluster,
+  .Breakdown-claim-actionCluster--primary,
+  .Breakdown-claim-actionCluster--evidence {
+    align-items: stretch;
+    display: flex;
+    width: 100%;
+  }
+
+  .Breakdown-claim-actionButton.btn,
+  .Breakdown-claim-actionButton.btn-link {
+    flex: 1 1 auto;
+  }
+}
+
+/* Theme-aware close button for claim evidence modal */
+.Breakdown-claim-evidence-modal .modal-header .btn-close {
+  --dfct-close-color: var(--theme-text, #f4f7fb);
+
+  align-items: center !important;
+  appearance: none !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    var(--theme-surface-soft, rgba(255, 255, 255, 0.08)) !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.16)) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+  color: var(--dfct-close-color) !important;
+  display: inline-flex !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  position: relative !important;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+  width: 2rem !important;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::before,
+.Breakdown-claim-evidence-modal .modal-header .btn-close::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  height: 0.12rem;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform-origin: center;
+  width: 0.86rem;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+.Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07)),
+    var(--theme-surface, rgba(255, 255, 255, 0.12)) !important;
+  border-color: var(--theme-border-strong, rgba(255, 255, 255, 0.28)) !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22) !important;
+  color: var(--theme-text, #ffffff) !important;
+  transform: translateY(-1px);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  outline: 2px solid var(--theme-accent, rgba(88, 166, 255, 0.75)) !important;
+  outline-offset: 2px;
+}
+
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close {
+  --dfct-close-color: var(--theme-text, #1e293b);
+
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 252, 0.92)),
+    var(--theme-surface-soft, #f8fafc) !important;
+  border-color: var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12) !important;
+}
+
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(232, 238, 247, 0.96)),
+    var(--theme-surface, #ffffff) !important;
+  border-color: var(--theme-border-strong, rgba(15, 23, 42, 0.24)) !important;
+  color: var(--theme-text, #0f172a) !important;
+}
+
+/* Theme-aware close button for claim evidence modal */
+.Breakdown-claim-evidence-modal .modal-header .btn-close {
+  --dfct-close-color: var(--theme-text, #f4f7fb);
+
+  align-items: center !important;
+  appearance: none !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    var(--theme-surface-soft, rgba(255, 255, 255, 0.08)) !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.16)) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+  color: var(--dfct-close-color) !important;
+  display: inline-flex !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  position: relative !important;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+  width: 2rem !important;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::before,
+.Breakdown-claim-evidence-modal .modal-header .btn-close::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  height: 0.12rem;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform-origin: center;
+  width: 0.86rem;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+.Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07)),
+    var(--theme-surface, rgba(255, 255, 255, 0.12)) !important;
+  border-color: var(--theme-border-strong, rgba(255, 255, 255, 0.28)) !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22) !important;
+  color: var(--theme-text, #ffffff) !important;
+  transform: translateY(-1px);
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  outline: 2px solid var(--theme-accent, rgba(88, 166, 255, 0.75)) !important;
+  outline-offset: 2px;
+}
+
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close {
+  --dfct-close-color: var(--theme-text, #1e293b);
+
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 252, 0.92)),
+    var(--theme-surface-soft, #f8fafc) !important;
+  border-color: var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12) !important;
+}
+
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
+[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible,
+[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(232, 238, 247, 0.96)),
+    var(--theme-surface, #ffffff) !important;
+  border-color: var(--theme-border-strong, rgba(15, 23, 42, 0.24)) !important;
+  color: var(--theme-text, #0f172a) !important;
+}
+
+/* Keep evidence modal close control pinned to the right side */
+.Breakdown-claim-evidence-modal .modal-header {
+  align-items: center !important;
+  display: flex !important;
+  gap: 0.75rem;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .modal-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.Breakdown-claim-evidence-modal .modal-header .btn-close {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
