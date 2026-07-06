@@ -75,7 +75,7 @@ function ClaimReviewModal({
   const currentReview = claimSummary?.reviewSummary?.currentUserReview;
 
   const [verdictTag, setVerdictTag] = useState("unverified");
-  const [confidence, setConfidence] = useState(72);
+  const [confidence, setConfidence] = useState(50);
   const [rationale, setRationale] = useState("");
 
   useEffect(() => {
@@ -84,7 +84,7 @@ function ClaimReviewModal({
     setVerdictTag(currentReview?.verdictTag || "unverified");
     setConfidence(
       currentReview?.confidence === undefined || currentReview?.confidence === null
-        ? 72
+        ? 50
         : Number(currentReview.confidence),
     );
     setRationale(currentReview?.rationale || "");
