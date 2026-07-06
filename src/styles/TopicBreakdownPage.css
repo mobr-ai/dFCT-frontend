@@ -977,7 +977,11 @@
   border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
   border-radius: 14px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025)
+    ),
     var(--theme-surface-soft, rgba(255, 255, 255, 0.045));
   padding: 0.7rem 0.8rem;
   margin: 0.85rem 0 0.9rem;
@@ -1093,9 +1097,13 @@
 
 .Breakdown-claim-actionCluster--primary {
   padding: 0.18rem;
-  border-radius: 999px;
+  border-radius: 1rem;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.025)
+    ),
     var(--theme-surface-soft, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1));
 }
@@ -1162,7 +1170,11 @@
 
 .Breakdown-claim-actionButton.is-agree:hover,
 .Breakdown-claim-actionButton.is-agree.is-active {
-  background: linear-gradient(135deg, rgba(38, 208, 124, 0.95), rgba(27, 170, 105, 0.96)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(38, 208, 124, 0.95),
+    rgba(27, 170, 105, 0.96)
+  ) !important;
   border-color: rgba(124, 246, 181, 0.45) !important;
   color: #ffffff !important;
   box-shadow: 0 10px 22px rgba(38, 208, 124, 0.24) !important;
@@ -1174,7 +1186,11 @@
 
 .Breakdown-claim-actionButton.is-disagree:hover,
 .Breakdown-claim-actionButton.is-disagree.is-active {
-  background: linear-gradient(135deg, rgba(236, 63, 91, 0.97), rgba(196, 37, 67, 0.97)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(236, 63, 91, 0.97),
+    rgba(196, 37, 67, 0.97)
+  ) !important;
   border-color: rgba(255, 145, 159, 0.42) !important;
   color: #ffffff !important;
   box-shadow: 0 10px 22px rgba(236, 63, 91, 0.24) !important;
@@ -1236,7 +1252,11 @@
   align-items: center !important;
   appearance: none !important;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04)
+    ),
     var(--theme-surface-soft, rgba(255, 255, 255, 0.08)) !important;
   background-image: none !important;
   border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.16)) !important;
@@ -1282,9 +1302,16 @@
 .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
 .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.07)
+    ),
     var(--theme-surface, rgba(255, 255, 255, 0.12)) !important;
-  border-color: var(--theme-border-strong, rgba(255, 255, 255, 0.28)) !important;
+  border-color: var(
+    --theme-border-strong,
+    rgba(255, 255, 255, 0.28)
+  ) !important;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22) !important;
   color: var(--theme-text, #ffffff) !important;
   transform: translateY(-1px);
@@ -1300,16 +1327,32 @@
   --dfct-close-color: var(--theme-text, #1e293b);
 
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 252, 0.92)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(245, 248, 252, 0.92)
+    ),
     var(--theme-surface-soft, #f8fafc) !important;
   border-color: var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12) !important;
 }
 
-[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
-[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
-[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible,
-[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+[data-theme="paper"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:hover,
+[data-theme="light"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:hover,
+[data-theme="paper"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:focus-visible,
+[data-theme="light"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:focus-visible {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(232, 238, 247, 0.96)),
     var(--theme-surface, #ffffff) !important;
@@ -1324,7 +1367,11 @@
   align-items: center !important;
   appearance: none !important;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04)
+    ),
     var(--theme-surface-soft, rgba(255, 255, 255, 0.08)) !important;
   background-image: none !important;
   border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.16)) !important;
@@ -1370,9 +1417,16 @@
 .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
 .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.07)
+    ),
     var(--theme-surface, rgba(255, 255, 255, 0.12)) !important;
-  border-color: var(--theme-border-strong, rgba(255, 255, 255, 0.28)) !important;
+  border-color: var(
+    --theme-border-strong,
+    rgba(255, 255, 255, 0.28)
+  ) !important;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22) !important;
   color: var(--theme-text, #ffffff) !important;
   transform: translateY(-1px);
@@ -1388,16 +1442,32 @@
   --dfct-close-color: var(--theme-text, #1e293b);
 
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 252, 0.92)),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(245, 248, 252, 0.92)
+    ),
     var(--theme-surface-soft, #f8fafc) !important;
   border-color: var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12) !important;
 }
 
-[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
-[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:hover,
-[data-theme="paper"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible,
-[data-theme="light"] .Breakdown-claim-evidence-modal .modal-header .btn-close:focus-visible {
+[data-theme="paper"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:hover,
+[data-theme="light"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:hover,
+[data-theme="paper"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:focus-visible,
+[data-theme="light"]
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:focus-visible {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(232, 238, 247, 0.96)),
     var(--theme-surface, #ffffff) !important;
@@ -1420,4 +1490,160 @@
 .Breakdown-claim-evidence-modal .modal-header .btn-close {
   flex: 0 0 auto !important;
   margin-left: auto !important;
+}
+
+/* Topic action auth modal: WelcomePage auth island */
+.Breakdown-auth-modal-backdrop {
+  background:
+    radial-gradient(
+      circle at 20% 18%,
+      rgba(78, 205, 196, 0.13),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 78% 8%,
+      rgba(135, 88, 255, 0.14),
+      transparent 32%
+    ),
+    rgba(3, 8, 15, 0.74);
+  backdrop-filter: blur(10px);
+}
+
+.Breakdown-auth-modal .modal-dialog {
+  max-width: min(560px, calc(100vw - 1.5rem));
+}
+
+.Breakdown-auth-modal-content,
+.Breakdown-auth-modal .modal-content,
+.Breakdown-auth-modal .modal-body {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.Breakdown-auth-modal .modal-body {
+  overflow: visible;
+  padding: 0;
+}
+
+.Breakdown-auth-welcome-shell.WelcomePage {
+  background: transparent !important;
+  display: block !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  position: relative;
+}
+
+.Breakdown-auth-card.WelcomePage-auth {
+  margin: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* In the modal, WelcomePage's auth island should be card-sized, not page-sized. */
+.Breakdown-auth-card .Auth-body-wrapper,
+.Breakdown-auth-card .Auth-container-wrapper,
+.Breakdown-auth-card .Auth-container {
+  min-height: 0 !important;
+}
+
+.Breakdown-auth-close {
+  align-items: center;
+  background: rgba(238, 246, 255, 0.92);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 0.9rem 2rem rgba(0, 0, 0, 0.34);
+  color: rgba(10, 16, 27, 0.9);
+  display: inline-flex;
+  font-size: 1.35rem;
+  font-weight: 800;
+  height: 2.2rem;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: -0.7rem;
+  top: -0.7rem;
+  width: 2.2rem;
+  z-index: 10;
+}
+
+.Breakdown-auth-close:hover,
+.Breakdown-auth-close:focus-visible {
+  background: #fff;
+  color: rgba(10, 16, 27, 1);
+}
+
+@media (max-width: 576px) {
+  .Breakdown-auth-modal .modal-dialog {
+    margin-inline: 0.85rem;
+  }
+
+  .Breakdown-auth-close {
+    right: -0.35rem;
+    top: -0.35rem;
+  }
+}
+
+/* Auth modal final alignment with WelcomePage card */
+.Breakdown-auth-card.WelcomePage-auth {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 1rem !important;
+}
+
+.Breakdown-auth-card .WelcomePage-authHeader {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 1rem !important;
+  padding: 0 !important;
+}
+
+.Breakdown-auth-card .Auth-container {
+  background: linear-gradient(
+    145deg,
+    rgba(31, 41, 56, 0.92),
+    rgba(18, 27, 42, 0.96)
+  ) !important;
+  border: 1px solid rgba(220, 235, 255, 0.18) !important;
+  border-radius: 1.25rem !important;
+  box-shadow:
+    0 1.25rem 3rem rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+  padding: 1.25rem !important;
+}
+
+/* The AuthPage image is broken in this embedded modal; replace it with the bundled SVG mark. */
+.Breakdown-auth-card .Auth-logo {
+  display: none !important;
+}
+
+.Breakdown-auth-card .Auth-container::before {
+  background:
+    url("/logo192.png") center / contain no-repeat,
+    radial-gradient(circle, rgba(122, 246, 229, 0.13), transparent 66%);
+  content: "";
+  display: block;
+  height: 3.75rem;
+  margin: 0 auto 0.65rem;
+  opacity: 0.9;
+  width: 3.75rem;
+}
+
+.Breakdown-auth-card .Auth-title {
+  margin-top: 0 !important;
+}
+
+.Breakdown-auth-card .Auth-input-group {
+  margin-bottom: 0.9rem !important;
+}
+
+.Breakdown-auth-card .Auth-divider {
+  margin: 1.05rem 0 !important;
+}
+
+.Breakdown-auth-card .Auth-divider {
+  margin: 1.05rem 0 !important;
 }

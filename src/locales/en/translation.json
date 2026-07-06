@@ -1049,6 +1049,11 @@
     "voteAlreadyCounted": "Your vote was already counted.",
     "voteFailed": "Could not save vote.",
     "loginRequired": "Log in to vote on this claim.",
-    "activeTopicRequired": "Voting opens when the topic is active."
+    "activeTopicRequired": "Voting opens when the topic is active.",
+    "authModal": {
+      "eyebrow": "Access d-FCT",
+      "title": "Sign in to verify, vote, and govern",
+      "body": "Use your account or Cardano wallet to vote on claims, contribute evidence, and participate in decentralized validation."
+    }
   }
 }

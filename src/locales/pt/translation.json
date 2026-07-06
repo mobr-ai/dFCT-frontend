@@ -1049,6 +1049,11 @@
     "voteAlreadyCounted": "Seu voto já foi contabilizado.",
     "voteFailed": "Não foi possível salvar o voto.",
     "loginRequired": "Entre para votar nesta alegação.",
-    "activeTopicRequired": "A votação abre quando o tópico está ativo."
+    "activeTopicRequired": "A votação abre quando o tópico está ativo.",
+    "authModal": {
+      "eyebrow": "Acesse o d-FCT",
+      "title": "Faça login para verificar, votar e governar",
+      "body": "Use sua conta ou carteira Cardano para votar em alegações, contribuir com evidências e participar da validação descentralizada."
+    }
   }
 }

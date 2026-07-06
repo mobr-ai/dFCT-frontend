@@ -1,4 +1,5 @@
 import "../styles/TopicBreakdownPage.css";
+import "../styles/WelcomePage.css";
 import "../styles/NavigationSidebar.css";
 import { TopicSidebar } from "../components/topic";
 import { TopicToolbar } from "../components/topic";
@@ -6,11 +7,12 @@ import { EvidenceModal } from "../components/submission";
 import { TopicLifecycleAuditTrail } from "../components/dsm";
 import Badge from "react-bootstrap/Badge";
 import LoadingPage from "./LoadingPage";
+import AuthPage from "./AuthPage";
 import { ContentList } from "../components/content";
 import { ClaimList } from "../components/topic";
 import { ContentCarousel } from "../components/content";
 import i18n from "../i18n";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -32,6 +34,46 @@ import {
 
 function isActiveTopicStatus(status) {
   return Number(status) === 2 || String(status || "").toLowerCase() === "active";
+}
+
+function TopicAuthPromptModal({ show, onHide }) {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      keyboard
+      backdrop
+      className="Breakdown-auth-modal"
+      backdropClassName="Breakdown-auth-modal-backdrop"
+      contentClassName="Breakdown-auth-modal-content"
+    >
+      <Modal.Body>
+        <div className="WelcomePage Breakdown-auth-welcome-shell">
+          <button
+            type="button"
+            className="Breakdown-auth-close"
+            aria-label={t("close")}
+            onClick={onHide}
+          >
+            ×
+          </button>
+
+          <aside className="WelcomePage-auth Breakdown-auth-card">
+            <div className="WelcomePage-authHeader">
+              <span>{t("welcomePage.authEyebrow")}</span>
+              <h2>{t("welcomePage.authTitle")}</h2>
+              <p>{t("welcomePage.authBody")}</p>
+            </div>
+
+            <AuthPage type="login" />
+          </aside>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
 }
 
 function getHashtags(
@@ -150,6 +192,7 @@ const Topic = ({
   const [verificationSummary, setVerificationSummary] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [votingClaimId, setVotingClaimId] = useState(null);
+  const [authPromptShow, setAuthPromptShow] = useState(false);
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
   const { authRequest } = useAuthRequest(user);
@@ -173,7 +216,22 @@ const Topic = ({
     navigate(`/?q=${encodeURIComponent(hashtagQuery)}`);
   };
 
+  const showAuthPrompt = useCallback(() => {
+    setAuthPromptShow(true);
+  }, []);
+
+  useEffect(() => {
+    if (user?.access_token) {
+      setAuthPromptShow(false);
+    }
+  }, [user?.access_token]);
+
   const showEvidenceModal = (title, evidenceType, claimId) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
     setEvidenceType(evidenceType);
     setEvidenceModalTitle(title);
     setClaimId(claimId);
@@ -209,7 +267,7 @@ const Topic = ({
 
   const handleClaimVote = useCallback(async (nextClaimId, vote) => {
     if (!user?.access_token) {
-      showToast?.(t("claimVoting.loginRequired"), "secondary");
+      showAuthPrompt();
       return;
     }
 
@@ -232,7 +290,7 @@ const Topic = ({
     } finally {
       setVotingClaimId(null);
     }
-  }, [loadVerificationSummary, showToast, t, user?.access_token, votingClaimId]);
+  }, [loadVerificationSummary, showAuthPrompt, showToast, t, user?.access_token, votingClaimId]);
 
   // Map refs for each content item
   const contentRefs = useRef({});
@@ -335,8 +393,12 @@ const Topic = ({
         verificationSummary={verificationSummary}
         verificationLoading={verificationLoading}
         votingClaimId={votingClaimId}
-        votingEnabled={Boolean(user?.access_token && isActiveTopicStatus(currentStatus))}
+        votingEnabled={isActiveTopicStatus(currentStatus)}
         onClaimVote={handleClaimVote}
+      />
+      <TopicAuthPromptModal
+        show={authPromptShow}
+        onHide={() => setAuthPromptShow(false)}
       />
       <div className="Breakdown-topic-article">{article}</div>
       {contentList && contentList.length > 0 && (
