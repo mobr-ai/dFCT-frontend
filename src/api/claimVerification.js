@@ -29,3 +29,17 @@ export async function castClaimVote(authRequest, claimId, vote) {
 
   return unwrap(res);
 }
+
+
+export async function reviewClaim(authRequest, claimId, review) {
+  if (!authRequest || !claimId) {
+    throw new Error("Missing claim review request context");
+  }
+
+  const res = await authRequest
+    .post(`/api/claims/${claimId}/reviews`)
+    .send(review)
+    .timeout(CLAIM_VERIFICATION_TIMEOUT);
+
+  return unwrap(res);
+}

@@ -1054,6 +1054,37 @@
       "eyebrow": "Access d-FCT",
       "title": "Sign in to verify, vote, and govern",
       "body": "Use your account or Cardano wallet to vote on claims, contribute evidence, and participate in decentralized validation."
-    }
+    },
+    "reviewing": "Reviewing…",
+    "reviewModalEyebrow": "Community intelligence",
+    "reviewModalTitle": "Shape the claim signal",
+    "verdictLabel": "Verdict",
+    "confidenceLabel": "Confidence",
+    "confidenceHelp": "Optional confidence score from 0 to 100.",
+    "rationaleLabel": "Rationale",
+    "rationalePlaceholder": "Briefly explain what led you to this verdict.",
+    "submitReview": "Publish review",
+    "reviewSaved": "Claim review published.",
+    "reviewAlreadySaved": "Your review was already up to date.",
+    "reviewFailed": "Could not publish claim review.",
+    "structuredReviews": "Review signal",
+    "totalReviews": "Reviews: {{count}}",
+    "latestReview": "Latest",
+    "yourReview": "Yours",
+    "verdicts": {
+      "true": "True",
+      "mostly_true": "Mostly true",
+      "partially_true": "Partly true",
+      "misleading": "Misleading",
+      "false": "False",
+      "unverified": "Needs evidence"
+    },
+    "reviewModalSubtitle": "Turn your judgment into a structured signal that others can understand, audit, compare, and reuse as curated LLM context after review.",
+    "claimUnderReview": "Claim under review",
+    "verdictHelp": "Choose the label that best communicates your assessment.",
+    "confidenceValue": "{{value}}% confident",
+    "confidenceLow": "Exploratory",
+    "confidenceHigh": "High conviction",
+    "rationaleHelp": "Optional, but useful for transparency."
   }
 }
