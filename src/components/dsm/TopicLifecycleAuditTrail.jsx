@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Spinner from "react-bootstrap/Spinner";
@@ -44,6 +45,9 @@ const JOURNEY_STAGES = [
       "contrib_rejected",
       "contrib_verified",
       "contrib_disputed",
+      "claim_reviewed",
+      "claim_review_curated",
+      "claim_review_rejected",
     ],
     actions: [
       "submit_contribution",
@@ -51,8 +55,11 @@ const JOURNEY_STAGES = [
       "reject_contribution",
       "verify_contribution",
       "dispute_contribution",
+      "review_claim",
+      "curate_claim_review",
+      "reject_claim_review",
     ],
-    fuzzy: ["contribution", "evidence"],
+    fuzzy: ["contribution", "evidence", "claim_review"],
   },
   {
     key: "rewards",
@@ -232,6 +239,214 @@ function latestEventForStage(stage, events) {
   );
 }
 
+
+function activityEventsForStage(stage, events, maxItems = 4) {
+  return [...events]
+    .filter((event) => stageMatchesEvent(stage, event))
+    .reverse()
+    .slice(0, maxItems);
+}
+
+
+function eventScope(event) {
+  return normalizeKey(event?.timelineScope || event?.entityKind || "");
+}
+
+
+function eventScore(event) {
+  const value = Number(event?.score ?? event?.inputWeight ?? 0);
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+
+const ACTOR_CODENAMES = [
+  "Proof Falcon",
+  "Context Lynx",
+  "Ledger Owl",
+  "Truth Cartographer",
+  "Evidence Fox",
+  "Archive Raven",
+  "Claim Sentinel",
+  "Source Scout",
+  "Consensus Kite",
+  "Reason Heron",
+  "Timeline Wolf",
+  "Signal Weaver",
+];
+
+
+function eventMetadata(event) {
+  return event?.metadata && typeof event.metadata === "object"
+    ? event.metadata
+    : {};
+}
+
+
+function metadataValue(event, keys = []) {
+  const metadata = eventMetadata(event);
+  const candidates = [
+    metadata,
+    metadata.dsm,
+    metadata.claim,
+    metadata.review,
+    metadata.claimReview,
+    metadata.claim_review,
+  ].filter((item) => item && typeof item === "object");
+
+  for (const candidate of candidates) {
+    for (const key of keys) {
+      const value = candidate[key];
+      if (value !== undefined && value !== null && value !== "") return value;
+    }
+  }
+
+  return "";
+}
+
+
+function actorSeed(event) {
+  const raw = String(
+    event?.actorUserId ||
+      event?.actor_user_id ||
+      event?.eventId ||
+      event?.event_id ||
+      eventHash(event) ||
+      event?.action ||
+      "dfct",
+  );
+
+  return raw.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
+
+function blindActorCodename(event) {
+  return ACTOR_CODENAMES[Math.abs(actorSeed(event)) % ACTOR_CODENAMES.length];
+}
+
+
+function actorLabel(t, event) {
+  const action = normalizeKey(event?.action);
+  const scope = eventScope(event);
+  const name = blindActorCodename(event);
+
+  if (scope === "contribution") {
+    return t("dsm.audit.actors.contributorNamed", { name });
+  }
+
+  if (scope === "claim_review") {
+    return t("dsm.audit.actors.claimReviewerNamed", { name });
+  }
+
+  if (action === "submit_topic") return t("dsm.audit.actors.proposer");
+  if (action === "review_topic" || action === "reject_topic")
+    return t("dsm.audit.actors.topicReviewerNamed", { name });
+
+  return t("dsm.audit.actors.platform");
+}
+
+
+function formatPoints(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return "";
+  return Number.isInteger(numeric) ? String(numeric) : numeric.toFixed(1);
+}
+
+
+function activityDetailLine(t, event) {
+  const claimId = metadataValue(event, ["claimId", "claim_id"]);
+  const reviewId = metadataValue(event, ["reviewId", "review_id", "claimReviewId", "claim_review_id"]);
+  const verdict = metadataValue(event, ["verdict", "submittedVerdict", "submitted_verdict"]);
+  const confidence = metadataValue(event, ["confidence", "scoreConfidence", "review_confidence"]);
+
+  const parts = [];
+
+  if (claimId) {
+    parts.push(t("dsm.audit.claimReference", { claimId: shortHash(claimId, 8, 4) }));
+  }
+
+  if (reviewId) {
+    parts.push(t("dsm.audit.reviewReference", { reviewId: shortHash(reviewId, 8, 4) }));
+  }
+
+  if (verdict) {
+    parts.push(t("dsm.audit.verdictReference", { verdict: humanize(verdict) }));
+  }
+
+  if (confidence !== "" && confidence !== undefined && confidence !== null) {
+    const numeric = Number(confidence);
+    const label = Number.isFinite(numeric)
+      ? numeric <= 1
+        ? `${Math.round(numeric * 100)}%`
+        : `${Math.round(numeric)}%`
+      : String(confidence);
+
+    parts.push(t("dsm.audit.confidenceReference", { confidence: label }));
+  }
+
+  return parts.join(" · ");
+}
+
+
+function activityTitle(t, event) {
+  const action = normalizeKey(event?.action);
+  return t(`dsm.audit.activityTitles.${action}`, actionLabel(t, action));
+}
+
+
+function activityDescription(t, event) {
+  const action = normalizeKey(event?.action);
+  const scope = eventScope(event);
+
+  return t(
+    `dsm.audit.activityDescriptions.${action}`,
+    t(`dsm.audit.activityDescriptions.${scope}`, ""),
+  );
+}
+
+
+function activityStatusLabel(t, event) {
+  const action = normalizeKey(event?.action);
+  return t(`dsm.audit.activityStatuses.${action}`, stateLabel(t, event?.toState));
+}
+
+
+function activityStatusVariant(event) {
+  const action = normalizeKey(event?.action);
+  const state = normalizeKey(event?.toState);
+
+  if (
+    action.includes("reject") ||
+    state.includes("rejected") ||
+    state.includes("disputed")
+  ) {
+    return "danger";
+  }
+
+  if (
+    action.includes("curate") ||
+    action.includes("verify") ||
+    state.includes("verified") ||
+    state.includes("curated")
+  ) {
+    return "success";
+  }
+
+  if (action.includes("review") || state.includes("reviewed")) return "info";
+
+  return "secondary";
+}
+
+
+function proofReference(t, event) {
+  const txHash = event?.anchorTxHash;
+  if (txHash) return `${t("dsm.audit.txHash")}: ${shortHash(txHash)}`;
+
+  const hash = eventHash(event);
+  if (hash) return `${t("dsm.audit.proof")}: ${shortHash(hash)}`;
+
+  return "";
+}
+
 function journeyHasRejected(topic, stages) {
   const topicStatus = normalizeTopicStatus(topic?.status);
 
@@ -247,19 +462,44 @@ function journeyHasRejected(topic, stages) {
 }
 
 function deriveCurrentStageIndex(stages, topic) {
+  const indexOf = (key) => stages.findIndex((stage) => stage.key === key);
+  const safeIndex = (key, fallback = 0) => {
+    const index = indexOf(key);
+    return index >= 0 ? index : fallback;
+  };
+
   if (journeyHasRejected(topic, stages)) {
-    const reviewIndex = stages.findIndex((stage) => stage.key === "review");
-    return reviewIndex >= 0 ? reviewIndex : 0;
+    return safeIndex("review", 0);
   }
 
-  const lastCompleted = stages.reduce(
-    (latest, stage, index) => (stage.event ? index : latest),
-    -1,
-  );
+  const topicStatus = normalizeTopicStatus(topic?.status);
+  const hasStageEvent = (key) => Boolean(stages.find((stage) => stage.key === key)?.event);
 
-  if (lastCompleted < 0) return 0;
-  if (lastCompleted >= stages.length - 1) return stages.length - 1;
-  return lastCompleted + 1;
+  if (topicStatus === "closed" || hasStageEvent("closure")) {
+    return safeIndex("closure", stages.length - 1);
+  }
+
+  if (hasStageEvent("rewards")) {
+    return safeIndex("rewards", stages.length - 1);
+  }
+
+  if (
+    topicStatus.includes("active") ||
+    hasStageEvent("activation") ||
+    hasStageEvent("contributions")
+  ) {
+    return safeIndex("contributions", safeIndex("activation", 0));
+  }
+
+  if (hasStageEvent("review")) {
+    return safeIndex("activation", safeIndex("review", 0));
+  }
+
+  if (hasStageEvent("publication")) {
+    return safeIndex("review", safeIndex("publication", 0));
+  }
+
+  return safeIndex("publication", 0);
 }
 
 function deriveJourneyStatus(t, topic, stages) {
@@ -286,15 +526,159 @@ function deriveJourneyStatus(t, topic, stages) {
   return t("dsm.audit.journeyStatus.draft");
 }
 
+function ContributionStageActivity({
+  events = [],
+  locale,
+  isCurrent = false,
+  isLocked = false,
+}) {
+  const { t } = useTranslation();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const boundedIndex = events.length
+    ? Math.min(Math.max(activeIndex, 0), events.length - 1)
+    : 0;
+
+  const primary = events[boundedIndex] || null;
+  const score = primary ? formatPoints(eventScore(primary)) : "";
+  const proof = primary ? proofReference(t, primary) : "";
+  const date = primary ? eventDate(primary, locale) : "";
+  const details = primary ? activityDetailLine(t, primary) : "";
+  const emptyState = !primary;
+  const hasMultiple = events.length > 1;
+
+  const secondaryEvents = events
+    .map((activity, index) => ({ activity, index }))
+    .filter((item) => item.index !== boundedIndex)
+    .slice(0, 3);
+
+  const goPrevious = () => {
+    if (!hasMultiple) return;
+    setActiveIndex((current) => (
+      current <= 0 ? events.length - 1 : current - 1
+    ));
+  };
+
+  const goNext = () => {
+    if (!hasMultiple) return;
+    setActiveIndex((current) => (
+      current >= events.length - 1 ? 0 : current + 1
+    ));
+  };
+
+  return (
+    <div
+      className={[
+        "TopicJourney-contributionPanel",
+        emptyState ? "TopicJourney-contributionPanel--empty" : "",
+      ].filter(Boolean).join(" ")}
+    >
+      <div
+        key={primary?.eventId || primary?.createdAt || "empty"}
+        className="TopicJourney-contributionPrimary"
+      >
+        <div className="TopicJourney-contributionMainline">
+          <strong>
+            {primary
+              ? activityTitle(t, primary)
+              : isLocked
+                ? t("dsm.audit.contributionPanel.lockedTitle")
+                : isCurrent
+                  ? t("dsm.audit.contributionPanel.currentTitle")
+                  : t("dsm.audit.contributionPanel.waitingTitle")}
+
+            {score && (
+              <span className="TopicJourney-points">
+                {" "}
+                +{score} {t("dsm.audit.points")}
+              </span>
+            )}
+          </strong>
+
+          {hasMultiple && (
+            <div className="TopicJourney-contributionControls" aria-label={t("dsm.audit.activityCarousel")}>
+              <button type="button" onClick={goPrevious} aria-label={t("dsm.audit.previousActivity")}>
+                ‹
+              </button>
+              <span>{boundedIndex + 1}/{events.length}</span>
+              <button type="button" onClick={goNext} aria-label={t("dsm.audit.nextActivity")}>
+                ›
+              </button>
+            </div>
+          )}
+        </div>
+
+        <p>
+          {primary
+            ? activityDescription(t, primary)
+            : isLocked
+              ? t("dsm.audit.contributionPanel.lockedDescription")
+              : t("dsm.audit.contributionPanel.currentDescription")}
+        </p>
+
+        {details && (
+          <small className="TopicJourney-contributionDetails">
+            {details}
+          </small>
+        )}
+
+        <div className="TopicJourney-signalTrack" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <i />
+          <i />
+          <i />
+        </div>
+      </div>
+
+      {secondaryEvents.length > 0 && (
+        <div className="TopicJourney-contributionStack">
+          {secondaryEvents.map(({ activity, index }) => (
+            <button
+              key={activity.eventId || `${activity.action}-${activity.createdAt}`}
+              type="button"
+              onClick={() => setActiveIndex(index)}
+              className={`TopicJourney-contributionMini TopicJourney-contributionMini--${eventScope(activity)}`}
+            >
+              <strong>{activityTitle(t, activity)}</strong>
+              <span>{relativeEventDate(activity, t) || actorLabel(t, activity)}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="TopicJourney-contributionFooter">
+        {primary ? (
+          <>
+            <span>
+              {activityTitle(t, primary)} {t("dsm.audit.by")} {actorLabel(t, primary)}
+            </span>
+            {proof && <span>{proof}</span>}
+            {date && <span>{date}</span>}
+          </>
+        ) : (
+          <>
+            <span>{t("dsm.audit.contributionPanel.footerPrimary")}</span>
+            <span>{t("dsm.audit.contributionPanel.footerSecondary")}</span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function StageCard({ stage, index, currentStageIndex, locale }) {
   const { t } = useTranslation();
   const event = stage.event;
   const isCompleted = Boolean(event);
-  const isCurrent = !isCompleted && index === currentStageIndex;
-  const isLocked = !isCompleted && index > currentStageIndex;
+  const isCurrent = index === currentStageIndex;
+  const isLocked = !isCurrent && !isCompleted && index > currentStageIndex;
   const hash = eventHash(event);
   const tx = event ? txUrl(event) : "";
   const source = event ? eventSource(event) : "";
+  const activityEvents = stage.activityEvents || [];
+  const isContributionStage = stage.key === "contributions";
 
   return (
     <li
@@ -330,23 +714,34 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
 
             <Badge
               bg={
-                isCompleted
-                  ? anchorStatusVariant(event?.anchorStatus)
-                  : isLocked
-                    ? "secondary"
-                    : "info"
+                isCurrent
+                  ? "info"
+                  : isCompleted
+                    ? anchorStatusVariant(event?.anchorStatus)
+                    : isLocked
+                      ? "secondary"
+                      : "info"
               }
               className="TopicJourney-badge"
             >
-              {isCompleted
-                ? anchorStatusLabel(t, event?.anchorStatus)
-                : isLocked
-                  ? t("dsm.audit.locked")
-                  : t("dsm.audit.current")}
+              {isCurrent
+                ? t("dsm.audit.current")
+                : isCompleted
+                  ? anchorStatusLabel(t, event?.anchorStatus)
+                  : isLocked
+                    ? t("dsm.audit.locked")
+                    : t("dsm.audit.current")}
             </Badge>
           </div>
 
-          {isCompleted ? (
+          {isContributionStage ? (
+            <ContributionStageActivity
+              events={activityEvents}
+              locale={locale}
+              isCurrent={isCurrent}
+              isLocked={isLocked}
+            />
+          ) : isCompleted ? (
             <>
               <div className="TopicJourney-transition">
                 <span>{stateLabel(t, event.fromState || "initial")}</span>
@@ -359,11 +754,7 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
                 {relativeEventDate(event, t) && (
                   <span>{relativeEventDate(event, t)}</span>
                 )}
-                {event.actorUserId && (
-                  <span>
-                    {t("dsm.audit.actorUser", { userId: event.actorUserId })}
-                  </span>
-                )}
+                <span>{actorLabel(t, event)}</span>
               </div>
 
               <div className="TopicJourney-proof">
@@ -444,6 +835,7 @@ export default function TopicLifecycleAuditTrail({
   const stages = JOURNEY_STAGES.map((stage) => ({
     ...stage,
     event: latestEventForStage(stage, events),
+    activityEvents: activityEventsForStage(stage, events),
   }));
   const currentStageIndex = deriveCurrentStageIndex(stages, topic);
   const journeyStatus = deriveJourneyStatus(t, topic, stages);
