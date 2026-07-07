@@ -19,9 +19,33 @@ export default function TaskDecisionPanel({
 
   const taskId = task?.id ?? task?.task_id ?? task?.taskId;
   const taskType = task?.taskType || task?.task_type || "topic_review";
-  const helpKey = taskType === "contribution_review"
-    ? "dsm.reviewDecisionHelpContribution"
-    : "dsm.reviewDecisionHelp";
+  const isClaimReview = taskType === "claim_review_curation";
+
+  const titleKey = isClaimReview
+    ? "dsm.reviewDecisionTitleClaimReview"
+    : "dsm.reviewDecisionTitle";
+
+  const helpKey = isClaimReview
+    ? "dsm.reviewDecisionHelpClaimReview"
+    : taskType === "contribution_review"
+      ? "dsm.reviewDecisionHelpContribution"
+      : "dsm.reviewDecisionHelp";
+
+  const approveLabel = t("dsm.approve");
+  const rejectLabel = t("dsm.reject");
+
+  const submitLabel = isClaimReview
+    ? t("dsm.submitClaimReviewDecision")
+    : t("dsm.submitDecision");
+
+  const reasonPlaceholder = isClaimReview
+    ? t("dsm.claimReviewReasonPlaceholder")
+    : t("dsm.reasonPlaceholder");
+
+  const notesPlaceholder = isClaimReview
+    ? t("dsm.claimReviewNotesPlaceholder")
+    : t("dsm.notesPlaceholder");
+
   const isBusy = actionTaskId === taskId;
   const requiresReason = decision === "reject";
   const trimmedReason = reason.trim();
@@ -51,7 +75,7 @@ export default function TaskDecisionPanel({
   return (
     <Form className="DsmDecisionPanel" onSubmit={handleSubmit}>
       <div className="DsmDecisionPanel-intro">
-        <strong>{t("dsm.reviewDecisionTitle")}</strong>
+        <strong>{t(titleKey)}</strong>
         <span>{t(helpKey)}</span>
       </div>
 
@@ -68,7 +92,7 @@ export default function TaskDecisionPanel({
               setReasonTouched(false);
             }}
           >
-            <FontAwesomeIcon icon={faThumbsUp} /> {t("dsm.approve")}
+            <FontAwesomeIcon icon={faThumbsUp} /> {approveLabel}
           </Button>
           <Button
             type="button"
@@ -77,7 +101,7 @@ export default function TaskDecisionPanel({
             aria-pressed={decision === "reject"}
             onClick={() => setDecision("reject")}
           >
-            <FontAwesomeIcon icon={faThumbsDown} /> {t("dsm.reject")}
+            <FontAwesomeIcon icon={faThumbsDown} /> {rejectLabel}
           </Button>
         </ButtonGroup>
       </Form.Group>
@@ -103,7 +127,7 @@ export default function TaskDecisionPanel({
               setReasonTouched(false);
             }
           }}
-          placeholder={t("dsm.reasonPlaceholder")}
+          placeholder={reasonPlaceholder}
         />
         <Form.Text className="DsmDecisionPanel-help">
           {t("dsm.reasonHelp")}
@@ -121,7 +145,7 @@ export default function TaskDecisionPanel({
           value={notes}
           disabled={isBusy}
           onChange={(event) => setNotes(event.target.value)}
-          placeholder={t("dsm.notesPlaceholder")}
+          placeholder={notesPlaceholder}
         />
       </Form.Group>
 
@@ -131,7 +155,7 @@ export default function TaskDecisionPanel({
           variant={decision === "reject" ? "danger" : "success"}
           disabled={!canSubmit}
         >
-          {isBusy ? t("dsm.submittingDecision") : t("dsm.submitDecision")}
+          {isBusy ? t("dsm.submittingDecision") : submitLabel}
         </Button>
       </div>
     </Form>

@@ -21,16 +21,27 @@ function isContributionReviewTask(task) {
   return getTaskType(task) === "contribution_review";
 }
 
+function isClaimReviewCurationTask(task) {
+  return getTaskType(task) === "claim_review_curation";
+}
+
 function getTaskTopicId(task) {
   return (
     task?.topic?.topicId ||
     task?.topicId ||
     task?.contribution?.topicId ||
+    task?.claimReview?.topicId ||
     null
   );
 }
 
 function taskToastKey(task, decision) {
+  if (isClaimReviewCurationTask(task)) {
+    return decision === "reject"
+      ? "topicReview.claimReviewRejectedToast"
+      : "topicReview.claimReviewApprovedToast";
+  }
+
   if (isContributionReviewTask(task)) {
     return decision === "reject"
       ? "topicReview.contributionRejectedToast"
@@ -93,7 +104,7 @@ export default function TopicReviewWorkbench() {
     runImmediately: initialLoadTokenRef.current !== accessToken,
     onError: (err) => {
       if (import.meta.env.DEV) {
-        console.error("Failed to load topic review tasks:", err);
+        console.error("Failed to load review workbench tasks:", err);
       }
     },
   });

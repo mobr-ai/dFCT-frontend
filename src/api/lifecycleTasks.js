@@ -1,8 +1,10 @@
 export const TOPIC_REVIEW_TASK_TYPE = "topic_review";
 export const CONTRIBUTION_REVIEW_TASK_TYPE = "contribution_review";
+export const CLAIM_REVIEW_CURATION_TASK_TYPE = "claim_review_curation";
 export const REVIEW_TASK_TYPES = [
   TOPIC_REVIEW_TASK_TYPE,
   CONTRIBUTION_REVIEW_TASK_TYPE,
+  CLAIM_REVIEW_CURATION_TASK_TYPE,
 ];
 
 const LIFECYCLE_REQUEST_TIMEOUT = {
