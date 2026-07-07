@@ -479,6 +479,37 @@ function setActivitySearchParam(searchParams, setSearchParams, eventId) {
 }
 
 
+function activityDeepLink(event) {
+  const eventId = normalizeActivityId(activityEventId(event));
+  const url = new URL(window.location.href);
+
+  if (eventId) {
+    url.searchParams.set("activity", eventId);
+  }
+
+  return url.toString();
+}
+
+
+async function copyTextToClipboard(value) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
+
 function formatConfidence(value) {
   if (value === undefined || value === null || value === "") return "";
 
@@ -534,6 +565,18 @@ function TopicActivityDetailsDrawer({
   const content = contribution?.content || null;
   const tx = event ? txUrl(event) : "";
   const payloadHash = eventHash(event);
+  const [activityLinkCopied, setActivityLinkCopied] = useState(false);
+
+  const handleCopyActivityLink = async () => {
+    if (!event) return;
+
+    await copyTextToClipboard(activityDeepLink(event));
+    setActivityLinkCopied(true);
+
+    window.setTimeout(() => {
+      setActivityLinkCopied(false);
+    }, 1800);
+  };
 
   return (
     <Offcanvas
@@ -613,9 +656,23 @@ function TopicActivityDetailsDrawer({
                 )}
               </div>
 
-              <Badge bg={activityStatusVariant(event)}>
-                {activityStatusLabel(t, event)}
-              </Badge>
+              <div className="TopicActivityDrawer-heroActions">
+                <Badge bg={activityStatusVariant(event)}>
+                  {activityStatusLabel(t, event)}
+                </Badge>
+
+                <Button
+                  type="button"
+                  variant="outline-light"
+                  size="sm"
+                  className="TopicActivityDrawer-copyLink"
+                  onClick={handleCopyActivityLink}
+                >
+                  {activityLinkCopied
+                    ? t("dsm.audit.activityLinkCopied")
+                    : t("dsm.audit.copyActivityLink")}
+                </Button>
+              </div>
             </section>
 
             {claim && (

@@ -671,7 +671,9 @@
       "yes": "Sim",
       "no": "Não",
       "noClaimStatement": "Nenhum texto de claim disponível.",
-      "closeActivityDetails": "Fechar detalhes da atividade"
+      "closeActivityDetails": "Fechar detalhes da atividade",
+      "copyActivityLink": "Copiar link",
+      "activityLinkCopied": "Copiado"
     },
     "required": "Obrigatório",
     "yes": "Sim",
