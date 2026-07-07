@@ -199,3 +199,69 @@ html[data-theme="paper"] body .GovernanceContainer [class*="card"] {
   color: var(--theme-text) !important;
   border-color: rgba(15, 23, 42, 0.12) !important;
 }
+
+/* navbar/sidebar burger: readable across workspace themes */
+html[data-theme] body #root > button.Navbar-toggle-btn,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface, #ffffff) 94%, transparent),
+      color-mix(in srgb, var(--theme-bg, #ffffff) 86%, var(--theme-surface, #ffffff))
+    ) !important;
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.18)) !important;
+  box-shadow:
+    0 10px 24px color-mix(in srgb, #000 14%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 32%, transparent) !important;
+  color: var(--theme-text, #111827) !important;
+}
+
+html[data-theme] body #root > button.Navbar-toggle-btn svg,
+html[data-theme] body #root > button.Navbar-toggle-btn svg *,
+html[data-theme] body #root > button.Navbar-toggle-btn path,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn svg,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn svg *,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn path {
+  color: currentColor !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Paper needs explicit contrast because older hardening rules can make the icon white */
+html[data-theme="paper"] body #root > button.Navbar-toggle-btn,
+html[data-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn,
+html[data-workspace-theme="paper"] body #root > button.Navbar-toggle-btn,
+html[data-workspace-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn {
+  background: linear-gradient(135deg, #ffffff, #f4f7fb) !important;
+  border-color: rgba(15, 23, 42, 0.2) !important;
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  color: #1f2937 !important;
+}
+
+html[data-theme="paper"] body #root > button.Navbar-toggle-btn svg,
+html[data-theme="paper"] body #root > button.Navbar-toggle-btn svg *,
+html[data-theme="paper"] body #root > button.Navbar-toggle-btn path,
+html[data-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn svg,
+html[data-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn svg *,
+html[data-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn path,
+html[data-workspace-theme="paper"] body #root > button.Navbar-toggle-btn svg,
+html[data-workspace-theme="paper"] body #root > button.Navbar-toggle-btn svg *,
+html[data-workspace-theme="paper"] body #root > button.Navbar-toggle-btn path,
+html[data-workspace-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn svg,
+html[data-workspace-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn svg *,
+html[data-workspace-theme="paper"] body button.Navbar-toggle-btn.Navbar-toggle-btn path {
+  color: #1f2937 !important;
+  fill: #1f2937 !important;
+  stroke: #1f2937 !important;
+}
+
+html[data-theme] body #root > button.Navbar-toggle-btn:hover,
+html[data-theme] body #root > button.Navbar-toggle-btn:focus-visible,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn:hover,
+html[data-theme] body button.Navbar-toggle-btn.Navbar-toggle-btn:focus-visible {
+  border-color: color-mix(in srgb, var(--theme-primary, #2563eb) 52%, var(--theme-border, transparent)) !important;
+  color: var(--theme-primary, #2563eb) !important;
+  outline: none !important;
+}

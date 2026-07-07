@@ -1542,3 +1542,278 @@
     transform: translateY(0);
   }
 }
+
+/* topic lifecycle: activity details drawer */
+.TopicJourney-contributionPrimary--button {
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+  width: 100%;
+}
+
+.TopicJourney-contributionPrimary--button:hover,
+.TopicJourney-contributionPrimary--button:focus-visible {
+  border-color: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-border));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent),
+    0 14px 34px color-mix(in srgb, #000 24%, transparent);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.TopicJourney-contributionPrimary--button:disabled {
+  cursor: default;
+  transform: none;
+}
+
+.TopicActivityDrawer {
+  --bs-offcanvas-width: min(520px, 100vw);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--theme-primary) 11%, transparent), transparent 34%),
+    var(--theme-bg);
+  color: var(--theme-text);
+}
+
+.TopicActivityDrawer .offcanvas-header {
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.TopicActivityDrawer .offcanvas-title {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.TopicActivityDrawer-eyebrow {
+  color: var(--theme-primary);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.18rem;
+  text-transform: uppercase;
+}
+
+.TopicActivityDrawer-loading {
+  align-items: center;
+  color: var(--theme-text-muted);
+  display: flex;
+  gap: 0.6rem;
+}
+
+.TopicActivityDrawer-content {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.TopicActivityDrawer-card {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 90%, transparent),
+      color-mix(in srgb, var(--theme-bg) 78%, var(--theme-surface))
+    );
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 14px);
+  box-shadow: 0 14px 30px color-mix(in srgb, #000 16%, transparent);
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+}
+
+.TopicActivityDrawer-card--hero {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.85rem;
+  justify-content: space-between;
+}
+
+.TopicActivityDrawer-card h5,
+.TopicActivityDrawer-card h4 {
+  color: var(--theme-text);
+  font-weight: 900;
+  margin: 0;
+}
+
+.TopicActivityDrawer-card p {
+  color: var(--theme-text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.TopicActivityDrawer-card span {
+  color: var(--theme-text-muted);
+}
+
+.TopicActivityDrawer-quote {
+  border-left: 3px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  padding-left: 0.75rem;
+}
+
+.TopicActivityDrawer-row {
+  border-top: 1px solid color-mix(in srgb, var(--theme-border) 72%, transparent);
+  display: grid;
+  gap: 0.2rem;
+  padding-top: 0.55rem;
+}
+
+.TopicActivityDrawer-row span {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.TopicActivityDrawer-row strong,
+.TopicActivityDrawer-row code,
+.TopicActivityDrawer-row a {
+  color: var(--theme-text);
+  font-size: 0.9rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.TopicActivityDrawer-note {
+  background: color-mix(in srgb, var(--theme-bg) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-border) 78%, transparent);
+  border-radius: 0.8rem;
+  padding: 0.75rem;
+}
+
+.TopicActivityDrawer-note span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.TopicActivityDrawer-contentPreview {
+  border: 1px solid color-mix(in srgb, var(--theme-border) 78%, transparent);
+  border-radius: 0.8rem;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+}
+
+.TopicActivityDrawer-contentPreview strong {
+  color: var(--theme-text);
+}
+
+.TopicActivityDrawer a {
+  color: var(--theme-primary);
+  font-weight: 850;
+}
+
+@media (max-width: 720px) {
+  .TopicActivityDrawer-card--hero {
+    display: grid;
+  }
+}
+
+/* topic activity drawer: mobile-friendly dismissal */
+.TopicActivityDrawer {
+  position: relative;
+}
+
+.TopicActivityDrawer-closeFloating {
+  align-items: center;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 92%, #fff),
+      color-mix(in srgb, var(--theme-bg) 84%, var(--theme-surface))
+    ) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 10px 26px color-mix(in srgb, #000 22%, transparent);
+  color: var(--theme-text) !important;
+  display: inline-flex;
+  font-size: 1.4rem;
+  font-weight: 850;
+  height: 2.4rem;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 0 0.08rem;
+  position: absolute;
+  right: 0.85rem;
+  top: 0.85rem;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+  width: 2.4rem;
+  z-index: 3;
+}
+
+.TopicActivityDrawer-closeFloating:hover,
+.TopicActivityDrawer-closeFloating:focus-visible {
+  border-color: color-mix(in srgb, var(--theme-primary) 52%, var(--theme-border)) !important;
+  color: var(--theme-primary) !important;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.TopicActivityDrawer .offcanvas-header {
+  padding-right: 4rem;
+}
+
+@media (max-width: 720px) {
+  .TopicActivityDrawer-closeFloating {
+    height: 2.7rem;
+    right: 0.75rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    width: 2.7rem;
+  }
+
+  .TopicActivityDrawer .offcanvas-body {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+}
+
+/* topic activity drawer: stay above sticky navbar/header */
+.TopicActivityDrawer.offcanvas {
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  top: 0 !important;
+  z-index: 12050 !important;
+}
+
+.offcanvas-backdrop.show {
+  z-index: 12040 !important;
+}
+
+.TopicActivityDrawer-closeFloating {
+  position: fixed !important;
+  right: max(0.85rem, env(safe-area-inset-right, 0px)) !important;
+  top: max(0.85rem, env(safe-area-inset-top, 0px)) !important;
+  z-index: 12070 !important;
+}
+
+.TopicActivityDrawer .offcanvas-header {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.9rem);
+}
+
+@media (max-width: 720px) {
+  .TopicActivityDrawer.offcanvas {
+    width: min(100vw, 520px) !important;
+  }
+
+  .TopicActivityDrawer-closeFloating {
+    right: max(0.75rem, env(safe-area-inset-right, 0px)) !important;
+    top: max(0.75rem, env(safe-area-inset-top, 0px)) !important;
+  }
+
+  .TopicActivityDrawer .offcanvas-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.85rem);
+    min-height: 4.25rem;
+  }
+}
+
+/* topic activity drawer: use only the custom floating close button */
+.TopicActivityDrawer .offcanvas-header .btn-close {
+  display: none !important;
+}

@@ -50,3 +50,12 @@ export async function activateTopic(authRequest, topicId) {
 
   return res.body || {};
 }
+
+
+export async function fetchTopicActivityEvent(authRequest, topicId, eventId) {
+  const res = await authRequest
+    .get(`/api/topics/${topicId}/activity-events/${eventId}`)
+    .timeout(TOPIC_LIFECYCLE_TIMEOUT);
+
+  return res.body || {};
+}

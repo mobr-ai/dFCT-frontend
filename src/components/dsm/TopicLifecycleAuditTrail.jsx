@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
+import Offcanvas from "react-bootstrap/Offcanvas";
 import Spinner from "react-bootstrap/Spinner";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,8 +16,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { CARDANO_EXPLORER_URL } from "../../chains/cardano/constants";
+import { fetchTopicActivityEvent } from "../../api/topicLifecycle";
 import { useAutoRefresh } from "../../hooks/useAutoRefresh";
 import { useTopicLifecycleEvents } from "../../hooks/useTopicLifecycleEvents";
+import { getApiErrorMessage, useAuthRequest } from "../../hooks/useAuthRequest";
 
 const JOURNEY_STAGES = [
   {
@@ -447,6 +451,283 @@ function proofReference(t, event) {
   return "";
 }
 
+
+function activityEventId(event) {
+  return event?.eventId || event?.event_id || "";
+}
+
+
+function formatConfidence(value) {
+  if (value === undefined || value === null || value === "") return "";
+
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return String(value);
+
+  if (numeric <= 1) return `${Math.round(numeric * 100)}%`;
+  return `${Math.round(numeric)}%`;
+}
+
+
+function fieldValue(value) {
+  if (value === undefined || value === null || value === "") return "—";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  return String(value);
+}
+
+
+function DetailRow({ label, value, children }) {
+  if (
+    (value === undefined || value === null || value === "") &&
+    !children
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="TopicActivityDrawer-row">
+      <span>{label}</span>
+      <strong>{children || fieldValue(value)}</strong>
+    </div>
+  );
+}
+
+
+function TopicActivityDetailsDrawer({
+  show,
+  loading,
+  error,
+  detail,
+  onHide,
+  locale,
+}) {
+  const { t } = useTranslation();
+  const touchStartXRef = useRef(null);
+  const touchStartYRef = useRef(null);
+
+  const event = detail?.event || null;
+  const activity = detail?.activity || {};
+  const claim = activity?.claim || null;
+  const claimReview = activity?.claimReview || null;
+  const contribution = activity?.contribution || null;
+  const content = contribution?.content || null;
+  const tx = event ? txUrl(event) : "";
+  const payloadHash = eventHash(event);
+
+  return (
+    <Offcanvas
+      show={show}
+      onHide={onHide}
+      placement="end"
+      className="TopicActivityDrawer"
+      onTouchStart={(event) => {
+        const touch = event.touches?.[0];
+        if (!touch) return;
+
+        touchStartXRef.current = touch.clientX;
+        touchStartYRef.current = touch.clientY;
+      }}
+      onTouchEnd={(event) => {
+        const touch = event.changedTouches?.[0];
+        if (!touch) return;
+
+        const startX = touchStartXRef.current;
+        const startY = touchStartYRef.current;
+        touchStartXRef.current = null;
+        touchStartYRef.current = null;
+
+        if (startX === null || startY === null) return;
+
+        const deltaX = touch.clientX - startX;
+        const deltaY = Math.abs(touch.clientY - startY);
+
+        if (deltaX > 90 && deltaY < 70) {
+          onHide?.();
+        }
+      }}
+    >
+      <Offcanvas.Header>
+        <div>
+          <p className="TopicActivityDrawer-eyebrow">
+            {t("dsm.audit.activityDetails")}
+          </p>
+          <Offcanvas.Title>
+            {event ? activityTitle(t, event) : t("dsm.audit.loading")}
+          </Offcanvas.Title>
+        </div>
+      </Offcanvas.Header>
+
+      <Button
+        type="button"
+        variant="light"
+        className="TopicActivityDrawer-closeFloating"
+        aria-label={t("dsm.audit.closeActivityDetails")}
+        onClick={onHide}
+      >
+        ×
+      </Button>
+
+      <Offcanvas.Body>
+        {loading && (
+          <div className="TopicActivityDrawer-loading">
+            <Spinner animation="border" size="sm" />
+            <span>{t("dsm.audit.loadingActivityDetails")}</span>
+          </div>
+        )}
+
+        {!loading && error && (
+          <Alert variant="warning" className="TopicActivityDrawer-alert">
+            {error}
+          </Alert>
+        )}
+
+        {!loading && !error && event && (
+          <div className="TopicActivityDrawer-content">
+            <section className="TopicActivityDrawer-card TopicActivityDrawer-card--hero">
+              <div>
+                <span>{t("dsm.audit.activity")}</span>
+                <h4>{activityTitle(t, event)}</h4>
+                {activityDescription(t, event) && (
+                  <p>{activityDescription(t, event)}</p>
+                )}
+              </div>
+
+              <Badge bg={activityStatusVariant(event)}>
+                {activityStatusLabel(t, event)}
+              </Badge>
+            </section>
+
+            {claim && (
+              <section className="TopicActivityDrawer-card">
+                <h5>{t("dsm.audit.claim")}</h5>
+                <p className="TopicActivityDrawer-quote">
+                  {claim.statement || t("dsm.audit.noClaimStatement")}
+                </p>
+                <DetailRow label={t("dsm.audit.claimId")} value={claim.claimId} />
+              </section>
+            )}
+
+            {claimReview && (
+              <section className="TopicActivityDrawer-card">
+                <h5>{t("dsm.audit.claimReview")}</h5>
+
+                <DetailRow
+                  label={t("dsm.audit.reviewId")}
+                  value={claimReview.reviewId}
+                />
+                <DetailRow
+                  label={t("dsm.audit.verdict")}
+                  value={claimReview.verdict ? humanize(claimReview.verdict) : ""}
+                />
+                <DetailRow
+                  label={t("dsm.audit.confidence")}
+                  value={formatConfidence(claimReview.confidence)}
+                />
+                <DetailRow
+                  label={t("dsm.audit.reviewStatus")}
+                  value={claimReview.reviewStatus ? humanize(claimReview.reviewStatus) : ""}
+                />
+                <DetailRow
+                  label={t("dsm.audit.curatedContext")}
+                  value={
+                    claimReview.curatedForLlmContext
+                      ? t("dsm.audit.yes")
+                      : t("dsm.audit.no")
+                  }
+                />
+
+                {claimReview.comment && (
+                  <div className="TopicActivityDrawer-note">
+                    <span>{t("dsm.audit.reviewerComment")}</span>
+                    <p>{claimReview.comment}</p>
+                  </div>
+                )}
+
+                {claimReview.reviewNotes && (
+                  <div className="TopicActivityDrawer-note">
+                    <span>{t("dsm.audit.curationNotes")}</span>
+                    <p>{claimReview.reviewNotes}</p>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {contribution && (
+              <section className="TopicActivityDrawer-card">
+                <h5>{t("dsm.audit.contribution")}</h5>
+
+                <DetailRow
+                  label={t("dsm.audit.contributionId")}
+                  value={contribution.contributionId}
+                />
+                <DetailRow
+                  label={t("dsm.audit.contributionStatus")}
+                  value={contribution.status}
+                />
+                <DetailRow
+                  label={t("dsm.audit.score")}
+                  value={contribution.score}
+                />
+
+                {contribution.rationale && (
+                  <div className="TopicActivityDrawer-note">
+                    <span>{t("dsm.audit.rationale")}</span>
+                    <p>{contribution.rationale}</p>
+                  </div>
+                )}
+
+                {content && (
+                  <div className="TopicActivityDrawer-contentPreview">
+                    <strong>{content.contentTitle || t("dsm.audit.attachedContent")}</strong>
+                    <span>{content.contentType}</span>
+                    {(content.localUrl || content.sourceUrl) && (
+                      <a
+                        href={content.localUrl || content.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t("dsm.audit.openContent")}
+                      </a>
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
+
+            <section className="TopicActivityDrawer-card">
+              <h5>{t("dsm.audit.provenance")}</h5>
+
+              <DetailRow label={t("dsm.audit.actor")} value={actorLabel(t, event)} />
+              <DetailRow label={t("dsm.audit.action")} value={actionLabel(t, event.action)} />
+              <DetailRow label={t("dsm.audit.fromState")} value={stateLabel(t, event.fromState || "initial")} />
+              <DetailRow label={t("dsm.audit.toState")} value={stateLabel(t, event.toState)} />
+              <DetailRow label={t("dsm.audit.createdAt")} value={eventDate(event, locale)} />
+              <DetailRow label={t("dsm.audit.anchorStatus")} value={anchorStatusLabel(t, event.anchorStatus)} />
+
+              {payloadHash && (
+                <DetailRow label={t("dsm.audit.payloadHash")}>
+                  <code>{shortHash(payloadHash, 18, 10)}</code>
+                </DetailRow>
+              )}
+
+              {event.anchorTxHash && (
+                <DetailRow label={t("dsm.audit.txHash")}>
+                  {tx ? (
+                    <a href={tx} target="_blank" rel="noopener noreferrer">
+                      {shortHash(event.anchorTxHash, 18, 10)}
+                    </a>
+                  ) : (
+                    <code>{shortHash(event.anchorTxHash, 18, 10)}</code>
+                  )}
+                </DetailRow>
+              )}
+            </section>
+          </div>
+        )}
+      </Offcanvas.Body>
+    </Offcanvas>
+  );
+}
+
 function journeyHasRejected(topic, stages) {
   const topicStatus = normalizeTopicStatus(topic?.status);
 
@@ -531,6 +812,7 @@ function ContributionStageActivity({
   locale,
   isCurrent = false,
   isLocked = false,
+  onSelectActivity,
 }) {
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -552,14 +834,16 @@ function ContributionStageActivity({
     .filter((item) => item.index !== boundedIndex)
     .slice(0, 3);
 
-  const goPrevious = () => {
+  const goPrevious = (event) => {
+    event?.stopPropagation?.();
     if (!hasMultiple) return;
     setActiveIndex((current) => (
       current <= 0 ? events.length - 1 : current - 1
     ));
   };
 
-  const goNext = () => {
+  const goNext = (event) => {
+    event?.stopPropagation?.();
     if (!hasMultiple) return;
     setActiveIndex((current) => (
       current >= events.length - 1 ? 0 : current + 1
@@ -573,9 +857,14 @@ function ContributionStageActivity({
         emptyState ? "TopicJourney-contributionPanel--empty" : "",
       ].filter(Boolean).join(" ")}
     >
-      <div
+      <button
         key={primary?.eventId || primary?.createdAt || "empty"}
-        className="TopicJourney-contributionPrimary"
+        type="button"
+        className="TopicJourney-contributionPrimary TopicJourney-contributionPrimary--button"
+        onClick={() => {
+          if (primary) onSelectActivity?.(primary);
+        }}
+        disabled={!primary}
       >
         <div className="TopicJourney-contributionMainline">
           <strong>
@@ -630,7 +919,7 @@ function ContributionStageActivity({
           <i />
           <i />
         </div>
-      </div>
+      </button>
 
       {secondaryEvents.length > 0 && (
         <div className="TopicJourney-contributionStack">
@@ -638,7 +927,10 @@ function ContributionStageActivity({
             <button
               key={activity.eventId || `${activity.action}-${activity.createdAt}`}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={() => {
+                setActiveIndex(index);
+                onSelectActivity?.(activity);
+              }}
               className={`TopicJourney-contributionMini TopicJourney-contributionMini--${eventScope(activity)}`}
             >
               <strong>{activityTitle(t, activity)}</strong>
@@ -668,7 +960,7 @@ function ContributionStageActivity({
   );
 }
 
-function StageCard({ stage, index, currentStageIndex, locale }) {
+function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }) {
   const { t } = useTranslation();
   const event = stage.event;
   const isCompleted = Boolean(event);
@@ -740,6 +1032,7 @@ function StageCard({ stage, index, currentStageIndex, locale }) {
               locale={locale}
               isCurrent={isCurrent}
               isLocked={isLocked}
+              onSelectActivity={onSelectActivity}
             />
           ) : isCompleted ? (
             <>
@@ -812,6 +1105,11 @@ export default function TopicLifecycleAuditTrail({
   const { t, i18n } = useTranslation();
   const locale = i18n.language || navigator.language || "en-US";
   const isAuthenticated = Boolean(user?.access_token);
+  const { authRequest } = useAuthRequest(user);
+  const [activityDetailOpen, setActivityDetailOpen] = useState(false);
+  const [activityDetail, setActivityDetail] = useState(null);
+  const [activityDetailLoading, setActivityDetailLoading] = useState(false);
+  const [activityDetailError, setActivityDetailError] = useState("");
 
   const { events, loading, error, canLoad, refresh } = useTopicLifecycleEvents(
     user,
@@ -839,6 +1137,26 @@ export default function TopicLifecycleAuditTrail({
   }));
   const currentStageIndex = deriveCurrentStageIndex(stages, topic);
   const journeyStatus = deriveJourneyStatus(t, topic, stages);
+
+  const openActivityDetail = async (event) => {
+    const eventId = activityEventId(event);
+    if (!eventId || !topicId || !authRequest) return;
+
+    setActivityDetailOpen(true);
+    setActivityDetailLoading(true);
+    setActivityDetailError("");
+
+    try {
+      const detail = await fetchTopicActivityEvent(authRequest, topicId, eventId);
+      setActivityDetail(detail);
+    } catch (err) {
+      setActivityDetailError(
+        getApiErrorMessage(err, t("dsm.audit.activityDetailsError")),
+      );
+    } finally {
+      setActivityDetailLoading(false);
+    }
+  };
 
   return (
     <aside className="TopicJourney" aria-label={t("dsm.audit.title")}>
@@ -870,9 +1188,23 @@ export default function TopicLifecycleAuditTrail({
             index={index}
             currentStageIndex={currentStageIndex}
             locale={locale}
+            onSelectActivity={openActivityDetail}
           />
         ))}
       </ol>
+
+      <TopicActivityDetailsDrawer
+        show={activityDetailOpen}
+        loading={activityDetailLoading}
+        error={activityDetailError}
+        detail={activityDetail}
+        locale={locale}
+        onHide={() => {
+          setActivityDetailOpen(false);
+          setActivityDetail(null);
+          setActivityDetailError("");
+        }}
+      />
     </aside>
   );
 }
