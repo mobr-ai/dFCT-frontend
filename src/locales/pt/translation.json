@@ -474,16 +474,20 @@
       "chain": "Rede",
       "txHash": "Transação",
       "actions": {
-        "submit_topic": "Publicar tópico",
-        "review_topic": "Revisar tópico",
+        "submit_topic": "Tópico proposto",
+        "review_topic": "Tópico revisado",
         "reject_topic": "Rejeitar tópico",
-        "submit_contribution": "Contribuição enviada",
-        "review_contribution": "Contribuição revisada",
-        "reject_contribution": "Contribuição rejeitada",
-        "verify_contribution": "Contribuição verificada",
-        "dispute_contribution": "Contribuição contestada",
+        "submit_contribution": "Evidência enviada",
+        "review_contribution": "Evidência verificada",
+        "reject_contribution": "Evidência contestada",
+        "verify_contribution": "Evidência verificada",
+        "dispute_contribution": "Evidência contestada",
         "evaluate_contribution": "Contribuição avaliada",
-        "distribute_rewards": "Recompensas distribuídas"
+        "distribute_rewards": "Recompensas distribuídas",
+        "activate_topic": "Tópico ativado",
+        "review_claim": "Claim revisada",
+        "curate_claim_review": "Revisão de claim aprovada",
+        "reject_claim_review": "Revisão de claim contestada"
       },
       "states": {
         "initial": "Inicial",
@@ -494,12 +498,15 @@
         "topic_active": "Ativo",
         "topic_closed": "Encerrado",
         "contrib_proposed": "Proposta",
-        "contrib_reviewed": "Revisada",
-        "contrib_rejected": "Rejeitada",
+        "contrib_reviewed": "Verificada",
+        "contrib_rejected": "Contestada",
         "contrib_verified": "Verificada",
         "contrib_disputed": "Contestada",
         "contribution_evaluated": "Avaliada",
-        "rewards_distributed": "Recompensas distribuídas"
+        "rewards_distributed": "Recompensas distribuídas",
+        "claim_reviewed": "Revisada",
+        "claim_review_curated": "Aprovada",
+        "claim_review_rejected": "Contestada"
       },
       "anchorStatuses": {
         "not_requested": "Não ancorado",
@@ -551,10 +558,10 @@
         },
         "contributions": {
           "title": "Contribuições",
-          "stateHint": "(Propostas/Verificadas/Disputadas)",
-          "description": "A comunidade propõe evidências, que podem ser verificadas, atualizadas ou disputadas.",
-          "waiting": "Aguardando eventos de contribuição.",
-          "locked": "Contribuições desbloqueiam após a ativação."
+          "stateHint": "Propostas/Verificadas/Contestadas",
+          "description": "Membros da comunidade propõem evidências, que depois são verificadas, atualizadas ou contestadas.",
+          "waiting": "Aguardando evidências da comunidade e revisões de claim.",
+          "locked": "As contribuições começam depois que o tópico fica ativo."
         },
         "rewards": {
           "title": "Recompensas",
@@ -571,7 +578,68 @@
           "locked": "O fechamento acontece após contribuições e recompensas."
         }
       },
-      "topicBreakdown": "Detalhamento do tópico"
+      "topicBreakdown": "Detalhamento do tópico",
+      "points": "Pontos",
+      "proof": "prova",
+      "by": "por",
+      "actors": {
+        "proposer": "Proponente do tópico",
+        "topicReviewer": "Revisor do tópico",
+        "contributor": "Contribuidor",
+        "claimReviewer": "Revisor de claim",
+        "platform": "Fluxo d-FCT",
+        "contributorNamed": "Contribuidor {{name}}",
+        "claimReviewerNamed": "Revisor de claim {{name}}",
+        "topicReviewerNamed": "Revisor do tópico {{name}}"
+      },
+      "activityTitles": {
+        "submit_contribution": "Evidência enviada",
+        "review_contribution": "Evidência verificada",
+        "reject_contribution": "Evidência contestada",
+        "verify_contribution": "Evidência verificada",
+        "dispute_contribution": "Evidência contestada",
+        "review_claim": "Claim revisada",
+        "curate_claim_review": "Revisão de claim aprovada",
+        "reject_claim_review": "Revisão de claim contestada"
+      },
+      "activityStatuses": {
+        "submit_contribution": "Proposta",
+        "review_contribution": "Verificada",
+        "reject_contribution": "Contestada",
+        "verify_contribution": "Verificada",
+        "dispute_contribution": "Contestada",
+        "review_claim": "Revisada",
+        "curate_claim_review": "Aprovada",
+        "reject_claim_review": "Contestada"
+      },
+      "activityDescriptions": {
+        "contribution": "Uma evidência da comunidade foi adicionada ou revisada para este tópico.",
+        "claim_review": "Uma revisão estruturada de claim enriqueceu o contexto deste tópico.",
+        "submit_contribution": "Novo material de apoio entrou no fluxo de revisão.",
+        "review_contribution": "A evidência enviada foi avaliada pelo fluxo comunitário.",
+        "reject_contribution": "A evidência enviada foi contestada e devolvida para revisão.",
+        "verify_contribution": "A evidência enviada foi verificada para este tópico.",
+        "dispute_contribution": "Uma contribuição foi contestada e marcada para nova análise.",
+        "review_claim": "Um revisor avaliou uma das claims extraídas.",
+        "curate_claim_review": "Uma revisão de claim foi aprovada para o contexto do tópico e o resumo preparado para LLM.",
+        "reject_claim_review": "Uma revisão de claim foi contestada e devolvida para refinamento."
+      },
+      "contributionPanel": {
+        "currentTitle": "Aguardando evidências da comunidade",
+        "waitingTitle": "Aguardando evidências da comunidade",
+        "lockedTitle": "Contribuições liberadas após a ativação",
+        "currentDescription": "Membros da comunidade podem adicionar evidências e revisões de claim conforme o tópico evolui.",
+        "lockedDescription": "Evidências e revisões de claim aparecerão aqui quando o tópico estiver ativo.",
+        "footerPrimary": "Pronto para evidências e revisões de claim",
+        "footerSecondary": "Atividades anchor-ready aparecerão aqui"
+      },
+      "activityCarousel": "Carrossel de atividades de contribuição",
+      "previousActivity": "Atividade anterior",
+      "nextActivity": "Próxima atividade",
+      "claimReference": "Claim {{claimId}}",
+      "reviewReference": "Revisão {{reviewId}}",
+      "verdictReference": "Veredito {{verdict}}",
+      "confidenceReference": "Confiança {{confidence}}"
     },
     "required": "Obrigatório",
     "yes": "Sim",

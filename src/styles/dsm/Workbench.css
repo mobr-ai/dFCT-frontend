@@ -995,7 +995,9 @@
     min-height: auto;
   }
 }
-\n\n/* review workbench final uniformity pass: bounded description version */
+
+
+/* review workbench final uniformity pass: bounded description version */
 .DsmTaskList {
   align-items: stretch;
 }
@@ -1215,4 +1217,328 @@
 /* review workbench: context badge removed from cards */
 .DsmTaskCard-contextBadge {
   display: none !important;
+}
+
+/* topic lifecycle: mockup-style contributions stage */
+.TopicJourney-stage--contributions .TopicJourney-card {
+  overflow: hidden;
+  position: relative;
+}
+
+.TopicJourney-contributionPanel {
+  display: grid;
+  gap: 0.68rem;
+  margin-top: 0.85rem;
+}
+
+.TopicJourney-contributionPrimary {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary) 8%, var(--theme-surface)),
+      color-mix(in srgb, var(--theme-bg) 58%, var(--theme-surface))
+    );
+  border: 1px solid color-mix(in srgb, var(--theme-border) 85%, var(--theme-primary));
+  border-left: 4px solid color-mix(in srgb, var(--theme-primary) 70%, var(--theme-success, #22c55e));
+  border-radius: var(--theme-radius-lg, 14px);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 7%, transparent),
+    0 12px 28px color-mix(in srgb, #000 18%, transparent);
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.85rem 0.95rem 0.8rem;
+}
+
+.TopicJourney-contributionMainline {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.TopicJourney-contributionMainline strong {
+  color: var(--theme-text);
+  font-size: clamp(0.98rem, 2.2vw, 1.15rem);
+  font-weight: 900;
+  line-height: 1.18;
+}
+
+.TopicJourney-points {
+  color: color-mix(in srgb, var(--theme-success, #22c55e) 72%, var(--theme-primary));
+  white-space: nowrap;
+}
+
+.TopicJourney-contributionStatus {
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.34rem 0.58rem;
+}
+
+.TopicJourney-contributionPrimary p {
+  color: var(--theme-text);
+  font-size: 0.86rem;
+  line-height: 1.35;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.TopicJourney-signalTrack {
+  align-items: end;
+  display: grid;
+  gap: 0.28rem;
+  grid-template-columns: 1.35fr 0.38fr 0.62fr 0.08fr 0.08fr 0.08fr;
+  height: 1.05rem;
+  margin-top: 0.1rem;
+  opacity: 0.65;
+}
+
+.TopicJourney-signalTrack span,
+.TopicJourney-signalTrack i {
+  background: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-text-muted));
+  border-radius: 999px;
+  display: block;
+}
+
+.TopicJourney-signalTrack span {
+  height: 0.28rem;
+}
+
+.TopicJourney-signalTrack i:nth-of-type(1) {
+  height: 0.85rem;
+}
+
+.TopicJourney-signalTrack i:nth-of-type(2) {
+  height: 0.48rem;
+}
+
+.TopicJourney-signalTrack i:nth-of-type(3) {
+  height: 0.72rem;
+}
+
+.TopicJourney-contributionStack {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.TopicJourney-contributionMini {
+  align-items: center;
+  background: color-mix(in srgb, var(--theme-bg) 58%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-border) 82%, transparent);
+  border-radius: 0.78rem;
+  display: flex;
+  gap: 0.65rem;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+}
+
+.TopicJourney-contributionMini strong {
+  color: var(--theme-text);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.TopicJourney-contributionMini span {
+  color: var(--theme-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.TopicJourney-contributionFooter {
+  border-top: 1px solid color-mix(in srgb, var(--theme-border) 82%, transparent);
+  color: var(--theme-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  padding-top: 0.62rem;
+}
+
+.TopicJourney-contributionFooter span:not(:last-child)::after {
+  content: "|";
+  margin-left: 0.6rem;
+  opacity: 0.45;
+}
+
+@media (max-width: 760px) {
+  .TopicJourney-contributionMainline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .TopicJourney-contributionMini {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .TopicJourney-contributionMini span {
+    white-space: normal;
+  }
+
+  .TopicJourney-contributionFooter {
+    display: grid;
+  }
+
+  .TopicJourney-contributionFooter span::after {
+    content: "" !important;
+    margin: 0 !important;
+  }
+}
+
+/* topic lifecycle: avoid contribution title/badge collision */
+.TopicJourney-stage--contributions .TopicJourney-cardHeader {
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.TopicJourney-stage--contributions .TopicJourney-cardHeader h4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.TopicJourney-stage--contributions .TopicJourney-cardHeader h4 span {
+  white-space: nowrap;
+}
+
+.TopicJourney-stage--contributions .TopicJourney-badge {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+
+/* topic lifecycle: remove pseudo lock/check badge; normal status badge owns this */
+/* topic lifecycle: contributions stage should always show a nested module */
+.TopicJourney-stage--contributions .TopicJourney-pending {
+  display: none !important;
+}
+
+.TopicJourney-stage--contributions .TopicJourney-cardHeader {
+  margin-bottom: 0.75rem;
+}
+
+.TopicJourney-contributionPanel--empty .TopicJourney-contributionPrimary {
+  border-left-color: color-mix(in srgb, var(--theme-primary) 68%, var(--theme-text-muted));
+}
+
+.TopicJourney-contributionPanel--empty .TopicJourney-contributionPrimary p {
+  color: var(--theme-text-muted);
+}
+
+.TopicJourney-contributionPanel--empty .TopicJourney-signalTrack {
+  opacity: 0.38;
+}
+
+.TopicJourney-contributionPanel--empty .TopicJourney-contributionFooter {
+  opacity: 0.88;
+}
+
+
+/* topic lifecycle: remove pseudo lock/check badge; normal status badge owns this */
+.TopicJourney-stage--contributions .TopicJourney-card::after,
+.TopicJourney-stage--contributions.is-completed .TopicJourney-card::after,
+.TopicJourney-stage--contributions.is-current .TopicJourney-card::after,
+.TopicJourney-stage--contributions.is-locked .TopicJourney-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+
+
+/* topic lifecycle: inner contribution status badge removed */
+.TopicJourney-contributionStatus {
+  display: none !important;
+}
+
+/* topic lifecycle: dynamic contribution activity carousel */
+.TopicJourney-contributionPrimary {
+  animation: topicJourneyActivityIn 180ms ease-out;
+}
+
+.TopicJourney-contributionControls {
+  align-items: center;
+  background: color-mix(in srgb, var(--theme-bg) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-border) 80%, transparent);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.35rem;
+  padding: 0.16rem 0.28rem;
+}
+
+.TopicJourney-contributionControls button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--theme-text);
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 900;
+  height: 1.35rem;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
+  width: 1.35rem;
+}
+
+.TopicJourney-contributionControls button:hover,
+.TopicJourney-contributionControls button:focus-visible {
+  background: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  color: var(--theme-primary);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.TopicJourney-contributionControls span {
+  color: var(--theme-text-muted);
+  font-size: 0.68rem;
+  font-weight: 850;
+  min-width: 2.1rem;
+  text-align: center;
+}
+
+.TopicJourney-contributionDetails {
+  color: var(--theme-text-muted);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1.35;
+  margin-top: -0.15rem;
+}
+
+.TopicJourney-contributionMini {
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+  width: 100%;
+}
+
+.TopicJourney-contributionMini:hover,
+.TopicJourney-contributionMini:focus-visible {
+  background: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-bg));
+  border-color: color-mix(in srgb, var(--theme-primary) 40%, var(--theme-border));
+  outline: none;
+  transform: translateX(2px);
+}
+
+@keyframes topicJourneyActivityIn {
+  from {
+    opacity: 0.72;
+    transform: translateY(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
