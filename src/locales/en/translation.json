@@ -671,7 +671,9 @@
       "yes": "Yes",
       "no": "No",
       "noClaimStatement": "No claim statement available.",
-      "closeActivityDetails": "Close activity details"
+      "closeActivityDetails": "Close activity details",
+      "copyActivityLink": "Copy link",
+      "activityLinkCopied": "Copied"
     },
     "required": "Required",
     "yes": "Yes",

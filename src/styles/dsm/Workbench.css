@@ -1843,3 +1843,39 @@
 .TopicActivityDrawer .offcanvas-header .btn-close {
   display: none !important;
 }
+
+/* topic activity drawer: shareable provenance links */
+.TopicActivityDrawer-heroActions {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: max-content;
+}
+
+.TopicActivityDrawer-copyLink {
+  background: color-mix(in srgb, var(--theme-surface) 86%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 34%, var(--theme-border)) !important;
+  border-radius: 999px !important;
+  color: var(--theme-text) !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.02em;
+  padding: 0.32rem 0.7rem !important;
+}
+
+.TopicActivityDrawer-copyLink:hover,
+.TopicActivityDrawer-copyLink:focus-visible {
+  background: color-mix(in srgb, var(--theme-primary) 13%, var(--theme-surface)) !important;
+  border-color: color-mix(in srgb, var(--theme-primary) 58%, var(--theme-border)) !important;
+  color: var(--theme-primary) !important;
+  outline: none !important;
+}
+
+@media (max-width: 720px) {
+  .TopicActivityDrawer-heroActions {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
