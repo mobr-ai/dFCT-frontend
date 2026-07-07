@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Spinner from "react-bootstrap/Spinner";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArchive,
@@ -454,6 +455,27 @@ function proofReference(t, event) {
 
 function activityEventId(event) {
   return event?.eventId || event?.event_id || "";
+}
+
+
+function normalizeActivityId(value) {
+  if (value === undefined || value === null || value === "") return "";
+
+  const raw = String(value).trim();
+  return raw && /^\d+$/.test(raw) ? raw : "";
+}
+
+
+function setActivitySearchParam(searchParams, setSearchParams, eventId) {
+  const nextParams = new URLSearchParams(searchParams);
+
+  if (eventId) {
+    nextParams.set("activity", String(eventId));
+  } else {
+    nextParams.delete("activity");
+  }
+
+  setSearchParams(nextParams, { replace: false });
 }
 
 
@@ -1106,6 +1128,8 @@ export default function TopicLifecycleAuditTrail({
   const locale = i18n.language || navigator.language || "en-US";
   const isAuthenticated = Boolean(user?.access_token);
   const { authRequest } = useAuthRequest(user);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activityParam = normalizeActivityId(searchParams.get("activity"));
   const [activityDetailOpen, setActivityDetailOpen] = useState(false);
   const [activityDetail, setActivityDetail] = useState(null);
   const [activityDetailLoading, setActivityDetailLoading] = useState(false);
@@ -1138,16 +1162,20 @@ export default function TopicLifecycleAuditTrail({
   const currentStageIndex = deriveCurrentStageIndex(stages, topic);
   const journeyStatus = deriveJourneyStatus(t, topic, stages);
 
-  const openActivityDetail = async (event) => {
-    const eventId = activityEventId(event);
-    if (!eventId || !topicId || !authRequest) return;
+  const openActivityDetailById = async (eventId, { updateUrl = true } = {}) => {
+    const normalizedEventId = normalizeActivityId(eventId);
+    if (!normalizedEventId || !topicId || !authRequest) return;
+
+    if (updateUrl) {
+      setActivitySearchParam(searchParams, setSearchParams, normalizedEventId);
+    }
 
     setActivityDetailOpen(true);
     setActivityDetailLoading(true);
     setActivityDetailError("");
 
     try {
-      const detail = await fetchTopicActivityEvent(authRequest, topicId, eventId);
+      const detail = await fetchTopicActivityEvent(authRequest, topicId, normalizedEventId);
       setActivityDetail(detail);
     } catch (err) {
       setActivityDetailError(
@@ -1157,6 +1185,36 @@ export default function TopicLifecycleAuditTrail({
       setActivityDetailLoading(false);
     }
   };
+
+  const openActivityDetail = async (event) => {
+    const eventId = activityEventId(event);
+    await openActivityDetailById(eventId);
+  };
+
+  const closeActivityDetail = () => {
+    setActivityDetailOpen(false);
+    setActivityDetail(null);
+    setActivityDetailError("");
+    setActivitySearchParam(searchParams, setSearchParams, "");
+  };
+
+  useEffect(() => {
+    if (!activityParam || !topicId || !authRequest) {
+      if (!activityParam && activityDetailOpen) {
+        setActivityDetailOpen(false);
+        setActivityDetail(null);
+        setActivityDetailError("");
+      }
+      return;
+    }
+
+    const currentEventId = normalizeActivityId(activityDetail?.eventId || activityDetail?.event?.eventId);
+    if (activityDetailOpen && currentEventId === activityParam) return;
+
+    openActivityDetailById(activityParam, { updateUrl: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activityParam, topicId, authRequest]);
+
 
   return (
     <aside className="TopicJourney" aria-label={t("dsm.audit.title")}>
@@ -1199,11 +1257,7 @@ export default function TopicLifecycleAuditTrail({
         error={activityDetailError}
         detail={activityDetail}
         locale={locale}
-        onHide={() => {
-          setActivityDetailOpen(false);
-          setActivityDetail(null);
-          setActivityDetailError("");
-        }}
+        onHide={closeActivityDetail}
       />
     </aside>
   );
