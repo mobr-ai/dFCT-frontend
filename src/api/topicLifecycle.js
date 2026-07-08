@@ -1,3 +1,4 @@
+import request from "superagent";
 const TOPIC_LIFECYCLE_TIMEOUT = {
   response: 10000,
   deadline: 20000,
@@ -58,4 +59,28 @@ export async function fetchTopicActivityEvent(authRequest, topicId, eventId) {
     .timeout(TOPIC_LIFECYCLE_TIMEOUT);
 
   return res.body || {};
+}
+
+
+export async function fetchPublicTopicActivityEvent(topicId, eventId) {
+  const res = await request
+    .get(`/api/public/topics/${topicId}/activity-events/${eventId}`)
+    .timeout(TOPIC_LIFECYCLE_TIMEOUT);
+
+  return res.body || {};
+}
+
+
+export async function fetchPublicTopicLifecycleEvents(topicId, options = {}) {
+  const query = {};
+
+  if (options.limit) query.limit = options.limit;
+  if (options.scope) query.scope = options.scope;
+
+  const res = await request
+    .get(`/api/public/topics/${topicId}/lifecycle-events`)
+    .query(query)
+    .timeout(TOPIC_LIFECYCLE_TIMEOUT);
+
+  return normalizeLifecyclePayload(res.body);
 }

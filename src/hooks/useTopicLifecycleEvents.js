@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { fetchTopicLifecycleEvents } from "../api/topicLifecycle";
+import { fetchPublicTopicLifecycleEvents, fetchTopicLifecycleEvents } from "../api/topicLifecycle";
 import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
 
 function eventsFromPayload(payload) {
@@ -23,7 +23,8 @@ export function useTopicLifecycleEvents(user, topicId, {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const canLoad = Boolean(enabled && topicId && user?.access_token);
+  const isAuthenticated = Boolean(user?.access_token);
+  const canLoad = Boolean(enabled && topicId && (!isAuthenticated || authRequest));
 
   useEffect(() => {
     authRequestRef.current = authRequest;
@@ -43,11 +44,16 @@ export function useTopicLifecycleEvents(user, topicId, {
     }
 
     try {
-      const nextPayload = await fetchTopicLifecycleEvents(
-        authRequestRef.current,
-        topicId,
-        { limit },
-      );
+      const nextPayload = isAuthenticated
+        ? await fetchTopicLifecycleEvents(
+          authRequestRef.current,
+          topicId,
+          { limit },
+        )
+        : await fetchPublicTopicLifecycleEvents(
+          topicId,
+          { limit },
+        );
       const nextEvents = eventsFromPayload(nextPayload);
       setPayload(nextPayload);
       setEvents(nextEvents);
@@ -62,7 +68,7 @@ export function useTopicLifecycleEvents(user, topicId, {
         setLoading(false);
       }
     }
-  }, [canLoad, limit, topicId]);
+  }, [canLoad, isAuthenticated, limit, topicId]);
 
   useEffect(() => {
     load().catch(() => {});
