@@ -673,7 +673,33 @@
       "noClaimStatement": "Nenhum texto de claim disponível.",
       "closeActivityDetails": "Fechar detalhes da atividade",
       "copyActivityLink": "Copiar link",
-      "activityLinkCopied": "Copiado"
+      "activityLinkCopied": "Copiado",
+      "verifiableProvenance": "Proveniência verificável",
+      "dfctFingerprintTitle": "Impressão digital d-FCT",
+      "verifiableProvenanceDescription": "Esta atividade possui uma impressão digital d-FCT e está pronta para ancoragem em blockchain.",
+      "dfctFingerprint": "Impressão digital d-FCT",
+      "previousEvent": "Evento anterior",
+      "anchoring": "Ancoragem",
+      "provenanceFormat": "Formato",
+      "copyFingerprint": "Copiar impressão digital",
+      "fingerprintCopied": "Copiado",
+      "provenanceUnavailable": "Impressão digital pendente",
+      "anchorPolicies": {
+        "none": "Não solicitada",
+        "optional": "Opcional",
+        "recommended": "Recomendada",
+        "required": "Obrigatória",
+        "milestones_only": "Apenas marcos",
+        "topic_owner_funded": "Financiada pelo tópico",
+        "community_funded": "Financiada pela comunidade",
+        "reward_pool_funded": "Financiada por recompensas"
+      },
+      "anchorScopes": {
+        "event": "Atividade individual",
+        "topic_batch": "Lote do tópico",
+        "community_batch": "Lote da comunidade",
+        "deployment_batch": "Lote da plataforma"
+      }
     },
     "required": "Obrigatório",
     "yes": "Sim",

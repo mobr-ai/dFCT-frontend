@@ -136,7 +136,12 @@ function shortHash(value, head = 10, tail = 6) {
 
 function eventHash(event) {
   return (
-    event?.anchorPayloadHash || event?.payloadHash || event?.payload_hash || ""
+    event?.anchorEventHash ||
+    event?.eventHash ||
+    event?.anchorPayloadHash ||
+    event?.payloadHash ||
+    event?.payload_hash ||
+    ""
   );
 }
 
@@ -203,6 +208,46 @@ function txUrl(event) {
   const chain = normalizeKey(event?.anchorChain);
   if (!txHash || chain !== "cardano") return "";
   return `${CARDANO_EXPLORER_URL}/transaction/${txHash}`;
+}
+
+function provenanceFingerprint(event) {
+  return eventHash(event);
+}
+
+function payloadFingerprint(event) {
+  return event?.anchorPayloadHash || event?.payloadHash || event?.payload_hash || "";
+}
+
+function previousEventFingerprint(event) {
+  return event?.previousEventHash || event?.previous_event_hash || "";
+}
+
+function provenanceFormat(event) {
+  const schema = event?.envelopeSchema || event?.envelope_schema || "";
+  const version =
+    event?.canonicalizationVersion || event?.canonicalization_version || "";
+
+  if (schema === "dsm-prov-event/v1") {
+    return "d-FCT Provenance v1";
+  }
+
+  if (!schema && !version) return "";
+  if (schema && version) return `${humanize(schema)} · ${version}`;
+  return schema || version;
+}
+
+function anchoringSummary(t, event) {
+  const policy = event?.anchorPolicy || event?.anchor_policy || "";
+  const scope = event?.anchorScope || event?.anchor_scope || "";
+
+  const policyLabel = policy
+    ? t(`dsm.audit.anchorPolicies.${normalizeKey(policy)}`, humanize(policy))
+    : "";
+  const scopeLabel = scope
+    ? t(`dsm.audit.anchorScopes.${normalizeKey(scope)}`, humanize(scope))
+    : "";
+
+  return [policyLabel, scopeLabel].filter(Boolean).join(" · ");
 }
 
 function eventSource(event) {
@@ -564,8 +609,31 @@ function TopicActivityDetailsDrawer({
   const contribution = activity?.contribution || null;
   const content = contribution?.content || null;
   const tx = event ? txUrl(event) : "";
-  const payloadHash = eventHash(event);
+  const payloadHash = payloadFingerprint(event);
+  const fingerprint = provenanceFingerprint(event);
+  const previousFingerprint = previousEventFingerprint(event);
+  const provenanceDetails = [
+    {
+      label: t("dsm.audit.dfctFingerprint"),
+      value: fingerprint,
+      shortValue: shortHash(fingerprint, 12, 8),
+    },
+    {
+      label: t("dsm.audit.previousEvent"),
+      value: previousFingerprint,
+      shortValue: shortHash(previousFingerprint, 12, 8),
+    },
+    {
+      label: t("dsm.audit.anchoring"),
+      value: anchoringSummary(t, event),
+    },
+    {
+      label: t("dsm.audit.provenanceFormat"),
+      value: provenanceFormat(event),
+    },
+  ].filter((item) => item.value);
   const [activityLinkCopied, setActivityLinkCopied] = useState(false);
+  const [fingerprintCopied, setFingerprintCopied] = useState(false);
 
   const handleCopyActivityLink = async () => {
     if (!event) return;
@@ -575,6 +643,17 @@ function TopicActivityDetailsDrawer({
 
     window.setTimeout(() => {
       setActivityLinkCopied(false);
+    }, 1800);
+  };
+
+  const handleCopyFingerprint = async () => {
+    if (!fingerprint) return;
+
+    await copyTextToClipboard(fingerprint);
+    setFingerprintCopied(true);
+
+    window.setTimeout(() => {
+      setFingerprintCopied(false);
     }, 1800);
   };
 
@@ -772,33 +851,73 @@ function TopicActivityDetailsDrawer({
               </section>
             )}
 
-            <section className="TopicActivityDrawer-card">
-              <h5>{t("dsm.audit.provenance")}</h5>
+            <section className="TopicActivityDrawer-card TopicActivityDrawer-card--provenance">
+              <div className="TopicActivityDrawer-provenanceHeader">
+                <div>
+                  <span>{t("dsm.audit.verifiableProvenance")}</span>
+                  <h5>{t("dsm.audit.dfctFingerprintTitle")}</h5>
+                  <p>{t("dsm.audit.verifiableProvenanceDescription")}</p>
+                </div>
 
-              <DetailRow label={t("dsm.audit.actor")} value={actorLabel(t, event)} />
-              <DetailRow label={t("dsm.audit.action")} value={actionLabel(t, event.action)} />
-              <DetailRow label={t("dsm.audit.fromState")} value={stateLabel(t, event.fromState || "initial")} />
-              <DetailRow label={t("dsm.audit.toState")} value={stateLabel(t, event.toState)} />
-              <DetailRow label={t("dsm.audit.createdAt")} value={eventDate(event, locale)} />
-              <DetailRow label={t("dsm.audit.anchorStatus")} value={anchorStatusLabel(t, event.anchorStatus)} />
+                {fingerprint && (
+                  <Button
+                    type="button"
+                    variant="outline-light"
+                    size="sm"
+                    className="TopicActivityDrawer-copyLink TopicActivityDrawer-copyFingerprint"
+                    onClick={handleCopyFingerprint}
+                  >
+                    {fingerprintCopied
+                      ? t("dsm.audit.fingerprintCopied")
+                      : t("dsm.audit.copyFingerprint")}
+                  </Button>
+                )}
+              </div>
 
-              {payloadHash && (
-                <DetailRow label={t("dsm.audit.payloadHash")}>
-                  <code>{shortHash(payloadHash, 18, 10)}</code>
-                </DetailRow>
+              {provenanceDetails.length > 0 ? (
+                <div className="TopicActivityDrawer-provenanceGrid">
+                  {provenanceDetails.map((item) => (
+                    <div
+                      className="TopicActivityDrawer-provenanceItem"
+                      key={item.label}
+                    >
+                      <span>{item.label}</span>
+                      <strong title={item.value}>
+                        {item.shortValue || item.value}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="TopicActivityDrawer-provenancePending">
+                  {t("dsm.audit.provenanceUnavailable")}
+                </p>
               )}
 
-              {event.anchorTxHash && (
-                <DetailRow label={t("dsm.audit.txHash")}>
-                  {tx ? (
-                    <a href={tx} target="_blank" rel="noopener noreferrer">
-                      {shortHash(event.anchorTxHash, 18, 10)}
-                    </a>
-                  ) : (
-                    <code>{shortHash(event.anchorTxHash, 18, 10)}</code>
-                  )}
-                </DetailRow>
-              )}
+              <div className="TopicActivityDrawer-provenanceTrail">
+                <DetailRow label={t("dsm.audit.actor")} value={actorLabel(t, event)} />
+                <DetailRow label={t("dsm.audit.action")} value={actionLabel(t, event.action)} />
+                <DetailRow label={t("dsm.audit.createdAt")} value={eventDate(event, locale)} />
+                <DetailRow label={t("dsm.audit.anchorStatus")} value={anchorStatusLabel(t, event.anchorStatus)} />
+
+                {payloadHash && payloadHash !== fingerprint && (
+                  <DetailRow label={t("dsm.audit.payloadHash")}>
+                    <code>{shortHash(payloadHash, 18, 10)}</code>
+                  </DetailRow>
+                )}
+
+                {event.anchorTxHash && (
+                  <DetailRow label={t("dsm.audit.txHash")}>
+                    {tx ? (
+                      <a href={tx} target="_blank" rel="noopener noreferrer">
+                        {shortHash(event.anchorTxHash, 18, 10)}
+                      </a>
+                    ) : (
+                      <code>{shortHash(event.anchorTxHash, 18, 10)}</code>
+                    )}
+                  </DetailRow>
+                )}
+              </div>
             </section>
           </div>
         )}
