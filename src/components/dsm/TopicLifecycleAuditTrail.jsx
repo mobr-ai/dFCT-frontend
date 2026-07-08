@@ -17,7 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { CARDANO_EXPLORER_URL } from "../../chains/cardano/constants";
-import { fetchTopicActivityEvent } from "../../api/topicLifecycle";
+import { fetchPublicTopicActivityEvent, fetchTopicActivityEvent } from "../../api/topicLifecycle";
 import { useAutoRefresh } from "../../hooks/useAutoRefresh";
 import { useTopicLifecycleEvents } from "../../hooks/useTopicLifecycleEvents";
 import { getApiErrorMessage, useAuthRequest } from "../../hooks/useAuthRequest";
@@ -1197,7 +1197,7 @@ export default function TopicLifecycleAuditTrail({
     topicId,
     {
       limit,
-      enabled: isAuthenticated,
+      enabled: Boolean(topicId),
     },
   );
 
@@ -1221,7 +1221,8 @@ export default function TopicLifecycleAuditTrail({
 
   const openActivityDetailById = async (eventId, { updateUrl = true } = {}) => {
     const normalizedEventId = normalizeActivityId(eventId);
-    if (!normalizedEventId || !topicId || !authRequest) return;
+    if (!normalizedEventId || !topicId) return;
+    if (isAuthenticated && !authRequest) return;
 
     if (updateUrl) {
       setActivitySearchParam(searchParams, setSearchParams, normalizedEventId);
@@ -1232,7 +1233,9 @@ export default function TopicLifecycleAuditTrail({
     setActivityDetailError("");
 
     try {
-      const detail = await fetchTopicActivityEvent(authRequest, topicId, normalizedEventId);
+      const detail = isAuthenticated
+        ? await fetchTopicActivityEvent(authRequest, topicId, normalizedEventId)
+        : await fetchPublicTopicActivityEvent(topicId, normalizedEventId);
       setActivityDetail(detail);
     } catch (err) {
       setActivityDetailError(
@@ -1256,7 +1259,7 @@ export default function TopicLifecycleAuditTrail({
   };
 
   useEffect(() => {
-    if (!activityParam || !topicId || !authRequest) {
+    if (!activityParam || !topicId || (isAuthenticated && !authRequest)) {
       if (!activityParam && activityDetailOpen) {
         setActivityDetailOpen(false);
         setActivityDetail(null);
@@ -1270,7 +1273,7 @@ export default function TopicLifecycleAuditTrail({
 
     openActivityDetailById(activityParam, { updateUrl: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activityParam, topicId, authRequest]);
+  }, [activityParam, topicId, authRequest, isAuthenticated]);
 
 
   return (
