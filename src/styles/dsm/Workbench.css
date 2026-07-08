@@ -1879,3 +1879,106 @@
     flex-wrap: wrap;
   }
 }
+
+/* topic activity drawer: verifiable provenance */
+.TopicActivityDrawer-card--provenance {
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--theme-primary) 16%, transparent),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-surface) 94%, transparent),
+      color-mix(in srgb, var(--theme-bg) 74%, var(--theme-surface))
+    );
+  border-color: color-mix(in srgb, var(--theme-primary) 28%, var(--theme-border));
+}
+
+.TopicActivityDrawer-provenanceHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.85rem;
+  justify-content: space-between;
+}
+
+.TopicActivityDrawer-provenanceHeader > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.TopicActivityDrawer-provenanceHeader span {
+  color: var(--theme-primary);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.TopicActivityDrawer-provenanceGrid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.TopicActivityDrawer-provenanceItem {
+  background: color-mix(in srgb, var(--theme-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-border) 76%, transparent);
+  border-radius: 0.8rem;
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+  padding: 0.68rem;
+}
+
+.TopicActivityDrawer-provenanceItem span {
+  color: var(--theme-text-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.TopicActivityDrawer-provenanceItem strong {
+  color: var(--theme-text);
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace;
+  font-size: 0.82rem;
+  font-weight: 850;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.TopicActivityDrawer-provenancePending {
+  color: var(--theme-text-muted);
+  margin: 0;
+}
+
+.TopicActivityDrawer-provenanceTrail {
+  border-top: 1px solid color-mix(in srgb, var(--theme-border) 72%, transparent);
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 0.2rem;
+}
+
+.TopicActivityDrawer-copyFingerprint {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .TopicActivityDrawer-provenanceHeader {
+    display: grid;
+  }
+
+  .TopicActivityDrawer-provenanceGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -673,7 +673,33 @@
       "noClaimStatement": "No claim statement available.",
       "closeActivityDetails": "Close activity details",
       "copyActivityLink": "Copy link",
-      "activityLinkCopied": "Copied"
+      "activityLinkCopied": "Copied",
+      "verifiableProvenance": "Verifiable provenance",
+      "dfctFingerprintTitle": "d-FCT fingerprint",
+      "verifiableProvenanceDescription": "This activity has a d-FCT fingerprint and is ready for blockchain anchoring.",
+      "dfctFingerprint": "d-FCT fingerprint",
+      "previousEvent": "Previous event",
+      "anchoring": "Anchoring",
+      "provenanceFormat": "Format",
+      "copyFingerprint": "Copy fingerprint",
+      "fingerprintCopied": "Copied",
+      "provenanceUnavailable": "Fingerprint pending",
+      "anchorPolicies": {
+        "none": "Not requested",
+        "optional": "Optional",
+        "recommended": "Recommended",
+        "required": "Required",
+        "milestones_only": "Milestones only",
+        "topic_owner_funded": "Topic-funded",
+        "community_funded": "Community-funded",
+        "reward_pool_funded": "Reward-funded"
+      },
+      "anchorScopes": {
+        "event": "Single activity",
+        "topic_batch": "Topic batch",
+        "community_batch": "Community batch",
+        "deployment_batch": "Platform batch"
+      }
     },
     "required": "Required",
     "yes": "Yes",
