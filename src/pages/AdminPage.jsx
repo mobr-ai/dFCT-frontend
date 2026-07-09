@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button } from "react-bootstrap";
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import AdminBillingCreditsPage from "./AdminBillingCreditsPage";
 import AdminTabs from "../components/admin/AdminTabs";
+import AdminAnchorJobsPanel from "../components/admin/AdminAnchorJobsPanel";
 import { hasAdminClaim, useAdminAccess } from "../hooks/useAdminAccess";
 
 import "../styles/admin/AdminConsole.css";
@@ -84,12 +84,32 @@ function OverviewPanel({ t, onOpenAnchoring }) {
 
 function AnchoringPlaceholder({ t }) {
   return (
-    <>
+    <div className="DfctAdminConsole-panel DfctAdminConsole-anchoringPanel">
+      <div className="BillingAccess-header DfctAdminConsole-panelHeader">
+        <div>
+          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
+          <h1>{t("adminConsole.anchoringTitle")}</h1>
+          <p>{t("adminConsole.anchoringSubtitle")}</p>
+        </div>
+      </div>
+
+      <div className="BillingAccess-tabs DfctBillingAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
+        <button className="nav-link active" type="button">
+          {t("adminConsole.anchoringSubtabJobs")}
+        </button>
+        <button className="nav-link" type="button" disabled>
+          {t("adminConsole.anchoringSubtabFunding")}
+        </button>
+        <button className="nav-link" type="button" disabled>
+          {t("adminConsole.anchoringSubtabVerification")}
+        </button>
+      </div>
+
       <section className="DfctBillingAdmin-section">
         <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
-          <h2>{t("adminConsole.anchoringTitle")}</h2>
-          <p>{t("adminConsole.anchoringSubtitle")}</p>
+          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringStatusEyebrow")}</span>
+          <h2>{t("adminConsole.anchoringStatusTitle")}</h2>
+          <p>{t("adminConsole.anchoringRoadmap")}</p>
         </div>
 
         <div className="DfctBillingAdmin-statGrid">
@@ -117,7 +137,7 @@ function AnchoringPlaceholder({ t }) {
         <div className="DfctBillingAdmin-sectionHeader">
           <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringFlowEyebrow")}</span>
           <h2>{t("adminConsole.anchoringOpsTitle")}</h2>
-          <p>{t("adminConsole.anchoringRoadmap")}</p>
+          <p>{t("adminConsole.anchoringOpsSubtitle")}</p>
         </div>
 
         <div className="DfctAdminConsole-anchorFlow">
@@ -138,13 +158,14 @@ function AnchoringPlaceholder({ t }) {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
 export default function AdminPage() {
   const { t } = useTranslation();
   const outletContext = useOutletContext() || {};
+  const { showToast } = outletContext;
   const userData =
     outletContext.userData ||
     outletContext.user ||
@@ -236,18 +257,10 @@ export default function AdminPage() {
           </div>
         )}
 
-        {activeTab === "anchoring" && <AnchoringPlaceholder t={t} />}
-
-        {activeTab === "overview" && (
-          <div className="DfctAdminConsole-tabFooter">
-            <Button variant="outline-secondary" size="sm" onClick={() => changeTab("billing")}>
-              {t("adminConsole.openBilling")}
-            </Button>
-            <Button variant="outline-primary" size="sm" onClick={() => changeTab("anchoring")}>
-              {t("adminConsole.openAnchoring")}
-            </Button>
-          </div>
+        {activeTab === "anchoring" && (
+          <AdminAnchorJobsPanel t={t} user={userData} showToast={showToast} />
         )}
+
       </div>
     </main>
   );
