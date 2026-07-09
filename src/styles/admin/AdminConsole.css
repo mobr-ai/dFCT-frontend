@@ -1,0 +1,286 @@
+.DfctAdminConsole {
+  --dfct-admin-bg: var(--theme-bg, var(--bs-body-bg));
+  --dfct-admin-surface: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
+  --dfct-admin-surface-soft: var(--theme-surface-soft, var(--theme-card-bg, var(--bs-tertiary-bg)));
+  --dfct-admin-text: var(--theme-text, var(--bs-body-color));
+  --dfct-admin-muted: var(--theme-muted, var(--bs-secondary-color));
+  --dfct-admin-border: var(--theme-border, var(--bs-border-color));
+  --dfct-admin-accent: var(--theme-accent, var(--bs-primary));
+  --dfct-admin-accent-text: var(--theme-accent-contrast, #ffffff);
+
+  min-height: 100vh;
+  padding: 32px 0 56px;
+  background: var(--dfct-admin-bg);
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-inner {
+  max-width: 1240px;
+}
+
+.DfctAdminConsole-hero {
+  margin-bottom: 18px;
+}
+
+.DfctAdminConsole-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--dfct-admin-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole-hero h1,
+.DfctAdminConsole-sectionHeader h2 {
+  margin: 0;
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.DfctAdminConsole-hero p,
+.DfctAdminConsole-sectionHeader p {
+  max-width: 760px;
+  margin: 8px 0 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 22px;
+  padding: 6px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 999px;
+  background: var(--dfct-admin-surface);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.DfctAdminTabs-button {
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: var(--dfct-admin-text);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.DfctAdminTabs-button:hover,
+.DfctAdminTabs-button:focus {
+  color: var(--dfct-admin-text);
+  text-decoration: none;
+}
+
+.DfctAdminTabs-button.is-active {
+  background: var(--dfct-admin-accent);
+  color: var(--dfct-admin-accent-text);
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccessPage {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccess {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccess-hero {
+  display: none;
+}
+
+.DfctAdminConsole-section {
+  margin-top: 16px;
+}
+
+.DfctAdminConsole-card {
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 24px;
+  background: var(--dfct-admin-surface);
+  color: var(--dfct-admin-text);
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.DfctAdminConsole-sectionHeader {
+  margin-bottom: 18px;
+}
+
+.DfctAdminConsole-placeholderGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-placeholderItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 132px;
+  padding: 16px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-placeholderItem strong {
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+}
+
+.DfctAdminConsole-placeholderItem span {
+  color: var(--dfct-admin-muted);
+  font-size: 0.94rem;
+}
+
+.DfctAdminConsole-note {
+  margin: 16px 0 0;
+  border-radius: 16px;
+}
+
+.DfctAdminConsole-tabFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 768px) {
+  .DfctAdminConsole {
+    padding-top: 20px;
+  }
+
+  .DfctAdminTabs {
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .DfctAdminTabs-button {
+    flex: 1 1 auto;
+  }
+
+  .DfctAdminConsole-placeholderGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.DfctAdminConsole-inner.BillingAccess {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.DfctAdminConsole .DfctBillingAdmin-section {
+  margin-top: 18px;
+}
+
+.DfctAdminConsole .DfctBillingAdmin-section:first-of-type {
+  margin-top: 0;
+}
+
+.DfctAdminConsole-actionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-actionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+  color: var(--dfct-admin-text);
+  text-align: left;
+}
+
+.DfctAdminConsole-actionCard span {
+  color: var(--dfct-admin-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole-actionCard strong {
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole-actionCard p {
+  margin: 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminConsole-actionCardButton {
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.DfctAdminConsole-actionCardButton:hover,
+.DfctAdminConsole-actionCardButton:focus {
+  border-color: var(--dfct-admin-accent);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+.DfctAdminConsole-anchorFlow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-anchorFlow > div {
+  min-height: 156px;
+  padding: 18px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+}
+
+.DfctAdminConsole-anchorFlow span {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: var(--dfct-admin-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.DfctAdminConsole-anchorFlow strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+}
+
+.DfctAdminConsole-anchorFlow p {
+  margin: 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminConsole-tabFooter {
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .DfctAdminConsole-actionGrid,
+  .DfctAdminConsole-anchorFlow {
+    grid-template-columns: 1fr;
+  }
+}
