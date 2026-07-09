@@ -14,7 +14,7 @@ import AuthPage from "./pages/AuthPage";
 import WaitingList from "./pages/WaitingListPage";
 import SettingsPage from "./pages/SettingsPage";
 import BillingAccessPage from "./pages/BillingAccessPage.jsx";
-import AdminBillingCreditsPage from "./pages/AdminBillingCreditsPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -330,8 +330,12 @@ const router = createBrowserRouter([
         element: <BillingAccessPage />,
       },
       {
+        path: "/admin",
+        element: <AdminPage />,
+      },
+      {
         path: "/admin/billing",
-        element: <AdminBillingCreditsPage />,
+        element: <AdminPage />,
       },
       {
         path: "/gov",
