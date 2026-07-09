@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button } from "react-bootstrap";
 import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import AdminBillingCreditsPage from "./AdminBillingCreditsPage";
 import AdminTabs from "../components/admin/AdminTabs";
+import AdminAnchorJobsPanel from "../components/admin/AdminAnchorJobsPanel";
 import { hasAdminClaim, useAdminAccess } from "../hooks/useAdminAccess";
 
 import "../styles/admin/AdminConsole.css";
@@ -165,6 +165,7 @@ function AnchoringPlaceholder({ t }) {
 export default function AdminPage() {
   const { t } = useTranslation();
   const outletContext = useOutletContext() || {};
+  const { showToast } = outletContext;
   const userData =
     outletContext.userData ||
     outletContext.user ||
@@ -256,18 +257,10 @@ export default function AdminPage() {
           </div>
         )}
 
-        {activeTab === "anchoring" && <AnchoringPlaceholder t={t} />}
-
-        {activeTab === "overview" && (
-          <div className="DfctAdminConsole-tabFooter">
-            <Button variant="outline-secondary" size="sm" onClick={() => changeTab("billing")}>
-              {t("adminConsole.openBilling")}
-            </Button>
-            <Button variant="outline-primary" size="sm" onClick={() => changeTab("anchoring")}>
-              {t("adminConsole.openAnchoring")}
-            </Button>
-          </div>
+        {activeTab === "anchoring" && (
+          <AdminAnchorJobsPanel t={t} user={userData} showToast={showToast} />
         )}
+
       </div>
     </main>
   );
