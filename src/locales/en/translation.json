@@ -676,7 +676,7 @@
       "activityLinkCopied": "Copied",
       "verifiableProvenance": "Verifiable provenance",
       "dfctFingerprintTitle": "d-FCT fingerprint",
-      "verifiableProvenanceDescription": "This activity has a d-FCT fingerprint and is ready for blockchain anchoring.",
+      "verifiableProvenanceDescription": "This activity is fingerprinted by d-FCT and ready for blockchain anchoring.",
       "dfctFingerprint": "d-FCT fingerprint",
       "previousEvent": "Previous event",
       "anchoring": "Anchoring",
