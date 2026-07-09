@@ -250,6 +250,19 @@ function anchoringSummary(t, event) {
   return [policyLabel, scopeLabel].filter(Boolean).join(" · ");
 }
 
+function isAnchorReady(event) {
+  if (!event) return false;
+
+  return Boolean(
+    event.anchorReady ||
+      event.anchorRecommended ||
+      event.anchorPolicy ||
+      event.anchorScope ||
+      event.anchor_policy ||
+      event.anchor_scope,
+  );
+}
+
 function eventSource(event) {
   return (
     event?.metadata?.source ||
@@ -488,11 +501,9 @@ function activityStatusVariant(event) {
 
 
 function proofReference(t, event) {
-  const txHash = event?.anchorTxHash;
-  if (txHash) return `${t("dsm.audit.txHash")}: ${shortHash(txHash)}`;
+  if (event?.anchorTxHash) return t("dsm.audit.blockchainRecordReady");
 
-  const hash = eventHash(event);
-  if (hash) return `${t("dsm.audit.proof")}: ${shortHash(hash)}`;
+  if (eventHash(event)) return t("dsm.audit.fingerprintReady");
 
   return "";
 }
@@ -1248,37 +1259,46 @@ function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }
                 <span>{actorLabel(t, event)}</span>
               </div>
 
-              <div className="TopicJourney-proof">
+              <div className="TopicJourney-proof TopicJourney-proof--trust">
                 {hash && (
-                  <span title={hash}>
-                    {t("dsm.audit.payloadHash")}: {shortHash(hash)}
+                  <span className="TopicJourney-trustPill" title={hash}>
+                    {t("dsm.audit.fingerprintReady")}
+                  </span>
+                )}
+                {isAnchorReady(event) && (
+                  <span className="TopicJourney-trustPill">
+                    {t("dsm.audit.anchorReady")}
                   </span>
                 )}
                 {source && (
                   <span>
-                    {t("dsm.audit.source")}: {humanize(source)}
-                  </span>
-                )}
-                {event.anchorChain && (
-                  <span>
-                    {t("dsm.audit.chain")}: {humanize(event.anchorChain)}
+                    {t("dsm.audit.capturedBy")}: {humanize(source)}
                   </span>
                 )}
                 {event.anchorTxHash && (
                   <span title={event.anchorTxHash}>
-                    {t("dsm.audit.txHash")}:{" "}
+                    {t("dsm.audit.blockchainRecord")}:{" "}
                     {tx ? (
                       <a href={tx} target="_blank" rel="noopener noreferrer">
-                        {shortHash(event.anchorTxHash)}
+                        {humanize(event.anchorChain || "cardano")}
                       </a>
                     ) : (
-                      shortHash(event.anchorTxHash)
+                      humanize(event.anchorChain || "cardano")
                     )}
                   </span>
                 )}
                 {eventDate(event, locale) && (
                   <span>{eventDate(event, locale)}</span>
                 )}
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="TopicJourney-openDetails"
+                  onClick={() => onSelectActivity?.(event)}
+                >
+                  {t("dsm.audit.openActivityDetails")}
+                </Button>
               </div>
             </>
           ) : (

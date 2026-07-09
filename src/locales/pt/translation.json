@@ -699,7 +699,13 @@
         "topic_batch": "Lote do tópico",
         "community_batch": "Lote da comunidade",
         "deployment_batch": "Lote da plataforma"
-      }
+      },
+      "fingerprintReady": "Impressão digital d-FCT pronta",
+      "anchorReady": "Pronto para ancoragem",
+      "blockchainRecord": "Registro em blockchain",
+      "blockchainRecordReady": "Registro em blockchain pronto",
+      "capturedBy": "Registrado por",
+      "openActivityDetails": "Abrir detalhes"
     },
     "required": "Obrigatório",
     "yes": "Sim",
