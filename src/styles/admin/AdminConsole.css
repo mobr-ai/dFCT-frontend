@@ -471,3 +471,273 @@
 .DfctAdminConsole .DfctAdminConsole-eyebrow {
   color: var(--theme-primary) !important;
 }
+
+/* Generic admin workspace primitives used by all admin tabs. */
+.DfctAdminConsole .DfctAdmin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-eyebrow {
+  display: inline-block;
+  color: var(--theme-primary) !important;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs {
+  border-bottom: 1px solid var(--theme-border);
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs .nav-link {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs .nav-link.active {
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-section {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 18px);
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader h2 {
+  margin: 0;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdmin-statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.DfctAdminConsole .DfctAdmin-stat {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminConsole .DfctAdmin-stat span {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdmin-stat strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--theme-text);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.DfctAdminConsole .DfctAdmin-stat small {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdmin-tableWrap {
+  overflow: auto;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface);
+}
+
+.DfctAdminConsole .DfctAdmin-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-table th,
+.DfctAdminConsole .DfctAdmin-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--theme-border);
+  vertical-align: middle;
+}
+
+.DfctAdminConsole .DfctAdmin-table th {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-modal .modal-content,
+.DfctAdminAnchorJobs-modalContent {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 20px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminAnchorJobs-modal .modal-header,
+.DfctAdminAnchorJobs-modal .modal-body {
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAnchorJobs-modalHeaderCopy p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorJobs-modalLoading {
+  display: flex;
+  align-items: center;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminAnchorJobs-actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+[data-theme="dfct-dark"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="graphite"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="terminal"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="midnight"] .DfctAdminAnchorJobs-modal .btn-close {
+  filter: invert(1) grayscale(100%);
+}
+
+@media (max-width: 900px) {
+  .DfctAdminConsole .DfctAdmin-header {
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdmin-statGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminConsole .DfctAdmin-statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Admin shell layout repair after generic class cleanup. */
+.DfctAdminConsole .DfctAdminConsole-inner.DfctAdminShell {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 32px 56px 64px;
+}
+
+.DfctAdminConsole .DfctAdminConsole-hero p {
+  color: var(--theme-text) !important;
+  opacity: 0.72;
+}
+
+/* Anchor job filters auto-apply, so no manual Apply button column is needed. */
+.DfctAdminAnchorJobs-filters {
+  grid-template-columns: 180px 160px minmax(220px, 1fr) 110px;
+}
+
+/* Keep admin modals above sticky navigation and away from the top bar. */
+.modal-backdrop.show {
+  z-index: 2490;
+}
+
+.modal.show {
+  z-index: 2500;
+}
+
+.DfctAdminAnchorJobs-modal.modal-dialog {
+  margin-top: 96px;
+  margin-bottom: 32px;
+  max-width: min(1100px, calc(100vw - 48px));
+}
+
+.DfctAdminAnchorJobs-modal.modal-dialog-scrollable .modal-content {
+  max-height: calc(100vh - 128px);
+}
+
+.DfctAdminAnchorJobs-modalTop {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorJobs-modalClose {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-color: var(--theme-border) !important;
+  border-radius: 10px;
+  background: var(--theme-surface-soft, transparent) !important;
+  color: var(--theme-text) !important;
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 800;
+  box-shadow: none !important;
+}
+
+.DfctAdminAnchorJobs-modalClose:hover,
+.DfctAdminAnchorJobs-modalClose:focus {
+  background: color-mix(in srgb, var(--theme-primary) 14%, transparent) !important;
+  color: var(--theme-text) !important;
+}
+
+@media (max-width: 900px) {
+  .DfctAdminConsole .DfctAdminConsole-inner.DfctAdminShell {
+    padding: 28px 20px 56px;
+  }
+
+  .DfctAdminAnchorJobs-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .DfctAdminAnchorJobs-modal.modal-dialog {
+    margin-top: 84px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorJobs-filters {
+    grid-template-columns: 1fr;
+  }
+}

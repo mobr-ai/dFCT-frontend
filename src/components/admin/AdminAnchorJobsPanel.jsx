@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Alert, Badge, Button, Form, Spinner } from "react-bootstrap";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 
 import { useAdminAnchorJobs } from "../../hooks/useAdminAnchorJobs";
 
@@ -36,7 +36,7 @@ function statusTone(status) {
 
 function Stat({ label, value, caption, tone }) {
   return (
-    <div className={`DfctBillingAdmin-stat ${tone ? `DfctBillingAdmin-stat--${tone}` : ""}`}>
+    <div className={`DfctAdmin-stat ${tone ? `DfctAdmin-stat--${tone}` : ""}`}>
       <span>{label}</span>
       <strong>{value}</strong>
       {caption ? <small>{caption}</small> : null}
@@ -81,6 +81,8 @@ function FundingPlan({ t, plan }) {
 export default function AdminAnchorJobsPanel({ t, user, showToast }) {
   const anchorJobs = useAdminAnchorJobs(user, showToast, t);
   const [txHash, setTxHash] = useState("");
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const didMountFilters = useRef(false);
 
   const selectedId = valueOf(
     anchorJobs.selectedJob,
@@ -96,24 +98,56 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
 
   const rows = useMemo(() => anchorJobs.items || [], [anchorJobs.items]);
 
+  const filterKey = [
+    anchorJobs.filters.status,
+    anchorJobs.filters.chain,
+    anchorJobs.filters.topicId,
+    anchorJobs.filters.limit,
+  ].join("|");
+
+  useEffect(() => {
+    if (!didMountFilters.current) {
+      didMountFilters.current = true;
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      anchorJobs.loadJobs({ silent: true });
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterKey]);
+
   const onFilterChange = (key, value) => {
     anchorJobs.setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const applyFilters = () => anchorJobs.loadJobs();
+  const closeDetailModal = () => setShowDetailModal(false);
+
+  const verifyOnly = () => {
+    if (!selectedId || !txHash.trim()) return;
+    anchorJobs.verifyTx(selectedId, txHash, { confirm: false });
+  };
+
+  const confirmVerified = () => {
+    if (!canConfirm) return;
+    anchorJobs.verifyTx(selectedId, txHash, { confirm: true });
+  };
 
   const selectJob = async (job) => {
     const id = valueOf(job, "anchorJobId", "anchor_job_id", "id");
     const loaded = await anchorJobs.loadJob(id);
     const existingTxHash = valueOf(loaded || job, "txHash", "tx_hash");
     setTxHash(existingTxHash || "");
+    setShowDetailModal(Boolean(id));
   };
 
   return (
     <div className="DfctAdminConsole-panel DfctAdminConsole-anchoringPanel">
-      <div className="BillingAccess-header DfctAdminConsole-panelHeader">
+      <div className="DfctAdmin-header DfctAdminConsole-panelHeader">
         <div>
-          <span className="BillingAccess-eyebrow">{t("adminAnchorJobs.eyebrow")}</span>
+          <span className="DfctAdmin-eyebrow">{t("adminAnchorJobs.eyebrow")}</span>
           <h1>{t("adminAnchorJobs.title")}</h1>
           <p>{t("adminAnchorJobs.subtitle")}</p>
         </div>
@@ -128,7 +162,7 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
         </span>
       </div>
 
-      <div className="BillingAccess-tabs DfctBillingAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
+      <div className="DfctAdmin-tabs DfctAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
         <button className="nav-link active" type="button">
           {t("adminAnchorJobs.subtabJobs")}
         </button>
@@ -148,14 +182,14 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
         <Alert variant="warning">{anchorJobs.error}</Alert>
       )}
 
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminAnchorJobs.summaryEyebrow")}</span>
+      <section className="DfctAdmin-section">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">{t("adminAnchorJobs.summaryEyebrow")}</span>
           <h2>{t("adminAnchorJobs.summaryTitle")}</h2>
           <p>{t("adminAnchorJobs.summarySubtitle")}</p>
         </div>
 
-        <div className="DfctBillingAdmin-statGrid">
+        <div className="DfctAdmin-statGrid">
           <Stat
             label={t("adminAnchorJobs.statTotal")}
             value={anchorJobs.stats.total}
@@ -215,13 +249,10 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
             <option value="100">100</option>
           </Form.Select>
 
-          <Button variant="outline-primary" onClick={applyFilters} disabled={anchorJobs.loading}>
-            {t("adminAnchorJobs.applyFilters")}
-          </Button>
         </div>
 
-        <div className="DfctBillingAdmin-tableWrap DfctAdminAnchorJobs-tableWrap">
-          <table className="DfctBillingAdmin-table">
+        <div className="DfctAdmin-tableWrap DfctAdminAnchorJobs-tableWrap">
+          <table className="DfctAdmin-table">
             <thead>
               <tr>
                 <th>{t("adminAnchorJobs.colActions")}</th>
@@ -281,98 +312,129 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
         </div>
       </section>
 
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminAnchorJobs.detailEyebrow")}</span>
-          <h2>{t("adminAnchorJobs.detailTitle")}</h2>
-          <p>{t("adminAnchorJobs.detailSubtitle")}</p>
-        </div>
 
-        {!anchorJobs.selectedJob ? (
-          <Alert variant="secondary" className="DfctAdminAnchorJobs-inlineAlert">
-            {t("adminAnchorJobs.noSelection")}
-          </Alert>
-        ) : (
-          <div className="DfctAdminAnchorJobs-detailLayout">
-            <div className="DfctAdminAnchorJobs-detailCard">
-              <h3>{t("adminAnchorJobs.jobDetails")}</h3>
-              <div className="DfctAdminAnchorJobs-detailGrid">
-                <DetailRow label={t("adminAnchorJobs.jobId")} value={selectedId} />
-                <DetailRow label={t("adminAnchorJobs.status")} value={anchorJobs.selectedJob.status} />
-                <DetailRow label={t("adminAnchorJobs.chain")} value={anchorJobs.selectedJob.chain} />
-                <DetailRow label={t("adminAnchorJobs.provider")} value={anchorJobs.selectedJob.provider} />
-                <DetailRow label={t("adminAnchorJobs.topicId")} value={anchorJobs.selectedJob.topicId} mono />
-                <DetailRow label={t("adminAnchorJobs.batchHash")} value={shorten(anchorJobs.selectedJob.batchHash, 18, 12)} mono />
-                <DetailRow label={t("adminAnchorJobs.recordRef")} value={shorten(anchorJobs.selectedJob.recordRef, 18, 12)} mono />
-                <DetailRow label={t("adminAnchorJobs.explorerUrl")} value={anchorJobs.selectedJob.explorerUrl ? t("adminAnchorJobs.available") : "—"} />
-              </div>
-            </div>
-
-            <div className="DfctAdminAnchorJobs-detailCard">
-              <h3>{t("adminAnchorJobs.fundingPlanTitle")}</h3>
-              {anchorJobs.detailLoading ? (
-                <Spinner animation="border" size="sm" />
-              ) : (
-                <FundingPlan t={t} plan={fundingPlan} />
-              )}
-            </div>
-
-            <div className="DfctAdminAnchorJobs-detailCard DfctAdminAnchorJobs-verifyCard">
-              <h3>{t("adminAnchorJobs.verifyTitle")}</h3>
-              <p>{t("adminAnchorJobs.verifySubtitle")}</p>
-
-              <Form.Group className="mb-3">
-                <Form.Label>{t("adminAnchorJobs.txHashLabel")}</Form.Label>
-                <Form.Control
-                  value={txHash}
-                  onChange={(event) => setTxHash(event.target.value)}
-                  placeholder={t("adminAnchorJobs.txHashPlaceholder")}
-                />
-              </Form.Group>
-
-              {verification && (
-                <Alert variant={verification.ok ? "success" : "danger"} className="DfctAdminAnchorJobs-inlineAlert">
-                  {verification.ok
-                    ? t("adminAnchorJobs.verifyOk")
-                    : t("adminAnchorJobs.verifyFailed", { error: verification.error || "unknown" })}
-                </Alert>
-              )}
-
-              <div className="DfctAdminAnchorJobs-actionRow">
-                <Button
-                  variant="outline-primary"
-                  disabled={!selectedId || !txHash.trim() || Boolean(anchorJobs.actionLoading)}
-                  onClick={() => anchorJobs.verifyTx(selectedId, txHash, { confirm: false })}
-                >
-                  {anchorJobs.actionLoading === "verifyTx" ? (
-                    <>
-                      <Spinner animation="border" size="sm" className="me-2" />
-                      {t("adminAnchorJobs.verifying")}
-                    </>
-                  ) : (
-                    t("adminAnchorJobs.verifyOnly")
-                  )}
-                </Button>
-
-                <Button
-                  variant="success"
-                  disabled={!canConfirm || Boolean(anchorJobs.actionLoading)}
-                  onClick={() => anchorJobs.verifyTx(selectedId, txHash, { confirm: true })}
-                >
-                  {anchorJobs.actionLoading === "confirmTx" ? (
-                    <>
-                      <Spinner animation="border" size="sm" className="me-2" />
-                      {t("adminAnchorJobs.confirming")}
-                    </>
-                  ) : (
-                    t("adminAnchorJobs.confirmVerified")
-                  )}
-                </Button>
-              </div>
-            </div>
+      <Modal
+        show={showDetailModal && Boolean(anchorJobs.selectedJob)}
+        onHide={closeDetailModal}
+        size="xl"
+        scrollable
+        dialogClassName="DfctAdminAnchorJobs-modal"
+        contentClassName="DfctAdminAnchorJobs-modalContent"
+      >
+        <Modal.Header className="DfctAdminAnchorJobs-modalTop">
+          <div className="DfctAdminAnchorJobs-modalHeaderCopy">
+            <span className="DfctAdmin-eyebrow">{t("adminAnchorJobs.detailEyebrow")}</span>
+            <Modal.Title>{t("adminAnchorJobs.detailTitle")}</Modal.Title>
+            <p>{t("adminAnchorJobs.detailSubtitle")}</p>
           </div>
-        )}
-      </section>
+          <Button
+            type="button"
+            variant="outline-secondary"
+            className="DfctAdminAnchorJobs-modalClose"
+            onClick={closeDetailModal}
+            aria-label={t("adminAnchorJobs.close")}
+          >
+            ×
+          </Button>
+        </Modal.Header>
+
+        <Modal.Body>
+          {anchorJobs.detailLoading ? (
+            <div className="DfctAdminAnchorJobs-modalLoading">
+              <Spinner animation="border" size="sm" className="me-2" />
+              {t("adminAnchorJobs.loading")}
+            </div>
+          ) : !anchorJobs.selectedJob ? (
+            <Alert variant="secondary">{t("adminAnchorJobs.noSelection")}</Alert>
+          ) : (
+            <div className="DfctAdminAnchorJobs-detailLayout">
+              <div className="DfctAdminAnchorJobs-detailCard">
+                <h3>{t("adminAnchorJobs.jobDetails")}</h3>
+                <div className="DfctAdminAnchorJobs-detailGrid">
+                  <DetailRow label={t("adminAnchorJobs.jobId")} value={selectedId} />
+                  <DetailRow label={t("adminAnchorJobs.status")} value={valueOf(anchorJobs.selectedJob, "status")} />
+                  <DetailRow label={t("adminAnchorJobs.chain")} value={valueOf(anchorJobs.selectedJob, "chain")} />
+                  <DetailRow label={t("adminAnchorJobs.provider")} value={valueOf(anchorJobs.selectedJob, "provider")} />
+                  <DetailRow label={t("adminAnchorJobs.topicId")} value={valueOf(anchorJobs.selectedJob, "topicId", "topic_id")} />
+                  <DetailRow label={t("adminAnchorJobs.colScope")} value={valueOf(anchorJobs.selectedJob, "scope")} />
+                  <DetailRow
+                    label={t("adminAnchorJobs.batchHash")}
+                    value={shorten(valueOf(anchorJobs.selectedJob, "batchHash", "batch_hash"), 18, 12)}
+                    mono
+                  />
+                  <DetailRow label={t("adminAnchorJobs.recordRef")} value={valueOf(anchorJobs.selectedJob, "recordRef", "record_ref")} />
+                  <DetailRow label={t("adminAnchorJobs.explorerUrl")} value={valueOf(anchorJobs.selectedJob, "explorerUrl", "explorer_url")} />
+                </div>
+              </div>
+
+              <div className="DfctAdminAnchorJobs-detailCard">
+                <h3>{t("adminAnchorJobs.fundingPlanTitle")}</h3>
+                <FundingPlan t={t} plan={fundingPlan} />
+              </div>
+
+              <div className="DfctAdminAnchorJobs-detailCard DfctAdminAnchorJobs-verifyCard">
+                <h3>{t("adminAnchorJobs.verifyTitle")}</h3>
+                <p>{t("adminAnchorJobs.verifySubtitle")}</p>
+
+                <Form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    verifyOnly();
+                  }}
+                >
+                  <Form.Group className="mb-3">
+                    <Form.Label>{t("adminAnchorJobs.txHashLabel")}</Form.Label>
+                    <Form.Control
+                      value={txHash}
+                      onChange={(event) => setTxHash(event.target.value)}
+                      placeholder={t("adminAnchorJobs.txHashPlaceholder")}
+                    />
+                  </Form.Group>
+
+                  {verification?.ok && (
+                    <Alert variant="success">{t("adminAnchorJobs.verifyOk")}</Alert>
+                  )}
+
+                  {verification && !verification.ok && (
+                    <Alert variant="danger">
+                      {t("adminAnchorJobs.verifyFailed", {
+                        error: verification.error || verification.message || "Unknown error",
+                      })}
+                    </Alert>
+                  )}
+
+                  <div className="DfctAdminAnchorJobs-actionRow">
+                    <Button
+                      type="submit"
+                      variant="outline-primary"
+                      disabled={!selectedId || !txHash.trim() || anchorJobs.actionLoading}
+                    >
+                      {anchorJobs.actionLoading ? (
+                        <>
+                          <Spinner animation="border" size="sm" className="me-2" />
+                          {t("adminAnchorJobs.verifying")}
+                        </>
+                      ) : (
+                        t("adminAnchorJobs.verifyOnly")
+                      )}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="primary"
+                      disabled={!canConfirm || anchorJobs.actionLoading}
+                      onClick={confirmVerified}
+                    >
+                      {t("adminAnchorJobs.confirmVerified")}
+                    </Button>
+                  </div>
+                </Form>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
+
     </div>
   );
 }
