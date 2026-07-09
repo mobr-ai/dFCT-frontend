@@ -1169,7 +1169,15 @@ function ContributionStageActivity({
   );
 }
 
-function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }) {
+function StageCard({
+  stage,
+  index,
+  currentStageIndex,
+  locale,
+  onSelectActivity,
+  isManuallyExpanded = false,
+  onToggleExpanded,
+}) {
   const { t } = useTranslation();
   const event = stage.event;
   const isCompleted = Boolean(event);
@@ -1180,6 +1188,9 @@ function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }
   const source = event ? eventSource(event) : "";
   const activityEvents = stage.activityEvents || [];
   const isContributionStage = stage.key === "contributions";
+  const canExpand = !isLocked && (isCompleted || isContributionStage);
+  const isStageExpanded = isCurrent || (!isLocked && isManuallyExpanded);
+  const detailsId = `topic-journey-${stage.key}-details`;
 
   return (
     <li
@@ -1190,6 +1201,8 @@ function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }
         isCompleted ? "is-completed" : "",
         isCurrent ? "is-current" : "",
         isLocked ? "is-locked" : "",
+        canExpand ? "is-expandable" : "",
+        isStageExpanded ? "is-expanded" : "is-collapsed",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -1233,18 +1246,39 @@ function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }
                     ? t("dsm.audit.locked")
                     : t("dsm.audit.current")}
             </Badge>
+
+            {canExpand && !isCurrent && (
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="TopicJourney-disclosure"
+                aria-expanded={isStageExpanded}
+                aria-controls={detailsId}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onToggleExpanded?.(stage.key);
+                }}
+              >
+                {isStageExpanded
+                  ? t("dsm.audit.hideStageDetails")
+                  : t("dsm.audit.showStageDetails")}
+              </Button>
+            )}
           </div>
 
-          {isContributionStage ? (
-            <ContributionStageActivity
-              events={activityEvents}
-              locale={locale}
-              isCurrent={isCurrent}
-              isLocked={isLocked}
-              onSelectActivity={onSelectActivity}
-            />
+          {isContributionStage && !isLocked ? (
+            <div className="TopicJourney-stageDetails" id={detailsId}>
+              <ContributionStageActivity
+                events={activityEvents}
+                locale={locale}
+                isCurrent={isCurrent}
+                isLocked={isLocked}
+                onSelectActivity={onSelectActivity}
+              />
+            </div>
           ) : isCompleted ? (
-            <>
+            <div className="TopicJourney-stageDetails" id={detailsId}>
               <div className="TopicJourney-transition">
                 <span>{stateLabel(t, event.fromState || "initial")}</span>
                 <span aria-hidden="true">→</span>
@@ -1300,7 +1334,7 @@ function StageCard({ stage, index, currentStageIndex, locale, onSelectActivity }
                   {t("dsm.audit.openActivityDetails")}
                 </Button>
               </div>
-            </>
+            </div>
           ) : (
             <div className="TopicJourney-pending">
               {isLocked
@@ -1330,6 +1364,7 @@ export default function TopicLifecycleAuditTrail({
   const [activityDetail, setActivityDetail] = useState(null);
   const [activityDetailLoading, setActivityDetailLoading] = useState(false);
   const [activityDetailError, setActivityDetailError] = useState("");
+  const [expandedStageKey, setExpandedStageKey] = useState("");
 
   const { events, loading, error, canLoad, refresh } = useTopicLifecycleEvents(
     user,
@@ -1397,6 +1432,14 @@ export default function TopicLifecycleAuditTrail({
     setActivitySearchParam(searchParams, setSearchParams, "");
   };
 
+  const toggleStageExpansion = (stageKey) => {
+    setExpandedStageKey((current) => (current === stageKey ? "" : stageKey));
+  };
+
+  useEffect(() => {
+    setExpandedStageKey("");
+  }, [topicId, currentStageIndex]);
+
   useEffect(() => {
     if (!activityParam || !topicId || (isAuthenticated && !authRequest)) {
       if (!activityParam && activityDetailOpen) {
@@ -1446,6 +1489,8 @@ export default function TopicLifecycleAuditTrail({
             currentStageIndex={currentStageIndex}
             locale={locale}
             onSelectActivity={openActivityDetail}
+            isManuallyExpanded={expandedStageKey === stage.key}
+            onToggleExpanded={toggleStageExpansion}
           />
         ))}
       </ol>

@@ -2025,3 +2025,68 @@
   display: inline-flex;
   gap: 0.25rem;
 }
+
+/* topic lifecycle: progressive disclosure timeline */
+.TopicJourney-stageDetails {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition:
+    max-height 180ms ease,
+    opacity 140ms ease,
+    transform 160ms ease;
+}
+
+.TopicJourney-stage.is-current .TopicJourney-stageDetails,
+.TopicJourney-stage.is-expanded .TopicJourney-stageDetails {
+  max-height: 760px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .TopicJourney-stage.is-expandable:not(.is-locked):hover .TopicJourney-stageDetails,
+  .TopicJourney-stage.is-expandable:not(.is-locked):focus-within .TopicJourney-stageDetails {
+    max-height: 760px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+.TopicJourney-stage.is-locked .TopicJourney-stageDetails {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.TopicJourney-disclosure {
+  display: none !important;
+}
+
+@media (hover: none), (max-width: 900px) {
+  .TopicJourney-disclosure {
+    align-items: center !important;
+    border: 1px solid color-mix(in srgb, var(--theme-primary) 28%, var(--theme-border)) !important;
+    border-radius: 999px !important;
+    color: var(--theme-primary) !important;
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    font-size: 0.68rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin-left: auto !important;
+    padding: 0.28rem 0.56rem !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+
+  .TopicJourney-disclosure:hover,
+  .TopicJourney-disclosure:focus-visible {
+    background: color-mix(in srgb, var(--theme-primary) 10%, transparent) !important;
+    outline: none !important;
+  }
+}

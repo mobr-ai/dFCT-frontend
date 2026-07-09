@@ -705,7 +705,9 @@
       "blockchainRecord": "Registro em blockchain",
       "blockchainRecordReady": "Registro em blockchain pronto",
       "capturedBy": "Registrado por",
-      "openActivityDetails": "Abrir detalhes"
+      "openActivityDetails": "Abrir detalhes",
+      "showStageDetails": "Mostrar detalhes",
+      "hideStageDetails": "Ocultar detalhes"
     },
     "required": "Obrigatório",
     "yes": "Sim",

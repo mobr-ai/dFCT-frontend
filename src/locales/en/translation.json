@@ -705,7 +705,9 @@
       "blockchainRecord": "Blockchain record",
       "blockchainRecordReady": "Blockchain record ready",
       "capturedBy": "Captured by",
-      "openActivityDetails": "Open details"
+      "openActivityDetails": "Open details",
+      "showStageDetails": "Show details",
+      "hideStageDetails": "Hide details"
     },
     "required": "Required",
     "yes": "Yes",
