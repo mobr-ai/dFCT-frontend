@@ -84,12 +84,32 @@ function OverviewPanel({ t, onOpenAnchoring }) {
 
 function AnchoringPlaceholder({ t }) {
   return (
-    <>
+    <div className="DfctAdminConsole-panel DfctAdminConsole-anchoringPanel">
+      <div className="BillingAccess-header DfctAdminConsole-panelHeader">
+        <div>
+          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
+          <h1>{t("adminConsole.anchoringTitle")}</h1>
+          <p>{t("adminConsole.anchoringSubtitle")}</p>
+        </div>
+      </div>
+
+      <div className="BillingAccess-tabs DfctBillingAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
+        <button className="nav-link active" type="button">
+          {t("adminConsole.anchoringSubtabJobs")}
+        </button>
+        <button className="nav-link" type="button" disabled>
+          {t("adminConsole.anchoringSubtabFunding")}
+        </button>
+        <button className="nav-link" type="button" disabled>
+          {t("adminConsole.anchoringSubtabVerification")}
+        </button>
+      </div>
+
       <section className="DfctBillingAdmin-section">
         <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
-          <h2>{t("adminConsole.anchoringTitle")}</h2>
-          <p>{t("adminConsole.anchoringSubtitle")}</p>
+          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringStatusEyebrow")}</span>
+          <h2>{t("adminConsole.anchoringStatusTitle")}</h2>
+          <p>{t("adminConsole.anchoringRoadmap")}</p>
         </div>
 
         <div className="DfctBillingAdmin-statGrid">
@@ -117,7 +137,7 @@ function AnchoringPlaceholder({ t }) {
         <div className="DfctBillingAdmin-sectionHeader">
           <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringFlowEyebrow")}</span>
           <h2>{t("adminConsole.anchoringOpsTitle")}</h2>
-          <p>{t("adminConsole.anchoringRoadmap")}</p>
+          <p>{t("adminConsole.anchoringOpsSubtitle")}</p>
         </div>
 
         <div className="DfctAdminConsole-anchorFlow">
@@ -138,7 +158,7 @@ function AnchoringPlaceholder({ t }) {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

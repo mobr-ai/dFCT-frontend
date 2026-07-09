@@ -1322,6 +1322,12 @@
     "openAnchoring": "Open anchoring",
     "nextAnchoring": "Open anchoring preview",
     "overviewEyebrow": "Admin foundation",
-    "anchoringFlowEyebrow": "Operational flow"
+    "anchoringFlowEyebrow": "Operational flow",
+    "anchoringSubtabJobs": "Anchor jobs",
+    "anchoringSubtabFunding": "Funding plans",
+    "anchoringSubtabVerification": "Tx verification",
+    "anchoringStatusEyebrow": "Anchor readiness",
+    "anchoringStatusTitle": "Anchor job foundation",
+    "anchoringOpsSubtitle": "A safe operational flow is already in place for listing jobs, previewing funding plans, and verifying transaction hashes."
   }
 }

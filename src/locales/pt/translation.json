@@ -1322,6 +1322,12 @@
     "openAnchoring": "Abrir ancoragem",
     "nextAnchoring": "Abrir preview de ancoragem",
     "overviewEyebrow": "Fundação admin",
-    "anchoringFlowEyebrow": "Fluxo operacional"
+    "anchoringFlowEyebrow": "Fluxo operacional",
+    "anchoringSubtabJobs": "Anchor jobs",
+    "anchoringSubtabFunding": "Planos de funding",
+    "anchoringSubtabVerification": "Verificação de tx",
+    "anchoringStatusEyebrow": "Prontidão de ancoragem",
+    "anchoringStatusTitle": "Fundação de Anchor Jobs",
+    "anchoringOpsSubtitle": "Um fluxo operacional seguro já está em vigor para listar jobs, visualizar planos de funding e verificar hashes de transações."
   }
 }

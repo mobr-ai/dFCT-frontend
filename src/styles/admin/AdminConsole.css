@@ -284,3 +284,68 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Admin shell polish: keep custom overview/anchoring cards aligned with billing surfaces. */
+.DfctAdminConsole-panel {
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-panelHeader {
+  margin-top: 2.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.DfctAdminConsole-panelHeader h1 {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.DfctAdminConsole-panelHeader p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole-subtabs {
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole-subtabs .nav-link:disabled {
+  color: var(--theme-muted);
+  opacity: 0.64;
+}
+
+.DfctAdminConsole-actionCard,
+.DfctAdminConsole-anchorFlow > div {
+  background: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-actionCard span,
+.DfctAdminConsole-anchorFlow span {
+  color: var(--theme-primary);
+}
+
+.DfctAdminConsole-actionCard strong,
+.DfctAdminConsole-anchorFlow strong {
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-actionCard p,
+.DfctAdminConsole-anchorFlow p {
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole-actionCardButton:hover,
+.DfctAdminConsole-actionCardButton:focus {
+  border-color: var(--theme-primary);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminConsole .BillingAccess-eyebrow,
+.DfctAdminConsole .DfctBillingAdmin-sectionHeader .BillingAccess-eyebrow {
+  color: var(--theme-primary) !important;
+}

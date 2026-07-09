@@ -254,7 +254,7 @@ function NavBar(props) {
                 {isAdmin && (
                   <Nav.Link
                     onClick={() => {
-                      navigate("/admin?tab=billing");
+                      navigate("/admin");
                       setExpanded(false);
                     }}
                     active={location.pathname.startsWith("/admin")}
@@ -330,7 +330,7 @@ function NavBar(props) {
               <Nav.Link
                 className="Navbar-admin-link"
                 onClick={() => {
-                  navigate("/admin?tab=billing");
+                  navigate("/admin");
                   setExpanded(false);
                 }}
                 active={location.pathname.startsWith("/admin")}
@@ -484,7 +484,7 @@ function NavBar(props) {
                   <NavDropdown.Item
                     className="Navbar-admin-dropdown-item"
                     onClick={() => {
-                      navigate("/admin?tab=billing");
+                      navigate("/admin");
                       setExpanded(false);
                     }}
                   >

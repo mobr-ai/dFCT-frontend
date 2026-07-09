@@ -114,7 +114,7 @@ function NavigationSidebarContent({
       {isAdmin && (
         <Link
           onClick={closeIfUnpinned}
-          to="/admin?tab=billing"
+          to="/admin"
           className={`Navbar-item ${
             location.pathname.startsWith("/admin") ? "active" : ""
           }`}
