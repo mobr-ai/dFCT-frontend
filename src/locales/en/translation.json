@@ -699,7 +699,13 @@
         "topic_batch": "Topic batch",
         "community_batch": "Community batch",
         "deployment_batch": "Platform batch"
-      }
+      },
+      "fingerprintReady": "d-FCT fingerprint ready",
+      "anchorReady": "Anchor-ready",
+      "blockchainRecord": "Blockchain record",
+      "blockchainRecordReady": "Blockchain record ready",
+      "capturedBy": "Captured by",
+      "openActivityDetails": "Open details"
     },
     "required": "Required",
     "yes": "Yes",

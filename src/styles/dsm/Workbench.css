@@ -1982,3 +1982,46 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* topic lifecycle: product-facing trust cues */
+.TopicJourney-proof--trust {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.TopicJourney-trustPill {
+  background: color-mix(in srgb, var(--theme-primary) 12%, var(--theme-surface));
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 32%, var(--theme-border));
+  border-radius: 999px;
+  color: var(--theme-text);
+  font-weight: 850;
+  padding: 0.22rem 0.52rem;
+}
+
+.TopicJourney-openDetails {
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 30%, var(--theme-border)) !important;
+  border-radius: 999px !important;
+  color: var(--theme-primary) !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+  padding: 0.24rem 0.58rem !important;
+  text-decoration: none !important;
+}
+
+.TopicJourney-openDetails:hover,
+.TopicJourney-openDetails:focus-visible {
+  background: color-mix(in srgb, var(--theme-primary) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-border)) !important;
+  outline: none !important;
+  transform: translateY(-1px);
+}
+
+.TopicJourney-contributionFooter span {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.25rem;
+}
