@@ -676,7 +676,7 @@
       "activityLinkCopied": "Copiado",
       "verifiableProvenance": "Proveniência verificável",
       "dfctFingerprintTitle": "Impressão digital d-FCT",
-      "verifiableProvenanceDescription": "Esta atividade possui uma impressão digital d-FCT e está pronta para ancoragem em blockchain.",
+      "verifiableProvenanceDescription": "Esta atividade foi registrada pelo d-FCT e está pronta para ancoragem em blockchain.",
       "dfctFingerprint": "Impressão digital d-FCT",
       "previousEvent": "Evento anterior",
       "anchoring": "Ancoragem",
