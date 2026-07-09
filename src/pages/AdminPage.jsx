@@ -11,7 +11,7 @@ import "../styles/admin/AdminConsole.css";
 
 function ConsoleStat({ label, value, caption, tone }) {
   return (
-    <div className={`DfctBillingAdmin-stat ${tone ? `DfctBillingAdmin-stat--${tone}` : ""}`}>
+    <div className={`DfctAdmin-stat ${tone ? `DfctAdmin-stat--${tone}` : ""}`}>
       <span>{label}</span>
       <strong>{value}</strong>
       {caption ? <small>{caption}</small> : null}
@@ -22,14 +22,14 @@ function ConsoleStat({ label, value, caption, tone }) {
 function OverviewPanel({ t, onOpenAnchoring }) {
   return (
     <>
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminConsole.overviewEyebrow")}</span>
+      <section className="DfctAdmin-section">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">{t("adminConsole.overviewEyebrow")}</span>
           <h2>{t("adminConsole.overviewTitle")}</h2>
           <p>{t("adminConsole.overviewSubtitle")}</p>
         </div>
 
-        <div className="DfctBillingAdmin-statGrid">
+        <div className="DfctAdmin-statGrid">
           <ConsoleStat
             label={t("adminConsole.overviewBillingLabel")}
             value={t("adminConsole.overviewBillingValue")}
@@ -55,8 +55,8 @@ function OverviewPanel({ t, onOpenAnchoring }) {
         </div>
       </section>
 
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
+      <section className="DfctAdmin-section">
+        <div className="DfctAdmin-sectionHeader">
           <h2>{t("adminConsole.nextOpsTitle")}</h2>
           <p>{t("adminConsole.nextOpsSubtitle")}</p>
         </div>
@@ -85,15 +85,15 @@ function OverviewPanel({ t, onOpenAnchoring }) {
 function AnchoringPlaceholder({ t }) {
   return (
     <div className="DfctAdminConsole-panel DfctAdminConsole-anchoringPanel">
-      <div className="BillingAccess-header DfctAdminConsole-panelHeader">
+      <div className="DfctAdmin-header DfctAdminConsole-panelHeader">
         <div>
-          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
+          <span className="DfctAdmin-eyebrow">{t("adminConsole.anchoringEyebrow")}</span>
           <h1>{t("adminConsole.anchoringTitle")}</h1>
           <p>{t("adminConsole.anchoringSubtitle")}</p>
         </div>
       </div>
 
-      <div className="BillingAccess-tabs DfctBillingAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
+      <div className="DfctAdmin-tabs DfctAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
         <button className="nav-link active" type="button">
           {t("adminConsole.anchoringSubtabJobs")}
         </button>
@@ -105,14 +105,14 @@ function AnchoringPlaceholder({ t }) {
         </button>
       </div>
 
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringStatusEyebrow")}</span>
+      <section className="DfctAdmin-section">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">{t("adminConsole.anchoringStatusEyebrow")}</span>
           <h2>{t("adminConsole.anchoringStatusTitle")}</h2>
           <p>{t("adminConsole.anchoringRoadmap")}</p>
         </div>
 
-        <div className="DfctBillingAdmin-statGrid">
+        <div className="DfctAdmin-statGrid">
           <ConsoleStat
             label={t("adminConsole.anchoringCardJobsTitle")}
             value={t("adminConsole.anchoringCardJobsValue")}
@@ -133,9 +133,9 @@ function AnchoringPlaceholder({ t }) {
         </div>
       </section>
 
-      <section className="DfctBillingAdmin-section">
-        <div className="DfctBillingAdmin-sectionHeader">
-          <span className="BillingAccess-eyebrow">{t("adminConsole.anchoringFlowEyebrow")}</span>
+      <section className="DfctAdmin-section">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">{t("adminConsole.anchoringFlowEyebrow")}</span>
           <h2>{t("adminConsole.anchoringOpsTitle")}</h2>
           <p>{t("adminConsole.anchoringOpsSubtitle")}</p>
         </div>
@@ -216,7 +216,7 @@ export default function AdminPage() {
   if (!isAdmin) {
     return (
       <main className="DfctAdminConsole">
-        <div className="DfctAdminConsole-inner BillingAccess DfctBillingAdmin">
+        <div className="DfctAdminConsole-inner DfctAdminShell">
           <section className="DfctAdminConsole-hero">
             <span className="DfctAdminConsole-eyebrow">
               {t("adminConsole.eyebrow")}
@@ -231,7 +231,7 @@ export default function AdminPage() {
 
   return (
     <main className="DfctAdminConsole">
-      <div className="DfctAdminConsole-inner BillingAccess DfctBillingAdmin">
+      <div className="DfctAdminConsole-inner DfctAdminShell">
         <section className="DfctAdminConsole-hero">
           <span className="DfctAdminConsole-eyebrow">
             {t("adminConsole.eyebrow")}
