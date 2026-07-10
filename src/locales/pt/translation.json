@@ -1202,9 +1202,9 @@
   "publicationUsesCredits": "Esta publicação usará {{count}} crédito(s) DFCT.",
   "publicationInsufficientCredits": "Você não tem DFCT Credits suficientes para publicar este tópico.",
   "publicationCreditCost": "Custo de publicação",
-  "publicationNoWalletRequired": "A publicação básica de tópicos não exige transação com carteira.",
+  "publicationNoWalletRequired": "A publicação do tópico usa DFCT Credits. Nenhuma transação direta com carteira é exigida aqui.",
   "publicationRewardPoolOptionalTitle": "O financiamento do pool de recompensa é opcional",
-  "publicationRewardPoolOptionalText": "A criação de pools de recompensa e a distribuição de recompensas chegarão em breve como etapas do fluxo dSM-Prov.",
+  "publicationRewardPoolOptionalText": "DFCT Credits são pré-pagos, com Cardano como primeiro gateway de pagamento. Pools e distribuição de recompensas virão depois como etapas do ciclo de vida.",
   "confirmPublishButton": "Publicar tópico",
   "topicPublishOwnerOnly": "Apenas o dono do tópico pode publicar este rascunho",
   "activateTopic": "Ativar tópico",
@@ -1413,5 +1413,11 @@
     "syncWaiting": "Aguardando sincronização dos anchor jobs",
     "syncedAt": "Sincronizado às {{time}}",
     "close": "Fechar"
-  }
+  },
+  "publicationProvenanceEyebrow": "Power-up opcional",
+  "publicationProvenanceTitle": "Proveniência verificável",
+  "publicationProvenanceText": "Adicione uma impressão d-FCT pronta para Cardano ao ciclo de vida deste tópico. O d-FCT enfileira a etapa de proveniência automaticamente após a publicação.",
+  "publicationProvenanceCredits": "Financiado com DFCT Credits pré-pagos quando a etapa de ancoragem for ativada.",
+  "publicationPowerUpStatusOn": "Ativo",
+  "publicationPowerUpStatusOff": "Inativo"
 }
