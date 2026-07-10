@@ -217,7 +217,15 @@ function TopicToolbar(props) {
     }
   };
 
-  const handlePublishConfirmed = async ({ rewardPoolEnabled = false } = {}) => {
+  const handlePublishConfirmed = async ({
+    rewardPoolEnabled = false,
+    anchoringEnabled = false,
+    anchorPolicy,
+    anchorScope,
+    anchorFundingSource,
+    anchorProvider,
+    anchorNetwork,
+  } = {}) => {
     const userId = userIdFrom(props.user);
 
     if (!userId) {
@@ -234,6 +242,12 @@ function TopicToolbar(props) {
         props.topicId,
         {
           rewardPoolEnabled,
+          anchoringEnabled,
+          anchorPolicy,
+          anchorScope,
+          anchorFundingSource,
+          anchorProvider,
+          anchorNetwork,
         },
       );
 

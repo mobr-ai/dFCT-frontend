@@ -1202,9 +1202,9 @@
   "publicationUsesCredits": "This publication will use {{count}} DFCT credit(s).",
   "publicationInsufficientCredits": "You do not have enough DFCT Credits to publish this topic.",
   "publicationCreditCost": "Publication cost",
-  "publicationNoWalletRequired": "Basic topic publication does not require a wallet transaction.",
+  "publicationNoWalletRequired": "Topic publication uses DFCT Credits. No direct wallet transaction is required here.",
   "publicationRewardPoolOptionalTitle": "Reward pool funding is optional",
-  "publicationRewardPoolOptionalText": "Reward pool creation and reward distribution are coming soon as dSM-Prov workflow steps.",
+  "publicationRewardPoolOptionalText": "DFCT Credits are prepaid, with Cardano as the first payment gateway. Reward pools and reward distribution will come later as lifecycle steps.",
   "confirmPublishButton": "Publish topic",
   "topicPublishOwnerOnly": "Only the topic owner can publish this draft",
   "activateTopic": "Activate topic",
@@ -1413,5 +1413,11 @@
     "syncWaiting": "Waiting for anchor jobs sync",
     "syncedAt": "Synced at {{time}}",
     "close": "Close"
-  }
+  },
+  "publicationProvenanceEyebrow": "Optional power-up",
+  "publicationProvenanceTitle": "Verifiable provenance",
+  "publicationProvenanceText": "Add a Cardano-ready d-FCT fingerprint to this topic lifecycle. d-FCT queues the provenance step automatically after publication.",
+  "publicationProvenanceCredits": "Funded with prepaid DFCT Credits when the anchoring step is activated.",
+  "publicationPowerUpStatusOn": "On",
+  "publicationPowerUpStatusOff": "Off"
 }
