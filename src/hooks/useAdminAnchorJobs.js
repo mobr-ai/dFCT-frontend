@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
   fetchAdminAnchorJob,
@@ -40,6 +40,8 @@ function normalizeFilters(filters = {}) {
 
 export function useAdminAnchorJobs(user, showToast, t) {
   const { authRequest } = useAuthRequest(user);
+  const authRequestRef = useRef(authRequest);
+  authRequestRef.current = authRequest;
 
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
@@ -79,7 +81,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
 
       try {
         const payload = await fetchAdminAnchorJobs(
-          authRequest,
+          authRequestRef.current,
           normalizeFilters(filters),
         );
         const nextItems = arrayFrom(payload, "items");
@@ -107,7 +109,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
         if (!silent) setLoading(false);
       }
     },
-    [authRequest, canLoad, filters, t],
+    [canLoad, filters, t],
   );
 
   const loadJob = useCallback(
@@ -119,7 +121,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
 
       try {
         const payload = await fetchAdminAnchorJob(
-          authRequest,
+          authRequestRef.current,
           anchorJobId,
           {
             includeProviderPreview: true,
@@ -149,7 +151,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
         setDetailLoading(false);
       }
     },
-    [authRequest, canLoad, t],
+    [canLoad, t],
   );
 
   const loadSettings = useCallback(
@@ -161,7 +163,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
       setError("");
 
       try {
-        const payload = await fetchAdminAnchorSettings(authRequest);
+        const payload = await fetchAdminAnchorSettings(authRequestRef.current);
 
         setSettings(payload?.settings || {});
         setSettingDefinitions(payload?.settingDefinitions || []);
@@ -187,7 +189,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
         if (!silent) setSettingsLoading(false);
       }
     },
-    [authRequest, canLoad, t],
+    [canLoad, t],
   );
 
   const saveSettings = useCallback(
@@ -198,7 +200,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
       setError("");
 
       try {
-        const payload = await updateAdminAnchorSettings(authRequest, {
+        const payload = await updateAdminAnchorSettings(authRequestRef.current, {
           settings: nextSettings,
         });
 
@@ -227,7 +229,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
         setSettingsSaving(false);
       }
     },
-    [authRequest, canLoad, showToast, t],
+    [canLoad, showToast, t],
   );
 
   const verifyTx = useCallback(
@@ -248,7 +250,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
 
       try {
         const payload = await verifyAdminAnchorJobTx(
-          authRequest,
+          authRequestRef.current,
           anchorJobId,
           {
             txHash: cleanTxHash,
@@ -293,7 +295,6 @@ export function useAdminAnchorJobs(user, showToast, t) {
       }
     },
     [
-      authRequest,
       canLoad,
       loadJob,
       loadJobs,
