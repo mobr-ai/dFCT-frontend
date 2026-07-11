@@ -92,20 +92,19 @@ export default function AdminAnchorVerificationPanel({
           <p>{t("adminAnchorJobs.verificationSubtitle")}</p>
         </div>
 
-        <Button
-          variant="outline-primary"
-          disabled={anchorJobs.loading}
-          onClick={() => anchorJobs.loadJobs()}
+        <div
+          className="DfctAdminAnchorVerification-autoRefresh"
+          aria-live="polite"
         >
-          {anchorJobs.loading ? (
-            <>
-              <Spinner animation="border" size="sm" className="me-2" />
-              {t("adminAnchorJobs.refreshing")}
-            </>
-          ) : (
-            t("adminAnchorJobs.refresh")
+          {anchorJobs.isAutoRefreshing && (
+            <Spinner animation="border" size="sm" />
           )}
-        </Button>
+          <span>
+            {anchorJobs.isAutoRefreshing
+              ? t("adminAnchorJobs.verificationRefreshing")
+              : t("adminAnchorJobs.verificationAutoRefresh")}
+          </span>
+        </div>
       </div>
 
       <div className="DfctAdmin-statGrid">

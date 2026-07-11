@@ -38,7 +38,15 @@ function normalizeFilters(filters = {}) {
   return clean;
 }
 
-export function useAdminAnchorJobs(user, showToast, t) {
+export function useAdminAnchorJobs(
+  user,
+  showToast,
+  t,
+  {
+    autoRefreshEnabled = true,
+    autoRefreshIntervalMs = 45000,
+  } = {},
+) {
   const { authRequest } = useAuthRequest(user);
   const authRequestRef = useRef(authRequest);
   authRequestRef.current = authRequest;
@@ -193,7 +201,7 @@ export function useAdminAnchorJobs(user, showToast, t) {
   );
 
   const saveSettings = useCallback(
-    async (nextSettings) => {
+    async (nextSettings, { showSuccessToast = true } = {}) => {
       if (!canLoad) return null;
 
       setSettingsSaving(true);
@@ -208,11 +216,13 @@ export function useAdminAnchorJobs(user, showToast, t) {
         setSettingDefinitions(payload?.settingDefinitions || []);
         setCapabilities(payload?.capabilities || {});
 
-        showToast?.(
-          t?.("adminAnchorJobs.settingsSaveSuccess")
-            || "Cardano execution settings saved.",
-          "success",
-        );
+        if (showSuccessToast) {
+          showToast?.(
+            t?.("adminAnchorJobs.settingsSaveSuccess")
+              || "Cardano execution settings saved.",
+            "success",
+          );
+        }
 
         return payload;
       } catch (err) {
@@ -304,9 +314,9 @@ export function useAdminAnchorJobs(user, showToast, t) {
   );
 
   const autoRefresh = useAutoRefresh({
-    enabled: canLoad,
+    enabled: canLoad && autoRefreshEnabled,
     refresh: () => loadJobs({ silent: true }),
-    intervalMs: 45000,
+    intervalMs: autoRefreshIntervalMs,
     maxIntervalMs: 300000,
     refreshWhenHidden: false,
     runImmediately: true,
