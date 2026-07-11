@@ -70,6 +70,7 @@ export function useAdminAnchorJobs(
   const [settings, setSettings] = useState(null);
   const [settingDefinitions, setSettingDefinitions] = useState([]);
   const [capabilities, setCapabilities] = useState(null);
+  const [autoDispatchRollout, setAutoDispatchRollout] = useState(null);
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
 
@@ -176,6 +177,7 @@ export function useAdminAnchorJobs(
         setSettings(payload?.settings || {});
         setSettingDefinitions(payload?.settingDefinitions || []);
         setCapabilities(payload?.capabilities || {});
+        setAutoDispatchRollout(payload?.autoDispatchRollout || null);
 
         return payload;
       } catch (err) {
@@ -215,6 +217,7 @@ export function useAdminAnchorJobs(
         setSettings(payload?.settings || {});
         setSettingDefinitions(payload?.settingDefinitions || []);
         setCapabilities(payload?.capabilities || {});
+        setAutoDispatchRollout(payload?.autoDispatchRollout || null);
 
         if (showSuccessToast) {
           showToast?.(
@@ -364,6 +367,7 @@ export function useAdminAnchorJobs(
     settings,
     settingDefinitions,
     capabilities,
+    autoDispatchRollout,
     settingsLoading,
     settingsSaving,
 

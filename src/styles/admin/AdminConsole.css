@@ -918,11 +918,232 @@
   color: var(--theme-muted);
 }
 
+
+.DfctAdminAnchorExecution ::selection {
+  background: var(--dfct-admin-accent);
+  color: var(--dfct-admin-accent-text);
+}
+
+.DfctAdminAnchorExecution-modal ::selection {
+  background: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid var(--theme-border, var(--bs-border-color));
+  border-radius: var(--theme-radius-lg, 18px);
+  background: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
+  color: var(--theme-text, var(--bs-body-color));
+  box-shadow: var(--theme-shadow-large, 0 24px 64px rgb(0 0 0 / 28%));
+}
+
+.DfctAdminAnchorExecution-modal .modal-header,
+.DfctAdminAnchorExecution-modal .modal-body,
+.DfctAdminAnchorExecution-modal .modal-footer {
+  border-color: var(--theme-border, var(--bs-border-color));
+  background: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorExecution-modal .modal-title {
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .modal-body > p {
+  color: var(--theme-muted, var(--bs-secondary-color));
+}
+
+.DfctAdminAnchorExecution-modalClose {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--theme-border, var(--bs-border-color));
+  border-radius: 0.65rem;
+  background: var(--theme-surface-soft, var(--theme-card-bg, transparent));
+  color: var(--theme-text, var(--bs-body-color));
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.DfctAdminAnchorExecution-modalClose:hover,
+.DfctAdminAnchorExecution-modalClose:focus-visible {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  );
+  color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.DfctAdminAnchorExecution-modalAlert {
+  border-width: 1px !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+}
+
+.DfctAdminAnchorExecution-modalAlert.is-success {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success, #198754)) 42%,
+    var(--theme-border, transparent)
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success, #198754)) 13%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  ) !important;
+}
+
+.DfctAdminAnchorExecution-modalAlert.is-warning {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-warning, var(--bs-warning, #ffc107)) 46%,
+    var(--theme-border, transparent)
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-warning, var(--bs-warning, #ffc107)) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  ) !important;
+}
+
+.DfctAdminAnchorExecution-modal .btn-outline-secondary {
+  border-color: var(--theme-border, var(--bs-border-color));
+  background: var(--theme-surface-soft, transparent);
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .btn-outline-secondary:hover,
+.DfctAdminAnchorExecution-modal .btn-outline-secondary:focus-visible {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  );
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .btn-primary {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-modal .btn-primary:hover,
+.DfctAdminAnchorExecution-modal .btn-primary:focus-visible {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 82%,
+    #000
+  );
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 82%,
+    #000
+  );
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-rollout {
+  margin-top: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 24%, var(--theme-border));
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--accent-primary) 7%, var(--theme-card-bg));
+}
+
+.DfctAdminAnchorExecution-rolloutHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader span,
+.DfctAdminAnchorExecution-rolloutGrid span {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader strong {
+  color: var(--theme-text);
+  font-size: 0.96rem;
+}
+
+.DfctAdminAnchorExecution-rollout > p {
+  margin: 0.65rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.DfctAdminAnchorExecution-rolloutGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.DfctAdminAnchorExecution-rolloutGrid > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-rolloutGrid strong {
+  overflow: hidden;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .DfctAdminAnchorExecution-fieldGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin-top: 1rem;
+}
+
+.DfctAdminAnchorExecution-helpText.form-text {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(
+    --theme-text-soft,
+    var(--theme-text, var(--bs-body-color))
+  ) !important;
+  opacity: 1;
 }
 
 .DfctAdminAnchorExecution-actions {
@@ -1020,7 +1241,8 @@
   }
 
   .DfctAdminAnchorExecution-capabilityGrid,
-  .DfctAdminAnchorExecution-fieldGrid {
+  .DfctAdminAnchorExecution-fieldGrid,
+  .DfctAdminAnchorExecution-rolloutGrid {
     grid-template-columns: 1fr;
   }
 

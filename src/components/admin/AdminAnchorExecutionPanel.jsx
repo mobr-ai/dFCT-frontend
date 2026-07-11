@@ -33,6 +33,7 @@ const REASON_TRANSLATIONS = {
   signer_not_configured: "reasonSignerMissing",
   blockfrost_not_configured: "reasonBlockfrostMissing",
   admin_submission_disabled: "reasonAdminDisabled",
+  auto_dispatch_cutoff_missing: "reasonAutoDispatchCutoffMissing",
 };
 
 
@@ -41,6 +42,16 @@ function shorten(value, head = 18, tail = 12) {
   if (!text) return "—";
   if (text.length <= head + tail + 3) return text;
   return `${text.slice(0, head)}...${text.slice(-tail)}`;
+}
+
+
+function formatDateTime(value) {
+  if (!value) return "—";
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return String(value);
+
+  return parsed.toLocaleString();
 }
 
 
@@ -104,6 +115,7 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
   const [draft, setDraft] = useState(initialSettings);
   const [autosaveState, setAutosaveState] = useState("idle");
   const [showEnableConfirmation, setShowEnableConfirmation] = useState(false);
+  const [showAutoDispatchConfirmation, setShowAutoDispatchConfirmation] = useState(false);
 
   const draftRef = useRef(initialSettings);
   const serverSettingsRef = useRef(initialSettings);
@@ -265,6 +277,15 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
     updateDraft("cardanoSubmissionEnabled", false, { immediate: true });
   };
 
+  const toggleAutoDispatch = (enabled) => {
+    if (enabled) {
+      setShowAutoDispatchConfirmation(true);
+      return;
+    }
+
+    updateDraft("autoDispatchEnabled", false, { immediate: true });
+  };
+
   const autosaveText = {
     idle: t("adminAnchorJobs.settingsAutosaveHint"),
     pending: t("adminAnchorJobs.settingsAutosavePending"),
@@ -275,6 +296,36 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
   }[anchorJobs.settingsSaving ? "saving" : autosaveState];
 
   const capabilities = anchorJobs.capabilities || {};
+  const rollout = anchorJobs.autoDispatchRollout || {};
+  const rolloutCutoff = Number(rollout.activationCutoffAnchorJobId);
+  const rolloutConfigured = Boolean(
+    Number.isInteger(rolloutCutoff)
+    && rolloutCutoff >= 0
+    && rollout.activatedAt
+  );
+  const rolloutEnabled = Boolean(draft.autoDispatchEnabled);
+
+  let rolloutStatus = {
+    text: t("adminAnchorJobs.autoDispatchRolloutReady"),
+    variant: "secondary",
+  };
+
+  if (rolloutEnabled && rolloutConfigured) {
+    rolloutStatus = {
+      text: t("adminAnchorJobs.autoDispatchRolloutProtected"),
+      variant: "success",
+    };
+  } else if (rolloutEnabled) {
+    rolloutStatus = {
+      text: t("adminAnchorJobs.autoDispatchRolloutSaving"),
+      variant: "warning",
+    };
+  } else if (rolloutConfigured) {
+    rolloutStatus = {
+      text: t("adminAnchorJobs.autoDispatchRolloutPaused"),
+      variant: "secondary",
+    };
+  }
 
   let executionStatus = {
     text: t("adminAnchorJobs.statusNotReady"),
@@ -431,12 +482,47 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                 type="switch"
                 id="anchor-auto-dispatch-enabled"
                 checked={Boolean(draft.autoDispatchEnabled)}
-                onChange={(event) => updateDraft(
-                  "autoDispatchEnabled",
-                  event.target.checked,
-                  { immediate: true },
-                )}
+                onChange={(event) => toggleAutoDispatch(event.target.checked)}
               />
+            </div>
+
+            <div className="DfctAdminAnchorExecution-rollout">
+              <div className="DfctAdminAnchorExecution-rolloutHeader">
+                <div>
+                  <span>{t("adminAnchorJobs.autoDispatchRolloutEyebrow")}</span>
+                  <strong>{t("adminAnchorJobs.autoDispatchRolloutTitle")}</strong>
+                </div>
+                <Badge bg={rolloutStatus.variant}>{rolloutStatus.text}</Badge>
+              </div>
+
+              <p>
+                {rolloutEnabled && rolloutConfigured
+                  ? t("adminAnchorJobs.autoDispatchRolloutActiveDescription", { cutoff: rolloutCutoff })
+                  : rolloutConfigured
+                    ? t("adminAnchorJobs.autoDispatchRolloutPausedDescription", { cutoff: rolloutCutoff })
+                    : t("adminAnchorJobs.autoDispatchRolloutReadyDescription")}
+              </p>
+
+              {rolloutConfigured && (
+                <div className="DfctAdminAnchorExecution-rolloutGrid">
+                  <div>
+                    <span>{t("adminAnchorJobs.autoDispatchRolloutPolicy")}</span>
+                    <strong>{t("adminAnchorJobs.autoDispatchRolloutPolicyNewJobs")}</strong>
+                  </div>
+                  <div>
+                    <span>{t("adminAnchorJobs.autoDispatchRolloutCutoff")}</span>
+                    <strong>#{rolloutCutoff}</strong>
+                  </div>
+                  <div>
+                    <span>{t("adminAnchorJobs.autoDispatchRolloutActivatedAt")}</span>
+                    <strong>{formatDateTime(rollout.activatedAt)}</strong>
+                  </div>
+                  <div>
+                    <span>{t("adminAnchorJobs.autoDispatchRolloutDeactivatedAt")}</span>
+                    <strong>{formatDateTime(rollout.deactivatedAt)}</strong>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="DfctAdminAnchorExecution-fieldGrid">
@@ -458,7 +544,7 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                     { immediate: true },
                   )}
                 />
-                <Form.Text>
+                <Form.Text className="DfctAdminAnchorExecution-helpText">
                   {t("adminAnchorJobs.claimTtlSecondsHelp")}
                 </Form.Text>
               </Form.Group>
@@ -593,16 +679,28 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
         show={showEnableConfirmation}
         onHide={() => setShowEnableConfirmation(false)}
         centered
+        className="DfctAdminAnchorExecution-modal"
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>
             {t("adminAnchorJobs.enableSubmissionConfirmTitle")}
           </Modal.Title>
+          <button
+            type="button"
+            className="DfctAdminAnchorExecution-modalClose"
+            aria-label={t("adminAnchorJobs.close")}
+            onClick={() => setShowEnableConfirmation(false)}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
         </Modal.Header>
 
         <Modal.Body>
           <p>{t("adminAnchorJobs.enableSubmissionConfirmText")}</p>
-          <Alert variant="warning">
+          <Alert
+            variant="warning"
+            className="DfctAdminAnchorExecution-modalAlert is-warning"
+          >
             {t("adminAnchorJobs.enableSubmissionConfirmWarning")}
           </Alert>
         </Modal.Body>
@@ -623,6 +721,60 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
             }}
           >
             {t("adminAnchorJobs.enableSubmission")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showAutoDispatchConfirmation}
+        onHide={() => setShowAutoDispatchConfirmation(false)}
+        centered
+        className="DfctAdminAnchorExecution-modal"
+      >
+        <Modal.Header>
+          <Modal.Title>{t("adminAnchorJobs.enableAutoDispatchConfirmTitle")}</Modal.Title>
+          <button
+            type="button"
+            className="DfctAdminAnchorExecution-modalClose"
+            aria-label={t("adminAnchorJobs.close")}
+            onClick={() => setShowAutoDispatchConfirmation(false)}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>{t("adminAnchorJobs.enableAutoDispatchConfirmText")}</p>
+          <Alert
+            variant="success"
+            className="DfctAdminAnchorExecution-modalAlert is-success"
+          >
+            {t("adminAnchorJobs.enableAutoDispatchBacklogProtection")}
+          </Alert>
+          <Alert
+            variant="warning"
+            className="DfctAdminAnchorExecution-modalAlert is-warning"
+          >
+            {t("adminAnchorJobs.enableAutoDispatchConfirmWarning")}
+          </Alert>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowAutoDispatchConfirmation(false)}
+          >
+            {t("adminAnchorJobs.cancel")}
+          </Button>
+
+          <Button
+            variant="primary"
+            onClick={() => {
+              updateDraft("autoDispatchEnabled", true, { immediate: true });
+              setShowAutoDispatchConfirmation(false);
+            }}
+          >
+            {t("adminAnchorJobs.enableAutoDispatch")}
           </Button>
         </Modal.Footer>
       </Modal>
