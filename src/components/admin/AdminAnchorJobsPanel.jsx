@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 
 import { useAdminAnchorJobs } from "../../hooks/useAdminAnchorJobs";
+import AdminAnchorExecutionPanel from "./AdminAnchorExecutionPanel";
+import AdminAnchorVerificationPanel from "./AdminAnchorVerificationPanel";
 
 function valueOf(row, ...keys) {
   for (const key of keys) {
@@ -29,7 +31,7 @@ function statusTone(status) {
   const s = String(status || "").toLowerCase();
   if (s === "confirmed") return "success";
   if (s === "failed" || s === "error") return "danger";
-  if (s === "prepared") return "info";
+  if (s === "submitted") return "info";
   if (s === "pending") return "warning";
   return "secondary";
 }
@@ -82,6 +84,7 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
   const anchorJobs = useAdminAnchorJobs(user, showToast, t);
   const [txHash, setTxHash] = useState("");
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [activeSubtab, setActiveSubtab] = useState("jobs");
   const didMountFilters = useRef(false);
 
   const selectedId = valueOf(
@@ -163,13 +166,25 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
       </div>
 
       <div className="DfctAdmin-tabs DfctAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">
-        <button className="nav-link active" type="button">
+        <button
+          className={`nav-link ${activeSubtab === "jobs" ? "active" : ""}`}
+          type="button"
+          onClick={() => setActiveSubtab("jobs")}
+        >
           {t("adminAnchorJobs.subtabJobs")}
         </button>
-        <button className="nav-link" type="button" disabled>
-          {t("adminAnchorJobs.subtabFunding")}
+        <button
+          className={`nav-link ${activeSubtab === "execution" ? "active" : ""}`}
+          type="button"
+          onClick={() => setActiveSubtab("execution")}
+        >
+          {t("adminAnchorJobs.subtabExecution")}
         </button>
-        <button className="nav-link" type="button" disabled>
+        <button
+          className={`nav-link ${activeSubtab === "verification" ? "active" : ""}`}
+          type="button"
+          onClick={() => setActiveSubtab("verification")}
+        >
           {t("adminAnchorJobs.subtabVerification")}
         </button>
       </div>
@@ -182,7 +197,8 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
         <Alert variant="warning">{anchorJobs.error}</Alert>
       )}
 
-      <section className="DfctAdmin-section">
+      {activeSubtab === "jobs" && (
+        <section className="DfctAdmin-section">
         <div className="DfctAdmin-sectionHeader">
           <span className="DfctAdmin-eyebrow">{t("adminAnchorJobs.summaryEyebrow")}</span>
           <h2>{t("adminAnchorJobs.summaryTitle")}</h2>
@@ -202,9 +218,9 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
             tone="info"
           />
           <Stat
-            label={t("adminAnchorJobs.statPrepared")}
-            value={anchorJobs.stats.prepared}
-            caption={t("adminAnchorJobs.statPreparedCaption")}
+            label={t("adminAnchorJobs.statSubmitted")}
+            value={anchorJobs.stats.submitted}
+            caption={t("adminAnchorJobs.statSubmittedCaption")}
             tone="success"
           />
           <Stat
@@ -221,9 +237,10 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
           >
             <option value="all">{t("adminAnchorJobs.statusAll")}</option>
             <option value="pending">{t("adminAnchorJobs.statusPending")}</option>
-            <option value="prepared">{t("adminAnchorJobs.statusPrepared")}</option>
+            <option value="submitted">{t("adminAnchorJobs.statusSubmitted")}</option>
             <option value="confirmed">{t("adminAnchorJobs.statusConfirmed")}</option>
             <option value="failed">{t("adminAnchorJobs.statusFailed")}</option>
+            <option value="skipped">{t("adminAnchorJobs.statusSkipped")}</option>
           </Form.Select>
 
           <Form.Select
@@ -310,8 +327,23 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
             </tbody>
           </table>
         </div>
-      </section>
+        </section>
+      )}
 
+      {activeSubtab === "execution" && (
+        <AdminAnchorExecutionPanel
+          t={t}
+          anchorJobs={anchorJobs}
+        />
+      )}
+
+      {activeSubtab === "verification" && (
+        <AdminAnchorVerificationPanel
+          t={t}
+          anchorJobs={anchorJobs}
+          onInspect={selectJob}
+        />
+      )}
 
       <Modal
         show={showDetailModal && Boolean(anchorJobs.selectedJob)}

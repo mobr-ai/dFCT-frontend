@@ -20,6 +20,10 @@ function post(authRequest, url, payload = {}) {
   return authRequest.post(url).send(payload).then(unwrap);
 }
 
+function put(authRequest, url, payload = {}) {
+  return authRequest.put(url).send(payload).then(unwrap);
+}
+
 export const fetchAdminAnchorJobs = (authRequest, params = {}) =>
   get(authRequest, "/api/dsm/anchor-jobs", params);
 
@@ -28,3 +32,9 @@ export const fetchAdminAnchorJob = (authRequest, anchorJobId, params = {}) =>
 
 export const verifyAdminAnchorJobTx = (authRequest, anchorJobId, payload = {}) =>
   post(authRequest, `/api/dsm/anchor-jobs/${anchorJobId}/cardano/verify`, payload);
+
+export const fetchAdminAnchorSettings = (authRequest) =>
+  get(authRequest, "/api/dsm/anchor-settings");
+
+export const updateAdminAnchorSettings = (authRequest, payload = {}) =>
+  put(authRequest, "/api/dsm/anchor-settings", payload);
