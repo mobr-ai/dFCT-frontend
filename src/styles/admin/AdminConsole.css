@@ -433,6 +433,85 @@
   gap: 10px;
 }
 
+.DfctAdminAnchorJobs-confirmedSummary {
+  display: grid;
+  gap: 16px;
+}
+
+.DfctAdminAnchorJobs-confirmedHero {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--bs-success, #198754) 38%, var(--theme-border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bs-success, #198754) 8%, var(--theme-surface));
+}
+
+.DfctAdminAnchorJobs-confirmedIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bs-success, #198754);
+  color: var(--bs-white, #fff);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy h3 {
+  margin-bottom: 6px;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy p {
+  margin: 0;
+}
+
+.DfctAdminAnchorJobs-confirmedBadge {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 0.55rem 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-confirmedGrid .DfctAdminAnchorJobs-detailRow {
+  min-height: 74px;
+}
+
+.DfctAdminAnchorJobs-confirmedFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorJobs-confirmedFooter p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorJobs-confirmedHero,
+  .DfctAdminAnchorJobs-confirmedFooter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminAnchorJobs-confirmedBadge {
+    align-self: flex-start;
+  }
+}
+
 @media (min-width: 1180px) {
   .DfctAdminAnchorJobs-detailLayout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
