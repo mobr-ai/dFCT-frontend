@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
   fetchAdminAnchorJob,
   fetchAdminAnchorJobs,
+  fetchAdminAnchorSettings,
+  updateAdminAnchorSettings,
   verifyAdminAnchorJobTx,
 } from "../api/adminAnchorJobs";
 import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
@@ -38,6 +40,8 @@ function normalizeFilters(filters = {}) {
 
 export function useAdminAnchorJobs(user, showToast, t) {
   const { authRequest } = useAuthRequest(user);
+  const authRequestRef = useRef(authRequest);
+  authRequestRef.current = authRequest;
 
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
@@ -47,11 +51,20 @@ export function useAdminAnchorJobs(user, showToast, t) {
     topicId: "",
     limit: 25,
   });
+
   const [selectedJob, setSelectedJob] = useState(null);
   const [verificationResult, setVerificationResult] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState("");
+
+  const [settings, setSettings] = useState(null);
+  const [settingDefinitions, setSettingDefinitions] = useState([]);
+  const [capabilities, setCapabilities] = useState(null);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsSaving, setSettingsSaving] = useState(false);
+
   const [accessDenied, setAccessDenied] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
@@ -67,7 +80,10 @@ export function useAdminAnchorJobs(user, showToast, t) {
       setError("");
 
       try {
-        const payload = await fetchAdminAnchorJobs(authRequest, normalizeFilters(filters));
+        const payload = await fetchAdminAnchorJobs(
+          authRequestRef.current,
+          normalizeFilters(filters),
+        );
         const nextItems = arrayFrom(payload, "items");
 
         setItems(nextItems);
@@ -81,13 +97,19 @@ export function useAdminAnchorJobs(user, showToast, t) {
           return null;
         }
 
-        setError(getApiErrorMessage(err, t?.("adminAnchorJobs.loadError") || "Unable to load anchor jobs."));
+        setError(
+          getApiErrorMessage(
+            err,
+            t?.("adminAnchorJobs.loadError")
+              || "Unable to load anchor jobs.",
+          ),
+        );
         return null;
       } finally {
         if (!silent) setLoading(false);
       }
     },
-    [authRequest, canLoad, filters, t],
+    [canLoad, filters, t],
   );
 
   const loadJob = useCallback(
@@ -98,9 +120,13 @@ export function useAdminAnchorJobs(user, showToast, t) {
       setError("");
 
       try {
-        const payload = await fetchAdminAnchorJob(authRequest, anchorJobId, {
-          includeProviderPreview: true,
-        });
+        const payload = await fetchAdminAnchorJob(
+          authRequestRef.current,
+          anchorJobId,
+          {
+            includeProviderPreview: true,
+          },
+        );
         const job = payload?.anchorJob || payload;
 
         setSelectedJob(job);
@@ -113,13 +139,97 @@ export function useAdminAnchorJobs(user, showToast, t) {
           return null;
         }
 
-        setError(getApiErrorMessage(err, t?.("adminAnchorJobs.detailError") || "Unable to load anchor job."));
+        setError(
+          getApiErrorMessage(
+            err,
+            t?.("adminAnchorJobs.detailError")
+              || "Unable to load anchor job.",
+          ),
+        );
         return null;
       } finally {
         setDetailLoading(false);
       }
     },
-    [authRequest, canLoad, t],
+    [canLoad, t],
+  );
+
+  const loadSettings = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!canLoad) return null;
+
+      if (!silent) setSettingsLoading(true);
+      setAccessDenied(false);
+      setError("");
+
+      try {
+        const payload = await fetchAdminAnchorSettings(authRequestRef.current);
+
+        setSettings(payload?.settings || {});
+        setSettingDefinitions(payload?.settingDefinitions || []);
+        setCapabilities(payload?.capabilities || {});
+
+        return payload;
+      } catch (err) {
+        if (isForbiddenError(err)) {
+          setAccessDenied(true);
+          setError("");
+          return null;
+        }
+
+        setError(
+          getApiErrorMessage(
+            err,
+            t?.("adminAnchorJobs.settingsLoadError")
+              || "Unable to load Cardano execution settings.",
+          ),
+        );
+        return null;
+      } finally {
+        if (!silent) setSettingsLoading(false);
+      }
+    },
+    [canLoad, t],
+  );
+
+  const saveSettings = useCallback(
+    async (nextSettings) => {
+      if (!canLoad) return null;
+
+      setSettingsSaving(true);
+      setError("");
+
+      try {
+        const payload = await updateAdminAnchorSettings(authRequestRef.current, {
+          settings: nextSettings,
+        });
+
+        setSettings(payload?.settings || {});
+        setSettingDefinitions(payload?.settingDefinitions || []);
+        setCapabilities(payload?.capabilities || {});
+
+        showToast?.(
+          t?.("adminAnchorJobs.settingsSaveSuccess")
+            || "Cardano execution settings saved.",
+          "success",
+        );
+
+        return payload;
+      } catch (err) {
+        const message = getApiErrorMessage(
+          err,
+          t?.("adminAnchorJobs.settingsSaveError")
+            || "Unable to save Cardano execution settings.",
+        );
+
+        setError(message);
+        showToast?.(message, "danger");
+        return null;
+      } finally {
+        setSettingsSaving(false);
+      }
+    },
+    [canLoad, showToast, t],
   );
 
   const verifyTx = useCallback(
@@ -128,7 +238,10 @@ export function useAdminAnchorJobs(user, showToast, t) {
 
       const cleanTxHash = String(txHash || "").trim();
       if (!cleanTxHash) {
-        setError(t?.("adminAnchorJobs.txHashRequired") || "Transaction hash is required.");
+        setError(
+          t?.("adminAnchorJobs.txHashRequired")
+            || "Transaction hash is required.",
+        );
         return null;
       }
 
@@ -136,19 +249,31 @@ export function useAdminAnchorJobs(user, showToast, t) {
       setError("");
 
       try {
-        const payload = await verifyAdminAnchorJobTx(authRequest, anchorJobId, {
-          txHash: cleanTxHash,
-          confirm,
-        });
+        const payload = await verifyAdminAnchorJobTx(
+          authRequestRef.current,
+          anchorJobId,
+          {
+            txHash: cleanTxHash,
+            confirm,
+          },
+        );
 
         setVerificationResult(payload);
 
         if (confirm && payload?.confirmedPersisted) {
-          showToast?.(t?.("adminAnchorJobs.confirmSuccess") || "Anchor job confirmed.", "success");
+          showToast?.(
+            t?.("adminAnchorJobs.confirmSuccess")
+              || "Anchor job confirmed.",
+            "success",
+          );
           await loadJobs({ silent: true });
           await loadJob(anchorJobId);
         } else if (payload?.verification?.ok) {
-          showToast?.(t?.("adminAnchorJobs.verifySuccess") || "Transaction hash verified.", "success");
+          showToast?.(
+            t?.("adminAnchorJobs.verifySuccess")
+              || "Transaction hash verified.",
+            "success",
+          );
         }
 
         return payload;
@@ -156,9 +281,12 @@ export function useAdminAnchorJobs(user, showToast, t) {
         const message = getApiErrorMessage(
           err,
           confirm
-            ? t?.("adminAnchorJobs.confirmError") || "Unable to confirm anchor job."
-            : t?.("adminAnchorJobs.verifyError") || "Unable to verify transaction hash.",
+            ? t?.("adminAnchorJobs.confirmError")
+              || "Unable to confirm anchor job."
+            : t?.("adminAnchorJobs.verifyError")
+              || "Unable to verify transaction hash.",
         );
+
         setError(message);
         showToast?.(message, "danger");
         return null;
@@ -166,7 +294,13 @@ export function useAdminAnchorJobs(user, showToast, t) {
         setActionLoading("");
       }
     },
-    [authRequest, canLoad, loadJob, loadJobs, showToast, t],
+    [
+      canLoad,
+      loadJob,
+      loadJobs,
+      showToast,
+      t,
+    ],
   );
 
   const autoRefresh = useAutoRefresh({
@@ -177,7 +311,13 @@ export function useAdminAnchorJobs(user, showToast, t) {
     refreshWhenHidden: false,
     runImmediately: true,
     onError: (err) => {
-      setError(getApiErrorMessage(err, t?.("adminAnchorJobs.loadError") || "Unable to load anchor jobs."));
+      setError(
+        getApiErrorMessage(
+          err,
+          t?.("adminAnchorJobs.loadError")
+            || "Unable to load anchor jobs.",
+        ),
+      );
     },
   });
 
@@ -191,9 +331,10 @@ export function useAdminAnchorJobs(user, showToast, t) {
     return {
       total: items.length,
       pending: byStatus.pending || 0,
-      prepared: byStatus.prepared || 0,
+      submitted: byStatus.submitted || 0,
       confirmed: byStatus.confirmed || 0,
       failed: byStatus.failed || 0,
+      skipped: byStatus.skipped || 0,
       byStatus,
     };
   }, [items]);
@@ -202,20 +343,33 @@ export function useAdminAnchorJobs(user, showToast, t) {
     items,
     filters,
     setFilters,
+
     selectedJob,
     verificationResult,
+
     loading,
     detailLoading,
     actionLoading,
+
+    settings,
+    settingDefinitions,
+    capabilities,
+    settingsLoading,
+    settingsSaving,
+
     accessDenied,
     error,
     lastUpdatedAt: autoRefresh.lastUpdatedAt || lastUpdatedAt,
     isAutoRefreshing: autoRefresh.isRefreshing,
     autoRefreshFailures: autoRefresh.consecutiveFailures,
+
     stats,
     canLoad,
+
     loadJobs,
     loadJob,
+    loadSettings,
+    saveSettings,
     verifyTx,
   };
 }

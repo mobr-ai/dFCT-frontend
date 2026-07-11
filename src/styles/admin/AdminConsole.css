@@ -741,3 +741,183 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Cardano execution admin surfaces */
+.DfctAdminAnchorExecution-heading,
+.DfctAdminAnchorVerification-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorExecution-status {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-capabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminAnchorExecution-capability {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminAnchorExecution-capability > span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-readiness {
+  margin-bottom: 1rem;
+  border-radius: 14px;
+}
+
+.DfctAdminAnchorExecution-readiness ul {
+  margin: 0.55rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.DfctAdminAnchorExecution-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 14px;
+}
+
+.DfctAdminAnchorExecution-card {
+  padding: 18px;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 18px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAnchorExecution-cardHeader h3 {
+  margin: 0;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminAnchorExecution-cardHeader p {
+  margin: 0.35rem 0 1rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution-switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-switchRow strong,
+.DfctAdminAnchorExecution-switchRow small {
+  display: block;
+}
+
+.DfctAdminAnchorExecution-switchRow small {
+  margin-top: 0.3rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution-fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 1rem;
+}
+
+.DfctAdminAnchorExecution-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.DfctAdminAnchorExecution-protocol {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-protocol summary {
+  margin-bottom: 0.65rem;
+  color: var(--theme-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.DfctAdminAnchorExecution-protocol code {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution-protocol code + code {
+  margin-top: 0.45rem;
+}
+
+.DfctAdminAnchorExecution-loading {
+  display: flex;
+  align-items: center;
+  min-height: 140px;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminAnchorVerification-tableWrap {
+  margin-top: 1rem;
+}
+
+.DfctAdminAnchorVerification-tableWrap .is-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media (max-width: 980px) {
+  .DfctAdminAnchorExecution-capabilityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .DfctAdminAnchorExecution-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorExecution-heading,
+  .DfctAdminAnchorVerification-header {
+    flex-direction: column;
+  }
+
+  .DfctAdminAnchorExecution-capabilityGrid,
+  .DfctAdminAnchorExecution-fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminAnchorExecution-actions {
+    flex-direction: column-reverse;
+  }
+
+  .DfctAdminAnchorExecution-actions .btn {
+    width: 100%;
+  }
+}
