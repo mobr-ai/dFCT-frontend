@@ -20,6 +20,17 @@ function shorten(value, head = 10, tail = 8) {
   return `${s.slice(0, head)}...${s.slice(-tail)}`;
 }
 
+function humanize(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "—";
+  return raw
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
 function formatDate(value) {
   if (!value) return "—";
   const date = new Date(value);
@@ -192,6 +203,127 @@ function FundingPlan({ t, plan }) {
   );
 }
 
+function settlementStatusTone(status) {
+  const normalized = String(status || "").toLowerCase();
+  if (normalized === "settled") return "success";
+  if (normalized === "debited") return "info";
+  if (normalized === "refunded") return "secondary";
+  if (normalized === "review_required") return "danger";
+  if (normalized === "blocked") return "warning";
+  return "warning";
+}
+
+function formatSettlementAmount(settlement) {
+  const amount = Number(
+    valueOf(settlement, "quotedCreditAmount", "quoted_credit_amount") || 0,
+  );
+  const currency = valueOf(settlement, "currencyCode", "currency_code") || "DFCT";
+
+  return `${amount.toLocaleString(undefined, {
+    maximumFractionDigits: 6,
+  })} ${currency}`;
+}
+
+function FundingSettlement({ t, settlement }) {
+  if (!settlement) {
+    return (
+      <Alert variant="secondary" className="DfctAdminAnchorJobs-inlineAlert">
+        {t("adminAnchorJobs.noFundingSettlement")}
+      </Alert>
+    );
+  }
+
+  const status = valueOf(settlement, "status") || "pending";
+  const billingMode = valueOf(settlement, "billingMode", "billing_mode");
+  const payerUserId = valueOf(settlement, "payerUserId", "payer_user_id");
+  const debitLedgerEntryId = valueOf(
+    settlement,
+    "debitLedgerEntryId",
+    "debit_ledger_entry_id",
+  );
+  const refundLedgerEntryId = valueOf(
+    settlement,
+    "refundLedgerEntryId",
+    "refund_ledger_entry_id",
+  );
+  const error = valueOf(settlement, "error");
+
+  return (
+    <div className="DfctAdminAnchorJobs-settlement">
+      <div className="DfctAdminAnchorJobs-settlementHeader">
+        <div>
+          <span className="DfctAdmin-eyebrow">
+            {t("adminAnchorJobs.settlementEyebrow")}
+          </span>
+          <p>{t("adminAnchorJobs.settlementDescription")}</p>
+        </div>
+        <Badge bg={settlementStatusTone(status)}>
+          {t(`adminAnchorJobs.settlementStatuses.${status}`, humanize(status))}
+        </Badge>
+      </div>
+
+      {String(status).toLowerCase() === "review_required" ? (
+        <Alert variant="danger" className="DfctAdminAnchorJobs-inlineAlert">
+          {t("adminAnchorJobs.settlementReviewRequired")}
+        </Alert>
+      ) : null}
+
+      {String(status).toLowerCase() === "blocked" && error ? (
+        <Alert variant="warning" className="DfctAdminAnchorJobs-inlineAlert">
+          {t("adminAnchorJobs.settlementBlocked", { error })}
+        </Alert>
+      ) : null}
+
+      <div className="DfctAdminAnchorJobs-detailGrid">
+        <DetailRow
+          label={t("adminAnchorJobs.settlementBillingMode")}
+          value={t(
+            `adminAnchorJobs.billingModes.${String(billingMode || "unknown").toLowerCase()}`,
+            humanize(billingMode || "unknown"),
+          )}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementAmount")}
+          value={formatSettlementAmount(settlement)}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementFundingSource")}
+          value={valueOf(settlement, "fundingSource", "funding_source")}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementPayer")}
+          value={payerUserId ? `#${payerUserId}` : "—"}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementNetwork")}
+          value={valueOf(settlement, "network")}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementFundingRef")}
+          value={valueOf(settlement, "fundingRef", "funding_ref")}
+          mono
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementDebitReference")}
+          value={debitLedgerEntryId ? `#${debitLedgerEntryId}` : "—"}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementRefundReference")}
+          value={refundLedgerEntryId ? `#${refundLedgerEntryId}` : "—"}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementQuotedAt")}
+          value={formatDate(valueOf(settlement, "quotedAt", "quoted_at"))}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.settlementSettledAt")}
+          value={formatDate(valueOf(settlement, "settledAt", "settled_at"))}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function AdminAnchorJobsPanel({ t, user, showToast }) {
   const [activeSubtab, setActiveSubtab] = useState("jobs");
   const anchorJobs = useAdminAnchorJobs(user, showToast, t, {
@@ -211,6 +343,11 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
 
   const providerPreview = anchorJobs.selectedJob?.providerPreview;
   const fundingPlan = providerPreview?.providerMetadata?.fundingPlan;
+  const fundingSettlement = valueOf(
+    anchorJobs.selectedJob,
+    "fundingSettlement",
+    "funding_settlement",
+  );
   const selectedStatus = String(
     valueOf(anchorJobs.selectedJob, "status") || "",
   ).toLowerCase();
@@ -521,6 +658,11 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
               <div className="DfctAdminAnchorJobs-detailCard">
                 <h3>{t("adminAnchorJobs.fundingPlanTitle")}</h3>
                 <FundingPlan t={t} plan={fundingPlan} />
+              </div>
+
+              <div className="DfctAdminAnchorJobs-detailCard DfctAdminAnchorJobs-settlementCard">
+                <h3>{t("adminAnchorJobs.fundingSettlementTitle")}</h3>
+                <FundingSettlement t={t} settlement={fundingSettlement} />
               </div>
 
               <div className="DfctAdminAnchorJobs-detailCard DfctAdminAnchorJobs-verifyCard">

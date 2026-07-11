@@ -236,6 +236,117 @@ function provenanceFormat(event) {
   return schema || version;
 }
 
+function financialEffectSource(detail, event) {
+  const candidates = [
+    detail?.financialEffects,
+    detail?.financial_effects,
+    detail?.activity?.financialEffects,
+    detail?.activity?.financial_effects,
+    event?.financialEffects,
+    event?.financial_effects,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate) && candidate.length) return candidate;
+  }
+
+  const anchorJobs = event?.anchorJobs || event?.anchor_jobs || [];
+  const latestAnchorSettlement = [...anchorJobs]
+    .reverse()
+    .map((job) => job?.fundingSettlement || job?.funding_settlement)
+    .find(Boolean);
+  const settlement =
+    detail?.fundingSettlement ||
+    detail?.funding_settlement ||
+    detail?.activity?.fundingSettlement ||
+    detail?.activity?.funding_settlement ||
+    event?.fundingSettlement ||
+    event?.funding_settlement ||
+    latestAnchorSettlement ||
+    null;
+
+  if (!settlement) return [];
+
+  return [
+    {
+      type: "cardano_anchor",
+      amount:
+        settlement.quotedCreditAmount ??
+        settlement.quoted_credit_amount ??
+        0,
+      currency: settlement.currencyCode || settlement.currency_code || "DFCT",
+      billingMode: settlement.billingMode || settlement.billing_mode,
+      status: settlement.status,
+      payerUserId: settlement.payerUserId || settlement.payer_user_id,
+      ledgerEntryId:
+        settlement.debitLedgerEntryId || settlement.debit_ledger_entry_id,
+      settlementId: settlement.settlementId || settlement.settlement_id,
+      direction: Number(
+        settlement.quotedCreditAmount ?? settlement.quoted_credit_amount ?? 0,
+      ) > 0
+        ? "debit"
+        : "neutral",
+    },
+  ];
+}
+
+function financialEffectLabel(t, effect) {
+  const type = normalizeKey(effect?.type || effect?.action || effect?.reason);
+  const labels = {
+    topic_publication: "topicPublication",
+    cardano_anchor: "cardanoAnchor",
+    cardano_anchor_refund: "cardanoAnchorRefund",
+    reward_pool_reserve: "rewardPoolReserve",
+    reward_pool_award: "rewardEarned",
+    reward_earned: "rewardEarned",
+    reward_pool_return: "rewardReturned",
+    reward_pool_release: "rewardReturned",
+  };
+
+  const key = labels[type];
+  return key
+    ? t(`dsm.audit.financialEffects.${key}`)
+    : humanize(effect?.type || effect?.action || effect?.reason);
+}
+
+function financialEffectAmount(t, effect) {
+  const billingMode = normalizeKey(effect?.billingMode || effect?.billing_mode);
+  if (billingMode === "sponsored") {
+    return t("dsm.audit.financialEffects.sponsored");
+  }
+  if (billingMode === "included") {
+    return t("dsm.audit.financialEffects.included");
+  }
+  if (billingMode === "free") {
+    return t("dsm.audit.financialEffects.free");
+  }
+
+  const amount = Number(
+    effect?.amount ??
+      effect?.creditAmount ??
+      effect?.credit_amount ??
+      effect?.quotedCreditAmount ??
+      effect?.quoted_credit_amount ??
+      0,
+  );
+  const currency = effect?.currency || effect?.currencyCode || effect?.currency_code || "DFCT";
+  const direction = normalizeKey(effect?.direction);
+  const sign = direction === "credit" || direction === "refund" || direction === "award"
+    ? "+"
+    : direction === "debit" || direction === "reserve"
+      ? "−"
+      : "";
+
+  return `${sign}${Math.abs(amount).toLocaleString(undefined, {
+    maximumFractionDigits: 6,
+  })} ${currency}`;
+}
+
+function financialEffectStatus(t, effect) {
+  const status = normalizeKey(effect?.status || "settled");
+  return t(`dsm.audit.financialStatuses.${status}`, humanize(status));
+}
+
 function anchoringSummary(t, event) {
   const policy = event?.anchorPolicy || event?.anchor_policy || "";
   const scope = event?.anchorScope || event?.anchor_scope || "";
@@ -623,6 +734,7 @@ function TopicActivityDetailsDrawer({
   const payloadHash = payloadFingerprint(event);
   const fingerprint = provenanceFingerprint(event);
   const previousFingerprint = previousEventFingerprint(event);
+  const financialEffects = financialEffectSource(detail, event);
   const provenanceDetails = [
     {
       label: t("dsm.audit.dfctFingerprint"),
@@ -859,6 +971,24 @@ function TopicActivityDetailsDrawer({
                     )}
                   </div>
                 )}
+              </section>
+            )}
+
+            {financialEffects.length > 0 && (
+              <section className="TopicActivityDrawer-card">
+                <h5>{t("dsm.audit.creditsAndFunding")}</h5>
+                <div className="TopicActivityDrawer-provenanceGrid">
+                  {financialEffects.map((effect, index) => (
+                    <div
+                      className="TopicActivityDrawer-provenanceItem"
+                      key={`${effect?.type || "financial-effect"}-${index}`}
+                    >
+                      <span>{financialEffectLabel(t, effect)}</span>
+                      <strong>{financialEffectAmount(t, effect)}</strong>
+                      <small>{financialEffectStatus(t, effect)}</small>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
 
@@ -1186,6 +1316,7 @@ function StageCard({
   const hash = eventHash(event);
   const tx = event ? txUrl(event) : "";
   const source = event ? eventSource(event) : "";
+  const financialEffects = financialEffectSource(null, event);
   const activityEvents = stage.activityEvents || [];
   const isContributionStage = stage.key === "contributions";
   const canExpand = !isLocked && (isCompleted || isContributionStage);
@@ -1304,6 +1435,14 @@ function StageCard({
                     {t("dsm.audit.anchorReady")}
                   </span>
                 )}
+                {financialEffects.map((effect, effectIndex) => (
+                  <span
+                    className="TopicJourney-trustPill"
+                    key={`${effect?.type || "financial-effect"}-${effectIndex}`}
+                  >
+                    {financialEffectLabel(t, effect)} · {financialEffectAmount(t, effect)}
+                  </span>
+                ))}
                 {source && (
                   <span>
                     {t("dsm.audit.capturedBy")}: {humanize(source)}

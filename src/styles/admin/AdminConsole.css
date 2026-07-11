@@ -427,6 +427,30 @@
   border-radius: 14px;
 }
 
+.DfctAdminAnchorJobs-settlement {
+  display: grid;
+  gap: 14px;
+}
+
+.DfctAdminAnchorJobs-settlementHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.DfctAdminAnchorJobs-settlementHeader p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-text-soft, var(--theme-text));
+}
+
+.DfctAdminAnchorJobs-settlementHeader .badge {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .DfctAdminAnchorJobs-actionRow {
   display: flex;
   flex-wrap: wrap;
@@ -517,6 +541,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
+  .DfctAdminAnchorJobs-settlementCard,
   .DfctAdminAnchorJobs-verifyCard {
     grid-column: 1 / -1;
   }

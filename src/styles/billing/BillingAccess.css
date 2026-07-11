@@ -2794,3 +2794,14 @@ button.DfctBillingAdmin-toggle:disabled {
     width: 100%;
   }
 }
+
+/* Financial activity context */
+.BillingAccess-activityTableWrap .BillingAccess-table th:nth-child(2),
+.BillingAccess-activityTableWrap .BillingAccess-table td:nth-child(2) {
+  min-width: 150px;
+  color: var(--theme-text-soft, var(--theme-text));
+}
+
+.BillingTransactionModal-field strong {
+  overflow-wrap: anywhere;
+}
