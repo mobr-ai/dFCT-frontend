@@ -47,10 +47,122 @@ function Stat({ label, value, caption, tone }) {
 }
 
 function DetailRow({ label, value, mono }) {
+  const displayValue = value === undefined || value === null || value === ""
+    ? "—"
+    : value;
+
   return (
     <div className="DfctAdminAnchorJobs-detailRow">
       <span>{label}</span>
-      <strong className={mono ? "is-mono" : ""}>{value || "—"}</strong>
+      <strong className={mono ? "is-mono" : ""}>{displayValue}</strong>
+    </div>
+  );
+}
+
+function ConfirmedAnchorSummary({ t, job, fundingPlan, fallbackTxHash }) {
+  const submitter = valueOf(fundingPlan, "submitter") || valueOf(job, "submitter");
+  const isAutomatic = String(submitter || "").toLowerCase() === "backend";
+  const metadataLabel = valueOf(fundingPlan, "metadataLabel", "metadata_label");
+  const txHash = valueOf(job, "txHash", "tx_hash") || fallbackTxHash;
+  const confirmedAt = valueOf(job, "confirmedAt", "confirmed_at");
+  const explorerUrl = valueOf(job, "explorerUrl", "explorer_url");
+  const verificationRetries = valueOf(
+    job,
+    "verifyRetryCount",
+    "verify_retry_count",
+    "retryCount",
+    "retry_count",
+  );
+  const verification = job?.verification || job?.verificationResult || {};
+  const plannedPayloadHash = fundingPlan?.metadata?.[String(metadataLabel)]?.dfct?.payloadHash;
+  const matchedPayloadHash = valueOf(
+    verification,
+    "foundPayloadHash",
+    "found_payload_hash",
+  ) || valueOf(job, "foundPayloadHash", "found_payload_hash") || plannedPayloadHash;
+
+  return (
+    <div className="DfctAdminAnchorJobs-confirmedSummary">
+      <div className="DfctAdminAnchorJobs-confirmedHero">
+        <span className="DfctAdminAnchorJobs-confirmedIcon" aria-hidden="true">
+          ✓
+        </span>
+        <div className="DfctAdminAnchorJobs-confirmedCopy">
+          <span className="DfctAdmin-eyebrow">
+            {t("adminAnchorJobs.confirmedEyebrow")}
+          </span>
+          <h3>
+            {t(
+              isAutomatic
+                ? "adminAnchorJobs.automaticConfirmedTitle"
+                : "adminAnchorJobs.confirmedTitle",
+            )}
+          </h3>
+          <p>
+            {t(
+              isAutomatic
+                ? "adminAnchorJobs.automaticConfirmedDescription"
+                : "adminAnchorJobs.confirmedDescription",
+            )}
+          </p>
+        </div>
+        <Badge bg="success" className="DfctAdminAnchorJobs-confirmedBadge">
+          {t("adminAnchorJobs.confirmedStatus")}
+        </Badge>
+      </div>
+
+      <div className="DfctAdminAnchorJobs-detailGrid DfctAdminAnchorJobs-confirmedGrid">
+        <DetailRow
+          label={t("adminAnchorJobs.confirmedAt")}
+          value={formatDate(confirmedAt)}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.verificationMethod")}
+          value={t(
+            isAutomatic
+              ? "adminAnchorJobs.verificationMethodAutomatic"
+              : "adminAnchorJobs.verificationMethodManual",
+          )}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.txHashLabel")}
+          value={txHash}
+          mono
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.verificationRetries")}
+          value={verificationRetries ?? "—"}
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.matchedPayloadHash")}
+          value={matchedPayloadHash}
+          mono
+        />
+        <DetailRow
+          label={t("adminAnchorJobs.metadataLabel")}
+          value={metadataLabel}
+        />
+      </div>
+
+      <div className="DfctAdminAnchorJobs-confirmedFooter">
+        <p>
+          {t("adminAnchorJobs.metadataMatchConfirmed", {
+            label: metadataLabel ?? "—",
+          })}
+        </p>
+        {explorerUrl ? (
+          <Button
+            as="a"
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outline-primary"
+            size="sm"
+          >
+            {t("adminAnchorJobs.openExplorer")}
+          </Button>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -99,6 +211,10 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
 
   const providerPreview = anchorJobs.selectedJob?.providerPreview;
   const fundingPlan = providerPreview?.providerMetadata?.fundingPlan;
+  const selectedStatus = String(
+    valueOf(anchorJobs.selectedJob, "status") || "",
+  ).toLowerCase();
+  const isConfirmed = selectedStatus === "confirmed";
   const verification = anchorJobs.verificationResult?.verification;
   const canConfirm = Boolean(verification?.ok && selectedId && txHash.trim());
 
@@ -408,62 +524,73 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
               </div>
 
               <div className="DfctAdminAnchorJobs-detailCard DfctAdminAnchorJobs-verifyCard">
-                <h3>{t("adminAnchorJobs.verifyTitle")}</h3>
-                <p>{t("adminAnchorJobs.verifySubtitle")}</p>
+                {isConfirmed ? (
+                  <ConfirmedAnchorSummary
+                    t={t}
+                    job={anchorJobs.selectedJob}
+                    fundingPlan={fundingPlan}
+                    fallbackTxHash={txHash}
+                  />
+                ) : (
+                  <>
+                    <h3>{t("adminAnchorJobs.verifyTitle")}</h3>
+                    <p>{t("adminAnchorJobs.verifySubtitle")}</p>
 
-                <Form
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    verifyOnly();
-                  }}
-                >
-                  <Form.Group className="mb-3">
-                    <Form.Label>{t("adminAnchorJobs.txHashLabel")}</Form.Label>
-                    <Form.Control
-                      value={txHash}
-                      onChange={(event) => setTxHash(event.target.value)}
-                      placeholder={t("adminAnchorJobs.txHashPlaceholder")}
-                    />
-                  </Form.Group>
-
-                  {verification?.ok && (
-                    <Alert variant="success">{t("adminAnchorJobs.verifyOk")}</Alert>
-                  )}
-
-                  {verification && !verification.ok && (
-                    <Alert variant="danger">
-                      {t("adminAnchorJobs.verifyFailed", {
-                        error: verification.error || verification.message || "Unknown error",
-                      })}
-                    </Alert>
-                  )}
-
-                  <div className="DfctAdminAnchorJobs-actionRow">
-                    <Button
-                      type="submit"
-                      variant="outline-primary"
-                      disabled={!selectedId || !txHash.trim() || anchorJobs.actionLoading}
+                    <Form
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        verifyOnly();
+                      }}
                     >
-                      {anchorJobs.actionLoading ? (
-                        <>
-                          <Spinner animation="border" size="sm" className="me-2" />
-                          {t("adminAnchorJobs.verifying")}
-                        </>
-                      ) : (
-                        t("adminAnchorJobs.verifyOnly")
+                      <Form.Group className="mb-3">
+                        <Form.Label>{t("adminAnchorJobs.txHashLabel")}</Form.Label>
+                        <Form.Control
+                          value={txHash}
+                          onChange={(event) => setTxHash(event.target.value)}
+                          placeholder={t("adminAnchorJobs.txHashPlaceholder")}
+                        />
+                      </Form.Group>
+
+                      {verification?.ok && (
+                        <Alert variant="success">{t("adminAnchorJobs.verifyOk")}</Alert>
                       )}
-                    </Button>
 
-                    <Button
-                      type="button"
-                      variant="primary"
-                      disabled={!canConfirm || anchorJobs.actionLoading}
-                      onClick={confirmVerified}
-                    >
-                      {t("adminAnchorJobs.confirmVerified")}
-                    </Button>
-                  </div>
-                </Form>
+                      {verification && !verification.ok && (
+                        <Alert variant="danger">
+                          {t("adminAnchorJobs.verifyFailed", {
+                            error: verification.error || verification.message || "Unknown error",
+                          })}
+                        </Alert>
+                      )}
+
+                      <div className="DfctAdminAnchorJobs-actionRow">
+                        <Button
+                          type="submit"
+                          variant="outline-primary"
+                          disabled={!selectedId || !txHash.trim() || anchorJobs.actionLoading}
+                        >
+                          {anchorJobs.actionLoading ? (
+                            <>
+                              <Spinner animation="border" size="sm" className="me-2" />
+                              {t("adminAnchorJobs.verifying")}
+                            </>
+                          ) : (
+                            t("adminAnchorJobs.verifyOnly")
+                          )}
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="primary"
+                          disabled={!canConfirm || anchorJobs.actionLoading}
+                          onClick={confirmVerified}
+                        >
+                          {t("adminAnchorJobs.confirmVerified")}
+                        </Button>
+                      </div>
+                    </Form>
+                  </>
+                )}
               </div>
             </div>
           )}
