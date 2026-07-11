@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Badge,
@@ -16,6 +16,14 @@ const DEFAULT_SETTINGS = {
   submitMaxRetries: 5,
   verifyMaxRetries: 8,
   verifyInitialDelaySeconds: 30,
+};
+
+
+const NUMERIC_LIMITS = {
+  claimTtlSeconds: { min: 60, max: 3600 },
+  submitMaxRetries: { min: 0, max: 20 },
+  verifyMaxRetries: { min: 0, max: 50 },
+  verifyInitialDelaySeconds: { min: 5, max: 900 },
 };
 
 
@@ -46,35 +54,227 @@ function Capability({ label, value, variant = "secondary" }) {
 }
 
 
-function numberValue(event, fallback) {
-  const parsed = Number(event.target.value);
-  return Number.isFinite(parsed) ? parsed : fallback;
+function normalizedSettings(settings) {
+  const next = {
+    ...DEFAULT_SETTINGS,
+    ...(settings || {}),
+    cardanoSubmissionEnabled: Boolean(
+      settings?.cardanoSubmissionEnabled
+      ?? DEFAULT_SETTINGS.cardanoSubmissionEnabled
+    ),
+    autoDispatchEnabled: Boolean(
+      settings?.autoDispatchEnabled
+      ?? DEFAULT_SETTINGS.autoDispatchEnabled
+    ),
+  };
+
+  for (const [key, limits] of Object.entries(NUMERIC_LIMITS)) {
+    const rawValue = next[key];
+
+    if (String(rawValue ?? "").trim() === "") return null;
+
+    const value = Number(rawValue);
+
+    if (
+      !Number.isInteger(value)
+      || value < limits.min
+      || value > limits.max
+    ) {
+      return null;
+    }
+
+    next[key] = value;
+  }
+
+  return next;
+}
+
+
+function settingsKey(settings) {
+  const normalized = normalizedSettings(settings);
+  return normalized ? JSON.stringify(normalized) : "";
 }
 
 
 export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
-  const [draft, setDraft] = useState(DEFAULT_SETTINGS);
+  const initialSettings = (
+    normalizedSettings(anchorJobs.settings)
+    || DEFAULT_SETTINGS
+  );
+  const [draft, setDraft] = useState(initialSettings);
+  const [autosaveState, setAutosaveState] = useState("idle");
   const [showEnableConfirmation, setShowEnableConfirmation] = useState(false);
+
+  const draftRef = useRef(initialSettings);
+  const serverSettingsRef = useRef(initialSettings);
+  const initializedRef = useRef(Boolean(anchorJobs.settings));
+  const saveTimerRef = useRef(null);
+  const saveInFlightRef = useRef(false);
+  const queuedSettingsRef = useRef(null);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     anchorJobs.loadSettings();
   }, [anchorJobs.loadSettings]);
 
   useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+
+      if (saveTimerRef.current) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!anchorJobs.settings) return;
 
-    setDraft({
-      ...DEFAULT_SETTINGS,
-      ...anchorJobs.settings,
-    });
+    const nextSettings = normalizedSettings(anchorJobs.settings);
+    if (!nextSettings) return;
+
+    serverSettingsRef.current = nextSettings;
+
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      draftRef.current = nextSettings;
+      setDraft(nextSettings);
+      setAutosaveState("idle");
+      return;
+    }
+
+    const hasLocalWork = Boolean(
+      saveTimerRef.current
+      || saveInFlightRef.current
+      || queuedSettingsRef.current
+    );
+
+    if (!hasLocalWork) {
+      draftRef.current = nextSettings;
+      setDraft(nextSettings);
+    }
   }, [anchorJobs.settings]);
 
-  const saved = {
-    ...DEFAULT_SETTINGS,
-    ...(anchorJobs.settings || {}),
+  const flushSaveQueue = useCallback(async () => {
+    if (saveInFlightRef.current) return;
+
+    saveInFlightRef.current = true;
+
+    try {
+      while (mountedRef.current && queuedSettingsRef.current) {
+        const nextSettings = queuedSettingsRef.current;
+        queuedSettingsRef.current = null;
+        setAutosaveState("saving");
+
+        const payload = await anchorJobs.saveSettings(nextSettings, {
+          showSuccessToast: false,
+        });
+
+        if (!mountedRef.current) return;
+
+        if (!payload) {
+          queuedSettingsRef.current = null;
+          draftRef.current = serverSettingsRef.current;
+          setDraft(serverSettingsRef.current);
+          setAutosaveState("error");
+          return;
+        }
+
+        const persisted = normalizedSettings(payload.settings || nextSettings);
+        if (!persisted) {
+          queuedSettingsRef.current = null;
+          draftRef.current = serverSettingsRef.current;
+          setDraft(serverSettingsRef.current);
+          setAutosaveState("error");
+          return;
+        }
+
+        serverSettingsRef.current = persisted;
+
+        const currentDraft = normalizedSettings(draftRef.current);
+
+        if (!currentDraft) {
+          setAutosaveState("invalid");
+        } else if (settingsKey(currentDraft) !== settingsKey(persisted)) {
+          queuedSettingsRef.current = currentDraft;
+          setAutosaveState("pending");
+        } else {
+          draftRef.current = persisted;
+          setDraft(persisted);
+          setAutosaveState("saved");
+        }
+      }
+    } finally {
+      saveInFlightRef.current = false;
+    }
+  }, [anchorJobs.saveSettings]);
+
+  const queueSave = useCallback((nextDraft, { immediate = false } = {}) => {
+    if (saveTimerRef.current) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+
+    const normalized = normalizedSettings(nextDraft);
+
+    if (!normalized) {
+      queuedSettingsRef.current = null;
+      setAutosaveState("invalid");
+      return;
+    }
+
+    if (settingsKey(normalized) === settingsKey(serverSettingsRef.current)) {
+      queuedSettingsRef.current = null;
+      setAutosaveState("saved");
+      return;
+    }
+
+    queuedSettingsRef.current = normalized;
+    setAutosaveState("pending");
+
+    if (immediate) {
+      void flushSaveQueue();
+      return;
+    }
+
+    saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = null;
+      void flushSaveQueue();
+    }, 700);
+  }, [flushSaveQueue]);
+
+  const updateDraft = useCallback((key, value, options) => {
+    const nextDraft = {
+      ...draftRef.current,
+      [key]: value,
+    };
+
+    draftRef.current = nextDraft;
+    setDraft(nextDraft);
+    queueSave(nextDraft, options);
+  }, [queueSave]);
+
+  const toggleSubmission = (enabled) => {
+    if (enabled) {
+      setShowEnableConfirmation(true);
+      return;
+    }
+
+    updateDraft("cardanoSubmissionEnabled", false, { immediate: true });
   };
+
+  const autosaveText = {
+    idle: t("adminAnchorJobs.settingsAutosaveHint"),
+    pending: t("adminAnchorJobs.settingsAutosavePending"),
+    saving: t("adminAnchorJobs.settingsAutosaveSaving"),
+    saved: t("adminAnchorJobs.settingsAutosaveSaved"),
+    invalid: t("adminAnchorJobs.settingsAutosaveInvalid"),
+    error: t("adminAnchorJobs.settingsAutosaveError"),
+  }[anchorJobs.settingsSaving ? "saving" : autosaveState];
+
   const capabilities = anchorJobs.capabilities || {};
-  const dirty = JSON.stringify(saved) !== JSON.stringify(draft);
 
   let executionStatus = {
     text: t("adminAnchorJobs.statusNotReady"),
@@ -97,27 +297,6 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
       variant: "warning",
     };
   }
-
-  const updateDraft = (key, value) => {
-    setDraft((current) => ({
-      ...current,
-      [key]: value,
-    }));
-  };
-
-  const toggleSubmission = (enabled) => {
-    if (enabled) {
-      setShowEnableConfirmation(true);
-      return;
-    }
-
-    updateDraft("cardanoSubmissionEnabled", false);
-  };
-
-  const save = async (event) => {
-    event.preventDefault();
-    await anchorJobs.saveSettings(draft);
-  };
 
   if (anchorJobs.settingsLoading && !anchorJobs.settings) {
     return (
@@ -218,7 +397,10 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
         <div className="DfctAdminAnchorExecution-layout">
           <Form
             className="DfctAdminAnchorExecution-card"
-            onSubmit={save}
+            onSubmit={(event) => {
+              event.preventDefault();
+              queueSave(draftRef.current, { immediate: true });
+            }}
           >
             <div className="DfctAdminAnchorExecution-cardHeader">
               <h3>{t("adminAnchorJobs.executionControlsTitle")}</h3>
@@ -252,6 +434,7 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                 onChange={(event) => updateDraft(
                   "autoDispatchEnabled",
                   event.target.checked,
+                  { immediate: true },
                 )}
               />
             </div>
@@ -268,7 +451,11 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                   value={draft.claimTtlSeconds}
                   onChange={(event) => updateDraft(
                     "claimTtlSeconds",
-                    numberValue(event, 300),
+                    event.target.value,
+                  )}
+                  onBlur={() => queueSave(
+                    draftRef.current,
+                    { immediate: true },
                   )}
                 />
                 <Form.Text>
@@ -287,7 +474,11 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                   value={draft.submitMaxRetries}
                   onChange={(event) => updateDraft(
                     "submitMaxRetries",
-                    numberValue(event, 5),
+                    event.target.value,
+                  )}
+                  onBlur={() => queueSave(
+                    draftRef.current,
+                    { immediate: true },
                   )}
                 />
               </Form.Group>
@@ -303,7 +494,11 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                   value={draft.verifyMaxRetries}
                   onChange={(event) => updateDraft(
                     "verifyMaxRetries",
-                    numberValue(event, 8),
+                    event.target.value,
+                  )}
+                  onBlur={() => queueSave(
+                    draftRef.current,
+                    { immediate: true },
                   )}
                 />
               </Form.Group>
@@ -319,36 +514,26 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
                   value={draft.verifyInitialDelaySeconds}
                   onChange={(event) => updateDraft(
                     "verifyInitialDelaySeconds",
-                    numberValue(event, 30),
+                    event.target.value,
+                  )}
+                  onBlur={() => queueSave(
+                    draftRef.current,
+                    { immediate: true },
                   )}
                 />
               </Form.Group>
             </div>
 
-            <div className="DfctAdminAnchorExecution-actions">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                disabled={!dirty || anchorJobs.settingsSaving}
-                onClick={() => setDraft(saved)}
-              >
-                {t("adminAnchorJobs.discardChanges")}
-              </Button>
-
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={!dirty || anchorJobs.settingsSaving}
-              >
-                {anchorJobs.settingsSaving ? (
-                  <>
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    {t("adminAnchorJobs.savingSettings")}
-                  </>
-                ) : (
-                  t("adminAnchorJobs.saveSettings")
-                )}
-              </Button>
+            <div
+              className={`DfctAdminAnchorExecution-autosave is-${
+                anchorJobs.settingsSaving ? "saving" : autosaveState
+              }`}
+              aria-live="polite"
+            >
+              {(anchorJobs.settingsSaving || autosaveState === "saving") && (
+                <Spinner animation="border" size="sm" />
+              )}
+              <span>{autosaveText}</span>
             </div>
           </Form>
 
@@ -433,7 +618,7 @@ export default function AdminAnchorExecutionPanel({ t, anchorJobs }) {
           <Button
             variant="primary"
             onClick={() => {
-              updateDraft("cardanoSubmissionEnabled", true);
+              updateDraft("cardanoSubmissionEnabled", true, { immediate: true });
               setShowEnableConfirmation(false);
             }}
           >

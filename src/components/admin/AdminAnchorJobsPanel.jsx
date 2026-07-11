@@ -81,10 +81,13 @@ function FundingPlan({ t, plan }) {
 }
 
 export default function AdminAnchorJobsPanel({ t, user, showToast }) {
-  const anchorJobs = useAdminAnchorJobs(user, showToast, t);
+  const [activeSubtab, setActiveSubtab] = useState("jobs");
+  const anchorJobs = useAdminAnchorJobs(user, showToast, t, {
+    autoRefreshEnabled: activeSubtab !== "execution",
+    autoRefreshIntervalMs: activeSubtab === "verification" ? 30000 : 45000,
+  });
   const [txHash, setTxHash] = useState("");
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [activeSubtab, setActiveSubtab] = useState("jobs");
   const didMountFilters = useRef(false);
 
   const selectedId = valueOf(

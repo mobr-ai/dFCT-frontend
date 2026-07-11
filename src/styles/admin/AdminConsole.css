@@ -853,6 +853,27 @@
   margin-top: 1.2rem;
 }
 
+.DfctAdminAnchorExecution-autosave {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  min-height: 2rem;
+  margin-top: 1rem;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.DfctAdminAnchorExecution-autosave.is-saved {
+  color: var(--theme-success, #198754);
+}
+
+.DfctAdminAnchorExecution-autosave.is-invalid,
+.DfctAdminAnchorExecution-autosave.is-error {
+  color: var(--theme-danger, #dc3545);
+}
+
 .DfctAdminAnchorExecution-protocol {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -882,6 +903,17 @@
   min-height: 140px;
   color: var(--theme-muted);
   font-weight: 800;
+}
+
+.DfctAdminAnchorVerification-autoRefresh {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.25rem;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .DfctAdminAnchorVerification-tableWrap {
