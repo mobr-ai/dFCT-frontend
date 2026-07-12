@@ -1652,5 +1652,22 @@
       "document": "Document",
       "file": "File"
     }
+  },
+  "referencePerception": {
+    "eyebrow": "Community assessment",
+    "title": "Community and reviewer assessment",
+    "pending": "Assessment pending",
+    "pendingHelp": "Community votes and curated claim reviews will appear here.",
+    "claimsLinked_one": "{{count}} linked claim",
+    "claimsLinked_other": "{{count}} linked claims",
+    "reviewedOutcome": "Reviewed outcome · {{verdict}}",
+    "reviewedClaims_one": "{{count}} reviewed claim",
+    "reviewedClaims_other": "{{count}} reviewed claims",
+    "totalVotes_one": "{{count}} vote",
+    "totalVotes_other": "{{count}} votes",
+    "communityAgrees": "{{percent}}% agree with linked claims",
+    "communityDisagrees": "{{percent}}% disagree with linked claims",
+    "communitySplit": "Community perception is mixed",
+    "noVotes": "No community votes yet"
   }
 }

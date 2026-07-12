@@ -1652,5 +1652,22 @@
       "document": "Documento",
       "file": "Arquivo"
     }
+  },
+  "referencePerception": {
+    "eyebrow": "Avaliação da comunidade",
+    "title": "Avaliação da comunidade e dos revisores",
+    "pending": "Avaliação pendente",
+    "pendingHelp": "Votos da comunidade e revisões curadas das alegações aparecerão aqui.",
+    "claimsLinked_one": "{{count}} alegação vinculada",
+    "claimsLinked_other": "{{count}} alegações vinculadas",
+    "reviewedOutcome": "Resultado revisado · {{verdict}}",
+    "reviewedClaims_one": "{{count}} alegação revisada",
+    "reviewedClaims_other": "{{count}} alegações revisadas",
+    "totalVotes_one": "{{count}} voto",
+    "totalVotes_other": "{{count}} votos",
+    "communityAgrees": "{{percent}}% concordam com as alegações vinculadas",
+    "communityDisagrees": "{{percent}}% discordam das alegações vinculadas",
+    "communitySplit": "A percepção da comunidade está dividida",
+    "noVotes": "Ainda não há votos da comunidade"
   }
 }

@@ -489,9 +489,140 @@ function referenceType(item = {}) {
   return "file";
 }
 
+function normalizeReferenceContentId(value) {
+  if (value === undefined || value === null) return "";
+  return String(value);
+}
+
+function referenceContentId(item = {}) {
+  return normalizeReferenceContentId(item.content_id ?? item.contentId);
+}
+
+function referenceAssessmentTone(assessment = {}) {
+  const verdict = String(assessment.dominantVerdict || "").toLowerCase();
+
+  if (["true", "mostly_true"].includes(verdict)) return "positive";
+  if (["false", "misleading"].includes(verdict)) return "negative";
+  if (["partially_true", "mixed"].includes(verdict)) return "mixed";
+  if (verdict === "unverified") return "pending";
+
+  if (assessment.voteLean === "agree") return "positive";
+  if (assessment.voteLean === "disagree") return "negative";
+  if (assessment.voteLean === "mixed") return "mixed";
+
+  return "pending";
+}
+
+function buildReferenceAssessmentMap(
+  contentList = [],
+  claimList = [],
+  verificationSummary = null,
+) {
+  const summaryByClaimId = new Map(
+    (verificationSummary?.claims || []).map((summary) => [
+      normalizeTopicClaimId(summary.claimId ?? summary.claim_id),
+      summary,
+    ]),
+  );
+
+  const claimsByContentId = new Map();
+
+  for (const claim of claimList || []) {
+    const contentId = normalizeReferenceContentId(
+      claim.content_id ?? claim.contentId,
+    );
+
+    if (!contentId) continue;
+
+    const linked = claimsByContentId.get(contentId) || [];
+    linked.push(claim);
+    claimsByContentId.set(contentId, linked);
+  }
+
+  const assessments = {};
+
+  for (const content of contentList || []) {
+    const contentId = referenceContentId(content);
+    if (!contentId) continue;
+
+    const linkedClaims = claimsByContentId.get(contentId) || [];
+    let agreeCount = 0;
+    let disagreeCount = 0;
+    const curatedVerdicts = [];
+
+    for (const claim of linkedClaims) {
+      const claimId = normalizeTopicClaimId(getTopicClaimId(claim));
+      const summary = summaryByClaimId.get(claimId);
+
+      agreeCount += Number(summary?.agreeCount || 0);
+      disagreeCount += Number(summary?.disagreeCount || 0);
+
+      const curatedVerdict =
+        summary?.reviewSummary?.latestCuratedReview?.verdictTag;
+
+      if (curatedVerdict) curatedVerdicts.push(curatedVerdict);
+    }
+
+    const totalVotes = agreeCount + disagreeCount;
+    const agreePercent = totalVotes
+      ? Math.round((agreeCount / totalVotes) * 100)
+      : 0;
+    const disagreePercent = totalVotes
+      ? Math.round((disagreeCount / totalVotes) * 100)
+      : 0;
+
+    const verdictCounts = curatedVerdicts.reduce((counts, verdict) => {
+      counts[verdict] = (counts[verdict] || 0) + 1;
+      return counts;
+    }, {});
+
+    const rankedVerdicts = Object.entries(verdictCounts).sort(
+      (left, right) => right[1] - left[1],
+    );
+
+    let dominantVerdict = null;
+
+    if (rankedVerdicts.length === 1) {
+      dominantVerdict = rankedVerdicts[0][0];
+    } else if (
+      rankedVerdicts.length > 1 &&
+      rankedVerdicts[0][1] > rankedVerdicts[1][1]
+    ) {
+      dominantVerdict = rankedVerdicts[0][0];
+    } else if (rankedVerdicts.length > 1) {
+      dominantVerdict = "mixed";
+    }
+
+    const voteLean =
+      !totalVotes
+        ? "pending"
+        : agreePercent >= 60
+          ? "agree"
+          : disagreePercent >= 60
+            ? "disagree"
+            : "mixed";
+
+    assessments[contentId] = {
+      contentId,
+      claimCount: linkedClaims.length,
+      totalVotes,
+      agreeCount,
+      disagreeCount,
+      agreePercent,
+      disagreePercent,
+      reviewedClaimCount: curatedVerdicts.length,
+      dominantVerdict,
+      voteLean,
+    };
+  }
+
+  return assessments;
+}
+
 function ReferenceDesktop({
   contentList,
   refsMap,
+  assessmentsByContentId,
   activeKey,
   onSelect,
   onClose,
@@ -507,6 +638,8 @@ function ReferenceDesktop({
       type,
       icon: REFERENCE_TYPE_ICONS[type] || faFile,
       name: referenceFileName(item, index),
+      assessment:
+        assessmentsByContentId?.[referenceContentId(item)] || null,
     };
   });
   const activeReference =
@@ -556,6 +689,12 @@ function ReferenceDesktop({
             >
               <span className="Breakdown-referenceFile-icon" aria-hidden="true">
                 <FontAwesomeIcon icon={reference.icon} />
+                <span
+                  className={[
+                    "Breakdown-referenceFile-assessment",
+                    `tone-${referenceAssessmentTone(reference.assessment)}`,
+                  ].join(" ")}
+                />
               </span>
               <strong>{reference.name}</strong>
               <small>{t(`topicReferences.types.${reference.type}`)}</small>
@@ -604,6 +743,7 @@ function ReferenceDesktop({
                 <ContentList
                   content={[activeReference.item]}
                   refsMap={refsMap}
+                  assessmentsByContentId={assessmentsByContentId}
                 />
               </div>
             </article>
@@ -694,6 +834,15 @@ const Topic = ({
   const [authPromptShow, setAuthPromptShow] = useState(false);
   const [activeReferenceKey, setActiveReferenceKey] = useState(null);
   const referencesSectionRef = useRef(null);
+  const referenceAssessments = React.useMemo(
+    () =>
+      buildReferenceAssessmentMap(
+        contentList,
+        claimList,
+        verificationSummary,
+      ),
+    [claimList, contentList, verificationSummary],
+  );
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
   const { authRequest } = useAuthRequest(user);
@@ -987,6 +1136,7 @@ const Topic = ({
         <ReferenceDesktop
           contentList={contentList}
           refsMap={contentRefs.current}
+          assessmentsByContentId={referenceAssessments}
           activeKey={activeReferenceKey}
           onSelect={(key) => openReference(key)}
           onClose={() => setActiveReferenceKey(null)}

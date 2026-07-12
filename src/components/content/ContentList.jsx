@@ -9,14 +9,118 @@ import "../../styles/TopicBreakdownPage.css";
 import { useTranslation } from "react-i18next";
 import Image from "react-bootstrap/Image";
 import Linkify from "linkify-react";
-import Badge from "react-bootstrap/Badge";
 
 const linkifyOpts = {
   defaultProtocol: "https",
   target: "_blank",
 };
 
-const ContentCard = ({ item, innerRef }) => {
+function assessmentTone(assessment = {}) {
+  const verdict = String(assessment.dominantVerdict || "").toLowerCase();
+
+  if (["true", "mostly_true"].includes(verdict)) return "positive";
+  if (["false", "misleading"].includes(verdict)) return "negative";
+  if (["partially_true", "mixed"].includes(verdict)) return "mixed";
+  if (verdict === "unverified") return "pending";
+
+  if (assessment.voteLean === "agree") return "positive";
+  if (assessment.voteLean === "disagree") return "negative";
+  if (assessment.voteLean === "mixed") return "mixed";
+
+  return "pending";
+}
+
+function ReferenceAssessment({ assessment }) {
+  const { t } = useTranslation();
+
+  if (!assessment) return null;
+
+  const {
+    claimCount = 0,
+    totalVotes = 0,
+    agreePercent = 0,
+    disagreePercent = 0,
+    reviewedClaimCount = 0,
+    dominantVerdict = null,
+    voteLean = "pending",
+  } = assessment;
+
+  const tone = assessmentTone(assessment);
+  const hasStructuredOutcome = reviewedClaimCount > 0 && dominantVerdict;
+  const hasVotes = totalVotes > 0;
+
+  const voteLabel =
+    voteLean === "agree"
+      ? t("referencePerception.communityAgrees", { percent: agreePercent })
+      : voteLean === "disagree"
+        ? t("referencePerception.communityDisagrees", {
+            percent: disagreePercent,
+          })
+        : voteLean === "mixed"
+          ? t("referencePerception.communitySplit")
+          : t("referencePerception.noVotes");
+
+  return (
+    <section
+      className={[
+        "Breakdown-referenceAssessment",
+        `tone-${tone}`,
+      ].join(" ")}
+      aria-label={t("referencePerception.title")}
+    >
+      <header className="Breakdown-referenceAssessment-header">
+        <div>
+          <span>{t("referencePerception.eyebrow")}</span>
+          <strong>
+            {hasStructuredOutcome
+              ? t(`claimVoting.verdicts.${dominantVerdict}`)
+              : hasVotes
+                ? voteLabel
+                : t("referencePerception.pending")}
+          </strong>
+        </div>
+
+        <small>
+          {t("referencePerception.claimsLinked", { count: claimCount })}
+        </small>
+      </header>
+
+      <div className="Breakdown-referenceAssessment-badges">
+        {hasStructuredOutcome && (
+          <span className="is-reviewed">
+            {t("referencePerception.reviewedOutcome", {
+              verdict: t(`claimVoting.verdicts.${dominantVerdict}`),
+            })}
+          </span>
+        )}
+
+        {hasVotes && (
+          <span className="is-community">
+            {voteLabel}
+          </span>
+        )}
+
+        {reviewedClaimCount > 0 && (
+          <span>
+            {t("referencePerception.reviewedClaims", {
+              count: reviewedClaimCount,
+            })}
+          </span>
+        )}
+
+        <span>
+          {t("referencePerception.totalVotes", { count: totalVotes })}
+        </span>
+      </div>
+
+      {!hasStructuredOutcome && !hasVotes && (
+        <p>{t("referencePerception.pendingHelp")}</p>
+      )}
+    </section>
+  );
+}
+
+const ContentCard = ({ item, innerRef, assessment }) => {
   const { t } = useTranslation();
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [isMuted, setIsMuted] = useState(true); // Track mute state
@@ -180,39 +284,32 @@ const ContentCard = ({ item, innerRef }) => {
         </Linkify>
       </div>
       <div>
-  <Linkify as="div" options={linkifyOpts}>
+        <Linkify as="div" options={linkifyOpts}>
           {item.description}
         </Linkify>
-</div>
-      {item.output_tags && (
-        <div className="Breakdown-content-tag-container">
-          {item.output_tags
-            .replaceAll("{", "")
-            .replaceAll('"', "")
-            .replaceAll("}", "")
-            .split(",")
-            .map((tag, idx) => (
-              <div key={idx} className="Breakdown-topic-claims-tag">
-                <Badge bg="secondary">{t(tag)}</Badge>
-              </div>
-            ))}
-        </div>
-      )}
+      </div>
+      <ReferenceAssessment assessment={assessment} />
     </div>
   );
 };
 
-function ContentList({ content, refsMap }) {
-  const { t } = useTranslation();
+function contentId(item = {}) {
+  return String(item.content_id ?? item.contentId ?? "");
+}
 
+function ContentList({
+  content,
+  refsMap,
+  assessmentsByContentId = {},
+}) {
   return (
     <div className="Breakdown-content-list">
-      <h3>{t("references")}</h3>
       {content.map((item, index) => (
         <ContentCard
-          key={index}
+          key={item.content_id || item.contentId || index}
           item={item}
           innerRef={refsMap[item.local_url]}
+          assessment={assessmentsByContentId[contentId(item)] || null}
         />
       ))}
     </div>
