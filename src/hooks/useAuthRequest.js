@@ -1,5 +1,6 @@
 // useAuthRequest.js
 
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import request from "superagent";
@@ -133,16 +134,27 @@ export function useAuthRequest(user) {
     const { t } = useTranslation();
     const outletContext = useOutletContext() || {};
     const { showToast } = outletContext;
+    const accessToken = user?.access_token || "";
 
-    const handleUnauthorized = () => {
+    const navigateRef = useRef(navigate);
+    const showToastRef = useRef(showToast);
+    const tRef = useRef(t);
+
+    useEffect(() => {
+        navigateRef.current = navigate;
+        showToastRef.current = showToast;
+        tRef.current = t;
+    }, [navigate, showToast, t]);
+
+    const handleUnauthorized = useCallback(() => {
         console.warn("Token expired or invalid. Redirecting to login...");
         window.localStorage.removeItem("userData");
-        if (showToast) showToast(t("sessionExpired"), "secondary");
-        navigate("/login?sessionExpired=1");
-    };
+        showToastRef.current?.(tRef.current("sessionExpired"), "secondary");
+        navigateRef.current("/login?sessionExpired=1");
+    }, []);
 
-    const authFetch = async (url, options = {}) => {
-        if (!user || !user.access_token) {
+    const authFetch = useCallback(async (url, options = {}) => {
+        if (!accessToken) {
             handleUnauthorized();
             throw new ApiClientError("Unauthorized", {
                 status: 401,
@@ -156,7 +168,7 @@ export function useAuthRequest(user) {
         const headers = {
             Accept: "application/json",
             ...options.headers,
-            Authorization: `Bearer ${user.access_token}`,
+            Authorization: `Bearer ${accessToken}`,
         };
 
         const response = await fetch(url, { ...options, headers });
@@ -189,17 +201,17 @@ export function useAuthRequest(user) {
         }
 
         return response;
-    };
+    }, [accessToken, handleUnauthorized]);
 
-    const buildRequest = (req) => {
+    const buildRequest = useCallback((req) => {
         req.set("Accept", "application/json");
 
-        if (!user || !user.access_token) {
+        if (!accessToken) {
             handleUnauthorized();
             return req;
         }
 
-        req.set("Authorization", `Bearer ${user.access_token}`);
+        req.set("Authorization", `Bearer ${accessToken}`);
 
         const originalEnd = req.end.bind(req);
         req.end = (fn) => {
@@ -238,16 +250,19 @@ export function useAuthRequest(user) {
         };
 
         return req;
-    };
+    }, [accessToken, handleUnauthorized]);
 
-    const authRequest = {
+    const authRequest = useMemo(() => ({
         get: (url) => buildRequest(request.get(url)),
         post: (url) => buildRequest(request.post(url)),
         put: (url) => buildRequest(request.put(url)),
         patch: (url) => buildRequest(request.patch(url)),
         delete: (url) => buildRequest(request.delete(url)),
         del: (url) => buildRequest(request.delete(url)),
-    };
+    }), [buildRequest]);
 
-    return { authFetch, authRequest };
+    return useMemo(
+        () => ({ authFetch, authRequest }),
+        [authFetch, authRequest],
+    );
 }

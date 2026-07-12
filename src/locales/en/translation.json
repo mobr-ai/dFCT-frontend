@@ -1713,6 +1713,7 @@
       "title": "Turn verified contributions into visible rewards",
       "body": "Activate a DFCT Credit pool for this topic. Eligible community work is scored by the topic lifecycle and rewarded proportionally when a distribution is approved.",
       "managerOnly": "The topic owner or a reward manager can activate this pool.",
+      "lifecycleLocked": "Reward pools unlock when the topic reaches Active / Pool Available.",
       "benefits": {
         "community": "Reward meaningful community work",
         "proportional": "Allocate by persisted contribution score",

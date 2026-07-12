@@ -1713,6 +1713,7 @@
       "title": "Transforme contribuições verificadas em recompensas visíveis",
       "body": "Ative um pool de Créditos DFCT para este tópico. O trabalho elegível da comunidade é pontuado pelo ciclo de vida do tópico e recompensado proporcionalmente quando uma distribuição é aprovada.",
       "managerOnly": "O proprietário do tópico ou um gestor de recompensas pode ativar este pool.",
+      "lifecycleLocked": "Pools de recompensa são liberados quando o tópico chega ao estado Ativo / Pool disponível.",
       "benefits": {
         "community": "Recompense trabalho comunitário relevante",
         "proportional": "Distribua pela pontuação persistida das contribuições",
