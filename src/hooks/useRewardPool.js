@@ -60,19 +60,48 @@ export function useRewardPool({
   onUpdated,
 } = {}) {
   const { authRequest } = useAuthRequest(user);
+
   const [summary, setSummary] = useState(null);
   const [preview, setPreview] = useState(null);
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState(null);
-  const operationKeysRef = useRef(new Map());
+
   const authRequestRef = useRef(authRequest);
+  const onUpdatedRef = useRef(onUpdated);
+  const summaryRef = useRef(null);
   const loadPromiseRef = useRef(null);
+  const activityPromiseRef = useRef(null);
+  const loadedKeyRef = useRef("");
+  const operationKeysRef = useRef(new Map());
 
   useEffect(() => {
     authRequestRef.current = authRequest;
   }, [authRequest]);
+
+  useEffect(() => {
+    onUpdatedRef.current = onUpdated;
+  }, [onUpdated]);
+
+  useEffect(() => {
+    summaryRef.current = summary;
+  }, [summary]);
+
+  const currentLoadKey = useCallback(
+    () =>
+      [
+        topicId || "",
+        Boolean(user?.access_token),
+        user?.user_id ?? user?.id ?? "",
+      ].join(":"),
+    [
+      topicId,
+      user?.access_token,
+      user?.id,
+      user?.user_id,
+    ],
+  );
 
   const operationKey = useCallback(
     (scope) => {
@@ -95,29 +124,47 @@ export function useRewardPool({
   const applySummary = useCallback(
     (payload, source = "reward_pool_refresh") => {
       if (!payload) {
+        summaryRef.current = null;
         setSummary(null);
-        onUpdated?.(null);
+        onUpdatedRef.current?.(null);
         return null;
       }
 
-      setSummary((current) => ({
-        ...(current || {}),
-        ...payload,
-        rewardPool: payload.rewardPool ?? current?.rewardPool ?? null,
-        permissions: payload.permissions || current?.permissions || {},
-        viewer: payload.viewer ?? current?.viewer ?? null,
-      }));
-      onUpdated?.(payload);
+      let nextSummary = null;
+      setSummary((current) => {
+        nextSummary = {
+          ...(current || {}),
+          ...payload,
+          rewardPool: payload.rewardPool ?? current?.rewardPool ?? null,
+          permissions: payload.permissions || current?.permissions || {},
+          viewer: payload.viewer ?? current?.viewer ?? null,
+        };
+        summaryRef.current = nextSummary;
+        return nextSummary;
+      });
+
+      loadedKeyRef.current = currentLoadKey();
+      onUpdatedRef.current?.(payload);
       dispatchRewardPoolEvents(topicId, source, payload);
       return payload;
     },
-    [onUpdated, topicId],
+    [currentLoadKey, topicId],
   );
 
   const load = useCallback(
-    async ({ silent = false } = {}) => {
+    async ({ silent = false, force = false } = {}) => {
       const requestClient = authRequestRef.current;
       if (!enabled || !topicId || !requestClient?.get) return null;
+
+      const loadKey = currentLoadKey();
+
+      if (
+        !force &&
+        loadedKeyRef.current === loadKey &&
+        summaryRef.current
+      ) {
+        return summaryRef.current;
+      }
 
       if (loadPromiseRef.current) return loadPromiseRef.current;
 
@@ -128,9 +175,12 @@ export function useRewardPool({
         authenticated: Boolean(user?.access_token),
       })
         .then((payload) => {
-          setSummary(payload || null);
-          onUpdated?.(payload || null);
-          return payload;
+          const nextSummary = payload || null;
+          loadedKeyRef.current = loadKey;
+          summaryRef.current = nextSummary;
+          setSummary(nextSummary);
+          onUpdatedRef.current?.(nextSummary);
+          return nextSummary;
         })
         .catch((err) => {
           setError(apiError(err, "Unable to load the reward pool."));
@@ -146,43 +196,67 @@ export function useRewardPool({
       loadPromiseRef.current = request;
       return request;
     },
-    [enabled, onUpdated, topicId, user?.access_token],
+    [
+      currentLoadKey,
+      enabled,
+      topicId,
+      user?.access_token,
+    ],
   );
 
   const loadActivity = useCallback(
-    async ({ silent = false } = {}) => {
+    async ({ silent = false, force = false } = {}) => {
       const requestClient = authRequestRef.current;
       if (!topicId || !requestClient?.get) return null;
+
+      if (!force && activity) return activity;
+      if (activityPromiseRef.current) return activityPromiseRef.current;
 
       if (!silent) setBusy("activity");
       setError(null);
 
-      try {
-        const payload = await fetchTopicRewardPoolActivity(
-          requestClient,
-          topicId,
-          { limit: 50 },
-        );
-        setActivity(payload || null);
-        return payload;
-      } catch (err) {
-        setError(apiError(err, "Unable to load reward-pool activity."));
-        throw err;
-      } finally {
-        if (!silent) setBusy("");
-      }
+      const request = fetchTopicRewardPoolActivity(
+        requestClient,
+        topicId,
+        { limit: 50 },
+      )
+        .then((payload) => {
+          setActivity(payload || null);
+          return payload;
+        })
+        .catch((err) => {
+          setError(api limit: 50 },
+      )
+        .then((payload) => {
+          setActivity(payload || null);
+          return payload;
+        })
+        .catch((err) => {
+          setError(apiError(err, "Unable to load reward-pool activity."));
+          throw err;
+        })
+        .finally(() => {
+          if (activityPromiseRef.current === request) {
+            activityPromiseRef.current = null;
+          }
+          if (!silent) setBusy("");
+        });
+
+      activityPromiseRef.current = request;
+      return request;
     },
-    [topicId],
+    [activity, topicId],
   );
 
   const createPool = useCallback(
     async (initialAmount) => {
+      const requestClient = authRequestRef.current;
       const scope = `create:${initialAmount}`;
       setBusy("create");
       setError(null);
 
       try {
-        const payload = await createTopicRewardPool(authRequest, topicId, {
+        const payload = await createTopicRewardPool(requestClient, topicId, {
           initialAmount,
           idempotencyKey: operationKey(scope),
           metadata: { source: "topic_reward_pool_modal" },
@@ -200,7 +274,6 @@ export function useRewardPool({
     },
     [
       applySummary,
-      authRequest,
       clearOperationKey,
       operationKey,
       topicId,
@@ -209,12 +282,13 @@ export function useRewardPool({
 
   const fundPool = useCallback(
     async (amount) => {
+      const requestClient = authRequestRef.current;
       const scope = `fund:${amount}`;
       setBusy("fund");
       setError(null);
 
       try {
-        const payload = await fundTopicRewardPool(authRequest, topicId, {
+        const payload = await fundTopicRewardPool(requestClient, topicId, {
           amount,
           idempotencyKey: operationKey(scope),
           metadata: { source: "topic_reward_pool_modal" },
@@ -232,7 +306,6 @@ export function useRewardPool({
     },
     [
       applySummary,
-      authRequest,
       clearOperationKey,
       operationKey,
       topicId,
@@ -241,13 +314,14 @@ export function useRewardPool({
 
   const previewDistribution = useCallback(
     async (amount) => {
+      const requestClient = authRequestRef.current;
       const scope = `preview:${amount}`;
       setBusy("preview");
       setError(null);
 
       try {
         const payload = await previewTopicRewardDistribution(
-          authRequest,
+          requestClient,
           topicId,
           {
             amount,
@@ -256,11 +330,15 @@ export function useRewardPool({
           },
         );
         clearOperationKey(scope);
-        setSummary((current) => ({
-          ...(current || {}),
-          rewardPool: payload?.rewardPool || current?.rewardPool || null,
-          permissions: payload?.permissions || current?.permissions || {},
-        }));
+        setSummary((current) => {
+          const nextSummary = {
+            ...(current || {}),
+            rewardPool: payload?.rewardPool || current?.rewardPool || null,
+            permissions: payload?.permissions || current?.permissions || {},
+          };
+          summaryRef.current = nextSummary;
+          return nextSummary;
+        });
         setPreview(payload?.distribution || null);
         return payload;
       } catch (err) {
@@ -270,17 +348,18 @@ export function useRewardPool({
         setBusy("");
       }
     },
-    [authRequest, clearOperationKey, operationKey, topicId],
+    [clearOperationKey, operationKey, topicId],
   );
 
   const executeDistribution = useCallback(
     async (distributionId) => {
+      const requestClient = authRequestRef.current;
       setBusy("execute");
       setError(null);
 
       try {
         const payload = await executeTopicRewardDistribution(
-          authRequest,
+          requestClient,
           topicId,
           distributionId,
         );
@@ -294,11 +373,15 @@ export function useRewardPool({
         setBusy("");
       }
     },
-    [applySummary, authRequest, topicId],
+    [applySummary, topicId],
   );
 
   useEffect(() => {
     setSummary(null);
+    summaryRef.current = null;
+    loadedKeyRef.current = "";
+    loadPromiseRef.current = null;
+    activityPromiseRef.current = null;
     setPreview(null);
     setActivity(null);
     setError(null);
@@ -306,7 +389,11 @@ export function useRewardPool({
   }, [topicId]);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      loadedKeyRef.current = "";
+      loadPromiseRef.current = null;
+      return;
+    }
     load().catch(() => {});
   }, [enabled, load]);
 

@@ -104,6 +104,7 @@ function Metric({ label, value, emphasized = false }) {
 
 function EmptyPool({
   canCreate,
+  lifecycleReady,
   authenticated,
   amount,
   amountInvalid,
@@ -168,6 +169,10 @@ function EmptyPool({
             <span>{t("rewardPoolModal.create.action")}</span>
           </Button>
         </Form>
+      ) : !lifecycleReady ? (
+        <div className="RewardPoolModal-notice">
+          {t("rewardPoolModal.empty.lifecycleLocked")}
+        </div>
       ) : !authenticated ? (
         <Button className="RewardPoolModal-authAction" onClick={onRequireAuth}>
           {t("rewardPoolModal.signInAction")}
@@ -551,6 +556,8 @@ export default function RewardPoolModal({
   const authenticated = Boolean(user?.access_token);
   const pool = rewardPool.pool;
   const permissions = rewardPool.permissions;
+  const lifecycleReady =
+    rewardPool.summary?.rewardPoolLifecycleReady !== false;
   const currency = pool?.currencyCode || "DFCT";
   const error = errorText(t, rewardPool.error);
   const creditBalance = billingStatus.balance?.credits_available ?? null;
@@ -707,6 +714,7 @@ export default function RewardPoolModal({
             {!pool ? (
               <EmptyPool
                 canCreate={permissions.canCreate}
+                lifecycleReady={lifecycleReady}
                 authenticated={authenticated}
                 amount={amount}
                 amountInvalid={amountInvalid}
