@@ -3,6 +3,7 @@ import "../styles/WelcomePage.css";
 import "../styles/NavigationSidebar.css";
 import { TopicSidebar } from "../components/topic";
 import { TopicToolbar } from "../components/topic";
+import TopicFinancialSummary from "../components/topic/TopicFinancialSummary";
 import { EvidenceModal } from "../components/submission";
 import { TopicLifecycleAuditTrail } from "../components/dsm";
 import Badge from "react-bootstrap/Badge";
@@ -14,7 +15,16 @@ import { ContentCarousel } from "../components/content";
 import i18n from "../i18n";
 import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowUp,
+  faFile,
+  faFileAlt,
+  faFileAudio,
+  faFileImage,
+  faFilePdf,
+  faFileVideo,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   useLoaderData,
   Await,
@@ -24,8 +34,6 @@ import {
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import TextTransition, { presets } from "react-text-transition";
-import { CARDANO_EXPLORER_URL } from "../chains/cardano/constants";
 import { useAuthRequest } from "../hooks/useAuthRequest";
 import {
   fetchTopicVerificationSummary,
@@ -302,6 +310,310 @@ function getHashtags(
   return tags;
 }
 
+
+const REFERENCE_TYPE_ICONS = {
+  image: faFileImage,
+  video: faFileVideo,
+  audio: faFileAudio,
+  pdf: faFilePdf,
+  link: faFileAlt,
+  document: faFileAlt,
+  file: faFile,
+};
+
+const REFERENCE_EXTENSION_TYPES = {
+  image: ["avif", "bmp", "gif", "heic", "jpeg", "jpg", "png", "svg", "webp"],
+  video: ["m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "webm"],
+  audio: ["aac", "flac", "m4a", "mp3", "ogg", "wav"],
+  pdf: ["pdf"],
+  document: [
+    "csv",
+    "doc",
+    "docx",
+    "json",
+    "md",
+    "odt",
+    "ppt",
+    "pptx",
+    "rtf",
+    "txt",
+    "xls",
+    "xlsx",
+    "xml",
+  ],
+};
+
+function referenceSourceUrl(item = {}) {
+  return (
+    item.src_url ||
+    item.srcUrl ||
+    item.original_url ||
+    item.originalUrl ||
+    item.source_url ||
+    item.sourceUrl ||
+    ""
+  );
+}
+
+function referenceCandidateUrl(item = {}) {
+  return (
+    referenceSourceUrl(item) ||
+    item.local_url ||
+    item.localUrl ||
+    item.url ||
+    item.source ||
+    ""
+  );
+}
+
+function referenceKey(item, index) {
+  return String(
+    item?.content_id ||
+      item?.contentId ||
+      item?.local_url ||
+      item?.localUrl ||
+      item?.url ||
+      item?.source_url ||
+      item?.sourceUrl ||
+      item?.file_name ||
+      item?.fileName ||
+      item?.filename ||
+      `reference-${index}`,
+  );
+}
+
+function referenceFileName(item = {}, index = 0) {
+  const directName =
+    item.title ||
+    item.name ||
+    item.file_name ||
+    item.fileName ||
+    item.filename;
+
+  if (directName) return String(directName);
+
+  const candidate = String(referenceCandidateUrl(item) || "");
+  if (candidate) {
+    try {
+      const parsed = new URL(candidate, window.location.origin);
+      const segment = parsed.pathname.split("/").filter(Boolean).pop();
+      if (segment) return decodeURIComponent(segment);
+    } catch {
+      const segment = candidate.split(/[?#]/)[0].split("/").filter(Boolean).pop();
+      if (segment) return decodeURIComponent(segment);
+    }
+  }
+
+  return `Reference ${index + 1}`;
+}
+
+function referenceExtensionFromValue(value) {
+  const candidate = String(value || "").trim().toLowerCase();
+  const match = candidate.match(/\.([a-z0-9]{1,8})(?:[?#\s]|$)/);
+  return match?.[1] || "";
+}
+
+function referenceExtension(item = {}) {
+  const candidate = [
+    item.file_name,
+    item.fileName,
+    item.filename,
+    referenceCandidateUrl(item),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return referenceExtensionFromValue(candidate);
+}
+
+function referenceTypeFromExtension(extension) {
+  for (const [type, extensions] of Object.entries(REFERENCE_EXTENSION_TYPES)) {
+    if (extensions.includes(extension)) return type;
+  }
+
+  return "";
+}
+
+function referenceType(item = {}) {
+  const sourceUrl = String(referenceSourceUrl(item) || "").trim();
+  const sourceExtension = referenceExtensionFromValue(sourceUrl);
+  const sourceFileType = referenceTypeFromExtension(sourceExtension);
+
+  // A fetched web page can have an extracted image/video preview. The
+  // reference icon should represent the source itself, not its cached preview.
+  if (/^https?:\/\//i.test(sourceUrl)) {
+    return sourceFileType || "link";
+  }
+
+  const explicitType = [
+    item.content_type,
+    item.contentType,
+    item.mime_type,
+    item.mimeType,
+    item.media_type,
+    item.mediaType,
+    item.type,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  for (const type of ["image", "video", "audio", "pdf"]) {
+    if (explicitType.includes(type)) return type;
+  }
+
+  if (
+    explicitType.includes("url") ||
+    explicitType.includes("link") ||
+    explicitType.includes("html")
+  ) {
+    return "link";
+  }
+
+  if (
+    explicitType.includes("text") ||
+    explicitType.includes("document") ||
+    explicitType.includes("json") ||
+    explicitType.includes("csv")
+  ) {
+    return "document";
+  }
+
+  const extension = referenceExtension(item);
+  const extensionType = referenceTypeFromExtension(extension);
+  if (extensionType) return extensionType;
+
+  const candidateUrl = String(referenceCandidateUrl(item) || "");
+  if (/^https?:\/\//i.test(candidateUrl)) return "link";
+
+  return "file";
+}
+
+function ReferenceDesktop({
+  contentList,
+  refsMap,
+  activeKey,
+  onSelect,
+  onClose,
+  sectionRef,
+}) {
+  const { t } = useTranslation();
+  const references = (contentList || []).map((item, index) => {
+    const type = referenceType(item);
+    return {
+      item,
+      index,
+      key: referenceKey(item, index),
+      type,
+      icon: REFERENCE_TYPE_ICONS[type] || faFile,
+      name: referenceFileName(item, index),
+    };
+  });
+  const activeReference =
+    references.find((reference) => reference.key === activeKey) || null;
+
+  return (
+    <section
+      ref={sectionRef}
+      className="Breakdown-referenceDesktop"
+      aria-labelledby="topic-references-title"
+    >
+      <header className="Breakdown-referenceDesktop-header">
+        <div>
+          <span>{t("topicReferences.eyebrow")}</span>
+          <h3 id="topic-references-title">{t("topicReferences.title")}</h3>
+        </div>
+        <small>
+          {t("topicReferences.count", { count: references.length })}
+        </small>
+      </header>
+
+      <div
+        className="Breakdown-referenceDesktop-grid"
+        role="list"
+        aria-label={t("topicReferences.desktopLabel")}
+      >
+        {references.map((reference) => {
+          const selected = activeReference?.key === reference.key;
+          return (
+            <button
+              key={reference.key}
+              type="button"
+              role="listitem"
+              className={[
+                "Breakdown-referenceFile",
+                `is-${reference.type}`,
+                selected ? "is-selected" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-expanded={selected}
+              aria-controls="topic-reference-preview"
+              onClick={() => onSelect(reference.key)}
+              title={`${reference.name} · ${t(
+                `topicReferences.types.${reference.type}`,
+              )}`}
+            >
+              <span className="Breakdown-referenceFile-icon" aria-hidden="true">
+                <FontAwesomeIcon icon={reference.icon} />
+              </span>
+              <strong>{reference.name}</strong>
+              <small>{t(`topicReferences.types.${reference.type}`)}</small>
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        id="topic-reference-preview"
+        className={[
+          "Breakdown-referencePreview",
+          activeReference ? "is-open" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden={!activeReference}
+      >
+        <div className="Breakdown-referencePreview-collapse">
+          {activeReference && (
+            <article className="Breakdown-referenceWindow">
+              <header className="Breakdown-referenceWindow-bar">
+                <span
+                  className={[
+                    "Breakdown-referenceWindow-appIcon",
+                    `is-${activeReference.type}`,
+                  ].join(" ")}
+                  aria-hidden="true"
+                >
+                  <FontAwesomeIcon icon={activeReference.icon} />
+                </span>
+                <strong title={activeReference.name}>
+                  {activeReference.name}
+                </strong>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label={t("topicReferences.closePreview")}
+                  title={t("topicReferences.closePreview")}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </header>
+
+              <div className="Breakdown-referenceWindow-body">
+                <ContentList
+                  content={[activeReference.item]}
+                  refsMap={refsMap}
+                />
+              </div>
+            </article>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function TopicDataResolver({
   parsedTopic,
   topicData,
@@ -363,9 +675,12 @@ const Topic = ({
     article,
     claims: claimList,
     content: contentList,
-    transaction_hash: transactionHash,
     proposed_by: proposedBy,
+    financialSummary:
+      topicFinancialSummary,
   } = topic;
+  const financialSummary =
+    topicFinancialSummary || topic.financial_summary || null;
 
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
@@ -377,10 +692,16 @@ const Topic = ({
   const [reviewingClaim, setReviewingClaim] = useState(null);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [authPromptShow, setAuthPromptShow] = useState(false);
+  const [activeReferenceKey, setActiveReferenceKey] = useState(null);
+  const referencesSectionRef = useRef(null);
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
   const { authRequest } = useAuthRequest(user);
   const authRequestRef = useRef(authRequest);
+  const openLifecycleDetails = useCallback(() => {
+    const target = document.getElementById("topic-lifecycle-audit");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   useEffect(() => {
     authRequestRef.current = authRequest;
@@ -541,77 +862,78 @@ const Topic = ({
     }
   }, [loadVerificationSummary, showAuthPrompt, showToast, t, user?.access_token, votingClaimId]);
 
-  // Map refs for each content item
+  // Map refs for each content item.
   const contentRefs = useRef({});
-  contentList.forEach((item) => {
-    contentRefs.current[item.local_url] =
-      contentRefs.current[item.local_url] || React.createRef();
+  (contentList || []).forEach((item, index) => {
+    const key = item.local_url || item.localUrl || referenceKey(item, index);
+    contentRefs.current[key] =
+      contentRefs.current[key] || React.createRef();
   });
 
-  // Scroll handler
-  const handleCarouselClick = (localUrl) => {
-    const targetRef = contentRefs.current[localUrl];
-    if (targetRef && targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  useEffect(() => {
+    if (!activeReferenceKey) return;
+
+    const referenceStillExists = (contentList || []).some(
+      (item, index) => referenceKey(item, index) === activeReferenceKey,
+    );
+
+    if (!referenceStillExists) setActiveReferenceKey(null);
+  }, [activeReferenceKey, contentList]);
+
+  const openReference = useCallback((key, { scroll = false } = {}) => {
+    setActiveReferenceKey((current) =>
+      current === key && !scroll ? null : key,
+    );
+
+    if (scroll) {
+      window.requestAnimationFrame(() => {
+        referencesSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      });
     }
+  }, []);
+
+  // Carousel items open the matching desktop reference preview.
+  const handleCarouselClick = (localUrl) => {
+    const index = (contentList || []).findIndex(
+      (item) =>
+        item.local_url === localUrl ||
+        item.localUrl === localUrl ||
+        item.url === localUrl,
+    );
+
+    if (index < 0) return;
+    openReference(referenceKey(contentList[index], index), { scroll: true });
   };
 
   return (
     <div className="Breakdown-topic-container">
       <h1 className="Breakdown-topic-title">{title}</h1>
-      <small className="Breakdown-topic-subheading">
-        <span>
-          {t("status")}:
-          <b>
-            <TextTransition
-              springConfig={presets.wobbly}
-              className="Breakdown-topic-status"
-            >
-              {transactionHash ? (
-                <a
-                  href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t(currentStatus)}
-                </a>
-              ) : (
-                t(currentStatus)
-              )}
-            </TextTransition>
-          </b>
-        </span>
-        <span>•</span>
-        <span>
-          {t("rewardPool")}:{" "}
-          <TextTransition springConfig={presets.gentle}>
-            {transactionHash ? (
-              <a
-                href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {rewardAmount || 0} $DFCT
-              </a>
-            ) : (
-              `${rewardAmount || 0} $DFCT`
-            )}
-          </TextTransition>
-        </span>
-      </small>
+      <div className="Breakdown-topic-commandBar">
+        <TopicFinancialSummary
+          status={currentStatus}
+          financialSummary={financialSummary}
+          legacyRewardAmount={rewardAmount}
+          locale={locale}
+          onOpenLifecycle={openLifecycleDetails}
+        />
 
-      <TopicToolbar
-        user={user}
-        shareModalShow={shareModalShow}
-        setShareModalShow={setShareModalShow}
-        title={title}
-        showToast={showToast}
-        hashtags={getHashtags(contentList)}
-        onTopicUpdated={handleTopicUpdate}
-        topicId={topicId}
-        status={currentStatus}
-        proposedBy={proposedBy}
-      />
+        <TopicToolbar
+          user={user}
+          shareModalShow={shareModalShow}
+          setShareModalShow={setShareModalShow}
+          title={title}
+          showToast={showToast}
+          hashtags={getHashtags(contentList)}
+          onTopicUpdated={handleTopicUpdate}
+          topicId={topicId}
+          status={currentStatus}
+          proposedBy={proposedBy}
+          financialSummary={financialSummary}
+        />
+      </div>
       {contentList && contentList.length > 0 && (
         <div style={{ marginBottom: "2rem" }}>
           <ContentCarousel
@@ -662,7 +984,14 @@ const Topic = ({
       />
       <div className="Breakdown-topic-article">{article}</div>
       {contentList && contentList.length > 0 && (
-        <ContentList content={contentList} refsMap={contentRefs.current} />
+        <ReferenceDesktop
+          contentList={contentList}
+          refsMap={contentRefs.current}
+          activeKey={activeReferenceKey}
+          onSelect={(key) => openReference(key)}
+          onClose={() => setActiveReferenceKey(null)}
+          sectionRef={referencesSectionRef}
+        />
       )}
       <EvidenceModal
         show={evidenceModalShow}
@@ -746,7 +1075,7 @@ function TopicBreakdownPage() {
             <FontAwesomeIcon icon={faArrowUp} />
           </Button>
         </div>
-        <div className="Breakdown-right-column">
+        <div className="Breakdown-right-column" id="topic-lifecycle-audit">
           {topicData?.topic_id && (
             <TopicLifecycleAuditTrail
               user={user}

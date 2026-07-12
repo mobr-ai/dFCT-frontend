@@ -1602,7 +1602,7 @@ export default function TopicLifecycleAuditTrail({
       <div className="TopicJourney-header">
         <p>{t("dsm.audit.topicBreakdown")}</p>
         <strong>
-          {t("dsm.audit.statusLabel")}: <span>{journeyStatus}</span>
+          <span>{journeyStatus}</span>
         </strong>
       </div>
 
