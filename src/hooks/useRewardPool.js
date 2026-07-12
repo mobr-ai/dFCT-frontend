@@ -67,6 +67,12 @@ export function useRewardPool({
   const [busy, setBusy] = useState("");
   const [error, setError] = useState(null);
   const operationKeysRef = useRef(new Map());
+  const authRequestRef = useRef(authRequest);
+  const loadPromiseRef = useRef(null);
+
+  useEffect(() => {
+    authRequestRef.current = authRequest;
+  }, [authRequest]);
 
   const operationKey = useCallback(
     (scope) => {
@@ -110,38 +116,50 @@ export function useRewardPool({
 
   const load = useCallback(
     async ({ silent = false } = {}) => {
-      if (!enabled || !topicId || !authRequest?.get) return null;
+      const requestClient = authRequestRef.current;
+      if (!enabled || !topicId || !requestClient?.get) return null;
+
+      if (loadPromiseRef.current) return loadPromiseRef.current;
 
       if (!silent) setLoading(true);
       setError(null);
 
-      try {
-        const payload = await fetchTopicRewardPool(authRequest, topicId, {
-          authenticated: Boolean(user?.access_token),
+      const request = fetchTopicRewardPool(requestClient, topicId, {
+        authenticated: Boolean(user?.access_token),
+      })
+        .then((payload) => {
+          setSummary(payload || null);
+          onUpdated?.(payload || null);
+          return payload;
+        })
+        .catch((err) => {
+          setError(apiError(err, "Unable to load the reward pool."));
+          throw err;
+        })
+        .finally(() => {
+          if (loadPromiseRef.current === request) {
+            loadPromiseRef.current = null;
+          }
+          if (!silent) setLoading(false);
         });
-        setSummary(payload || null);
-        onUpdated?.(payload || null);
-        return payload;
-      } catch (err) {
-        setError(apiError(err, "Unable to load the reward pool."));
-        throw err;
-      } finally {
-        if (!silent) setLoading(false);
-      }
+
+      loadPromiseRef.current = request;
+      return request;
     },
-    [authRequest, enabled, onUpdated, topicId, user?.access_token],
+    [enabled, onUpdated, topicId, user?.access_token],
   );
 
   const loadActivity = useCallback(
     async ({ silent = false } = {}) => {
-      if (!topicId || !authRequest?.get) return null;
+      const requestClient = authRequestRef.current;
+      if (!topicId || !requestClient?.get) return null;
 
       if (!silent) setBusy("activity");
       setError(null);
 
       try {
         const payload = await fetchTopicRewardPoolActivity(
-          authRequest,
+          requestClient,
           topicId,
           { limit: 50 },
         );
@@ -154,7 +172,7 @@ export function useRewardPool({
         if (!silent) setBusy("");
       }
     },
-    [authRequest, topicId],
+    [topicId],
   );
 
   const createPool = useCallback(
@@ -290,7 +308,7 @@ export function useRewardPool({
   useEffect(() => {
     if (!enabled) return;
     load().catch(() => {});
-  }, [enabled, load, user?.access_token]);
+  }, [enabled, load]);
 
   const permissions = summary?.permissions || EMPTY_PERMISSIONS;
 

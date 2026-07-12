@@ -849,6 +849,10 @@ const Topic = ({
   const navigate = useNavigate();
   const { authRequest } = useAuthRequest(user);
   const authRequestRef = useRef(authRequest);
+  const showToastRef = useRef(showToast);
+  const translationRef = useRef(t);
+  const topicIdRef = useRef(topicId);
+  const verificationLoadRef = useRef(null);
   const openLifecycleDetails = useCallback(() => {
     const target = document.getElementById("topic-lifecycle-audit");
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -856,7 +860,10 @@ const Topic = ({
 
   useEffect(() => {
     authRequestRef.current = authRequest;
-  }, [authRequest]);
+    showToastRef.current = showToast;
+    translationRef.current = t;
+    topicIdRef.current = topicId;
+  }, [authRequest, showToast, t, topicId]);
 
   const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
@@ -919,27 +926,47 @@ const Topic = ({
   };
 
   const loadVerificationSummary = useCallback(async ({ silent = false } = {}) => {
-    if (!topicId || !user?.access_token) {
+    const requestTopicId = topicId;
+    const requestClient = authRequestRef.current;
+
+    if (!requestTopicId || !user?.access_token || !requestClient?.get) {
       setVerificationSummary(null);
       return null;
     }
 
+    if (verificationLoadRef.current) return verificationLoadRef.current;
+
     if (!silent) setVerificationLoading(true);
 
-    try {
-      const summary = await fetchTopicVerificationSummary(
-        authRequestRef.current,
-        topicId,
-      );
-      setVerificationSummary(summary);
-      return summary;
-    } catch {
-      if (!silent) showToast?.(t("claimVoting.summaryFailed"), "secondary");
-      return null;
-    } finally {
-      if (!silent) setVerificationLoading(false);
-    }
-  }, [showToast, t, topicId, user?.access_token]);
+    const request = fetchTopicVerificationSummary(
+      requestClient,
+      requestTopicId,
+    )
+      .then((summary) => {
+        if (String(topicIdRef.current) === String(requestTopicId)) {
+          setVerificationSummary(summary);
+        }
+        return summary;
+      })
+      .catch(() => {
+        if (!silent) {
+          showToastRef.current?.(
+            translationRef.current("claimVoting.summaryFailed"),
+            "secondary",
+          );
+        }
+        return null;
+      })
+      .finally(() => {
+        if (verificationLoadRef.current === request) {
+          verificationLoadRef.current = null;
+        }
+        if (!silent) setVerificationLoading(false);
+      });
+
+    verificationLoadRef.current = request;
+    return request;
+  }, [topicId, user?.access_token]);
 
   useEffect(() => {
     loadVerificationSummary({ silent: true });
