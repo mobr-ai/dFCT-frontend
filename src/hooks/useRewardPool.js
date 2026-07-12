@@ -225,13 +225,6 @@ export function useRewardPool({
           return payload;
         })
         .catch((err) => {
-          setError(api limit: 50 },
-      )
-        .then((payload) => {
-          setActivity(payload || null);
-          return payload;
-        })
-        .catch((err) => {
           setError(apiError(err, "Unable to load reward-pool activity."));
           throw err;
         })
