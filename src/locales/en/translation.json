@@ -1669,5 +1669,135 @@
     "communityDisagrees": "{{percent}}% disagree with linked claims",
     "communitySplit": "Community perception is mixed",
     "noVotes": "No community votes yet"
+  },
+  "rewardPoolModal": {
+    "eyebrow": "Community incentives",
+    "title": "Community reward pool",
+    "topicFallback": "Topic reward pool",
+    "loading": "Loading reward pool…",
+    "navigation": "Reward pool sections",
+    "footer": "Rewards use persisted dSM-Prov contribution scores and exact DFCT Credit accounting.",
+    "open": "Open community reward pool",
+    "signInAction": "Sign in to contribute",
+    "signInHelp": "Add DFCT Credits and support community verification.",
+    "available": "Available to distribute",
+    "availableHelp": "Unreserved credits ready for the next distribution.",
+    "sponsorBalance": "Your refundable contribution",
+    "sponsorBalanceHelp": "Your remaining funded share before credits are awarded.",
+    "creditBalance": "Your DFCT Credit balance",
+    "amount": "Amount",
+    "amountPlaceholder": "e.g. 25",
+    "amountInvalid": "Enter a positive amount with up to 6 decimal places.",
+    "refresh": "Refresh",
+    "backToOverview": "Back to overview",
+    "nav": {
+      "overview": "Overview",
+      "fund": "Add credits",
+      "distribute": "Distribute",
+      "activity": "Activity"
+    },
+    "statuses": {
+      "active": "Active",
+      "paused": "Paused",
+      "closed": "Closed",
+      "pending": "Pending"
+    },
+    "metrics": {
+      "funded": "Funded",
+      "reserved": "Reserved",
+      "distributed": "Distributed",
+      "returned": "Returned"
+    },
+    "empty": {
+      "eyebrow": "Power community verification",
+      "title": "Turn verified contributions into visible rewards",
+      "body": "Activate a DFCT Credit pool for this topic. Eligible community work is scored by the topic lifecycle and rewarded proportionally when a distribution is approved.",
+      "managerOnly": "The topic owner or a reward manager can activate this pool.",
+      "benefits": {
+        "community": "Reward meaningful community work",
+        "proportional": "Allocate by persisted contribution score",
+        "accounting": "Keep every credit movement auditable"
+      }
+    },
+    "create": {
+      "initialAmount": "Initial funding",
+      "help": "Credits are debited from your DFCT balance and become available to this topic.",
+      "action": "Activate reward pool"
+    },
+    "actions": {
+      "fund": "Add credits",
+      "fundHelp": "Increase the amount available for future rewards.",
+      "distribute": "Preview distribution",
+      "distributeHelp": "Review exact allocations before awarding credits.",
+      "activity": "View activity",
+      "activityHelp": "Inspect funding and distribution history."
+    },
+    "fund": {
+      "title": "Add credits to the pool",
+      "body": "Support this topic with DFCT Credits. Your contribution stays traceable in the pool ledger.",
+      "action": "Add credits"
+    },
+    "distribution": {
+      "title": "Prepare a reward distribution",
+      "body": "Choose how much to distribute from {{available}}. The preview uses finalized, unpaid dSM-Prov score events.",
+      "previewAction": "Preview allocation",
+      "previewEyebrow": "Distribution preview",
+      "previewTitle": "Review every allocation",
+      "completeEyebrow": "Distribution complete",
+      "completeTitle": "Rewards delivered",
+      "participants_one": "{{count}} contributor",
+      "participants_other": "{{count}} contributors",
+      "totalScore": "{{score}} total points",
+      "contributor": "Contributor",
+      "score": "Score",
+      "share": "Share",
+      "reward": "Reward",
+      "confirmTitle": "This action awards credits immediately",
+      "confirmBody": "Executing this preview atomically credits every listed contributor and consumes the selected score events. It cannot be run twice.",
+      "execute": "Distribute rewards",
+      "changeAmount": "Change amount",
+      "completeNotice": "Credits were awarded successfully",
+      "completeBody": "The distribution and its claimed contribution events are now recorded in the immutable reward ledger."
+    },
+    "activity": {
+      "eyebrow": "Accounting trail",
+      "title": "Pool activity",
+      "loading": "Loading activity…",
+      "empty": "No reward-pool activity has been recorded yet.",
+      "poolEntries": "Pool ledger",
+      "distributions": "Distributions",
+      "distributionLabel": "Distribution #{{id}}",
+      "entryTypes": {
+        "fund": "Credits added",
+        "reserve": "Credits reserved",
+        "release": "Reservation released",
+        "award": "Rewards awarded",
+        "return": "Credits returned"
+      }
+    },
+    "errors": {
+      "amountrequired": "Enter an amount.",
+      "initialamountrequired": "Enter the initial funding amount.",
+      "idempotencykeyrequired": "The operation could not be safely identified. Try again.",
+      "invalididempotencykey": "The operation identifier is invalid. Reload and try again.",
+      "insufficientcredits": "Your DFCT Credit balance is not sufficient for this amount.",
+      "insufficientrewardpoolbalance": "The reward pool does not have enough available credits.",
+      "noeligiblerewardpoints": "There are no finalized, unpaid contribution points to distribute yet.",
+      "rewardamounttoosmallforparticipants": "The selected amount is too small for the eligible contributors.",
+      "rewarddistributionintegrityerror": "The preview failed its integrity check. Create a new preview.",
+      "rewarddistributionnotexecutable": "This distribution can no longer be executed.",
+      "rewarddistributionpreviewstale": "The eligible contribution set changed. Create a fresh preview.",
+      "rewardpoolalreadyexists": "This topic already has a reward pool.",
+      "rewardpoolclosed": "This reward pool is closed.",
+      "rewardpoolmanagerrequired": "Only the topic owner or a reward manager can perform this action.",
+      "rewardpoolnotfound": "This topic does not have a reward pool yet.",
+      "rewardpoolunavailable": "The reward pool is not available for this operation.",
+      "generic": "The reward-pool operation could not be completed."
+    },
+    "toasts": {
+      "created": "Community reward pool activated.",
+      "funded": "Credits added to the reward pool.",
+      "distributed": "Community rewards distributed."
+    }
   }
 }

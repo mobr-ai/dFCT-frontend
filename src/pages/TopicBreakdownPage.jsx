@@ -3,6 +3,7 @@ import "../styles/WelcomePage.css";
 import "../styles/NavigationSidebar.css";
 import { TopicSidebar } from "../components/topic";
 import { TopicToolbar } from "../components/topic";
+import { RewardPoolModal } from "../components/topic";
 import TopicFinancialSummary from "../components/topic/TopicFinancialSummary";
 import { EvidenceModal } from "../components/submission";
 import { TopicLifecycleAuditTrail } from "../components/dsm";
@@ -832,6 +833,7 @@ const Topic = ({
   const [reviewingClaim, setReviewingClaim] = useState(null);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [authPromptShow, setAuthPromptShow] = useState(false);
+  const [rewardPoolModalShow, setRewardPoolModalShow] = useState(false);
   const [activeReferenceKey, setActiveReferenceKey] = useState(null);
   const referencesSectionRef = useRef(null);
   const referenceAssessments = React.useMemo(
@@ -860,6 +862,30 @@ const Topic = ({
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
     if (message) showToast(message, "success");
   };
+
+  const handleRewardPoolUpdated = useCallback((payload) => {
+    if (!payload) return;
+
+    setTopic((prev) => {
+      const currentSummary =
+        prev?.financialSummary ||
+        prev?.financial_summary ||
+        {};
+      const nextRewardPool = payload.rewardPool ?? null;
+
+      return {
+        ...prev,
+        financialSummary: {
+          ...currentSummary,
+          rewardPool: nextRewardPool,
+          rewardPoolAccountingReady:
+            payload.rewardPoolAccountingReady ?? Boolean(nextRewardPool),
+          hasFinancialActivity:
+            currentSummary.hasFinancialActivity || Boolean(nextRewardPool),
+        },
+      };
+    });
+  }, [setTopic]);
 
   const handleTagClick = (tag) => {
     // Navigate to LandingPage with search query
@@ -1067,6 +1093,7 @@ const Topic = ({
           legacyRewardAmount={rewardAmount}
           locale={locale}
           onOpenLifecycle={openLifecycleDetails}
+          onOpenRewardPool={() => setRewardPoolModalShow(true)}
         />
 
         <TopicToolbar
@@ -1143,6 +1170,17 @@ const Topic = ({
           sectionRef={referencesSectionRef}
         />
       )}
+      <RewardPoolModal
+        show={rewardPoolModalShow}
+        onHide={() => setRewardPoolModalShow(false)}
+        topicId={topicId}
+        topicTitle={title}
+        user={user}
+        locale={locale}
+        onRewardPoolUpdated={handleRewardPoolUpdated}
+        onRequireAuth={showAuthPrompt}
+        showToast={showToast}
+      />
       <EvidenceModal
         show={evidenceModalShow}
         title={evidenceModalTitle}

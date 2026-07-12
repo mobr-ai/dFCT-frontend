@@ -110,6 +110,7 @@ function TopicFinancialSummary({
   legacyRewardAmount,
   locale,
   onOpenLifecycle,
+  onOpenRewardPool,
 }) {
   const { t } = useTranslation();
   const anchoring = financialSummary?.anchoring || null;
@@ -174,6 +175,8 @@ function TopicFinancialSummary({
       value: rewardValue,
       meta: rewardStatus,
       tone: rewardPoolAccountingReady ? "settled" : "pending",
+      onClick: onOpenRewardPool || onOpenLifecycle,
+      actionLabel: t("rewardPoolModal.open"),
     },
   ];
 
@@ -198,9 +201,13 @@ function TopicFinancialSummary({
             ]
               .filter(Boolean)
               .join(" ")}
-            onClick={onOpenLifecycle}
-            aria-label={summary}
-            title={`${summary}. ${t("topicFinancialSummary.openLifecycle")}`}
+            onClick={card.onClick || onOpenLifecycle}
+            aria-label={`${summary}. ${
+              card.actionLabel || t("topicFinancialSummary.openLifecycle")
+            }`}
+            title={`${summary}. ${
+              card.actionLabel || t("topicFinancialSummary.openLifecycle")
+            }`}
           >
             <span>{card.label}</span>
             <strong>{card.value}</strong>

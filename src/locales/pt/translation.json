@@ -1669,5 +1669,135 @@
     "communityDisagrees": "{{percent}}% discordam das alegações vinculadas",
     "communitySplit": "A percepção da comunidade está dividida",
     "noVotes": "Ainda não há votos da comunidade"
+  },
+  "rewardPoolModal": {
+    "eyebrow": "Incentivos comunitários",
+    "title": "Pool de recompensas da comunidade",
+    "topicFallback": "Pool de recompensas do tópico",
+    "loading": "Carregando pool de recompensas…",
+    "navigation": "Seções do pool de recompensas",
+    "footer": "As recompensas usam pontuações persistidas do dSM-Prov e contabilização exata em Créditos DFCT.",
+    "open": "Abrir pool de recompensas da comunidade",
+    "signInAction": "Entrar para contribuir",
+    "signInHelp": "Adicione Créditos DFCT e apoie a verificação pela comunidade.",
+    "available": "Disponível para distribuição",
+    "availableHelp": "Créditos não reservados, prontos para a próxima distribuição.",
+    "sponsorBalance": "Sua contribuição reembolsável",
+    "sponsorBalanceHelp": "Sua parcela financiada restante antes da concessão das recompensas.",
+    "creditBalance": "Seu saldo de Créditos DFCT",
+    "amount": "Valor",
+    "amountPlaceholder": "ex.: 25",
+    "amountInvalid": "Informe um valor positivo com até 6 casas decimais.",
+    "refresh": "Atualizar",
+    "backToOverview": "Voltar à visão geral",
+    "nav": {
+      "overview": "Visão geral",
+      "fund": "Adicionar créditos",
+      "distribute": "Distribuir",
+      "activity": "Atividade"
+    },
+    "statuses": {
+      "active": "Ativo",
+      "paused": "Pausado",
+      "closed": "Encerrado",
+      "pending": "Pendente"
+    },
+    "metrics": {
+      "funded": "Financiado",
+      "reserved": "Reservado",
+      "distributed": "Distribuído",
+      "returned": "Devolvido"
+    },
+    "empty": {
+      "eyebrow": "Impulsione a verificação pela comunidade",
+      "title": "Transforme contribuições verificadas em recompensas visíveis",
+      "body": "Ative um pool de Créditos DFCT para este tópico. O trabalho elegível da comunidade é pontuado pelo ciclo de vida do tópico e recompensado proporcionalmente quando uma distribuição é aprovada.",
+      "managerOnly": "O proprietário do tópico ou um gestor de recompensas pode ativar este pool.",
+      "benefits": {
+        "community": "Recompense trabalho comunitário relevante",
+        "proportional": "Distribua pela pontuação persistida das contribuições",
+        "accounting": "Mantenha cada movimentação de crédito auditável"
+      }
+    },
+    "create": {
+      "initialAmount": "Financiamento inicial",
+      "help": "Os créditos são debitados do seu saldo DFCT e ficam disponíveis para este tópico.",
+      "action": "Ativar pool de recompensas"
+    },
+    "actions": {
+      "fund": "Adicionar créditos",
+      "fundHelp": "Aumente o valor disponível para recompensas futuras.",
+      "distribute": "Pré-visualizar distribuição",
+      "distributeHelp": "Revise as alocações exatas antes de conceder créditos.",
+      "activity": "Ver atividade",
+      "activityHelp": "Inspecione o histórico de financiamento e distribuições."
+    },
+    "fund": {
+      "title": "Adicionar créditos ao pool",
+      "body": "Apoie este tópico com Créditos DFCT. Sua contribuição permanece rastreável no livro-razão do pool.",
+      "action": "Adicionar créditos"
+    },
+    "distribution": {
+      "title": "Preparar uma distribuição de recompensas",
+      "body": "Escolha quanto distribuir dos {{available}}. A prévia usa eventos de pontuação dSM-Prov finalizados e ainda não pagos.",
+      "previewAction": "Pré-visualizar alocação",
+      "previewEyebrow": "Prévia da distribuição",
+      "previewTitle": "Revise cada alocação",
+      "completeEyebrow": "Distribuição concluída",
+      "completeTitle": "Recompensas entregues",
+      "participants_one": "{{count}} contribuidor",
+      "participants_other": "{{count}} contribuidores",
+      "totalScore": "{{score}} pontos totais",
+      "contributor": "Contribuidor",
+      "score": "Pontuação",
+      "share": "Parcela",
+      "reward": "Recompensa",
+      "confirmTitle": "Esta ação concede os créditos imediatamente",
+      "confirmBody": "A execução desta prévia credita atomicamente todos os contribuidores listados e consome os eventos de pontuação selecionados. Ela não pode ser executada duas vezes.",
+      "execute": "Distribuir recompensas",
+      "changeAmount": "Alterar valor",
+      "completeNotice": "Os créditos foram concedidos com sucesso",
+      "completeBody": "A distribuição e os eventos de contribuição utilizados agora estão registrados no livro-razão imutável de recompensas."
+    },
+    "activity": {
+      "eyebrow": "Trilha contábil",
+      "title": "Atividade do pool",
+      "loading": "Carregando atividade…",
+      "empty": "Ainda não há atividade registrada neste pool de recompensas.",
+      "poolEntries": "Livro-razão do pool",
+      "distributions": "Distribuições",
+      "distributionLabel": "Distribuição nº {{id}}",
+      "entryTypes": {
+        "fund": "Créditos adicionados",
+        "reserve": "Créditos reservados",
+        "release": "Reserva liberada",
+        "award": "Recompensas concedidas",
+        "return": "Créditos devolvidos"
+      }
+    },
+    "errors": {
+      "amountrequired": "Informe um valor.",
+      "initialamountrequired": "Informe o valor do financiamento inicial.",
+      "idempotencykeyrequired": "Não foi possível identificar a operação com segurança. Tente novamente.",
+      "invalididempotencykey": "O identificador da operação é inválido. Recarregue e tente novamente.",
+      "insufficientcredits": "Seu saldo de Créditos DFCT não é suficiente para este valor.",
+      "insufficientrewardpoolbalance": "O pool não possui créditos disponíveis suficientes.",
+      "noeligiblerewardpoints": "Ainda não há pontos de contribuição finalizados e não pagos para distribuir.",
+      "rewardamounttoosmallforparticipants": "O valor selecionado é pequeno demais para os contribuidores elegíveis.",
+      "rewarddistributionintegrityerror": "A prévia falhou na verificação de integridade. Gere uma nova prévia.",
+      "rewarddistributionnotexecutable": "Esta distribuição não pode mais ser executada.",
+      "rewarddistributionpreviewstale": "O conjunto de contribuições elegíveis mudou. Gere uma nova prévia.",
+      "rewardpoolalreadyexists": "Este tópico já possui um pool de recompensas.",
+      "rewardpoolclosed": "Este pool de recompensas está encerrado.",
+      "rewardpoolmanagerrequired": "Somente o proprietário do tópico ou um gestor de recompensas pode realizar esta ação.",
+      "rewardpoolnotfound": "Este tópico ainda não possui um pool de recompensas.",
+      "rewardpoolunavailable": "O pool de recompensas não está disponível para esta operação.",
+      "generic": "Não foi possível concluir a operação do pool de recompensas."
+    },
+    "toasts": {
+      "created": "Pool de recompensas da comunidade ativado.",
+      "funded": "Créditos adicionados ao pool de recompensas.",
+      "distributed": "Recompensas da comunidade distribuídas."
+    }
   }
 }
