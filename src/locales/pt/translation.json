@@ -528,11 +528,11 @@
       "relativeDays": "há {{count}}d",
       "relativeYears": "há {{count}}a",
       "journeyStatus": {
-        "draft": "Rascunho, ainda não proposto",
-        "proposed": "Proposto e aguardando revisão",
-        "reviewed": "Revisado e preparando ativação",
-        "active": "Ativo e aceitando contribuições",
-        "rejected": "Rejeitado após revisão"
+        "draft": "Rascunho · Ainda não proposto",
+        "proposed": "Proposto · Aguardando revisão",
+        "reviewed": "Revisado · Preparando ativação",
+        "active": "Ativo · Aceitando contribuições",
+        "rejected": "Rejeitado · Revisão concluída"
       },
       "stages": {
         "publication": {
@@ -1601,5 +1601,56 @@
   "publicationProvenanceText": "Adicione uma impressão d-FCT pronta para Cardano ao ciclo de vida deste tópico. O d-FCT enfileira a etapa de proveniência automaticamente após a publicação.",
   "publicationProvenanceCredits": "Financiado com DFCT Credits pré-pagos quando a etapa de ancoragem for ativada.",
   "publicationPowerUpStatusOn": "Ativo",
-  "publicationPowerUpStatusOff": "Inativo"
+  "publicationPowerUpStatusOff": "Inativo",
+  "topicFinancialSummary": {
+    "ariaLabel": "Resumo financeiro e de status do tópico",
+    "state": "Jornada",
+    "publication": "Publicação",
+    "anchoring": "On-chain",
+    "rewardPool": "Recompensas",
+    "lifecycleState": "Estado atual do ciclo de vida",
+    "notPublished": "Não publicado",
+    "notAnchored": "Não ancorado",
+    "notFunded": "Sem pool",
+    "accountingPending": "Contabilização pendente",
+    "legacyRewardConfigured": "{{amount}} DFCT",
+    "rewardAvailable": "{{amount}} {{currency}}",
+    "rewardFunded": "{{amount}} {{currency}} financiados",
+    "openLifecycle": "Abrir detalhes do ciclo de vida",
+    "billingModes": {
+      "sponsored": "Patrocinada",
+      "included": "Incluída",
+      "free": "Gratuita"
+    },
+    "statuses": {
+      "pending": "Pendente",
+      "blocked": "Financiamento bloqueado",
+      "funding_blocked": "Financiamento bloqueado",
+      "debited": "Debitado",
+      "settled": "Liquidado",
+      "refunded": "Reembolsado",
+      "review_required": "Revisão necessária",
+      "confirmed": "Confirmada",
+      "submitted": "Enviada",
+      "failed": "Falhou"
+    }
+  },
+  "topicActions": "Ações do tópico",
+  "topicReferences": {
+    "eyebrow": "Área de fontes",
+    "title": "Referências",
+    "desktopLabel": "Arquivos de referência do tópico",
+    "count_one": "{{count}} referência",
+    "count_other": "{{count}} referências",
+    "closePreview": "Fechar visualização da referência",
+    "types": {
+      "image": "Imagem",
+      "video": "Vídeo",
+      "audio": "Áudio",
+      "pdf": "PDF",
+      "link": "Link da web",
+      "document": "Documento",
+      "file": "Arquivo"
+    }
+  }
 }

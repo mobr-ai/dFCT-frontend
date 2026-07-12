@@ -528,11 +528,11 @@
       "relativeDays": "{{count}}d ago",
       "relativeYears": "{{count}}y ago",
       "journeyStatus": {
-        "draft": "Draft, not yet proposed",
-        "proposed": "Proposed and waiting for review",
-        "reviewed": "Reviewed and preparing activation",
-        "active": "Active and accepting contributions",
-        "rejected": "Rejected after review"
+        "draft": "Draft · Not yet proposed",
+        "proposed": "Proposed · Awaiting review",
+        "reviewed": "Reviewed · Preparing activation",
+        "active": "Active · Accepting contributions",
+        "rejected": "Rejected · Review complete"
       },
       "stages": {
         "publication": {
@@ -1601,5 +1601,56 @@
   "publicationProvenanceText": "Add a Cardano-ready d-FCT fingerprint to this topic lifecycle. d-FCT queues the provenance step automatically after publication.",
   "publicationProvenanceCredits": "Funded with prepaid DFCT Credits when the anchoring step is activated.",
   "publicationPowerUpStatusOn": "On",
-  "publicationPowerUpStatusOff": "Off"
+  "publicationPowerUpStatusOff": "Off",
+  "topicFinancialSummary": {
+    "ariaLabel": "Topic status and financial summary",
+    "state": "Journey",
+    "publication": "Publishing",
+    "anchoring": "On-chain",
+    "rewardPool": "Rewards",
+    "lifecycleState": "Current lifecycle state",
+    "notPublished": "Not published",
+    "notAnchored": "Not anchored",
+    "notFunded": "No pool",
+    "accountingPending": "Accounting pending",
+    "legacyRewardConfigured": "{{amount}} DFCT",
+    "rewardAvailable": "{{amount}} {{currency}}",
+    "rewardFunded": "{{amount}} {{currency}} funded",
+    "openLifecycle": "Open lifecycle details",
+    "billingModes": {
+      "sponsored": "Sponsored",
+      "included": "Included",
+      "free": "Free"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "blocked": "Funding blocked",
+      "funding_blocked": "Funding blocked",
+      "debited": "Debited",
+      "settled": "Settled",
+      "refunded": "Refunded",
+      "review_required": "Review required",
+      "confirmed": "Confirmed",
+      "submitted": "Submitted",
+      "failed": "Failed"
+    }
+  },
+  "topicActions": "Topic actions",
+  "topicReferences": {
+    "eyebrow": "Source workspace",
+    "title": "References",
+    "desktopLabel": "Topic reference files",
+    "count_one": "{{count}} reference",
+    "count_other": "{{count}} references",
+    "closePreview": "Close reference preview",
+    "types": {
+      "image": "Image",
+      "video": "Video",
+      "audio": "Audio",
+      "pdf": "PDF",
+      "link": "Web link",
+      "document": "Document",
+      "file": "File"
+    }
+  }
 }
