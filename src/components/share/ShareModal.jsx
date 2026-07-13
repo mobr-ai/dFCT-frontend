@@ -63,11 +63,20 @@ function ShareModal(props) {
                 size="md"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
+                contentClassName="ShareModal-content"
             >
-                <Modal.Header closeButton>
+                <Modal.Header className="ShareModal-header">
                     <Modal.Title id="contained-modal-title-vcenter">
                         {t('shareTopicTo')}
                     </Modal.Title>
+                    <button
+                        type="button"
+                        className="ShareModal-close"
+                        aria-label={t('closeButton')}
+                        onClick={props.onHide}
+                    >
+                        ×
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="ShareModal-grid-wrapper">
@@ -121,7 +130,7 @@ function ShareModal(props) {
                         </div>
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer className="ShareModal-footer">
                     <Button variant="secondary" onClick={copyToClipboard}>
                         📋 {t('copy')}
                     </Button>
