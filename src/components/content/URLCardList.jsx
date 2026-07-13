@@ -77,8 +77,11 @@ function URLCardList(props) {
     props &&
     props.urls && (
       <div className="Url-card-container">
-        {props.urls.map((item, _) => (
-          <URLCard item={item} />
+        {props.urls.map((item, index) => (
+          <URLCard
+            key={`${item.url || "url"}-${index}`}
+            item={item}
+          />
         ))}
       </div>
     )

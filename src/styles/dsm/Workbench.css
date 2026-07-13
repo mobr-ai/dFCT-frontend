@@ -1584,7 +1584,8 @@
   transform: translateY(-1px);
 }
 
-.TopicJourney-contributionPrimary--button:disabled {
+.TopicJourney-contributionPrimary--button:disabled,
+.TopicJourney-contributionPrimary--button[aria-disabled="true"] {
   cursor: default;
   transform: none;
 }
