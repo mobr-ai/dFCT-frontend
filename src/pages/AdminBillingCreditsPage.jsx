@@ -651,7 +651,7 @@ export default function AdminBillingCreditsPage() {
             <p>{t("adminBilling.subtitle")}</p>
           </div>
 
-          <span className="BillingAccess-syncPill">
+          <span className="BillingAccess-syncPill DfctAdminWorkflow-sync">
             {loading ? <Spinner animation="border" size="sm" /> : <span className="BillingAccess-syncDot" />}
             {apiUnavailable
               ? t("adminBilling.syncWaiting")
