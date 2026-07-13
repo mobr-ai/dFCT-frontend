@@ -1312,14 +1312,15 @@
   "adminConsole": {
     "eyebrow": "Console admin",
     "title": "Console Admin d-FCT",
-    "subtitle": "Opere billing, ancoragem de proveniência e futuros controles da plataforma em um único workspace admin.",
+    "subtitle": "Opere workflow, billing, ancoragem de proveniência e futuros controles da plataforma em um único workspace admin.",
     "accessDeniedTitle": "Acesso admin necessário",
     "accessDeniedText": "Apenas admins podem abrir a console admin do d-FCT.",
     "tabsAriaLabel": "Seções da console admin",
     "tabs": {
       "overview": "Visão geral",
       "billing": "Billing",
-      "anchoring": "Ancoragem"
+      "anchoring": "Ancoragem",
+      "workflow": "Workflow"
     },
     "overviewTitle": "Visão geral admin",
     "overviewSubtitle": "Uma visão operacional compacta das áreas admin atualmente disponíveis no d-FCT.",
@@ -1336,7 +1337,7 @@
     "overviewRoadmapValue": "Evoluindo",
     "overviewRoadmapCaption": "Este shell está preparado para tópicos, sistema, alertas e operações de proveniência.",
     "nextOpsTitle": "Áreas operacionais",
-    "nextOpsSubtitle": "Comece com billing hoje e avance para ancoragem de proveniência como próximo workflow admin.",
+    "nextOpsSubtitle": "Opere primeiro a cobertura de revisores e, depois, billing e ancoragem de proveniência no mesmo workspace.",
     "actionBillingEyebrow": "Fundação de billing",
     "actionBillingTitle": "Gerenciar créditos e acesso",
     "actionBillingText": "Revise usuários, saldos, concessões, payment intents, pacotes de catálogo e configurações de notificação.",
@@ -1373,7 +1374,10 @@
     "anchoringSubtabVerification": "Verificação de tx",
     "anchoringStatusEyebrow": "Prontidão de ancoragem",
     "anchoringStatusTitle": "Fundação de Anchor Jobs",
-    "anchoringOpsSubtitle": "Um fluxo operacional seguro já está em vigor para listar jobs, visualizar planos de funding e verificar hashes de transações."
+    "anchoringOpsSubtitle": "Um fluxo operacional seguro já está em vigor para listar jobs, visualizar planos de funding e verificar hashes de transações.",
+    "actionWorkflowEyebrow": "Operações de verificação",
+    "actionWorkflowTitle": "Mantenha as revisões avançando",
+    "actionWorkflowText": "Monitore a saúde das revisões, recupere trabalhos parados e gerencie a elegibilidade de revisores sem contornar as regras do ciclo de vida."
   },
   "adminAnchorJobs": {
     "eyebrow": "Proveniência verificável",
@@ -1801,5 +1805,196 @@
       "distributed": "Recompensas da comunidade distribuídas."
     }
   },
-  "languageCommunicationHint": "Usado na interface e também na comunicação via e-mail e notificações."
+  "languageCommunicationHint": "Usado na interface e também na comunicação via e-mail e notificações.",
+  "adminWorkflow": {
+    "eyebrow": "Operações de workflow",
+    "title": "Workflow",
+    "subtitle": "Mantenha o trabalho de verificação em movimento e resolva tarefas de revisão que precisam de atenção.",
+    "poweredBy": "Operado pelo ciclo de vida dSM-Prov.",
+    "accessDenied": "É necessário acesso de administrador de sistema para operar os controles de workflow.",
+    "syncedAt": "Sincronizado às {{time}}",
+    "syncWaiting": "Aguardando a primeira sincronização",
+    "loading": "Carregando a saúde do workflow…",
+    "recoveryNotice": "A recuperação automática expirou {{assignments}} atribuição(ões) obsoleta(s) e reabriu {{tasks}} tarefa(s).",
+    "views": {
+      "overview": "Visão geral",
+      "queue": "Fila de revisão",
+      "reviewers": "Revisores"
+    },
+    "healthEyebrow": "Saúde operacional",
+    "healthTitle": "Fluxo de revisão em um relance",
+    "healthSubtitle": "Sinais ao vivo de cobertura e progresso das tarefas de revisão do ciclo de vida.",
+    "health": {
+      "awaitingReview": "Aguardando revisão",
+      "awaitingReviewCaption": "Tarefas abertas aguardando um revisor.",
+      "noReviewerAvailable": "Sem revisor disponível",
+      "noReviewerAvailableCaption": "Tarefas abertas sem revisor elegível.",
+      "inProgress": "Em andamento",
+      "inProgressCaption": "Tarefas atualmente assumidas por um revisor.",
+      "atRiskOrExpired": "Em risco / expiradas",
+      "atRiskOrExpiredCaption": "Atribuições próximas do prazo ou já expiradas."
+    },
+    "attentionEyebrow": "Atenção necessária",
+    "attentionTitle": "Resolva trabalhos de revisão parados",
+    "attentionSubtitle": "{{count}} tarefa(s) requer(em) atenção operacional no momento.",
+    "attentionEmptyTitle": "Tudo está avançando",
+    "attentionEmptyText": "Nenhuma tarefa de revisão exige atenção administrativa neste momento.",
+    "queueEyebrow": "Operações de revisão",
+    "queueTitle": "Fila de revisão",
+    "queueSubtitle": "Inspecione estágio do ciclo, cobertura, atribuição, idade, prazos e saúde das notificações.",
+    "queueEmptyTitle": "Nenhuma tarefa encontrada",
+    "queueEmptyText": "Ajuste os filtros ou aguarde novos trabalhos de revisão do ciclo de vida.",
+    "reviewersEyebrow": "Elegibilidade e cobertura",
+    "reviewersTitle": "Revisores",
+    "reviewersSubtitle": "Pesquise contas, inspecione carga de trabalho e gerencie papéis globais ou limitados a tópicos.",
+    "reviewersSearchPlaceholder": "Pesquisar por nome, usuário ou e-mail",
+    "reviewersEmptyTitle": "Nenhum revisor encontrado",
+    "reviewersEmptyText": "Pesquise uma conta para conceder elegibilidade ou limpe a busca para ver os revisores ativos.",
+    "topicFallback": "Tópico #{{id}}",
+    "userFallback": "Usuário #{{id}}",
+    "noEmail": "E-mail indisponível",
+    "coverageEligible": "revisor(es) elegível(is)",
+    "notificationFailed": "Falha na notificação",
+    "notificationNone": "Sem notificação",
+    "columns": {
+      "topic": "Tópico",
+      "stage": "Estágio do ciclo",
+      "status": "Status da tarefa",
+      "coverage": "Cobertura de revisores",
+      "acceptedReviewer": "Revisor responsável",
+      "ageDeadline": "Idade / prazo",
+      "notifications": "Notificações",
+      "actions": "Ações",
+      "reviewer": "Revisor",
+      "roles": "Papel e escopo",
+      "availability": "Disponibilidade",
+      "openAssignments": "Atribuições abertas",
+      "completedReviews": "Revisões concluídas",
+      "lastActivity": "Última atividade",
+      "topicId": "ID do tópico"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Todos os status",
+      "taskType": "Tipo de tarefa",
+      "allTaskTypes": "Todos os tipos de revisão",
+      "topicId": "ID do tópico",
+      "topicIdPlaceholder": "ID de tópico opcional",
+      "search": "Buscar",
+      "searchPlaceholder": "Busque por título, tarefa, revisor, status ou metadados"
+    },
+    "rawStatuses": {
+      "open": "Aberta",
+      "assigned": "Atribuída",
+      "completed": "Concluída",
+      "expired": "Expirada",
+      "cancelled": "Cancelada"
+    },
+    "taskTypes": {
+      "topic_review": "Revisão de tópico",
+      "contribution_review": "Revisão de contribuição",
+      "claim_review_curation": "Curadoria de revisão de alegação",
+      "unknown": "Tarefa de revisão"
+    },
+    "statuses": {
+      "waiting_for_reviewers": "Aguardando revisores",
+      "claimed": "Assumida",
+      "in_review": "Em revisão",
+      "completed": "Concluída",
+      "expired": "Expirada",
+      "cancelled": "Cancelada",
+      "needs_attention": "Precisa de atenção",
+      "unknown": "Desconhecido"
+    },
+    "attentionReasons": {
+      "no_reviewer_available": "Sem revisor elegível",
+      "task_expired": "Tarefa expirada",
+      "notification_failed": "Falha na notificação",
+      "assignment_at_risk": "Atribuição em risco",
+      "unknown": "Precisa de atenção"
+    },
+    "availability": {
+      "available": "Disponível",
+      "busy": "Ocupado",
+      "unknown": "Não definida"
+    },
+    "roles": {
+      "reviewer": "Revisor",
+      "moderator": "Moderador",
+      "expert_reviewer": "Revisor especialista",
+      "none": "Sem papel ativo no workflow",
+      "globalScope": "Global",
+      "topicScoped": "Limitado a tópico",
+      "topicScope": "Tópico #{{id}}"
+    },
+    "actions": {
+      "refresh": "Atualizar",
+      "openQueue": "Abrir fila de revisão",
+      "inspect": "Inspecionar",
+      "reoffer": "Reofertar",
+      "applyFilters": "Aplicar filtros",
+      "search": "Pesquisar",
+      "clear": "Limpar",
+      "grantRole": "Conceder papel",
+      "revokeRole": "Revogar papel",
+      "close": "Fechar",
+      "cancel": "Cancelar",
+      "confirmOffer": "Reofertar tarefa",
+      "confirmGrant": "Conceder papel",
+      "confirmRevoke": "Revogar papel"
+    },
+    "time": {
+      "lessThanHour": "Menos de 1 hora",
+      "hours": "{{count}} horas",
+      "days": "{{count}} dias"
+    },
+    "inspect": {
+      "title": "Tarefa do workflow",
+      "taskId": "ID da tarefa",
+      "createdAt": "Criada em",
+      "deadlineAt": "Prazo",
+      "attention": "Sinais de atenção",
+      "audit": "Histórico de auditoria admin",
+      "auditEvent": "Ação administrativa",
+      "noReason": "Nenhum motivo registrado",
+      "auditEmpty": "Nenhuma ação administrativa de workflow foi registrada para esta tarefa."
+    },
+    "offer": {
+      "title": "Reofertar tarefa de revisão",
+      "text": "Notifique novamente os revisores elegíveis sobre “{{topic}}”. As notificações existentes permanecem idempotentes.",
+      "reasonPlaceholder": "Por que esta tarefa está sendo reofertada?"
+    },
+    "grant": {
+      "title": "Conceder papel de revisor",
+      "text": "Adicione elegibilidade no workflow para {{reviewer}}.",
+      "reasonPlaceholder": "Por que esta conta deve receber elegibilidade de revisor?"
+    },
+    "revoke": {
+      "title": "Revogar papel de revisor",
+      "text": "Remova o papel {{role}} de {{reviewer}}.",
+      "reasonPlaceholder": "Por que este papel de revisor está sendo revogado?"
+    },
+    "fields": {
+      "reason": "Motivo administrativo",
+      "reasonAuditHint": "Obrigatório. Este motivo é armazenado nos metadados de auditoria do workflow.",
+      "role": "Papel",
+      "scope": "Escopo"
+    },
+    "toasts": {
+      "offerSuccess": "Tarefa reofertada: {{created}} nova(s) notificação(ões), {{existing}} já existia(m).",
+      "offerPendingTemplate": "Este tipo de revisão está visível, mas seu template de e-mail de reoferta ainda não está disponível.",
+      "roleGranted": "Papel de revisor concedido.",
+      "roleAlreadyActive": "Este papel de revisor já está ativo.",
+      "roleRevoked": "Papel de revisor revogado.",
+      "roleAlreadyRevoked": "Este papel de revisor já estava revogado."
+    },
+    "errors": {
+      "summary": "Não foi possível carregar a saúde do workflow.",
+      "tasks": "Não foi possível carregar as tarefas do workflow.",
+      "reviewers": "Não foi possível carregar as contas de revisores.",
+      "offer": "Não foi possível reofertar esta tarefa.",
+      "grantRole": "Não foi possível conceder o papel de revisor.",
+      "revokeRole": "Não foi possível revogar o papel de revisor."
+    }
+  }
 }

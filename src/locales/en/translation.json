@@ -1312,14 +1312,15 @@
   "adminConsole": {
     "eyebrow": "Admin console",
     "title": "d-FCT Admin Console",
-    "subtitle": "Operate billing, provenance anchoring, and future platform controls from one admin workspace.",
+    "subtitle": "Operate workflow, billing, provenance anchoring, and future platform controls from one admin workspace.",
     "accessDeniedTitle": "Admin access required",
     "accessDeniedText": "Only admins can open the d-FCT admin console.",
     "tabsAriaLabel": "Admin console sections",
     "tabs": {
       "overview": "Overview",
       "billing": "Billing",
-      "anchoring": "Anchoring"
+      "anchoring": "Anchoring",
+      "workflow": "Workflow"
     },
     "overviewTitle": "Admin overview",
     "overviewSubtitle": "A compact operational view of the admin areas currently available in d-FCT.",
@@ -1336,7 +1337,7 @@
     "overviewRoadmapValue": "Growing",
     "overviewRoadmapCaption": "This shell is prepared for topics, system, alerts, and provenance operations.",
     "nextOpsTitle": "Operational areas",
-    "nextOpsSubtitle": "Start with billing today and expand into provenance anchoring as the next admin workflow.",
+    "nextOpsSubtitle": "Operate reviewer coverage first, then billing and provenance anchoring from the same workspace.",
     "actionBillingEyebrow": "Billing foundation",
     "actionBillingTitle": "Manage credits and access",
     "actionBillingText": "Review users, balances, grants, payment intents, catalog packages, and notification settings.",
@@ -1373,7 +1374,10 @@
     "anchoringSubtabVerification": "Tx verification",
     "anchoringStatusEyebrow": "Anchor readiness",
     "anchoringStatusTitle": "Anchor job foundation",
-    "anchoringOpsSubtitle": "A safe operational flow is already in place for listing jobs, previewing funding plans, and verifying transaction hashes."
+    "anchoringOpsSubtitle": "A safe operational flow is already in place for listing jobs, previewing funding plans, and verifying transaction hashes.",
+    "actionWorkflowEyebrow": "Verification operations",
+    "actionWorkflowTitle": "Keep reviews moving",
+    "actionWorkflowText": "Monitor review health, recover stalled work, and manage reviewer eligibility without bypassing lifecycle rules."
   },
   "adminAnchorJobs": {
     "eyebrow": "Verifiable provenance",
@@ -1801,5 +1805,196 @@
       "distributed": "Community rewards distributed."
     }
   },
-  "languageCommunicationHint": "Used across the interface and for account emails and workflow notifications."
+  "languageCommunicationHint": "Used across the interface and for account emails and workflow notifications.",
+  "adminWorkflow": {
+    "eyebrow": "Workflow operations",
+    "title": "Workflow",
+    "subtitle": "Keep verification work moving and resolve review tasks that need attention.",
+    "poweredBy": "Powered by the dSM-Prov lifecycle.",
+    "accessDenied": "System administrator access is required to operate workflow controls.",
+    "syncedAt": "Synced at {{time}}",
+    "syncWaiting": "Waiting for first sync",
+    "loading": "Loading workflow health…",
+    "recoveryNotice": "Automatic recovery expired {{assignments}} stale assignment(s) and reopened {{tasks}} task(s).",
+    "views": {
+      "overview": "Overview",
+      "queue": "Review queue",
+      "reviewers": "Reviewers"
+    },
+    "healthEyebrow": "Operational health",
+    "healthTitle": "Review flow at a glance",
+    "healthSubtitle": "Live coverage and progress signals from lifecycle review tasks.",
+    "health": {
+      "awaitingReview": "Awaiting review",
+      "awaitingReviewCaption": "Open tasks waiting for a reviewer.",
+      "noReviewerAvailable": "No reviewer available",
+      "noReviewerAvailableCaption": "Open tasks without an eligible reviewer.",
+      "inProgress": "In progress",
+      "inProgressCaption": "Tasks currently claimed by a reviewer.",
+      "atRiskOrExpired": "At risk / expired",
+      "atRiskOrExpiredCaption": "Assignments near deadline or already expired."
+    },
+    "attentionEyebrow": "Attention needed",
+    "attentionTitle": "Resolve stalled review work",
+    "attentionSubtitle": "{{count}} task(s) currently require operational attention.",
+    "attentionEmptyTitle": "Everything is moving",
+    "attentionEmptyText": "No review task currently requires admin attention.",
+    "queueEyebrow": "Review operations",
+    "queueTitle": "Review queue",
+    "queueSubtitle": "Inspect lifecycle stage, coverage, assignment, age, deadlines, and notification health.",
+    "queueEmptyTitle": "No matching tasks",
+    "queueEmptyText": "Adjust the filters or wait for new lifecycle review work.",
+    "reviewersEyebrow": "Eligibility and coverage",
+    "reviewersTitle": "Reviewers",
+    "reviewersSubtitle": "Search accounts, inspect workload, and manage global or topic-scoped reviewer roles.",
+    "reviewersSearchPlaceholder": "Search by name, username, or email",
+    "reviewersEmptyTitle": "No matching reviewers",
+    "reviewersEmptyText": "Search for an account to grant eligibility or clear the search to view active reviewers.",
+    "topicFallback": "Topic #{{id}}",
+    "userFallback": "User #{{id}}",
+    "noEmail": "No email available",
+    "coverageEligible": "eligible reviewer(s)",
+    "notificationFailed": "Notification failed",
+    "notificationNone": "No notification",
+    "columns": {
+      "topic": "Topic",
+      "stage": "Lifecycle stage",
+      "status": "Task status",
+      "coverage": "Reviewer coverage",
+      "acceptedReviewer": "Accepted reviewer",
+      "ageDeadline": "Age / deadline",
+      "notifications": "Notifications",
+      "actions": "Actions",
+      "reviewer": "Reviewer",
+      "roles": "Role and scope",
+      "availability": "Availability",
+      "openAssignments": "Open assignments",
+      "completedReviews": "Completed reviews",
+      "lastActivity": "Last activity",
+      "topicId": "Topic ID"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "taskType": "Task type",
+      "allTaskTypes": "All review types",
+      "topicId": "Topic ID",
+      "topicIdPlaceholder": "Optional topic ID",
+      "search": "Search",
+      "searchPlaceholder": "Search title, task, reviewer, status, or metadata"
+    },
+    "rawStatuses": {
+      "open": "Open",
+      "assigned": "Assigned",
+      "completed": "Completed",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "taskTypes": {
+      "topic_review": "Topic review",
+      "contribution_review": "Contribution review",
+      "claim_review_curation": "Claim review curation",
+      "unknown": "Review task"
+    },
+    "statuses": {
+      "waiting_for_reviewers": "Waiting for reviewers",
+      "claimed": "Claimed",
+      "in_review": "In review",
+      "completed": "Completed",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "needs_attention": "Needs attention",
+      "unknown": "Unknown"
+    },
+    "attentionReasons": {
+      "no_reviewer_available": "No eligible reviewer",
+      "task_expired": "Task expired",
+      "notification_failed": "Notification failed",
+      "assignment_at_risk": "Assignment at risk",
+      "unknown": "Needs attention"
+    },
+    "availability": {
+      "available": "Available",
+      "busy": "Busy",
+      "unknown": "Not set"
+    },
+    "roles": {
+      "reviewer": "Reviewer",
+      "moderator": "Moderator",
+      "expert_reviewer": "Expert reviewer",
+      "none": "No active workflow role",
+      "globalScope": "Global",
+      "topicScoped": "Topic-scoped",
+      "topicScope": "Topic #{{id}}"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "openQueue": "Open review queue",
+      "inspect": "Inspect",
+      "reoffer": "Re-offer",
+      "applyFilters": "Apply filters",
+      "search": "Search",
+      "clear": "Clear",
+      "grantRole": "Grant role",
+      "revokeRole": "Revoke role",
+      "close": "Close",
+      "cancel": "Cancel",
+      "confirmOffer": "Re-offer task",
+      "confirmGrant": "Grant role",
+      "confirmRevoke": "Revoke role"
+    },
+    "time": {
+      "lessThanHour": "Less than 1 hour",
+      "hours": "{{count}} hours",
+      "days": "{{count}} days"
+    },
+    "inspect": {
+      "title": "Workflow task",
+      "taskId": "Task ID",
+      "createdAt": "Created",
+      "deadlineAt": "Deadline",
+      "attention": "Attention signals",
+      "audit": "Admin audit history",
+      "auditEvent": "Admin action",
+      "noReason": "No reason recorded",
+      "auditEmpty": "No admin workflow actions have been recorded for this task."
+    },
+    "offer": {
+      "title": "Re-offer review task",
+      "text": "Notify eligible reviewers about “{{topic}}” again. Existing notifications remain idempotent.",
+      "reasonPlaceholder": "Why is this task being re-offered?"
+    },
+    "grant": {
+      "title": "Grant reviewer role",
+      "text": "Add workflow eligibility for {{reviewer}}.",
+      "reasonPlaceholder": "Why should this account receive reviewer eligibility?"
+    },
+    "revoke": {
+      "title": "Revoke reviewer role",
+      "text": "Remove the {{role}} role from {{reviewer}}.",
+      "reasonPlaceholder": "Why is this reviewer role being revoked?"
+    },
+    "fields": {
+      "reason": "Admin reason",
+      "reasonAuditHint": "Required. This reason is stored in workflow audit metadata.",
+      "role": "Role",
+      "scope": "Scope"
+    },
+    "toasts": {
+      "offerSuccess": "Task offered: {{created}} new notification(s), {{existing}} already existed.",
+      "offerPendingTemplate": "This review type is visible but its re-offer email template is not available yet.",
+      "roleGranted": "Reviewer role granted.",
+      "roleAlreadyActive": "This reviewer role is already active.",
+      "roleRevoked": "Reviewer role revoked.",
+      "roleAlreadyRevoked": "This reviewer role was already revoked."
+    },
+    "errors": {
+      "summary": "Unable to load workflow health.",
+      "tasks": "Unable to load workflow tasks.",
+      "reviewers": "Unable to load reviewer accounts.",
+      "offer": "Unable to re-offer this task.",
+      "grantRole": "Unable to grant reviewer role.",
+      "revokeRole": "Unable to revoke reviewer role."
+    }
+  }
 }
