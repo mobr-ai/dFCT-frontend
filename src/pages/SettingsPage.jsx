@@ -3,7 +3,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "../styles/SettingsPage.css";
 import { ShareModal } from "../components/share";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { Container, Form, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Row,
+  Col,
+  Image,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Button, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,6 +21,7 @@ import {
   faPen,
   faUpload,
   faTrash,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuthRequest } from "../hooks/useAuthRequest";
 import { useS3Upload } from "../hooks/useS3Upload";
@@ -405,12 +414,36 @@ function SettingsPage() {
           </div>
           <Form>
             <Form.Group controlId="languageSelect" className="mb-3">
-              <Form.Label>{t("languageConf")}</Form.Label>
+              <div className="Settings-fieldLabelRow">
+                <Form.Label>{t("languageConf")}</Form.Label>
+
+                <OverlayTrigger
+                  placement="right"
+                  overlay={
+                    <Tooltip
+                      id="settings-language-help"
+                      className="Settings-language-tooltip"
+                    >
+                      {t("languageCommunicationHint")}
+                    </Tooltip>
+                  }
+                >
+                  <button
+                    type="button"
+                    className="Settings-language-helpTrigger"
+                    aria-label={t("languageCommunicationHint")}
+                  >
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </button>
+                </OverlayTrigger>
+              </div>
+
               <Form.Select value={language} onChange={handleLanguageChange}>
                 <option value="en">🇺🇸 English (US)</option>
                 <option value="pt">🇧🇷 Português (BR)</option>
               </Form.Select>
-              <Form.Text className="text-muted">
+
+              <Form.Text className="Settings-language-hint-mobile">
                 {t("languageCommunicationHint")}
               </Form.Text>
             </Form.Group>
