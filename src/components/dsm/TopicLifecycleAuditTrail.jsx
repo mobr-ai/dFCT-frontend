@@ -1196,14 +1196,27 @@ function ContributionStageActivity({
         emptyState ? "TopicJourney-contributionPanel--empty" : "",
       ].filter(Boolean).join(" ")}
     >
-      <button
+      <div
         key={primary?.eventId || primary?.createdAt || "empty"}
-        type="button"
         className="TopicJourney-contributionPrimary TopicJourney-contributionPrimary--button"
+        role="button"
+        tabIndex={primary ? 0 : -1}
+        aria-disabled={!primary}
         onClick={() => {
           if (primary) onSelectActivity?.(primary);
         }}
-        disabled={!primary}
+        onKeyDown={(event) => {
+          if (
+            event.target !== event.currentTarget ||
+            !primary ||
+            !["Enter", " "].includes(event.key)
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+          onSelectActivity?.(primary);
+        }}
       >
         <div className="TopicJourney-contributionMainline">
           <strong>
@@ -1258,7 +1271,7 @@ function ContributionStageActivity({
           <i />
           <i />
         </div>
-      </button>
+      </div>
 
       {secondaryEvents.length > 0 && (
         <div className="TopicJourney-contributionStack">

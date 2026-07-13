@@ -36,14 +36,40 @@ import { Buffer } from "buffer";
 window.Buffer = Buffer;
 installThemeRouteSync();
 
+function getStoredUserData() {
+  const raw = window.localStorage.getItem("userData");
+
+  if (!raw || raw === "null" || raw === "undefined") {
+    if (raw) {
+      window.localStorage.removeItem("userData");
+    }
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      window.localStorage.removeItem("userData");
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.warn("Discarding invalid cached user data.", error);
+    window.localStorage.removeItem("userData");
+    return null;
+  }
+}
+
 function Layout() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(
-    window.localStorage.userData
-      ? JSON.parse(window.localStorage.userData)
-      : null
-  );
+  const [user, setUser] = useState(() => getStoredUserData());
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({
     show: false,
@@ -83,9 +109,21 @@ function Layout() {
     [setLoading, setUser, navigate]
   );
 
-  // save user data on changes
+  // Keep the authenticated account cache valid on every state change.
   useEffect(() => {
-    window.localStorage.setItem("userData", JSON.stringify(user));
+    if (
+      user &&
+      typeof user === "object" &&
+      !Array.isArray(user)
+    ) {
+      window.localStorage.setItem(
+        "userData",
+        JSON.stringify(user),
+      );
+      return;
+    }
+
+    window.localStorage.removeItem("userData");
   }, [user]);
 
   return (
@@ -150,7 +188,7 @@ const allTopicsLoader = async () => {
 };
 
 const homeLoader = async () => {
-  if (!window.localStorage.userData) {
+  if (!getStoredUserData()) {
     return {};
   }
 
@@ -202,10 +240,9 @@ const fetchUserTopics = async (userData) => {
 };
 
 const govProposalsLoader = async () => {
-  if (!window.localStorage.userData) return {};
+  const userData = getStoredUserData();
 
-  let userData = JSON.parse(window.localStorage.userData);
-  if (userData && userData.id) {
+  if (userData?.id) {
     const govProposalsPromise = fetchGovProposals(userData);
     return defer({ govProposalsPromise });
   }
@@ -214,10 +251,9 @@ const govProposalsLoader = async () => {
 };
 
 const userTopicsLoader = async () => {
-  if (!window.localStorage.userData) return {};
+  const userData = getStoredUserData();
 
-  let userData = JSON.parse(window.localStorage.userData);
-  if (userData && userData.id) {
+  if (userData?.id) {
     const userTopicsPromise = fetchUserTopics(userData);
     return defer({ userTopicsPromise });
   }
@@ -236,16 +272,6 @@ const normalizeTopicPayload = (payload) => {
     content: Array.isArray(payload.content) ? payload.content : [],
     contents: Array.isArray(payload.contents) ? payload.contents : [],
   };
-};
-
-const getStoredUserData = () => {
-  try {
-    const raw = window.localStorage.getItem("userData");
-    if (!raw || raw === "null") return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
 };
 
 const fetchTopic = async (userId, topicId, signal) => {

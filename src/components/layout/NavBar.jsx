@@ -168,10 +168,15 @@ function NavBar(props) {
         });
 
         if (response.ok) {
-          props.setUser?.((previous) => ({
-            ...previous,
+          const updatedUserData = {
+            ...props.userData,
             settings: JSON.stringify(updatedSettings),
-          }));
+          };
+
+          window.localStorage.setItem(
+            "userData",
+            JSON.stringify(updatedUserData),
+          );
         } else {
           console.warn("Could not persist account communication language.");
         }
