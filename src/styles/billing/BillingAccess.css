@@ -774,13 +774,6 @@
   margin-right: auto !important;
 }
 
-/* Silent polling: hide sync status in billing/admin headers. */
-.BillingAccess-header > .BillingAccess-syncPill,
-.BillingAccess-header > span.BillingAccess-syncPill,
-.BillingAccess-header > span {
-  display: none !important;
-}
-
 /* Desktop/tablet: avoid horizontal scroll by fitting the table. */
 @media (min-width: 901px) {
   .DfctBillingAdmin-userTableWrap {

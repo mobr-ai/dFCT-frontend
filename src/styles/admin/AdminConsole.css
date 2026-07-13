@@ -1279,3 +1279,564 @@
     width: 100%;
   }
 }
+
+/* Admin Workflow: operational review health, queue, and reviewer coverage. */
+.DfctAdminConsole-actionGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.DfctAdminConsole .DfctAdmin-stat--success {
+  border-color: color-mix(in srgb, var(--bs-success, #198754) 34%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdmin-stat--info {
+  border-color: color-mix(in srgb, var(--bs-info, #0dcaf0) 36%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdmin-stat--warning {
+  border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdmin-stat--danger {
+  border-color: color-mix(in srgb, var(--bs-danger, #dc3545) 38%, var(--theme-border));
+}
+
+.DfctAdminWorkflow-poweredBy {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--theme-muted);
+  font-weight: 700;
+}
+
+.DfctAdminWorkflow-headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.DfctAdminWorkflow-sync {
+  display: inline-flex !important;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-recoveryNotice {
+  margin-top: 0.75rem;
+  border-radius: 14px;
+}
+
+.DfctAdminWorkflow-sectionHeaderSplit {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminWorkflow-attentionList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.DfctAdminWorkflow-attentionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-border);
+  border-left: 4px solid var(--bs-danger, #dc3545);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-attentionMain {
+  min-width: 0;
+}
+
+.DfctAdminWorkflow-attentionMain p {
+  margin: 0.3rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.9rem;
+}
+
+.DfctAdminWorkflow-taskHeading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.DfctAdminWorkflow-topicLink {
+  color: var(--theme-text);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.DfctAdminWorkflow-topicLink:hover,
+.DfctAdminWorkflow-topicLink:focus {
+  color: var(--theme-primary);
+  text-decoration: underline;
+}
+
+.DfctAdminWorkflow-reasonList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.DfctAdminWorkflow-reasonList > span {
+  display: inline-flex;
+  padding: 0.28rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--bs-danger, #dc3545) 30%, var(--theme-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bs-danger, #dc3545) 7%, var(--theme-surface));
+  color: var(--theme-text);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.DfctAdminWorkflow-cardActions,
+.DfctAdminWorkflow-rowActions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.DfctAdminWorkflow-emptyState,
+.DfctAdminWorkflow-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 145px;
+  padding: 1.5rem;
+  border: 1px dashed var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  text-align: center;
+}
+
+.DfctAdminWorkflow-emptyState strong {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminWorkflow-emptyState p,
+.DfctAdminWorkflow-loading span {
+  margin: 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-filters {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(190px, 1fr) minmax(150px, 0.75fr) auto;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminWorkflow-reviewerSearch {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto auto;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminWorkflow-tableWrap {
+  max-height: min(66vh, 760px);
+}
+
+.DfctAdminWorkflow-table {
+  min-width: 1040px;
+}
+
+.DfctAdminWorkflow-table tr.needs-attention td:first-child {
+  box-shadow: inset 4px 0 0 var(--bs-danger, #dc3545);
+}
+
+.DfctAdminWorkflow-table td {
+  min-width: 110px;
+}
+
+.DfctAdminWorkflow-table td:first-child {
+  min-width: 220px;
+}
+
+.DfctAdminWorkflow-table td > strong,
+.DfctAdminWorkflow-table td > small {
+  display: block;
+}
+
+.DfctAdminWorkflow-table td > small {
+  margin-top: 0.2rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-roleList {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 190px;
+}
+
+.DfctAdminWorkflow-roleList > span {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.DfctAdminWorkflow-roleList small {
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-roleList button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--theme-muted);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-roleList button:hover,
+.DfctAdminWorkflow-roleList button:focus {
+  border-color: var(--bs-danger, #dc3545);
+  color: var(--bs-danger, #dc3545);
+}
+
+.DfctAdminWorkflow-roleList button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.DfctAdminWorkflow-modal .modal-content {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 20px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminWorkflow-modal .modal-header,
+.DfctAdminWorkflow-modal .modal-footer {
+  border-color: var(--theme-border);
+}
+
+.DfctAdminWorkflow-modal .modal-title,
+.DfctAdminWorkflow-modal h4 {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminWorkflow-modal p,
+.DfctAdminWorkflow-modal .form-text,
+.DfctAdminWorkflow-muted {
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-inspectGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminWorkflow-inspectGrid > div {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-inspectGrid span,
+.DfctAdminWorkflow-inspectGrid strong {
+  display: block;
+}
+
+.DfctAdminWorkflow-inspectGrid span {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminWorkflow-inspectGrid strong {
+  margin-top: 0.25rem;
+  overflow: hidden;
+  color: var(--theme-text);
+  text-overflow: ellipsis;
+}
+
+.DfctAdminWorkflow-modalSection {
+  margin-top: 1.25rem;
+}
+
+.DfctAdminWorkflow-modalSection h4 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
+
+.DfctAdminWorkflow-auditList {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.DfctAdminWorkflow-auditList > div {
+  display: grid;
+  grid-template-columns: minmax(140px, auto) auto;
+  gap: 0.2rem 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-auditList strong {
+  color: var(--theme-text);
+}
+
+.DfctAdminWorkflow-auditList span {
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.DfctAdminWorkflow-auditList p {
+  grid-column: 1 / -1;
+  margin: 0.2rem 0 0;
+}
+
+[data-theme="dfct-dark"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="graphite"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="terminal"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="midnight"] .DfctAdminWorkflow-modal .btn-close {
+  filter: invert(1) grayscale(100%);
+}
+
+@media (max-width: 980px) {
+  .DfctAdminConsole-actionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-filters,
+  .DfctAdminWorkflow-reviewerSearch {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminWorkflow-headerActions,
+  .DfctAdminWorkflow-sectionHeaderSplit,
+  .DfctAdminWorkflow-attentionCard {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminWorkflow-cardActions,
+  .DfctAdminWorkflow-cardActions .btn {
+    width: 100%;
+  }
+
+  .DfctAdminWorkflow-inspectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-auditList > div {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-auditList span {
+    text-align: left;
+  }
+}
+
+/* Workflow console refinements: responsive table, automatic filters, themed modal close. */
+.DfctAdminWorkflow-sync {
+  gap: 0.45rem;
+}
+
+.DfctAdminWorkflow-filters {
+  grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 0.9fr) minmax(260px, 1.5fr) minmax(130px, 0.65fr);
+}
+
+.DfctAdminWorkflow-tableWrap {
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+}
+
+.DfctAdminWorkflow-table {
+  width: 100%;
+  min-width: 960px;
+  table-layout: auto;
+}
+
+.DfctAdminWorkflow-table th,
+.DfctAdminWorkflow-table td {
+  min-width: 0;
+  white-space: normal;
+}
+
+.DfctAdminWorkflow-table th:first-child,
+.DfctAdminWorkflow-table td:first-child {
+  min-width: 190px;
+}
+
+.DfctAdminWorkflow-table th:nth-child(2),
+.DfctAdminWorkflow-table td:nth-child(2) {
+  width: 92px;
+  min-width: 82px;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-modal .btn-close {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px;
+  background: var(--theme-surface-soft, var(--theme-card-bg)) !important;
+  background-image: none !important;
+  color: var(--theme-text) !important;
+  filter: none !important;
+  opacity: 0.82 !important;
+}
+
+.DfctAdminWorkflow-modal .btn-close::before {
+  content: "×";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: currentColor;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-modal .btn-close:hover,
+.DfctAdminWorkflow-modal .btn-close:focus-visible {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 1080px) {
+  .DfctAdminWorkflow-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Workflow modal close: fully theme-driven, without Bootstrap's static icon tile. */
+.DfctAdminWorkflow-modal .btn-close {
+  align-items: center;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px;
+  color: var(--theme-text) !important;
+  display: inline-flex;
+  filter: none !important;
+  height: 2rem;
+  justify-content: center;
+  opacity: 0.82 !important;
+  padding: 0 !important;
+  position: relative;
+  width: 2rem;
+}
+
+.DfctAdminWorkflow-modal .btn-close::before {
+  color: currentColor;
+  content: "×";
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-modal .btn-close:hover,
+.DfctAdminWorkflow-modal .btn-close:focus-visible {
+  background: var(--theme-surface-soft) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+/* Billing lives inside the shared admin shell, so its sync state must remain visible. */
+.DfctAdminConsole .DfctBillingAdmin .BillingAccess-sync,
+.DfctAdminConsole .DfctBillingAdmin .DfctBillingAdmin-sync,
+.DfctAdminConsole .DfctBillingAdmin .BillingAccess-syncStatus {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+/* Final Workflow modal close-button override.
+   Must outrank the global themed modal button rules. */
+html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close,
+html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close {
+  appearance: none !important;
+  align-items: center !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: var(--theme-text) !important;
+  display: inline-flex !important;
+  filter: none !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  opacity: 0.82 !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 2rem !important;
+  text-align: center !important;
+  align-content: center !important;
+}
+
+html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close::before,
+html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close::before {
+  color: currentColor !important;
+  content: "×" !important;
+  display: grid !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  place-items: center !important;
+  align-content: center !important;
+  text-align: center !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:hover,
+html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:focus-visible,
+html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:hover,
+html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:focus-visible {
+  background-color: var(--theme-surface-soft) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}

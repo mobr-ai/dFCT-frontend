@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import AdminBillingCreditsPage from "./AdminBillingCreditsPage";
 import AdminTabs from "../components/admin/AdminTabs";
 import AdminAnchorJobsPanel from "../components/admin/AdminAnchorJobsPanel";
+import AdminWorkflowPanel from "../components/admin/AdminWorkflowPanel";
 import { hasAdminClaim, useAdminAccess } from "../hooks/useAdminAccess";
 
 import "../styles/admin/AdminConsole.css";
@@ -19,7 +20,7 @@ function ConsoleStat({ label, value, caption, tone }) {
   );
 }
 
-function OverviewPanel({ t, onOpenAnchoring }) {
+function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenAnchoring }) {
   return (
     <>
       <section className="DfctAdmin-section">
@@ -62,11 +63,24 @@ function OverviewPanel({ t, onOpenAnchoring }) {
         </div>
 
         <div className="DfctAdminConsole-actionGrid">
-          <div className="DfctAdminConsole-actionCard">
+          <button
+            type="button"
+            className="DfctAdminConsole-actionCard DfctAdminConsole-actionCardButton"
+            onClick={onOpenBilling}
+          >
             <span>{t("adminConsole.actionBillingEyebrow")}</span>
             <strong>{t("adminConsole.actionBillingTitle")}</strong>
             <p>{t("adminConsole.actionBillingText")}</p>
-          </div>
+          </button>
+          <button
+            type="button"
+            className="DfctAdminConsole-actionCard DfctAdminConsole-actionCardButton"
+            onClick={onOpenWorkflow}
+          >
+            <span>{t("adminConsole.actionWorkflowEyebrow")}</span>
+            <strong>{t("adminConsole.actionWorkflowTitle")}</strong>
+            <p>{t("adminConsole.actionWorkflowText")}</p>
+          </button>
           <button
             type="button"
             className="DfctAdminConsole-actionCard DfctAdminConsole-actionCardButton"
@@ -180,6 +194,7 @@ export default function AdminPage() {
   const tabs = useMemo(
     () => [
       { key: "overview" },
+      { key: "workflow" },
       { key: "billing" },
       { key: "anchoring" },
     ],
@@ -248,7 +263,16 @@ export default function AdminPage() {
         />
 
         {activeTab === "overview" && (
-          <OverviewPanel t={t} onOpenAnchoring={() => changeTab("anchoring")} />
+          <OverviewPanel
+            t={t}
+            onOpenBilling={() => changeTab("billing")}
+            onOpenWorkflow={() => changeTab("workflow")}
+            onOpenAnchoring={() => changeTab("anchoring")}
+          />
+        )}
+
+        {activeTab === "workflow" && (
+          <AdminWorkflowPanel t={t} user={userData} showToast={showToast} />
         )}
 
         {activeTab === "billing" && (
