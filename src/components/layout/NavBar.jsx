@@ -4,7 +4,7 @@ import Image from "react-bootstrap/Image";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -27,6 +27,12 @@ import AnimatedBrand from "../branding/AnimatedBrand";
 import GlobalTopicSearch from "../search/GlobalTopicSearch";
 import { useAdminAccess } from "../../hooks/useAdminAccess";
 import { useBillingStatus } from "../../hooks/useBillingStatus";
+import { useAuthRequest } from "../../hooks/useAuthRequest";
+import {
+  normalizeAccountLanguage,
+  parseUserSettings,
+  settingsWithNotificationLanguage,
+} from "../../utils/userSettings";
 
 function numberFrom(...values) {
   for (const value of values) {
@@ -53,6 +59,7 @@ function NavBar(props) {
   const { t } = useTranslation();
   const { isAdmin } = useAdminAccess(props.userData);
   const billingStatus = useBillingStatus(props.userData);
+  const { authFetch } = useAuthRequest(props.userData);
   const billingCredits = formatCredits(
     billingStatus.balance?.credits_available ??
       billingStatus.balance?.available_credits ??
@@ -76,6 +83,19 @@ function NavBar(props) {
       });
   const showBillingStatus =
     Boolean(props.userData) && billingStatus.loaded && !billingStatus.apiUnavailable;
+
+  useEffect(() => {
+    const savedLanguage = parseUserSettings(
+      props.userData?.settings,
+    ).notificationLanguage;
+    if (!savedLanguage) return;
+
+    const normalizedLanguage = normalizeAccountLanguage(savedLanguage);
+    localStorage.setItem("i18nextLng", normalizedLanguage);
+    if (i18n.language.split("-")[0] !== normalizedLanguage) {
+      i18n.changeLanguage(normalizedLanguage);
+    }
+  }, [props.userData?.settings]);
 
   const topClick = useCallback(() => {
     const scrollLandingToTop = () => {
@@ -129,10 +149,39 @@ function NavBar(props) {
     navigate("/login");
   };
 
-  const changeLanguage = (lng) => {
-    localStorage.setItem("i18nextLng", lng); // i18next checks this on init
+  const changeLanguage = async (lng) => {
+    const selectedLang = normalizeAccountLanguage(lng);
+    localStorage.setItem("i18nextLng", selectedLang);
+    await i18n.changeLanguage(selectedLang);
+
+    if (props.userData?.id) {
+      const updatedSettings = settingsWithNotificationLanguage(
+        props.userData.settings,
+        selectedLang,
+      );
+
+      try {
+        const response = await authFetch(`/api/user/${props.userData.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ settings: updatedSettings }),
+        });
+
+        if (response.ok) {
+          props.setUser?.((previous) => ({
+            ...previous,
+            settings: JSON.stringify(updatedSettings),
+          }));
+        } else {
+          console.warn("Could not persist account communication language.");
+        }
+      } catch (error) {
+        console.warn("Could not persist account communication language.", error);
+      }
+    }
+
     window.history.replaceState(null, "", window.location.pathname);
-    navigate(0); // Reload the page to trigger language change
+    navigate(0);
   };
 
   const userMenu = props.userData && (

@@ -1800,5 +1800,6 @@
       "funded": "Créditos adicionados ao pool de recompensas.",
       "distributed": "Recompensas da comunidade distribuídas."
     }
-  }
+  },
+  "languageCommunicationHint": "Usado na interface e também nos e-mails da conta e notificações de fluxo."
 }
