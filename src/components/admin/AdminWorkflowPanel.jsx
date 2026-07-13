@@ -3,6 +3,7 @@ import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { useAdminWorkflow } from "../../hooks/useAdminWorkflow";
+import AdminSyncPill from "./AdminSyncPill";
 
 const WORKFLOW_VIEWS = ["overview", "queue", "reviewers"];
 
@@ -443,15 +444,6 @@ export default function AdminWorkflowPanel({ t, user, showToast }) {
     if (result) setRevokeTarget(null);
   };
 
-  const syncLabel = workflow.lastUpdatedAt
-    ? t("adminWorkflow.syncedAt", {
-        time: workflow.lastUpdatedAt.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      })
-    : t("adminWorkflow.syncWaiting");
-
 
 
   return (
@@ -466,10 +458,13 @@ export default function AdminWorkflowPanel({ t, user, showToast }) {
           </small>
         </div>
         <div className="DfctAdminWorkflow-headerActions">
-          <span className="DfctAdminWorkflow-sync">
-            {workflow.isRefreshing ? <Spinner size="sm" animation="border" /> : null}
-            {syncLabel}
-          </span>
+          <AdminSyncPill
+            isRefreshing={workflow.isRefreshing}
+            lastUpdatedAt={workflow.lastUpdatedAt}
+            syncingLabel={t("adminWorkflow.syncing")}
+            waitingLabel={t("adminWorkflow.syncWaiting")}
+            syncedAtLabel={(time) => t("adminWorkflow.syncedAt", { time })}
+          />
         </div>
       </div>
 

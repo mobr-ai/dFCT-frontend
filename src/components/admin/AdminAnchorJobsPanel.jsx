@@ -4,6 +4,7 @@ import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 import { useAdminAnchorJobs } from "../../hooks/useAdminAnchorJobs";
 import AdminAnchorExecutionPanel from "./AdminAnchorExecutionPanel";
 import AdminAnchorVerificationPanel from "./AdminAnchorVerificationPanel";
+import AdminSyncPill from "./AdminSyncPill";
 
 function valueOf(row, ...keys) {
   for (const key of keys) {
@@ -410,15 +411,14 @@ export default function AdminAnchorJobsPanel({ t, user, showToast }) {
           <h1>{t("adminAnchorJobs.title")}</h1>
           <p>{t("adminAnchorJobs.subtitle")}</p>
         </div>
-        <span className="DfctAdminAnchorJobs-sync">
-          {anchorJobs.isAutoRefreshing
-            ? t("adminAnchorJobs.syncRefreshing")
-            : anchorJobs.lastUpdatedAt
-              ? t("adminAnchorJobs.syncedAt", {
-                  time: anchorJobs.lastUpdatedAt.toLocaleTimeString(),
-                })
-              : t("adminAnchorJobs.syncWaiting")}
-        </span>
+        <AdminSyncPill
+          className="DfctAdminAnchorJobs-sync"
+          isRefreshing={anchorJobs.isAutoRefreshing}
+          lastUpdatedAt={anchorJobs.lastUpdatedAt}
+          syncingLabel={t("adminWorkflow.syncing")}
+          waitingLabel={t("adminAnchorJobs.syncWaiting")}
+          syncedAtLabel={(time) => t("adminAnchorJobs.syncedAt", { time })}
+        />
       </div>
 
       <div className="DfctAdmin-tabs DfctAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs">

@@ -1840,3 +1840,28 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
   color: var(--theme-primary) !important;
   opacity: 1 !important;
 }
+
+/* Shared Workflow, Billing, and Anchoring synchronization indicator. */
+.DfctAdminWorkflow-sync {
+  align-items: center;
+  display: inline-flex !important;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-syncSpinner {
+  flex: 0 0 auto;
+  height: 0.78rem !important;
+  width: 0.78rem !important;
+  border-width: 0.12em !important;
+}
+
+.DfctAdminWorkflow-syncDot {
+  background: currentColor;
+  border-radius: 999px;
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 0.42rem;
+  opacity: 0.72;
+  width: 0.42rem;
+}

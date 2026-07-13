@@ -16,6 +16,7 @@ import { faBan, faCoins, faCrown, faRotateRight } from "@fortawesome/free-solid-
 
 import { useAdminBillingCredits } from "../hooks/useAdminBillingCredits";
 import "../styles/billing/BillingAccess.css";
+import AdminSyncPill from "../components/admin/AdminSyncPill";
 
 function numberFrom(...values) {
   for (const value of values) {
@@ -651,19 +652,18 @@ export default function AdminBillingCreditsPage() {
             <p>{t("adminBilling.subtitle")}</p>
           </div>
 
-          <span className="BillingAccess-syncPill DfctAdminWorkflow-sync">
-            {loading ? <Spinner animation="border" size="sm" /> : <span className="BillingAccess-syncDot" />}
-            {apiUnavailable
-              ? t("adminBilling.syncWaiting")
-              : lastUpdatedAt
-                ? t("adminBilling.syncedAt", {
-                    time: lastUpdatedAt.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }),
-                  })
-                : t("adminBilling.synced")}
-          </span>
+          <AdminSyncPill
+            className="BillingAccess-syncPill"
+            isRefreshing={loading}
+            lastUpdatedAt={lastUpdatedAt}
+            syncingLabel={t("adminWorkflow.syncing")}
+            waitingLabel={
+              apiUnavailable
+                ? t("adminBilling.syncWaiting")
+                : t("adminBilling.synced")
+            }
+            syncedAtLabel={(time) => t("adminBilling.syncedAt", { time })}
+          />
         </div>
 
         {error ? <div className="BillingAccess-error">{error}</div> : null}

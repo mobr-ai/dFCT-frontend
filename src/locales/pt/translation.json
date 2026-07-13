@@ -1995,6 +1995,7 @@
       "offer": "Não foi possível reofertar esta tarefa.",
       "grantRole": "Não foi possível conceder o papel de revisor.",
       "revokeRole": "Não foi possível revogar o papel de revisor."
-    }
+    },
+    "syncing": "Sincronizando…"
   }
 }

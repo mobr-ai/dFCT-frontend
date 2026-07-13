@@ -1995,6 +1995,7 @@
       "offer": "Unable to re-offer this task.",
       "grantRole": "Unable to grant reviewer role.",
       "revokeRole": "Unable to revoke reviewer role."
-    }
+    },
+    "syncing": "Syncing…"
   }
 }
