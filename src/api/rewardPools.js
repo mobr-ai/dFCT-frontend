@@ -102,3 +102,22 @@ export const fetchTopicRewardPoolActivity = (
       `/api/topics/${topicId}/reward-pool/activity${queryString({ limit })}`,
     )
     .then(unwrap);
+
+export const fetchTopicRewardPoolReadiness = (
+  authRequest,
+  topicId,
+  { cutoffEventId } = {},
+) =>
+  authRequest
+    .get(
+      `/api/topics/${topicId}/reward-pool/readiness${queryString({ cutoffEventId })}`,
+    )
+    .then(unwrap);
+
+export const fetchTopicRewardPoolAnalytics = (
+  authRequest,
+  topicId,
+) =>
+  authRequest
+    .get(`/api/topics/${topicId}/reward-pool/analytics`)
+    .then(unwrap);

@@ -1320,7 +1320,8 @@
       "overview": "Overview",
       "billing": "Billing",
       "anchoring": "Anchoring",
-      "workflow": "Workflow"
+      "workflow": "Workflow",
+      "rewards": "Rewards"
     },
     "overviewTitle": "Admin overview",
     "overviewSubtitle": "A compact operational view of the admin areas currently available in d-FCT.",
@@ -1377,7 +1378,13 @@
     "anchoringOpsSubtitle": "A safe operational flow is already in place for listing jobs, previewing funding plans, and verifying transaction hashes.",
     "actionWorkflowEyebrow": "Verification operations",
     "actionWorkflowTitle": "Keep reviews moving",
-    "actionWorkflowText": "Monitor review health, recover stalled work, and manage reviewer eligibility without bypassing lifecycle rules."
+    "actionWorkflowText": "Monitor review health, recover stalled work, and manage reviewer eligibility without bypassing lifecycle rules.",
+    "overviewRewardsLabel": "Reward operations",
+    "overviewRewardsValue": "Distribution ready",
+    "overviewRewardsCaption": "Monitor funded pools, pending contribution scores, previews, and completed awards.",
+    "actionRewardsEyebrow": "Rewards",
+    "actionRewardsTitle": "Open reward operations",
+    "actionRewardsText": "Inspect pool health, preview deterministic distributions, and execute approved reward rounds."
   },
   "adminAnchorJobs": {
     "eyebrow": "Verifiable provenance",
@@ -1997,5 +2004,137 @@
       "revokeRole": "Unable to revoke reviewer role."
     },
     "syncing": "Syncing…"
+  },
+  "adminRewards": {
+    "eyebrow": "Reward operations",
+    "title": "Rewards",
+    "subtitle": "Monitor topic reward pools, pending evaluated contributions, and deterministic DFCT distributions.",
+    "accessDenied": "System administrator access is required to manage reward operations.",
+    "syncedAt": "Synced at {{time}}",
+    "syncWaiting": "Waiting for first sync",
+    "syncing": "Syncing…",
+    "loading": "Loading reward operations…",
+    "loadingDetails": "Loading reward-pool details…",
+    "views": {
+      "overview": "Overview",
+      "pools": "Pools"
+    },
+    "healthEyebrow": "Reward health",
+    "healthTitle": "Distribution readiness",
+    "healthSubtitle": "A live view of pool capacity, pending reward events, and operational exceptions.",
+    "health": {
+      "available": "Available rewards",
+      "availableCaption": "Credits currently available across all topic pools.",
+      "pendingEvents": "Pending reward events",
+      "pendingEventsCaption": "{{contributors}} contributors are awaiting distribution.",
+      "readyPools": "Ready pools",
+      "readyPoolsCaption": "Pools with eligible events and available credits.",
+      "attention": "Needs attention",
+      "attentionCaption": "Pools blocked by failures or insufficient funding."
+    },
+    "attentionEyebrow": "Operations queue",
+    "attentionTitle": "Ready and blocked pools",
+    "attentionSubtitle": "{{count}} pools currently require distribution or operational attention.",
+    "attentionEmptyTitle": "Reward operations are clear",
+    "attentionEmptyText": "There are no pools waiting for distribution or requiring attention.",
+    "poolsEyebrow": "Portfolio",
+    "poolsTitle": "Topic reward pools",
+    "poolsSubtitle": "Inspect balances, readiness, previews, and distribution history across all funded topics.",
+    "poolsEmptyTitle": "No reward pools found",
+    "poolsEmptyText": "No topic reward pools match the current filters.",
+    "topicFallback": "Topic #{{id}}",
+    "poolId": "Pool #{{id}}",
+    "pendingSummary": "{{events}} pending events across {{contributors}} contributors",
+    "pendingContributors": "{{count}} contributors",
+    "filters": {
+      "status": "Pool status",
+      "allStatuses": "All statuses",
+      "search": "Search",
+      "searchPlaceholder": "Topic title, topic ID, pool ID, or policy"
+    },
+    "columns": {
+      "topic": "Topic",
+      "status": "Operational status",
+      "available": "Available",
+      "distributed": "Distributed",
+      "pending": "Pending",
+      "latestDistribution": "Latest distribution",
+      "updated": "Updated",
+      "actions": "Actions"
+    },
+    "statuses": {
+      "active": "Active",
+      "depleted": "Depleted",
+      "paused": "Paused",
+      "closed": "Closed",
+      "healthy": "Healthy",
+      "ready_to_distribute": "Ready to distribute",
+      "preview_ready": "Preview ready",
+      "processing": "Processing",
+      "needs_attention": "Needs attention",
+      "completed": "Completed",
+      "failed": "Failed",
+      "previewed": "Previewed",
+      "unknown": "Unknown",
+      "submit_topic": "Topic submitted",
+      "submit_contribution": "Contribution submitted",
+      "review_contribution": "Contribution reviewed",
+      "verify_contribution": "Contribution verified",
+      "evaluate_contribution": "Contribution evaluated",
+      "distribute_rewards": "Rewards distributed"
+    },
+    "attentionReasons": {
+      "failed_distribution": "Failed distribution",
+      "distribution_processing": "Distribution processing",
+      "preview_waiting_execution": "Preview waiting for execution",
+      "insufficient_pool": "Insufficient pool balance",
+      "reserved_balance": "Reserved balance remains",
+      "unknown": "Operational review required"
+    },
+    "actions": {
+      "inspect": "Inspect",
+      "openPools": "Open all pools",
+      "preview": "Preview distribution",
+      "execute": "Execute",
+      "close": "Close",
+      "cancel": "Cancel",
+      "confirmExecute": "Distribute rewards"
+    },
+    "detail": {
+      "poolTitle": "Pool accounting",
+      "funded": "Funded",
+      "available": "Available",
+      "reserved": "Reserved",
+      "distributed": "Distributed",
+      "readinessTitle": "Pending reward activity",
+      "pendingEvents": "Pending events",
+      "pendingContributors": "Contributors",
+      "pendingScore": "Total score",
+      "evaluatedContributions": "Evaluated contributions",
+      "distributionTitle": "Create a distribution preview",
+      "distributionText": "Choose the total amount to release. Individual awards are calculated proportionally from persisted eligible scores and cannot be edited manually.",
+      "previewsTitle": "Executable previews",
+      "previewMeta": "{{participants}} participants · total score {{score}}",
+      "noPreviews": "No preview is currently waiting for execution."
+    },
+    "fields": {
+      "amount": "Distribution amount (DFCT)"
+    },
+    "execute": {
+      "title": "Confirm reward distribution",
+      "text": "Distribute {{amount}} across {{participants}} participants using the persisted preview?",
+      "warning": "Execution credits contributor balances and claims the included reward events. Individual award amounts cannot be changed."
+    },
+    "toasts": {
+      "previewCreated": "Distribution preview created.",
+      "distributionCompleted": "Rewards distributed successfully."
+    },
+    "errors": {
+      "summary": "Unable to load reward operations.",
+      "pools": "Unable to load reward pools.",
+      "details": "Unable to load reward-pool details.",
+      "preview": "Unable to preview the distribution.",
+      "execute": "Unable to execute the distribution."
+    }
   }
 }
