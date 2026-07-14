@@ -6,6 +6,7 @@ import AdminBillingCreditsPage from "./AdminBillingCreditsPage";
 import AdminTabs from "../components/admin/AdminTabs";
 import AdminAnchorJobsPanel from "../components/admin/AdminAnchorJobsPanel";
 import AdminWorkflowPanel from "../components/admin/AdminWorkflowPanel";
+import AdminRewardsPanel from "../components/admin/AdminRewardsPanel";
 import { hasAdminClaim, useAdminAccess } from "../hooks/useAdminAccess";
 
 import "../styles/admin/AdminConsole.css";
@@ -20,7 +21,7 @@ function ConsoleStat({ label, value, caption, tone }) {
   );
 }
 
-function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenAnchoring }) {
+function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenRewards, onOpenAnchoring }) {
   return (
     <>
       <section className="DfctAdmin-section">
@@ -47,6 +48,12 @@ function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenAnchoring }) {
             label={t("adminConsole.overviewVerificationLabel")}
             value={t("adminConsole.overviewVerificationValue")}
             caption={t("adminConsole.overviewVerificationCaption")}
+          />
+          <ConsoleStat
+            label={t("adminConsole.overviewRewardsLabel")}
+            value={t("adminConsole.overviewRewardsValue")}
+            caption={t("adminConsole.overviewRewardsCaption")}
+            tone="warning"
           />
           <ConsoleStat
             label={t("adminConsole.overviewRoadmapLabel")}
@@ -80,6 +87,15 @@ function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenAnchoring }) {
             <span>{t("adminConsole.actionWorkflowEyebrow")}</span>
             <strong>{t("adminConsole.actionWorkflowTitle")}</strong>
             <p>{t("adminConsole.actionWorkflowText")}</p>
+          </button>
+          <button
+            type="button"
+            className="DfctAdminConsole-actionCard DfctAdminConsole-actionCardButton"
+            onClick={onOpenRewards}
+          >
+            <span>{t("adminConsole.actionRewardsEyebrow")}</span>
+            <strong>{t("adminConsole.actionRewardsTitle")}</strong>
+            <p>{t("adminConsole.actionRewardsText")}</p>
           </button>
           <button
             type="button"
@@ -196,6 +212,7 @@ export default function AdminPage() {
       { key: "overview" },
       { key: "workflow" },
       { key: "billing" },
+      { key: "rewards" },
       { key: "anchoring" },
     ],
     [],
@@ -267,6 +284,7 @@ export default function AdminPage() {
             t={t}
             onOpenBilling={() => changeTab("billing")}
             onOpenWorkflow={() => changeTab("workflow")}
+            onOpenRewards={() => changeTab("rewards")}
             onOpenAnchoring={() => changeTab("anchoring")}
           />
         )}
@@ -279,6 +297,10 @@ export default function AdminPage() {
           <div className="DfctAdminConsole-embeddedPage">
             <AdminBillingCreditsPage />
           </div>
+        )}
+
+        {activeTab === "rewards" && (
+          <AdminRewardsPanel t={t} user={userData} showToast={showToast} />
         )}
 
         {activeTab === "anchoring" && (

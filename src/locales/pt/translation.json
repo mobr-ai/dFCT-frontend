@@ -1320,7 +1320,8 @@
       "overview": "Visão geral",
       "billing": "Billing",
       "anchoring": "Ancoragem",
-      "workflow": "Workflow"
+      "workflow": "Workflow",
+      "rewards": "Recompensas"
     },
     "overviewTitle": "Visão geral admin",
     "overviewSubtitle": "Uma visão operacional compacta das áreas admin atualmente disponíveis no d-FCT.",
@@ -1377,7 +1378,13 @@
     "anchoringOpsSubtitle": "Um fluxo operacional seguro já está em vigor para listar jobs, visualizar planos de funding e verificar hashes de transações.",
     "actionWorkflowEyebrow": "Operações de verificação",
     "actionWorkflowTitle": "Mantenha as revisões avançando",
-    "actionWorkflowText": "Monitore a saúde das revisões, recupere trabalhos parados e gerencie a elegibilidade de revisores sem contornar as regras do ciclo de vida."
+    "actionWorkflowText": "Monitore a saúde das revisões, recupere trabalhos parados e gerencie a elegibilidade de revisores sem contornar as regras do ciclo de vida.",
+    "overviewRewardsLabel": "Operações de recompensas",
+    "overviewRewardsValue": "Distribuição pronta",
+    "overviewRewardsCaption": "Monitore fundos, pontuações pendentes, prévias e premiações concluídas.",
+    "actionRewardsEyebrow": "Recompensas",
+    "actionRewardsTitle": "Abrir operações de recompensas",
+    "actionRewardsText": "Inspecione a saúde dos fundos, simule distribuições determinísticas e execute rodadas aprovadas."
   },
   "adminAnchorJobs": {
     "eyebrow": "Proveniência verificável",
@@ -1997,5 +2004,137 @@
       "revokeRole": "Não foi possível revogar o papel de revisor."
     },
     "syncing": "Sincronizando…"
+  },
+  "adminRewards": {
+    "eyebrow": "Operações de recompensas",
+    "title": "Recompensas",
+    "subtitle": "Monitore fundos de tópicos, contribuições avaliadas pendentes e distribuições determinísticas de DFCT.",
+    "accessDenied": "É necessário acesso de administrador do sistema para gerenciar recompensas.",
+    "syncedAt": "Sincronizado às {{time}}",
+    "syncWaiting": "Aguardando primeira sincronização",
+    "syncing": "Sincronizando…",
+    "loading": "Carregando operações de recompensas…",
+    "loadingDetails": "Carregando detalhes do fundo de recompensas…",
+    "views": {
+      "overview": "Visão geral",
+      "pools": "Fundos"
+    },
+    "healthEyebrow": "Saúde das recompensas",
+    "healthTitle": "Prontidão para distribuição",
+    "healthSubtitle": "Visão ao vivo da capacidade dos fundos, eventos pendentes e exceções operacionais.",
+    "health": {
+      "available": "Recompensas disponíveis",
+      "availableCaption": "Créditos atualmente disponíveis em todos os fundos de tópicos.",
+      "pendingEvents": "Eventos pendentes",
+      "pendingEventsCaption": "{{contributors}} contribuidores aguardam distribuição.",
+      "readyPools": "Fundos prontos",
+      "readyPoolsCaption": "Fundos com eventos elegíveis e créditos disponíveis.",
+      "attention": "Requer atenção",
+      "attentionCaption": "Fundos bloqueados por falhas ou saldo insuficiente."
+    },
+    "attentionEyebrow": "Fila operacional",
+    "attentionTitle": "Fundos prontos e bloqueados",
+    "attentionSubtitle": "{{count}} fundos exigem distribuição ou atenção operacional.",
+    "attentionEmptyTitle": "Operações de recompensas em ordem",
+    "attentionEmptyText": "Não há fundos aguardando distribuição ou exigindo atenção.",
+    "poolsEyebrow": "Portfólio",
+    "poolsTitle": "Fundos de recompensas dos tópicos",
+    "poolsSubtitle": "Inspecione saldos, prontidão, prévias e histórico de distribuição de todos os tópicos financiados.",
+    "poolsEmptyTitle": "Nenhum fundo encontrado",
+    "poolsEmptyText": "Nenhum fundo de tópico corresponde aos filtros atuais.",
+    "topicFallback": "Tópico #{{id}}",
+    "poolId": "Fundo #{{id}}",
+    "pendingSummary": "{{events}} eventos pendentes para {{contributors}} contribuidores",
+    "pendingContributors": "{{count}} contribuidores",
+    "filters": {
+      "status": "Status do fundo",
+      "allStatuses": "Todos os status",
+      "search": "Buscar",
+      "searchPlaceholder": "Título, ID do tópico, ID do fundo ou política"
+    },
+    "columns": {
+      "topic": "Tópico",
+      "status": "Status operacional",
+      "available": "Disponível",
+      "distributed": "Distribuído",
+      "pending": "Pendente",
+      "latestDistribution": "Última distribuição",
+      "updated": "Atualizado",
+      "actions": "Ações"
+    },
+    "statuses": {
+      "active": "Ativo",
+      "depleted": "Esgotado",
+      "paused": "Pausado",
+      "closed": "Fechado",
+      "healthy": "Saudável",
+      "ready_to_distribute": "Pronto para distribuir",
+      "preview_ready": "Prévia pronta",
+      "processing": "Processando",
+      "needs_attention": "Requer atenção",
+      "completed": "Concluída",
+      "failed": "Falhou",
+      "previewed": "Pré-visualizada",
+      "unknown": "Desconhecido",
+      "submit_topic": "Tópico enviado",
+      "submit_contribution": "Contribuição enviada",
+      "review_contribution": "Contribuição revisada",
+      "verify_contribution": "Contribuição verificada",
+      "evaluate_contribution": "Contribuição avaliada",
+      "distribute_rewards": "Recompensas distribuídas"
+    },
+    "attentionReasons": {
+      "failed_distribution": "Distribuição com falha",
+      "distribution_processing": "Distribuição em processamento",
+      "preview_waiting_execution": "Prévia aguardando execução",
+      "insufficient_pool": "Saldo insuficiente no fundo",
+      "reserved_balance": "Saldo reservado remanescente",
+      "unknown": "Revisão operacional necessária"
+    },
+    "actions": {
+      "inspect": "Inspecionar",
+      "openPools": "Abrir todos os fundos",
+      "preview": "Gerar prévia",
+      "execute": "Executar",
+      "close": "Fechar",
+      "cancel": "Cancelar",
+      "confirmExecute": "Distribuir recompensas"
+    },
+    "detail": {
+      "poolTitle": "Contabilidade do fundo",
+      "funded": "Financiado",
+      "available": "Disponível",
+      "reserved": "Reservado",
+      "distributed": "Distribuído",
+      "readinessTitle": "Atividade de recompensa pendente",
+      "pendingEvents": "Eventos pendentes",
+      "pendingContributors": "Contribuidores",
+      "pendingScore": "Pontuação total",
+      "evaluatedContributions": "Contribuições avaliadas",
+      "distributionTitle": "Criar prévia de distribuição",
+      "distributionText": "Escolha o valor total a liberar. As premiações individuais são calculadas proporcionalmente a partir das pontuações elegíveis persistidas e não podem ser editadas manualmente.",
+      "previewsTitle": "Prévias executáveis",
+      "previewMeta": "{{participants}} participantes · pontuação total {{score}}",
+      "noPreviews": "Nenhuma prévia aguarda execução no momento."
+    },
+    "fields": {
+      "amount": "Valor da distribuição (DFCT)"
+    },
+    "execute": {
+      "title": "Confirmar distribuição de recompensas",
+      "text": "Distribuir {{amount}} entre {{participants}} participantes usando a prévia persistida?",
+      "warning": "A execução credita os saldos dos contribuidores e vincula os eventos incluídos. Os valores individuais não podem ser alterados."
+    },
+    "toasts": {
+      "previewCreated": "Prévia de distribuição criada.",
+      "distributionCompleted": "Recompensas distribuídas com sucesso."
+    },
+    "errors": {
+      "summary": "Não foi possível carregar as operações de recompensas.",
+      "pools": "Não foi possível carregar os fundos de recompensas.",
+      "details": "Não foi possível carregar os detalhes do fundo.",
+      "preview": "Não foi possível gerar a prévia de distribuição.",
+      "execute": "Não foi possível executar a distribuição."
+    }
   }
 }
