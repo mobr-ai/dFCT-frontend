@@ -213,9 +213,22 @@ const ContentCard = ({ item, innerRef, assessment }) => {
     };
   }, [videoLoaded]);
 
+  const sourceCardUrl =
+    item.source_card_url || item.sourceCardUrl || item.source_card || "";
+  const hasSourceCard = Boolean(sourceCardUrl);
+
   return (
     <div className="Breakdown-content-card" ref={innerRef}>
-      {item.content_type === "image" && (
+      {hasSourceCard && (
+        <a href={item.src_url} target="_blank" rel="noreferrer">
+          <Image
+            src={sourceCardUrl}
+            alt={item.content_title}
+            className="Breakdown-content-container loaded"
+          />
+        </a>
+      )}
+      {!hasSourceCard && item.content_type === "image" && (
         <a href={item.src_url} target="_blank" rel="noreferrer">
           <Image
             src={item.local_url}
@@ -224,7 +237,7 @@ const ContentCard = ({ item, innerRef, assessment }) => {
           />
         </a>
       )}
-      {item.content_type === "video" && (
+      {!hasSourceCard && item.content_type === "video" && (
         <div
           className="Breakdown-video-wrapper"
           onDoubleClick={enterFullscreen}
@@ -273,7 +286,7 @@ const ContentCard = ({ item, innerRef, assessment }) => {
           )}
         </div>
       )}
-      {item.content_type === "audio" && (
+      {!hasSourceCard && item.content_type === "audio" && (
         <audio className="Breakdown-audio-container" controls>
           <source src={item.local_url} type="audio/mpeg" />
         </audio>
