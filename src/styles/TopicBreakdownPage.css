@@ -1648,11 +1648,13 @@
   margin: 1.05rem 0 !important;
 }
 
-
 /* Structured claim review */
 .Breakdown-claim-reviewSummary {
-  background:
-    linear-gradient(135deg, rgba(122, 246, 229, 0.1), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(
+    135deg,
+    rgba(122, 246, 229, 0.1),
+    rgba(255, 255, 255, 0.04)
+  );
   border: 1px solid rgba(122, 246, 229, 0.18);
   border-radius: 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -1692,7 +1694,11 @@
 
 .Breakdown-claim-review-modal .modal-content {
   background:
-    radial-gradient(circle at 14% 8%, rgba(122, 246, 229, 0.16), transparent 32%),
+    radial-gradient(
+      circle at 14% 8%,
+      rgba(122, 246, 229, 0.16),
+      transparent 32%
+    ),
     linear-gradient(145deg, rgba(24, 34, 50, 0.98), rgba(11, 18, 30, 0.98));
   border: 1px solid rgba(220, 235, 255, 0.16);
   border-radius: 1.35rem;
@@ -1792,7 +1798,11 @@
 
 .Breakdown-claim-review-modalContent {
   background:
-    radial-gradient(circle at 12% 0%, rgba(122, 246, 229, 0.18), transparent 34%),
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(122, 246, 229, 0.18),
+      transparent 34%
+    ),
     linear-gradient(145deg, rgba(23, 34, 51, 0.98), rgba(8, 15, 28, 0.985));
   border: 1px solid rgba(220, 235, 255, 0.17);
   border-radius: 1.25rem;
@@ -1842,8 +1852,17 @@
 
 .Breakdown-claim-review-close {
   align-items: center;
-  background: color-mix(in srgb, var(--theme-surface, #101827) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--theme-border, rgba(220, 235, 255, 0.2)) 75%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--theme-surface, #101827) 72%,
+    transparent
+  );
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-border, rgba(220, 235, 255, 0.2)) 75%,
+      transparent
+    );
   border-radius: 0.75rem;
   color: var(--theme-text, rgba(240, 247, 255, 0.94));
   display: inline-flex;
@@ -1865,8 +1884,16 @@
 
 .Breakdown-claim-review-close:hover,
 .Breakdown-claim-review-close:focus-visible {
-  background: color-mix(in srgb, var(--theme-accent, #7af6e5) 18%, var(--theme-surface, #101827));
-  border-color: color-mix(in srgb, var(--theme-accent, #7af6e5) 52%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, #7af6e5) 18%,
+    var(--theme-surface, #101827)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, #7af6e5) 52%,
+    transparent
+  );
   color: var(--theme-text, #fff);
   opacity: 1;
   transform: translateY(-1px);
@@ -1890,8 +1917,11 @@
 }
 
 .Breakdown-claim-review-claimBox {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.075),
+    rgba(255, 255, 255, 0.035)
+  );
   border: 1px solid rgba(220, 235, 255, 0.13);
   border-radius: 1rem;
   margin-bottom: 0.95rem;
@@ -1945,8 +1975,11 @@
 }
 
 .Breakdown-claim-review-verdictPill {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.025)
+  );
   border: 1px solid rgba(220, 235, 255, 0.12);
   border-radius: 999px;
   color: rgba(231, 242, 253, 0.82);
@@ -1970,8 +2003,11 @@
 }
 
 .Breakdown-claim-review-verdictPill.is-selected {
-  background:
-    linear-gradient(135deg, rgba(122, 246, 229, 0.24), rgba(74, 144, 226, 0.16));
+  background: linear-gradient(
+    135deg,
+    rgba(122, 246, 229, 0.24),
+    rgba(74, 144, 226, 0.16)
+  );
   border-color: rgba(122, 246, 229, 0.55);
   box-shadow:
     0 0.75rem 1.6rem rgba(0, 0, 0, 0.2),
@@ -2012,7 +2048,11 @@
 [data-theme="light"] .Breakdown-claim-review-modalContent {
   background:
     radial-gradient(circle at 12% 0%, rgba(21, 97, 109, 0.1), transparent 34%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 252, 0.98));
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(246, 249, 252, 0.98)
+    );
   color: rgba(24, 34, 50, 0.95);
 }
 
@@ -2088,14 +2128,17 @@
 
 /* Structured claim review: stronger selected verdict state */
 
-
 .Breakdown-claim-review-verdictPill {
   position: relative;
 }
 
 .Breakdown-claim-review-verdictPill.is-selected {
   background:
-    radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.22), transparent 26%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(255, 255, 255, 0.22),
+      transparent 26%
+    ),
     linear-gradient(135deg, rgba(122, 246, 229, 0.34), rgba(74, 144, 226, 0.24)) !important;
   border-color: rgba(122, 246, 229, 0.82) !important;
   box-shadow:
@@ -2130,12 +2173,14 @@
   padding-right: 1.15rem;
 }
 
-
-
 [data-theme="paper"] .Breakdown-claim-review-verdictPill.is-selected,
 [data-theme="light"] .Breakdown-claim-review-verdictPill.is-selected {
   background:
-    radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.55), transparent 26%),
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(255, 255, 255, 0.55),
+      transparent 26%
+    ),
     linear-gradient(135deg, rgba(21, 97, 109, 0.18), rgba(74, 144, 226, 0.12)) !important;
   border-color: rgba(21, 97, 109, 0.54) !important;
   box-shadow:
@@ -2154,8 +2199,11 @@
 /* Structured review summary: paper/light contrast polish */
 [data-theme="paper"] .Breakdown-claim-reviewSummary,
 [data-theme="light"] .Breakdown-claim-reviewSummary {
-  background:
-    linear-gradient(135deg, rgba(15, 32, 48, 0.075), rgba(15, 32, 48, 0.035));
+  background: linear-gradient(
+    135deg,
+    rgba(15, 32, 48, 0.075),
+    rgba(15, 32, 48, 0.035)
+  );
   border-color: rgba(15, 32, 48, 0.16);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
@@ -2212,11 +2260,7 @@
   border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14));
   border-radius: 1rem;
   box-shadow: 0 8px 26px
-    color-mix(
-      in srgb,
-      var(--theme-shadow-color, #000000) 8%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-shadow-color, #000000) 8%, transparent);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   margin: -1rem 0 1.35rem;
@@ -2293,11 +2337,7 @@
   background: var(--theme-text-muted, #64748b);
   border-radius: 999px;
   box-shadow: 0 0 0 3px
-    color-mix(
-      in srgb,
-      var(--theme-text-muted, #64748b) 12%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-text-muted, #64748b) 12%, transparent);
   content: "";
   flex: 0 0 auto;
   height: 0.38rem;
@@ -2322,11 +2362,7 @@
 .Breakdown-financial-chip.is-state.tone-active > span::before {
   background: var(--theme-success, #15945f);
   box-shadow: 0 0 0 3px
-    color-mix(
-      in srgb,
-      var(--theme-success, #15945f) 14%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-success, #15945f) 14%, transparent);
 }
 
 .Breakdown-financial-chip.tone-review_required > span::before,
@@ -2335,11 +2371,7 @@
 .Breakdown-financial-chip.tone-funding_blocked > span::before {
   background: var(--theme-danger, #c0392b);
   box-shadow: 0 0 0 3px
-    color-mix(
-      in srgb,
-      var(--theme-danger, #c0392b) 14%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-danger, #c0392b) 14%, transparent);
 }
 
 .Breakdown-financial-chip.tone-pending > span::before,
@@ -2347,11 +2379,7 @@
 .Breakdown-financial-chip.tone-debited > span::before {
   background: var(--theme-warning, #d29b20);
   box-shadow: 0 0 0 3px
-    color-mix(
-      in srgb,
-      var(--theme-warning, #d29b20) 14%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-warning, #d29b20) 14%, transparent);
 }
 
 .Breakdown-topic-commandBar .Breakdown-toolbar {
@@ -2445,11 +2473,7 @@
   border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
   border-radius: 0.8rem;
   box-shadow: 0 18px 46px
-    color-mix(
-      in srgb,
-      var(--theme-shadow-color, #000000) 22%,
-      transparent
-    ) !important;
+    color-mix(in srgb, var(--theme-shadow-color, #000000) 22%, transparent) !important;
   min-width: 12rem;
   padding: 0.35rem;
 }
@@ -2467,14 +2491,23 @@
   padding: 0.5rem 0.65rem;
 }
 
-[data-theme] .Breakdown-toolbar .Breakdown-topic-overflowMenu .dropdown-item:hover,
-[data-theme] .Breakdown-toolbar .Breakdown-topic-overflowMenu .dropdown-item:focus {
+[data-theme]
+  .Breakdown-toolbar
+  .Breakdown-topic-overflowMenu
+  .dropdown-item:hover,
+[data-theme]
+  .Breakdown-toolbar
+  .Breakdown-topic-overflowMenu
+  .dropdown-item:focus {
   background: var(--theme-accent-soft, rgba(37, 99, 235, 0.08)) !important;
   color: var(--theme-accent-hover, var(--theme-primary, #2563eb)) !important;
   box-shadow: none !important;
 }
 
-[data-theme] .Breakdown-toolbar .Breakdown-topic-overflowMenu .dropdown-item:disabled {
+[data-theme]
+  .Breakdown-toolbar
+  .Breakdown-topic-overflowMenu
+  .dropdown-item:disabled {
   color: var(--theme-text-muted, #64748b) !important;
   opacity: 0.46;
 }
@@ -2523,27 +2556,15 @@
   background:
     radial-gradient(
       circle at 1px 1px,
-      color-mix(
-        in srgb,
-        var(--theme-text-muted, #64748b) 16%,
-        transparent
-      ) 1px,
+      color-mix(in srgb, var(--theme-text-muted, #64748b) 16%, transparent) 1px,
       transparent 1.2px
     ),
-    color-mix(
-      in srgb,
-      var(--theme-surface, #ffffff) 92%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-surface, #ffffff) 92%, transparent);
   background-size: 18px 18px;
   border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14));
   border-radius: 1rem;
   box-shadow: 0 12px 34px
-    color-mix(
-      in srgb,
-      var(--theme-shadow-color, #000000) 8%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-shadow-color, #000000) 8%, transparent);
   margin: 2rem 0 3rem;
   overflow: hidden;
   padding: 1rem;
@@ -2643,11 +2664,7 @@
     var(--theme-border, rgba(15, 23, 42, 0.14))
   );
   box-shadow: 0 7px 18px
-    color-mix(
-      in srgb,
-      var(--theme-primary, #2563eb) 12%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-primary, #2563eb) 12%, transparent);
 }
 
 .Breakdown-referenceFile-icon {
@@ -2664,11 +2681,7 @@
 }
 
 .Breakdown-referenceFile-icon::after {
-  background: color-mix(
-    in srgb,
-    currentColor 16%,
-    transparent
-  );
+  background: color-mix(in srgb, currentColor 16%, transparent);
   border-radius: 999px;
   bottom: -0.05rem;
   content: "";
@@ -2750,11 +2763,7 @@
   border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14));
   border-radius: 0.92rem;
   box-shadow: 0 16px 42px
-    color-mix(
-      in srgb,
-      var(--theme-shadow-color, #000000) 14%,
-      transparent
-    );
+    color-mix(in srgb, var(--theme-shadow-color, #000000) 14%, transparent);
   color: var(--theme-text, #111827);
   overflow: hidden;
 }
@@ -2781,11 +2790,12 @@
     var(--theme-primary, #2563eb) 10%,
     var(--theme-surface, #ffffff)
   );
-  border: 1px solid color-mix(
-    in srgb,
-    var(--theme-primary, #2563eb) 24%,
-    var(--theme-border, rgba(15, 23, 42, 0.14))
-  );
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-primary, #2563eb) 24%,
+      var(--theme-border, rgba(15, 23, 42, 0.14))
+    );
   border-radius: 0.42rem;
   color: var(--theme-primary, #2563eb);
   display: inline-flex;
@@ -2837,11 +2847,7 @@
 
 .Breakdown-referenceWindow-bar > button:hover,
 .Breakdown-referenceWindow-bar > button:focus-visible {
-  background: color-mix(
-    in srgb,
-    var(--theme-danger, #c0392b) 11%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--theme-danger, #c0392b) 11%, transparent);
   color: var(--theme-danger, #c0392b);
   outline: none;
 }
@@ -3022,11 +3028,7 @@
 }
 
 .Breakdown-referenceAssessment-badges > span {
-  background: color-mix(
-    in srgb,
-    var(--theme-bg, #f8fafc) 68%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--theme-bg, #f8fafc) 68%, transparent);
   border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14));
   border-radius: 999px;
   color: var(--theme-text-muted, #64748b);
@@ -3060,4 +3062,872 @@
   .Breakdown-referenceAssessment-header small {
     white-space: normal;
   }
+}
+
+/* Structured claim review: evidence intelligence */
+.Breakdown-claim-review-evidenceSection {
+  padding: 0.78rem 0.85rem;
+}
+
+.Breakdown-claim-review-evidenceState {
+  color: rgba(220, 234, 247, 0.66);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.3rem 0;
+}
+
+.Breakdown-claim-review-evidenceState.is-error {
+  color: #ff9eaa;
+}
+
+.Breakdown-claim-review-evidenceGroup {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.Breakdown-claim-review-evidenceGroup + .Breakdown-claim-review-evidenceGroup {
+  border-top: 1px solid rgba(220, 235, 255, 0.09);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.Breakdown-claim-review-interpretation {
+  min-width: 0;
+}
+
+.Breakdown-claim-review-interpretationHeader {
+  align-items: center;
+  display: flex;
+  gap: 0.6rem;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
+.Breakdown-claim-review-interpretationHeader > span {
+  border: 1px solid rgba(122, 246, 229, 0.24);
+  border-radius: 999px;
+  color: rgba(122, 246, 229, 0.94);
+  font-size: 0.69rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.Breakdown-claim-review-interpretationHeader > span.is-contradicting {
+  border-color: rgba(255, 106, 127, 0.3);
+  color: rgba(255, 142, 158, 0.95);
+}
+
+.Breakdown-claim-review-interpretationHeader > span.is-contextualizing {
+  border-color: rgba(120, 170, 255, 0.32);
+  color: rgba(157, 194, 255, 0.96);
+}
+
+.Breakdown-claim-review-interpretationHeader > span.is-insufficient {
+  border-color: rgba(220, 234, 247, 0.22);
+  color: rgba(220, 234, 247, 0.72);
+}
+
+.Breakdown-claim-review-interpretationHeader small {
+  color: rgba(220, 234, 247, 0.54);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.Breakdown-claim-review-evidenceAssertion {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.025)
+  );
+  border: 1px solid rgba(220, 235, 255, 0.1);
+  border-radius: 0.85rem;
+  padding: 0.72rem 0.78rem;
+}
+
+.Breakdown-claim-review-evidenceAssertion
+  + .Breakdown-claim-review-evidenceAssertion {
+  margin-top: 0.48rem;
+}
+
+.Breakdown-claim-review-evidenceAssertion blockquote {
+  color: rgba(246, 251, 255, 0.92);
+  font-size: 0.88rem;
+  font-weight: 750;
+  line-height: 1.38;
+  margin: 0 0 0.55rem;
+}
+
+.Breakdown-claim-review-evidenceMeta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  justify-content: space-between;
+}
+
+.Breakdown-claim-review-confidenceMetric {
+  align-items: baseline;
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.Breakdown-claim-review-confidenceMetric span {
+  color: rgba(220, 234, 247, 0.6);
+  font-size: 0.7rem;
+  font-weight: 850;
+}
+
+.Breakdown-claim-review-confidenceMetric strong {
+  color: rgba(122, 246, 229, 0.96);
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.Breakdown-claim-review-modelBadge {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  text-align: right;
+}
+
+.Breakdown-claim-review-modelBadge span {
+  color: rgba(236, 245, 253, 0.78);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.Breakdown-claim-review-modelBadge small,
+.Breakdown-claim-review-legacyProvenance {
+  color: rgba(220, 234, 247, 0.5);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.Breakdown-claim-review-aiRationale {
+  color: rgba(220, 234, 247, 0.66);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0.5rem 0 0;
+}
+
+.Breakdown-claim-review-assessmentBlock {
+  border-top: 1px solid rgba(220, 235, 255, 0.08);
+  margin-top: 0.62rem;
+  padding-top: 0.58rem;
+}
+
+.Breakdown-claim-review-assessmentBlock > span {
+  color: rgba(220, 234, 247, 0.62);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.Breakdown-claim-review-assessmentGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.Breakdown-claim-review-assessmentPill {
+  background: transparent;
+  border: 1px solid rgba(220, 235, 255, 0.12);
+  border-radius: 999px;
+  color: rgba(226, 238, 249, 0.72);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.28rem 0.52rem;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.Breakdown-claim-review-assessmentPill:hover,
+.Breakdown-claim-review-assessmentPill:focus-visible,
+.Breakdown-claim-review-assessmentPill.is-selected {
+  background: rgba(122, 246, 229, 0.12);
+  border-color: rgba(122, 246, 229, 0.48);
+  color: rgba(250, 253, 255, 0.98);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-evidenceAssertion,
+[data-theme="light"] .Breakdown-claim-review-evidenceAssertion {
+  background: rgba(15, 32, 48, 0.035);
+  border-color: rgba(15, 32, 48, 0.11);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-evidenceAssertion blockquote,
+[data-theme="light"] .Breakdown-claim-review-evidenceAssertion blockquote {
+  color: rgba(18, 35, 52, 0.92);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-confidenceMetric span,
+[data-theme="light"] .Breakdown-claim-review-confidenceMetric span,
+[data-theme="paper"] .Breakdown-claim-review-aiRationale,
+[data-theme="light"] .Breakdown-claim-review-aiRationale,
+[data-theme="paper"] .Breakdown-claim-review-assessmentBlock > span,
+[data-theme="light"] .Breakdown-claim-review-assessmentBlock > span {
+  color: rgba(38, 55, 72, 0.68);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-confidenceMetric strong,
+[data-theme="light"] .Breakdown-claim-review-confidenceMetric strong {
+  color: rgba(11, 106, 112, 0.96);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-modelBadge span,
+[data-theme="light"] .Breakdown-claim-review-modelBadge span {
+  color: rgba(28, 46, 65, 0.78);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-assessmentPill,
+[data-theme="light"] .Breakdown-claim-review-assessmentPill {
+  border-color: rgba(15, 32, 48, 0.15);
+  color: rgba(31, 49, 68, 0.76);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-assessmentPill.is-selected,
+[data-theme="light"] .Breakdown-claim-review-assessmentPill.is-selected {
+  background: rgba(21, 97, 109, 0.11);
+  border-color: rgba(21, 97, 109, 0.42);
+  color: rgba(11, 68, 75, 0.96);
+}
+
+@media (max-width: 576px) {
+  .Breakdown-claim-review-evidenceMeta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .Breakdown-claim-review-modelBadge {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+/* Claim review modal: viewport-centered shell with internally scrolling body */
+.Breakdown-claim-review-modal {
+  --review-modal-top-gap: 0;
+}
+
+.Breakdown-claim-review-modal .modal-dialog,
+.Breakdown-claim-review-modal .modal-dialog-centered {
+  align-items: center;
+  display: flex;
+  margin: 0.75rem auto;
+  max-width: min(38rem, calc(100vw - 1.5rem));
+  min-height: calc(100% - 1.5rem);
+}
+
+.Breakdown-claim-review-modalContent {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 1.5rem);
+  overflow: hidden;
+  width: 100%;
+}
+
+/*
+ * Header/body/footer live inside a form, so the form itself must be
+ * the constrained flex container. Otherwise modal-body cannot shrink
+ * and take ownership of vertical scrolling.
+ */
+.Breakdown-claim-review-modalContent > form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  max-height: calc(100vh - 1.5rem);
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.Breakdown-claim-review-modal .modal-header,
+.Breakdown-claim-review-modal .modal-footer {
+  flex: 0 0 auto;
+}
+
+.Breakdown-claim-review-modal .modal-body {
+  flex: 1 1 auto;
+  max-height: none;
+  min-height: 0;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 576px) {
+  .Breakdown-claim-review-modal .modal-dialog,
+  .Breakdown-claim-review-modal .modal-dialog-centered {
+    margin: 0.5rem;
+    min-height: calc(100% - 1rem);
+  }
+
+  .Breakdown-claim-review-modalContent,
+  .Breakdown-claim-review-modalContent > form {
+    max-height: calc(100vh - 1rem);
+  }
+}
+
+/* Evidence interpretation assessment: explicit selected state */
+.Breakdown-claim-review-assessmentPill {
+  position: relative;
+}
+
+.Breakdown-claim-review-assessmentPill.is-selected {
+  background: linear-gradient(
+    135deg,
+    rgba(122, 246, 229, 0.24),
+    rgba(74, 144, 226, 0.16)
+  ) !important;
+  border-color: rgba(122, 246, 229, 0.72) !important;
+  box-shadow:
+    0 0 0 1px rgba(122, 246, 229, 0.18),
+    0 0.45rem 1rem rgba(0, 0, 0, 0.16);
+  color: rgba(250, 253, 255, 0.99) !important;
+  padding-right: 1.45rem;
+}
+
+.Breakdown-claim-review-assessmentPill.is-selected::after {
+  content: "✓";
+  font-size: 0.66rem;
+  font-weight: 950;
+  position: absolute;
+  right: 0.48rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[data-theme="paper"] .Breakdown-claim-review-assessmentPill.is-selected,
+[data-theme="light"] .Breakdown-claim-review-assessmentPill.is-selected {
+  background: rgba(21, 97, 109, 0.14) !important;
+  border-color: rgba(21, 97, 109, 0.52) !important;
+  color: rgba(11, 68, 75, 0.98) !important;
+}
+
+/* Evidence contribution relationship — compact decision panel */
+.Breakdown-evidence-relationship-modal .modal-dialog {
+  max-width: min(520px, calc(100vw - 1.5rem));
+}
+
+.Breakdown-evidence-relationship-modal .modal-content {
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      color-mix(in srgb, var(--theme-primary, #2563eb) 7%, transparent),
+      transparent 34%
+    ),
+    var(--theme-surface, #ffffff) !important;
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14));
+  border-radius: 1rem;
+  box-shadow:
+    0 1.6rem 4rem
+      color-mix(in srgb, var(--theme-shadow-color, #000000) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--theme-text, #ffffff) 5%, transparent);
+  color: var(--theme-text, #111827);
+  overflow: hidden;
+}
+
+.Breakdown-evidence-relationship-modal .modal-header {
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
+  min-height: auto;
+  padding: 0.85rem 1rem 0.78rem;
+}
+
+.Breakdown-evidence-relationship-modal .modal-title {
+  color: var(--theme-text, #111827);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  max-width: calc(100% - 2.5rem);
+}
+
+.Breakdown-evidence-relationship-modal .modal-body {
+  background: transparent !important;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.Breakdown-evidence-relationship-modal .modal-footer {
+  background: transparent !important;
+  border-top: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
+  min-height: auto;
+  padding: 0.58rem 1rem;
+}
+
+.Breakdown-evidence-relationship-modal .modal-footer .btn {
+  border-radius: 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-height: 2rem;
+  padding: 0.35rem 0.7rem;
+}
+
+.Breakdown-evidence-relationship-intro {
+  color: var(--theme-text-muted, #64748b);
+  font-size: 0.79rem;
+  line-height: 1.42;
+  margin: 0 0 0.72rem;
+}
+
+.Breakdown-evidence-relationship-claim {
+  background: color-mix(
+    in srgb,
+    var(--theme-surface-2, #f8fafc) 76%,
+    transparent
+  );
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
+  border-radius: 0.72rem;
+  margin: 0 0 0.72rem;
+  padding: 0.62rem 0.72rem;
+}
+
+.Breakdown-evidence-relationship-claim strong {
+  color: var(--theme-primary, #2563eb);
+  display: block;
+  font-size: 0.61rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+}
+
+.Breakdown-evidence-relationship-claim p {
+  color: var(--theme-text, #111827);
+  font-size: 0.78rem;
+  line-height: 1.38;
+  margin: 0;
+}
+
+.Breakdown-evidence-relationship-options {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.Breakdown-evidence-relationship-option {
+  appearance: none;
+  align-items: stretch;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--theme-surface-2, #f8fafc) 86%, transparent),
+    color-mix(in srgb, var(--theme-surface, #ffffff) 94%, transparent)
+  );
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.13));
+  border-radius: 0.78rem;
+  color: var(--theme-text, #111827);
+  cursor: pointer;
+  display: flex;
+  min-height: 5.4rem;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+  width: 100%;
+}
+
+.Breakdown-evidence-relationship-option::before {
+  border-radius: 0.78rem 0 0 0.78rem;
+  bottom: -1px;
+  content: "";
+  left: -1px;
+  position: absolute;
+  top: -1px;
+  width: 3px;
+}
+
+.Breakdown-evidence-relationship-option:first-child::before {
+  background: var(--theme-success, #15945f);
+}
+
+.Breakdown-evidence-relationship-option:last-child::before {
+  background: var(--theme-danger, #c0392b);
+}
+
+.Breakdown-evidence-relationship-option:hover,
+.Breakdown-evidence-relationship-option:focus-visible {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-primary, #2563eb) 32%,
+    var(--theme-border, rgba(15, 23, 42, 0.14))
+  );
+  box-shadow: 0 0.55rem 1.25rem
+    color-mix(in srgb, var(--theme-shadow-color, #000000) 10%, transparent);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.Breakdown-evidence-relationship-option:first-child:hover,
+.Breakdown-evidence-relationship-option:first-child:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--theme-success, #15945f) 7%,
+    var(--theme-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-success, #15945f) 35%,
+    var(--theme-border, rgba(15, 23, 42, 0.14))
+  );
+}
+
+.Breakdown-evidence-relationship-option:last-child:hover,
+.Breakdown-evidence-relationship-option:last-child:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--theme-danger, #c0392b) 6%,
+    var(--theme-surface, #ffffff)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-danger, #c0392b) 32%,
+    var(--theme-border, rgba(15, 23, 42, 0.14))
+  );
+}
+
+.Breakdown-evidence-relationship-optionCopy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.28rem;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.68rem 0.78rem 0.68rem 0.88rem;
+}
+
+.Breakdown-evidence-relationship-optionCopy strong {
+  color: var(--theme-text, #111827);
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.22;
+}
+
+.Breakdown-evidence-relationship-optionCopy span {
+  color: var(--theme-text-muted, #64748b);
+  display: block;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 480px) {
+  .Breakdown-evidence-relationship-modal .modal-dialog {
+    margin-inline: 0.6rem;
+  }
+
+  .Breakdown-evidence-relationship-options {
+    grid-template-columns: 1fr;
+  }
+
+  .Breakdown-evidence-relationship-option {
+    min-height: 4.5rem;
+  }
+}
+
+/* Declared submitter view inside the evidence form */
+.Breakdown-evidence-declared-view {
+  justify-content: flex-start;
+  padding: 0.55rem 0.7rem;
+}
+
+.Breakdown-evidence-declared-view span,
+.Breakdown-evidence-declared-view strong {
+  display: inline-block;
+}
+
+.Breakdown-evidence-declared-view span {
+  flex: 0 0 auto;
+}
+
+.Breakdown-evidence-declared-view strong {
+  font-size: 0.86rem;
+}
+
+/* Theme-native modal close controls */
+.Breakdown-evidence-relationship-modal .btn-close,
+.Breakdown-claim-evidence-modal .btn-close {
+  align-items: center;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--theme-text) !important;
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  opacity: 0.72;
+  padding: 0 !important;
+  position: relative;
+  width: 2rem;
+}
+
+.Breakdown-evidence-relationship-modal .btn-close::before,
+.Breakdown-evidence-relationship-modal .btn-close::after,
+.Breakdown-claim-evidence-modal .btn-close::before,
+.Breakdown-claim-evidence-modal .btn-close::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  height: 1px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: 0.85rem;
+}
+
+.Breakdown-evidence-relationship-modal .btn-close::before,
+.Breakdown-claim-evidence-modal .btn-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.Breakdown-evidence-relationship-modal .btn-close::after,
+.Breakdown-claim-evidence-modal .btn-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.Breakdown-evidence-relationship-modal .btn-close:hover,
+.Breakdown-evidence-relationship-modal .btn-close:focus-visible,
+.Breakdown-claim-evidence-modal .btn-close:hover,
+.Breakdown-claim-evidence-modal .btn-close:focus-visible {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  opacity: 1;
+  outline: 1px solid var(--theme-border);
+}
+
+/* Persisted claim contribution summary */
+.Breakdown-claim-actionCluster--evidence {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.Breakdown-claim-contributionCount,
+.Breakdown-claim-contributionMine {
+  border-radius: 999px;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.32rem 0.5rem;
+  white-space: nowrap;
+}
+
+.Breakdown-claim-contributionCount {
+  border: 1px solid var(--theme-border);
+  color: var(--theme-text-muted);
+}
+
+.Breakdown-claim-contributionMine {
+  background: var(--theme-surface-2);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-primary);
+  font-weight: 600;
+}
+
+/* Evidence relationship modal: force theme-native close control */
+html[data-theme]
+  body
+  .Breakdown-evidence-relationship-modal
+  .modal-header
+  .btn-close {
+  appearance: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0.45rem !important;
+  box-shadow: none !important;
+  color: var(--theme-text, #111827) !important;
+  filter: none !important;
+  height: 1.85rem !important;
+  margin: 0 0 0 auto !important;
+  opacity: 0.68 !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 1.85rem !important;
+}
+
+html[data-theme]
+  body
+  .Breakdown-evidence-relationship-modal
+  .modal-header
+  .btn-close:hover,
+html[data-theme]
+  body
+  .Breakdown-evidence-relationship-modal
+  .modal-header
+  .btn-close:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--theme-text, #111827) 8%,
+    transparent
+  ) !important;
+  color: var(--theme-text, #111827) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  outline: none !important;
+}
+
+/* Tighter evidence relationship geometry */
+.Breakdown-evidence-relationship-claim {
+  border-radius: 0.45rem;
+}
+
+.Breakdown-evidence-relationship-optionCopy {
+  border-radius: 0.45rem;
+}
+
+/* Evidence submission: declared relationship */
+.Breakdown-evidence-declared-view {
+  align-items: baseline !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.32rem !important;
+  justify-content: center !important;
+}
+
+.Breakdown-evidence-declared-view > span,
+.Breakdown-evidence-declared-view > strong {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
+.Breakdown-evidence-declared-view > strong {
+  color: var(--theme-text, inherit) !important;
+  font-weight: 800;
+}
+
+/*
+ * Evidence submission modal close button.
+ * Override Bootstrap and older theme-specific btn-close rules completely.
+ */
+html[data-theme] body .Breakdown-claim-evidence-modal .modal-header .btn-close {
+  appearance: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0.45rem !important;
+  box-shadow: none !important;
+  color: var(--theme-text, #f4f7fb) !important;
+  filter: none !important;
+  flex: 0 0 auto !important;
+  height: 1.9rem !important;
+  margin: 0 0 0 auto !important;
+  opacity: 0.7 !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 1.9rem !important;
+}
+
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close::before,
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close::after {
+  background: currentColor !important;
+  border-radius: 999px;
+  content: "";
+  height: 1.5px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: 0.82rem;
+}
+
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:hover,
+html[data-theme]
+  body
+  .Breakdown-claim-evidence-modal
+  .modal-header
+  .btn-close:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--theme-text, #f4f7fb) 9%,
+    transparent
+  ) !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--theme-text, #f4f7fb) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  outline: none !important;
+}
+
+/* URL preview cards inside evidence submission */
+.Breakdown-claim-evidence-modal .Url-card.card {
+  background: var(--theme-surface, #ffffff) !important;
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
+  color: var(--theme-text, #111827) !important;
+  overflow: hidden;
+}
+
+.Breakdown-claim-evidence-modal .Url-card .card-body,
+.Breakdown-claim-evidence-modal .Url-card .card-footer {
+  background: var(--theme-surface, #ffffff) !important;
+  border-color: var(--theme-border, rgba(15, 23, 42, 0.14)) !important;
+  color: var(--theme-text, #111827) !important;
+}
+
+.Breakdown-claim-evidence-modal .Url-card .card-title,
+.Breakdown-claim-evidence-modal .Url-card h1,
+.Breakdown-claim-evidence-modal .Url-card h2,
+.Breakdown-claim-evidence-modal .Url-card h3,
+.Breakdown-claim-evidence-modal .Url-card h4,
+.Breakdown-claim-evidence-modal .Url-card h5,
+.Breakdown-claim-evidence-modal .Url-card h6,
+.Breakdown-claim-evidence-modal .Url-card strong {
+  color: var(--theme-text, #111827) !important;
+}
+
+.Breakdown-claim-evidence-modal .Url-card p,
+.Breakdown-claim-evidence-modal .Url-card small,
+.Breakdown-claim-evidence-modal .Url-card .card-text {
+  color: var(--theme-text-muted, #64748b) !important;
+}
+
+.Breakdown-claim-evidence-modal .Url-card a {
+  color: var(--theme-primary, #2563eb) !important;
+}
+
+.Breakdown-claim-evidence-modal .Url-card .card-footer {
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
 }

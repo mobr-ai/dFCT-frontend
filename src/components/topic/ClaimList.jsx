@@ -6,11 +6,10 @@ import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCheck,
+  faPaperclip,
   faSearch,
   faThumbsDown,
   faThumbsUp,
-  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
 const linkifyOpts = {
@@ -56,6 +55,7 @@ function actionClass(...parts) {
   return ["Breakdown-claim-actionButton", ...parts].filter(Boolean).join(" ");
 }
 
+
 const ClaimItem = ({
   index,
   claim,
@@ -87,6 +87,19 @@ const ClaimItem = ({
   const totalReviews = Number(reviewSummary.totalReviews || 0);
   const latestReview = reviewSummary.latestReview || null;
   const currentUserReview = reviewSummary.currentUserReview || null;
+
+  const contributionSummary =
+    claimSummary?.contributions || {};
+  const contributionCount = Number(
+    contributionSummary.count || 0,
+  );
+  const currentUserContribution =
+    contributionSummary.currentUser || {};
+  const hasContributed = Boolean(
+    currentUserContribution.hasContributed,
+  );
+  const currentUserContributionStatus =
+    currentUserContribution.latest?.status || null;
 
   return (
     <Accordion.Item eventKey={String(index)}>
@@ -219,25 +232,37 @@ const ClaimItem = ({
             <div className="Breakdown-claim-actionCluster Breakdown-claim-actionCluster--evidence">
               <Button
                 variant="link"
-                className={actionClass("is-evidencePro")}
-                onClick={() =>
-                  showEvidenceModal(t("addProEvidence"), "proEvidence", claimId)
-                }
+                className={actionClass("is-evidence")}
+                onClick={() => showEvidenceModal(claimId)}
               >
-                <FontAwesomeIcon icon={faCheck} />
-                <span>{t("addProEvidence")}</span>
+                <FontAwesomeIcon icon={faPaperclip} />
+                <span>
+                  {t("evidenceContribution.submitEvidence")}
+                </span>
               </Button>
 
-              <Button
-                variant="link"
-                className={actionClass("is-evidenceCon")}
-                onClick={() =>
-                  showEvidenceModal(t("addConEvidence"), "conEvidence", claimId)
-                }
-              >
-                <FontAwesomeIcon icon={faTimes} />
-                <span>{t("addConEvidence")}</span>
-              </Button>
+              {contributionCount > 0 && (
+                <span className="Breakdown-claim-contributionCount">
+                  {t(
+                    "evidenceContribution.contributionCount",
+                    { count: contributionCount },
+                  )}
+                </span>
+              )}
+
+              {hasContributed && (
+                <span className="Breakdown-claim-contributionMine">
+                  ✓ {t("evidenceContribution.youContributed")}
+                  {currentUserContributionStatus && (
+                    <>
+                      {" · "}
+                      {t(
+                        `evidenceContribution.status.${currentUserContributionStatus}`,
+                      )}
+                    </>
+                  )}
+                </span>
+              )}
             </div>
           </div>
 

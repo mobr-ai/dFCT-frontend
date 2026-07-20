@@ -1278,8 +1278,8 @@
       "body": "Use sua conta ou carteira Cardano para votar em alegações, contribuir com evidências e participar da validação descentralizada."
     },
     "reviewing": "Revisando…",
-    "reviewModalEyebrow": "Inteligência da comunidade",
-    "reviewModalTitle": "Construa o sinal da alegação",
+    "reviewModalEyebrow": "Revisão da comunidade",
+    "reviewModalTitle": "Revise esta alegação",
     "verdictLabel": "Veredito",
     "confidenceLabel": "Confiança",
     "confidenceHelp": "Pontuação opcional de confiança de 0 a 100.",
@@ -1289,7 +1289,7 @@
     "reviewSaved": "Revisão da alegação publicada.",
     "reviewAlreadySaved": "Sua revisão já estava atualizada.",
     "reviewFailed": "Não foi possível publicar a revisão da alegação.",
-    "structuredReviews": "Sinal de revisão",
+    "structuredReviews": "Revisões da comunidade",
     "totalReviews": "Revisões: {{count}}",
     "latestReview": "Mais recente",
     "yourReview": "Sua",
@@ -1301,13 +1301,41 @@
       "false": "Falsa",
       "unverified": "Precisa de evidências"
     },
-    "reviewModalSubtitle": "Transforme seu julgamento em um sinal estruturado que outras pessoas possam entender, auditar, comparar e reutilizar como contexto curado para LLM após revisão.",
+    "reviewModalSubtitle": "Compartilhe sua avaliação, compare as evidências e ajude outras pessoas a entender o que se sustenta.",
     "claimUnderReview": "Alegação em revisão",
     "verdictHelp": "Escolha o rótulo que melhor comunica sua avaliação.",
     "confidenceValue": "{{value}}% de confiança",
     "confidenceLow": "Exploratório",
     "confidenceHigh": "Alta convicção",
-    "rationaleHelp": "Opcional, mas útil para transparência."
+    "rationaleHelp": "Opcional, mas útil para transparência.",
+    "yourConfidence": "Sua confiança",
+    "aiConfidence": "Confiança da IA",
+    "reviewerConfidence": "Confiança do revisor",
+    "communityConfidence": "Confiança da comunidade",
+    "basedOnReviews": "Com base em {{count}} revisões",
+    "evidenceInterpretation": "Interpretação da evidência",
+    "evidenceAssertionCount": "{{count}} análise",
+    "evidenceAssertionCount_plural": "{{count}} análises",
+    "loadingEvidenceInterpretations": "Carregando interpretações da evidência…",
+    "evidenceInterpretationsFailed": "Não foi possível carregar as interpretações da evidência.",
+    "noEvidenceInterpretations": "Ainda não há interpretações estruturadas de evidências.",
+    "analysisCount": "{{count}} análise",
+    "analysisCount_plural": "{{count}} análises",
+    "evidenceInterpretationVersion": "Interpretação da evidência · v{{version}}",
+    "modelProvenanceUnavailable": "Proveniência do modelo indisponível para esta análise anterior.",
+    "yourEvidenceAssessment": "Sua avaliação",
+    "evidenceRelations": {
+      "supporting": "Favorável",
+      "contradicting": "Contraditória",
+      "contextualizing": "Contextualizadora",
+      "insufficient": "Insuficiente"
+    },
+    "evidenceAssessments": {
+      "agree": "Concordo",
+      "disagree": "Discordo",
+      "contextualize": "Precisa de contexto",
+      "insufficient": "Evidência insuficiente"
+    }
   },
   "adminConsole": {
     "eyebrow": "Console admin",
@@ -2135,6 +2163,31 @@
       "details": "Não foi possível carregar os detalhes do fundo.",
       "preview": "Não foi possível gerar a prévia de distribuição.",
       "execute": "Não foi possível executar a distribuição."
+    }
+  },
+  "fetchURLPreviewUnavailable": "Prévia indisponível. Não foi possível gerar uma prévia deste link, mas você ainda pode enviá-lo para análise.",
+  "fetchURLPreviewUnavailableShort": "Prévia indisponível",
+  "evidenceContribution": {
+    "submitEvidence": "Enviar evidência",
+    "relationshipTitle": "Como esta evidência se relaciona com a alegação?",
+    "relationshipSubtitle": "Compartilhe sua avaliação da fonte. O d-FCT a analisa de forma independente, e essa relação pode ser revisada pela comunidade.",
+    "claimLabel": "Alegação",
+    "yourView": "Sua avaliação",
+    "supports": "Apoia a alegação",
+    "supportsDescription": "Acredito que esta fonte apoia ou fortalece a alegação.",
+    "challenges": "Contesta a alegação",
+    "challengesDescription": "Acredito que esta fonte contesta ou enfraquece a alegação.",
+    "submitted": "Evidência enviada",
+    "processed": "Contribuição de evidência processada.",
+    "processingFailed": "Não foi possível processar esta fonte de evidência. Tente novamente.",
+    "contributionCount_one": "1 contribuição",
+    "contributionCount_other": "{{count}} contribuições",
+    "youContributed": "Você contribuiu",
+    "status": {
+      "processing": "Processando",
+      "processed": "Processada",
+      "failed": "Falhou",
+      "unknown": "Status indisponível"
     }
   }
 }

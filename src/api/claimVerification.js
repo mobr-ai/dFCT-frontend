@@ -17,6 +17,19 @@ export async function fetchTopicVerificationSummary(authRequest, topicId) {
   return unwrap(res);
 }
 
+export async function fetchClaimEvidenceAssertions(authRequest, claimId) {
+  if (!authRequest || !claimId) {
+    throw new Error("Missing claim evidence request context");
+  }
+
+  const res = await authRequest
+    .get(`/api/claims/${claimId}/evidence-assertions`)
+    .timeout(CLAIM_VERIFICATION_TIMEOUT);
+
+  return unwrap(res);
+}
+
+
 export async function castClaimVote(authRequest, claimId, vote) {
   if (!authRequest || !claimId) {
     throw new Error("Missing claim voting request context");

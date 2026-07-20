@@ -2,7 +2,16 @@ import Carousel from 'react-bootstrap/Carousel';
 import '../../styles/ContentCarousel.css';
 
 function ContentCarousel({ contentList, onItemClick }) {
-    const mediaItems = contentList.slice(0, 4);
+    const showcaseContent = (contentList || []).filter((item) => {
+        const type = String(
+            item?.content_type ??
+            item?.contentType ??
+            "",
+        ).toLowerCase();
+
+        return ["image", "video", "audio"].includes(type);
+    });
+    const mediaItems = showcaseContent.slice(0, 4);
 
     const getRandomEffect = () => {
         const effects = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right'];
