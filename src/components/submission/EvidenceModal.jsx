@@ -107,10 +107,6 @@ function EvidenceModal(props) {
     if (!rawUrl) return;
 
     if (!URL.canParse(rawUrl)) {
-      if (import.meta.env.DEV) {
-        console.log("Invalid URL:", rawUrl);
-      }
-
       if (help) help.innerText = t("invalidURL");
       setFetching(false);
       return;
@@ -150,15 +146,7 @@ function EvidenceModal(props) {
       addURL(res.body || null);
     };
 
-    const metaError = (res) => {
-      if (import.meta.env.DEV) {
-        console.log(
-          "URL preview unavailable:",
-          res?.status,
-          res?.message,
-        );
-      }
-
+    const metaError = () => {
       /*
        * Preview generation is best-effort. A publisher, paywall, bot
        * protection, or transient HTTP failure must not prevent the source
