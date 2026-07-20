@@ -19,7 +19,6 @@ function EvidenceModal(props) {
   const [dropBackground, setDropBackground] = useState("#54646C");
   const [dropBorder, setDropBorder] = useState();
   const [files, setFiles] = useState([]);
-  const [topicId] = useState();
   const [urls, setURLs] = useState([]);
   const [progress, setProgress] = useState(10);
   const [showFiles, setShowFiles] = useState(false);
@@ -101,58 +100,83 @@ function EvidenceModal(props) {
   }, [uploadProgress, files, t]);
 
   const handleURLInput = () => {
-    if (document.getElementById("input-url-text").value) {
-      if (!URL.canParse(document.getElementById("input-url-text").value)) {
-        if (import.meta.env.DEV) console.log(
-          "Oops, invalid URL: " +
-            document.getElementById("input-url-text").value
-        );
-        document.getElementById("input-url-help-msg").innerText =
-          t("invalidURL");
-        setFetching(false);
-        return;
+    const input = document.getElementById("input-url-text");
+    const help = document.getElementById("input-url-help-msg");
+    const rawUrl = input?.value?.trim();
+
+    if (!rawUrl) return;
+
+    if (!URL.canParse(rawUrl)) {
+      if (import.meta.env.DEV) {
+        console.log("Invalid URL:", rawUrl);
       }
 
-      const metaSuccess = (res) => {
-        let url = {
-          url: document.getElementById("input-url-text").value,
-          metadata: res.body,
-        };
-
-        setURLs(urls.concat([url]));
-        setShowURLs(true);
-        setFetching(false);
-
-        if (document.querySelector("#input-process-button"))
-          document
-            .querySelector("#input-process-button")
-            .scrollIntoView({ behavior: "smooth", block: "center" });
-        document.getElementById("input-url-text").value = "";
-      };
-
-      const metaError = (res) => {
-        // let url = { "url": document.getElementById('input-url-text').value, "metadata": "" }
-        // display error msg
-        if (import.meta.env.DEV) console.log(
-          "Oops, error fetching URL: " + res.status + " (" + res.message + ")"
-        );
-        document.getElementById("input-url-help-msg").innerText =
-          t("fetchURLError");
-        // setURLs(urls.concat([url]))
-        // setShowURLs(true)
-        setFetching(false);
-        document.getElementById("input-url-text").value = "";
-      };
-
-      authRequest
-        .post("/api/fetch_url")
-        .set("Accept", "application/json")
-        .send({ url: document.getElementById("input-url-text").value })
-        .then(metaSuccess, metaError);
-
-      document.getElementById("input-url-help-msg").innerText = "";
-      setFetching(true);
+      if (help) help.innerText = t("invalidURL");
+      setFetching(false);
+      return;
     }
+
+    const addURL = (metadata = null) => {
+      setURLs((current) => {
+        if (current.some((item) => item.url === rawUrl)) {
+          return current;
+        }
+
+        return current.concat([
+          {
+            url: rawUrl,
+            metadata,
+          },
+        ]);
+      });
+
+      setShowURLs(true);
+      setFetching(false);
+
+      if (input) input.value = "";
+
+      requestAnimationFrame(() => {
+        document
+          .querySelector("#input-process-button")
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+      });
+    };
+
+    const metaSuccess = (res) => {
+      if (help) help.innerText = "";
+      addURL(res.body || null);
+    };
+
+    const metaError = (res) => {
+      if (import.meta.env.DEV) {
+        console.log(
+          "URL preview unavailable:",
+          res?.status,
+          res?.message,
+        );
+      }
+
+      /*
+       * Preview generation is best-effort. A publisher, paywall, bot
+       * protection, or transient HTTP failure must not prevent the source
+       * from entering the actual evidence-processing pipeline.
+       */
+      if (help) help.innerText = t("fetchURLPreviewUnavailable");
+
+      addURL(null);
+    };
+
+    if (help) help.innerText = "";
+    setFetching(true);
+
+    authRequest
+      .post("/api/fetch_url")
+      .set("Accept", "application/json")
+      .send({ url: rawUrl })
+      .then(metaSuccess, metaError);
   };
 
   const processEvidence = () => {
@@ -162,10 +186,10 @@ function EvidenceModal(props) {
 
     function handleError(res) {
       // display error msg
-      showError(t("topicCreationFailed"));
+      showError(t("evidenceContribution.processingFailed"));
       if (import.meta.env.DEV) console.log(
         "Topic (id = " +
-          topicId +
+          props.topicId +
           ") processing failed: [" +
           res.status +
           "] (" +
@@ -192,7 +216,7 @@ function EvidenceModal(props) {
           if (import.meta.env.DEV) console.log("Error retrieving processing progress: " + e.message);
           setProgress(0);
           nextProgress = -1;
-          showError(t("topicCreationFailed"));
+          showError(t("evidenceContribution.processingFailed"));
         }
       };
 
@@ -208,10 +232,23 @@ function EvidenceModal(props) {
 
       // send user to topic breakdown page
       if (nextProgress === 100) {
-        setDropMsg(t("topicProcessed"));
+        setDropMsg(
+          t("evidenceContribution.processed"),
+        );
         setLoading(false);
 
-        // refresh page
+        try {
+          window.sessionStorage.setItem(
+            `dfct:evidence-submitted:${props.topicId}:${props.claimId}`,
+            JSON.stringify({
+              evidenceType: props.type,
+              submittedAt: new Date().toISOString(),
+            }),
+          );
+        } catch {
+          // Best-effort UI acknowledgement only.
+        }
+
         window.location.reload();
       }
     }
@@ -251,7 +288,8 @@ function EvidenceModal(props) {
 
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={props.onHide}
       className="Breakdown-claim-evidence-modal"
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
@@ -263,6 +301,17 @@ function EvidenceModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <div className="Breakdown-evidence-declared-view">
+          <span>
+            {t("evidenceContribution.yourView")}:
+          </span>
+          <strong>
+            {props.type === "proEvidence"
+              ? t("evidenceContribution.supports")
+              : t("evidenceContribution.challenges")}
+          </strong>
+        </div>
+
         <FileUploadArea
           disableDrop={disableDrop}
           dropMsg={dropMsg}

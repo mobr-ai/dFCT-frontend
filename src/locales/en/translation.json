@@ -1278,8 +1278,8 @@
       "body": "Use your account or Cardano wallet to vote on claims, contribute evidence, and participate in decentralized validation."
     },
     "reviewing": "Reviewing…",
-    "reviewModalEyebrow": "Community intelligence",
-    "reviewModalTitle": "Shape the claim signal",
+    "reviewModalEyebrow": "Community review",
+    "reviewModalTitle": "Review this claim",
     "verdictLabel": "Verdict",
     "confidenceLabel": "Confidence",
     "confidenceHelp": "Optional confidence score from 0 to 100.",
@@ -1289,7 +1289,7 @@
     "reviewSaved": "Claim review published.",
     "reviewAlreadySaved": "Your review was already up to date.",
     "reviewFailed": "Could not publish claim review.",
-    "structuredReviews": "Review signal",
+    "structuredReviews": "Community reviews",
     "totalReviews": "Reviews: {{count}}",
     "latestReview": "Latest",
     "yourReview": "Yours",
@@ -1301,13 +1301,41 @@
       "false": "False",
       "unverified": "Needs evidence"
     },
-    "reviewModalSubtitle": "Turn your judgment into a structured signal that others can understand, audit, compare, and reuse as curated LLM context after review.",
+    "reviewModalSubtitle": "Share your take, compare the evidence, and help others understand what holds up.",
     "claimUnderReview": "Claim under review",
     "verdictHelp": "Choose the label that best communicates your assessment.",
     "confidenceValue": "{{value}}% confident",
     "confidenceLow": "Exploratory",
     "confidenceHigh": "High conviction",
-    "rationaleHelp": "Optional, but useful for transparency."
+    "rationaleHelp": "Optional, but useful for transparency.",
+    "yourConfidence": "Your confidence",
+    "aiConfidence": "AI confidence",
+    "reviewerConfidence": "Reviewer confidence",
+    "communityConfidence": "Community confidence",
+    "basedOnReviews": "Based on {{count}} reviews",
+    "evidenceInterpretation": "Evidence interpretation",
+    "evidenceAssertionCount": "{{count}} analysis",
+    "evidenceAssertionCount_plural": "{{count}} analyses",
+    "loadingEvidenceInterpretations": "Loading evidence interpretations…",
+    "evidenceInterpretationsFailed": "Could not load evidence interpretations.",
+    "noEvidenceInterpretations": "No structured evidence interpretations are available yet.",
+    "analysisCount": "{{count}} analysis",
+    "analysisCount_plural": "{{count}} analyses",
+    "evidenceInterpretationVersion": "Evidence interpretation · v{{version}}",
+    "modelProvenanceUnavailable": "Model provenance unavailable for this earlier analysis.",
+    "yourEvidenceAssessment": "Your assessment",
+    "evidenceRelations": {
+      "supporting": "Supporting",
+      "contradicting": "Contradicting",
+      "contextualizing": "Contextualizing",
+      "insufficient": "Insufficient"
+    },
+    "evidenceAssessments": {
+      "agree": "Agree",
+      "disagree": "Disagree",
+      "contextualize": "Needs context",
+      "insufficient": "Not enough evidence"
+    }
   },
   "adminConsole": {
     "eyebrow": "Admin console",
@@ -2135,6 +2163,31 @@
       "details": "Unable to load reward-pool details.",
       "preview": "Unable to preview the distribution.",
       "execute": "Unable to execute the distribution."
+    }
+  },
+  "fetchURLPreviewUnavailable": "Preview unavailable. We couldn't generate a preview for this link, but you can still submit it for analysis.",
+  "fetchURLPreviewUnavailableShort": "Preview unavailable",
+  "evidenceContribution": {
+    "submitEvidence": "Submit evidence",
+    "relationshipTitle": "How does this evidence relate to the claim?",
+    "relationshipSubtitle": "Share your view of the source. d-FCT analyzes it independently, and the relationship can be reviewed by the community.",
+    "claimLabel": "Claim",
+    "yourView": "Your view",
+    "supports": "Supports the claim",
+    "supportsDescription": "I believe this source supports or strengthens the claim.",
+    "challenges": "Challenges the claim",
+    "challengesDescription": "I believe this source challenges or weakens the claim.",
+    "submitted": "Evidence submitted",
+    "processed": "Evidence contribution processed.",
+    "processingFailed": "We couldn't process this evidence source. Please try again.",
+    "contributionCount_one": "1 contribution",
+    "contributionCount_other": "{{count}} contributions",
+    "youContributed": "You contributed",
+    "status": {
+      "processing": "Processing",
+      "processed": "Processed",
+      "failed": "Failed",
+      "unknown": "Status unavailable"
     }
   }
 }

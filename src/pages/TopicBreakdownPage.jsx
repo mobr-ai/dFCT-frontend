@@ -38,6 +38,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useAuthRequest } from "../hooks/useAuthRequest";
 import {
   fetchTopicVerificationSummary,
+  fetchClaimEvidenceAssertions,
   castClaimVote,
   reviewClaim,
 } from "../api/claimVerification";
@@ -54,6 +55,76 @@ const CLAIM_REVIEW_VERDICTS = [
   "false",
   "unverified",
 ];
+
+
+const EVIDENCE_ASSESSMENT_VALUES = [
+  "agree",
+  "disagree",
+  "contextualize",
+  "insufficient",
+];
+
+function groupEvidenceAssertions(assertions = []) {
+  const evidenceGroups = new Map();
+
+  assertions.forEach((assertion) => {
+    const evidenceKey =
+      assertion?.evidenceGroupKey ||
+      assertion?.evidenceAssertionId;
+
+    if (!evidenceGroups.has(evidenceKey)) {
+      evidenceGroups.set(evidenceKey, {
+        key: evidenceKey,
+        interpretations: new Map(),
+      });
+    }
+
+    const group = evidenceGroups.get(evidenceKey);
+    const interpretationKey =
+      assertion?.interpretationGroupKey ||
+      `${evidenceKey}:${assertion?.relation || "unknown"}`;
+
+    if (!group.interpretations.has(interpretationKey)) {
+      group.interpretations.set(interpretationKey, {
+        key: interpretationKey,
+        relation: assertion?.relation || "insufficient",
+        assertions: [],
+      });
+    }
+
+    group.interpretations
+      .get(interpretationKey)
+      .assertions.push(assertion);
+  });
+
+  return Array.from(evidenceGroups.values()).map((group) => ({
+    ...group,
+    interpretations: Array.from(group.interpretations.values()),
+  }));
+}
+
+function evidenceModelLabel(execution) {
+  return execution?.model || null;
+}
+
+function evidenceProviderLabel(execution) {
+  const provider = String(execution?.provider || "").trim();
+
+  if (!provider) return null;
+
+  const aliases = {
+    openai: "OpenAI",
+    xai: "xAI",
+    anthropic: "Anthropic",
+  };
+
+  return aliases[provider.toLowerCase()] || provider;
+}
+
+function evidencePromptVersion(execution) {
+  const prompt = execution?.prompts?.[0];
+  return prompt?.version ?? null;
+}
 
 function normalizeTopicClaimId(value) {
   if (value === undefined || value === null) return "";
@@ -77,15 +148,26 @@ function ClaimReviewModal({
   onHide,
   claim,
   claimSummary,
+  evidenceAssertions = [],
+  evidenceLoading = false,
+  evidenceError = false,
   onSubmit,
   submitting = false,
 }) {
   const { t } = useTranslation();
   const currentReview = claimSummary?.reviewSummary?.currentUserReview;
 
+  const evidenceAssessmentHydrationKey = evidenceAssertions
+    .map((assertion) => [
+      assertion?.evidenceAssertionId,
+      assertion?.currentUserAssessment?.assessment || "",
+    ].join(":"))
+    .join("|");
+
   const [verdictTag, setVerdictTag] = useState("unverified");
   const [confidence, setConfidence] = useState(50);
   const [rationale, setRationale] = useState("");
+  const [evidenceAssessments, setEvidenceAssessments] = useState({});
 
   useEffect(() => {
     if (!show) return;
@@ -97,7 +179,47 @@ function ClaimReviewModal({
         : Number(currentReview.confidence),
     );
     setRationale(currentReview?.rationale || "");
-  }, [currentReview, show]);
+
+    const nextEvidenceAssessments = {};
+
+    evidenceAssertions.forEach((assertion) => {
+      const currentAssessment =
+        assertion?.currentUserAssessment?.assessment;
+
+      if (currentAssessment) {
+        nextEvidenceAssessments[
+          assertion.evidenceAssertionId
+        ] = currentAssessment;
+      }
+    });
+
+    setEvidenceAssessments(nextEvidenceAssessments);
+  }, [
+    currentReview,
+    evidenceAssessmentHydrationKey,
+    show,
+  ]);
+
+  const evidenceGroups = groupEvidenceAssertions(
+    evidenceAssertions,
+  );
+
+  const setEvidenceAssessment = (
+    evidenceAssertionId,
+    assessment,
+  ) => {
+    setEvidenceAssessments((current) => {
+      const next = { ...current };
+
+      if (next[evidenceAssertionId] === assessment) {
+        delete next[evidenceAssertionId];
+      } else {
+        next[evidenceAssertionId] = assessment;
+      }
+
+      return next;
+    });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -106,6 +228,12 @@ function ClaimReviewModal({
       verdictTag,
       confidence: Number(confidence),
       rationale,
+      evidenceAssessments: Object.entries(
+        evidenceAssessments,
+      ).map(([evidenceAssertionId, assessment]) => ({
+        evidenceAssertionId,
+        assessment,
+      })),
     });
   };
 
@@ -148,6 +276,195 @@ function ClaimReviewModal({
             </div>
           )}
 
+          <section className="Breakdown-claim-review-section Breakdown-claim-review-evidenceSection">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.evidenceInterpretation")}</span>
+              {!evidenceLoading && evidenceAssertions.length > 0 && (
+                <small>
+                  {t("claimVoting.evidenceAssertionCount", {
+                    count: evidenceAssertions.length,
+                  })}
+                </small>
+              )}
+            </div>
+
+            {evidenceLoading && (
+              <div className="Breakdown-claim-review-evidenceState">
+                {t("claimVoting.loadingEvidenceInterpretations")}
+              </div>
+            )}
+
+            {!evidenceLoading && evidenceError && (
+              <div className="Breakdown-claim-review-evidenceState is-error">
+                {t("claimVoting.evidenceInterpretationsFailed")}
+              </div>
+            )}
+
+            {!evidenceLoading &&
+              !evidenceError &&
+              evidenceGroups.length === 0 && (
+                <div className="Breakdown-claim-review-evidenceState">
+                  {t("claimVoting.noEvidenceInterpretations")}
+                </div>
+              )}
+
+            {!evidenceLoading &&
+              !evidenceError &&
+              evidenceGroups.map((group) => (
+                <div
+                  key={group.key}
+                  className="Breakdown-claim-review-evidenceGroup"
+                >
+                  {group.interpretations.map((interpretation) => (
+                    <div
+                      key={interpretation.key}
+                      className="Breakdown-claim-review-interpretation"
+                    >
+                      <div className="Breakdown-claim-review-interpretationHeader">
+                        <span className={`is-${interpretation.relation}`}>
+                          {t(
+                            `claimVoting.evidenceRelations.${interpretation.relation}`,
+                          )}
+                        </span>
+
+                        {interpretation.assertions.length > 1 && (
+                          <small>
+                            {t("claimVoting.analysisCount", {
+                              count: interpretation.assertions.length,
+                            })}
+                          </small>
+                        )}
+                      </div>
+
+                      {interpretation.assertions.map((assertion) => {
+                        const execution =
+                          assertion?.llmExecution || null;
+
+                        const model =
+                          evidenceModelLabel(execution);
+
+                        const provider =
+                          evidenceProviderLabel(execution);
+
+                        const promptVersion =
+                          evidencePromptVersion(execution);
+
+                        const selectedAssessment =
+                          evidenceAssessments[
+                            assertion.evidenceAssertionId
+                          ];
+
+                        return (
+                          <article
+                            key={assertion.evidenceAssertionId}
+                            className="Breakdown-claim-review-evidenceAssertion"
+                          >
+                            {assertion.evidenceText && (
+                              <blockquote>
+                                “{assertion.evidenceText}”
+                              </blockquote>
+                            )}
+
+                            <div className="Breakdown-claim-review-evidenceMeta">
+                              <div className="Breakdown-claim-review-confidenceMetric">
+                                <span>
+                                  {t("claimVoting.aiConfidence")}
+                                </span>
+                                <strong>
+                                  {assertion.confidence === null ||
+                                  assertion.confidence === undefined
+                                    ? "—"
+                                    : `${Math.round(
+                                        Number(assertion.confidence) * 100,
+                                      )}%`}
+                                </strong>
+                              </div>
+
+                              {(model || provider) && (
+                                <div className="Breakdown-claim-review-modelBadge">
+                                  <span>
+                                    {[model, provider]
+                                      .filter(Boolean)
+                                      .join(" · ")}
+                                  </span>
+
+                                  {promptVersion !== null && (
+                                    <small>
+                                      {t(
+                                        "claimVoting.evidenceInterpretationVersion",
+                                        {
+                                          version: promptVersion,
+                                        },
+                                      )}
+                                    </small>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {assertion?.metadata?.rationale && (
+                              <p className="Breakdown-claim-review-aiRationale">
+                                {assertion.metadata.rationale}
+                              </p>
+                            )}
+
+                            {!execution && (
+                              <small className="Breakdown-claim-review-legacyProvenance">
+                                {t(
+                                  "claimVoting.modelProvenanceUnavailable",
+                                )}
+                              </small>
+                            )}
+
+                            <div className="Breakdown-claim-review-assessmentBlock">
+                              <span>
+                                {t(
+                                  "claimVoting.yourEvidenceAssessment",
+                                )}
+                              </span>
+
+                              <div className="Breakdown-claim-review-assessmentGrid">
+                                {EVIDENCE_ASSESSMENT_VALUES.map(
+                                  (assessment) => (
+                                    <button
+                                      key={assessment}
+                                      type="button"
+                                      disabled={submitting}
+                                      aria-pressed={
+                                        selectedAssessment === assessment
+                                      }
+                                      className={[
+                                        "Breakdown-claim-review-assessmentPill",
+                                        selectedAssessment ===
+                                          assessment &&
+                                          "is-selected",
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" ")}
+                                      onClick={() =>
+                                        setEvidenceAssessment(
+                                          assertion.evidenceAssertionId,
+                                          assessment,
+                                        )
+                                      }
+                                    >
+                                      {t(
+                                        `claimVoting.evidenceAssessments.${assessment}`,
+                                      )}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </section>
+
           <section className="Breakdown-claim-review-section">
             <div className="Breakdown-claim-review-sectionHeader">
               <span>{t("claimVoting.verdictLabel")}</span>
@@ -174,7 +491,7 @@ function ClaimReviewModal({
 
           <section className="Breakdown-claim-review-section">
             <div className="Breakdown-claim-review-sectionHeader">
-              <span>{t("claimVoting.confidenceLabel")}</span>
+              <span>{t("claimVoting.yourConfidence")}</span>
               <strong>{t("claimVoting.confidenceValue", { value: confidence })}</strong>
             </div>
 
@@ -274,19 +591,34 @@ function getHashtags(
 ) {
   let tags = [
     ...new Set(
-      contentList
+      (contentList || [])
         .map((c) => {
-          return c.concept_list
+          const conceptList = String(
+            c?.concept_list ??
+            c?.conceptList ??
+            "",
+          ).trim();
+
+          if (!conceptList) return [];
+
+          return conceptList
             .replaceAll("'", "")
             .replaceAll('"', "")
             .replaceAll("}", "")
             .replaceAll("{", "")
             .replaceAll("-", "")
             .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
             .map((s) =>
               s
                 .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .filter(Boolean)
+                .map(
+                  (word) =>
+                    word.charAt(0).toUpperCase() +
+                    word.slice(1),
+                )
                 .join(""),
             );
         })
@@ -381,6 +713,79 @@ function referenceKey(item, index) {
       item?.filename ||
       `reference-${index}`,
   );
+}
+
+function referenceDisplayPriority(item = {}) {
+  const type = String(
+    item?.content_type ??
+    item?.contentType ??
+    "",
+  ).toLowerCase();
+
+  const localUrl = String(
+    item?.local_url ??
+    item?.localUrl ??
+    "",
+  ).toLowerCase();
+
+  if (
+    type === "image" ||
+    /\.(png|jpe?g|webp|gif)(?:[?#]|$)/i.test(localUrl)
+  ) {
+    return 30;
+  }
+
+  if (type === "video") return 25;
+  if (type === "audio") return 20;
+
+  if (
+    type === "text" &&
+    localUrl.endsWith(".json")
+  ) {
+    return 10;
+  }
+
+  return 5;
+}
+
+function groupReferencesBySource(contentList = []) {
+  const groups = new Map();
+
+  (contentList || []).forEach((item, index) => {
+    const sourceUrl = String(
+      referenceSourceUrl(item) ||
+      referenceCandidateUrl(item) ||
+      referenceKey(item, index),
+    ).trim();
+
+    const key = sourceUrl || referenceKey(item, index);
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        key,
+        sourceUrl,
+        items: [],
+      });
+    }
+
+    groups.get(key).items.push({
+      item,
+      index,
+    });
+  });
+
+  return Array.from(groups.values()).map((group) => {
+    const ranked = [...group.items].sort(
+      (left, right) =>
+        referenceDisplayPriority(right.item) -
+        referenceDisplayPriority(left.item),
+    );
+
+    return {
+      ...group,
+      representative: ranked[0],
+    };
+  });
 }
 
 function referenceFileName(item = {}, index = 0) {
@@ -630,17 +1035,26 @@ function ReferenceDesktop({
   sectionRef,
 }) {
   const { t } = useTranslation();
-  const references = (contentList || []).map((item, index) => {
+
+  const references = groupReferencesBySource(
+    contentList,
+  ).map((group) => {
+    const { item, index } = group.representative;
     const type = referenceType(item);
+
     return {
       item,
       index,
-      key: referenceKey(item, index),
+      key: group.key,
       type,
       icon: REFERENCE_TYPE_ICONS[type] || faFile,
       name: referenceFileName(item, index),
+      sourceUrl: group.sourceUrl,
+      artifactCount: group.items.length,
       assessment:
-        assessmentsByContentId?.[referenceContentId(item)] || null,
+        assessmentsByContentId?.[
+          referenceContentId(item)
+        ] || null,
     };
   });
   const activeReference =
@@ -826,12 +1240,19 @@ const Topic = ({
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
+  const [
+    evidenceRelationshipModalShow,
+    setEvidenceRelationshipModalShow,
+  ] = useState(false);
   const [verificationSummary, setVerificationSummary] = useState(null);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [votingClaimId, setVotingClaimId] = useState(null);
   const [reviewModalShow, setReviewModalShow] = useState(false);
   const [reviewingClaim, setReviewingClaim] = useState(null);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewEvidenceAssertions, setReviewEvidenceAssertions] = useState([]);
+  const [reviewEvidenceLoading, setReviewEvidenceLoading] = useState(false);
+  const [reviewEvidenceError, setReviewEvidenceError] = useState(false);
   const [authPromptShow, setAuthPromptShow] = useState(false);
   const [rewardPoolModalShow, setRewardPoolModalShow] = useState(false);
   const [activeReferenceKey, setActiveReferenceKey] = useState(null);
@@ -913,17 +1334,30 @@ const Topic = ({
     }
   }, [user?.access_token]);
 
-  const showEvidenceModal = (title, evidenceType, claimId) => {
+  const showEvidenceModal = (nextClaimId) => {
     if (!user?.access_token) {
       showAuthPrompt();
       return;
     }
 
-    setEvidenceType(evidenceType);
-    setEvidenceModalTitle(title);
-    setClaimId(claimId);
+    setClaimId(nextClaimId);
+    setEvidenceRelationshipModalShow(true);
+  };
+
+  const continueEvidenceSubmission = (nextEvidenceType) => {
+    setEvidenceType(nextEvidenceType);
+    setEvidenceModalTitle(
+      t("evidenceContribution.submitEvidence"),
+    );
+    setEvidenceRelationshipModalShow(false);
     setEvidenceModalShow(true);
   };
+
+  const evidenceClaim = (claimList || []).find(
+    (item) =>
+      String(getTopicClaimId(item) || "") ===
+      String(claimId || ""),
+  );
 
   const loadVerificationSummary = useCallback(async ({ silent = false } = {}) => {
     const requestTopicId = topicId;
@@ -976,6 +1410,60 @@ const Topic = ({
     () => findClaimSummaryForClaim(verificationSummary, reviewingClaim),
     [reviewingClaim, verificationSummary],
   );
+
+
+  useEffect(() => {
+    const nextClaimId = getTopicClaimId(reviewingClaim);
+
+    if (
+      !reviewModalShow ||
+      !nextClaimId ||
+      !user?.access_token
+    ) {
+      setReviewEvidenceAssertions([]);
+      setReviewEvidenceLoading(false);
+      setReviewEvidenceError(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    setReviewEvidenceLoading(true);
+    setReviewEvidenceError(false);
+
+    fetchClaimEvidenceAssertions(
+      authRequestRef.current,
+      nextClaimId,
+    )
+      .then((payload) => {
+        if (cancelled) return;
+
+        setReviewEvidenceAssertions(
+          Array.isArray(payload?.evidenceAssertions)
+            ? payload.evidenceAssertions
+            : [],
+        );
+      })
+      .catch(() => {
+        if (cancelled) return;
+
+        setReviewEvidenceAssertions([]);
+        setReviewEvidenceError(true);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setReviewEvidenceLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    reviewModalShow,
+    reviewingClaim,
+    user?.access_token,
+  ]);
 
   const closeClaimReviewModal = useCallback(() => {
     if (reviewSubmitting) return;
@@ -1075,11 +1563,13 @@ const Topic = ({
   useEffect(() => {
     if (!activeReferenceKey) return;
 
-    const referenceStillExists = (contentList || []).some(
-      (item, index) => referenceKey(item, index) === activeReferenceKey,
-    );
+    const referenceStillExists = groupReferencesBySource(
+      contentList,
+    ).some((group) => group.key === activeReferenceKey);
 
-    if (!referenceStillExists) setActiveReferenceKey(null);
+    if (!referenceStillExists) {
+      setActiveReferenceKey(null);
+    }
   }, [activeReferenceKey, contentList]);
 
   const openReference = useCallback((key, { scroll = false } = {}) => {
@@ -1097,7 +1587,7 @@ const Topic = ({
     }
   }, []);
 
-  // Carousel items open the matching desktop reference preview.
+  // Carousel media open the logical source they belong to.
   const handleCarouselClick = (localUrl) => {
     const index = (contentList || []).findIndex(
       (item) =>
@@ -1107,7 +1597,17 @@ const Topic = ({
     );
 
     if (index < 0) return;
-    openReference(referenceKey(contentList[index], index), { scroll: true });
+
+    const item = contentList[index];
+    const sourceKey = String(
+      referenceSourceUrl(item) ||
+      referenceCandidateUrl(item) ||
+      referenceKey(item, index),
+    ).trim();
+
+    if (!sourceKey) return;
+
+    openReference(sourceKey, { scroll: true });
   };
 
   return (
@@ -1178,6 +1678,9 @@ const Topic = ({
         onHide={closeClaimReviewModal}
         claim={reviewingClaim}
         claimSummary={getReviewingClaimSummary()}
+        evidenceAssertions={reviewEvidenceAssertions}
+        evidenceLoading={reviewEvidenceLoading}
+        evidenceError={reviewEvidenceError}
         onSubmit={handleClaimReview}
         submitting={reviewSubmitting}
       />
@@ -1208,6 +1711,94 @@ const Topic = ({
         onRequireAuth={showAuthPrompt}
         showToast={showToast}
       />
+      <Modal
+        show={evidenceRelationshipModalShow}
+        onHide={() =>
+          setEvidenceRelationshipModalShow(false)
+        }
+        centered
+        className="Breakdown-evidence-relationship-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {t("evidenceContribution.relationshipTitle")}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p className="Breakdown-evidence-relationship-intro">
+            {t(
+              "evidenceContribution.relationshipSubtitle",
+            )}
+          </p>
+
+          {evidenceClaim?.statement && (
+            <div className="Breakdown-evidence-relationship-claim">
+              <strong>
+                {t("evidenceContribution.claimLabel")}
+              </strong>
+              <p>{evidenceClaim.statement}</p>
+            </div>
+          )}
+
+          <div className="Breakdown-evidence-relationship-options">
+            <button
+              type="button"
+              className="Breakdown-evidence-relationship-option"
+              onClick={() =>
+                continueEvidenceSubmission(
+                  "proEvidence",
+                )
+              }
+            >
+              <div className="Breakdown-evidence-relationship-optionCopy">
+                <strong>
+                  {t("evidenceContribution.supports")}
+                </strong>
+                <span>
+                  {t(
+                    "evidenceContribution.supportsDescription",
+                  )}
+                </span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="Breakdown-evidence-relationship-option"
+              onClick={() =>
+                continueEvidenceSubmission(
+                  "conEvidence",
+                )
+              }
+            >
+              <div className="Breakdown-evidence-relationship-optionCopy">
+                <strong>
+                  {t("evidenceContribution.challenges")}
+                </strong>
+                <span>
+                  {t(
+                    "evidenceContribution.challengesDescription",
+                  )}
+                </span>
+              </div>
+            </button>
+
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() =>
+              setEvidenceRelationshipModalShow(false)
+            }
+          >
+            {t("cancel")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <EvidenceModal
         show={evidenceModalShow}
         title={evidenceModalTitle}

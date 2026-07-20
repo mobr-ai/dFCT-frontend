@@ -16,8 +16,11 @@ function URLCardList(props) {
   };
 
   const getHostname = (url) => {
-    // use URL constructor and return hostname
-    return new URL(url).hostname;
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return url || "";
+    }
   };
 
   const removeCard = (url) => {
@@ -29,6 +32,20 @@ function URLCardList(props) {
 
   const URLCard = ({ item }) => {
     const { t } = useTranslation();
+    const metadata = item?.metadata || {};
+
+    const previewImage =
+      metadata["og:image"] &&
+      metadata["og:image"].startsWith("http")
+        ? metadata["og:image"]
+        : metadata["image-array"]
+        ? "data:image/png;base64,".concat(metadata["image-array"])
+        : null;
+
+    const previewTitle =
+      metadata["og:title"] ||
+      metadata.title ||
+      "";
 
     return (
       <Card variant="dark" className="Url-card">
@@ -36,16 +53,9 @@ function URLCardList(props) {
           className="Url-card-img"
           onClick={() => openInNewTab(item.url)}
           variant="top"
-          src={
-            item.metadata["og:image"] &&
-            item.metadata["og:image"].startsWith("http")
-              ? item.metadata["og:image"]
-              : item.metadata["image-array"]
-              ? "data:image/png;base64,".concat(item.metadata["image-array"])
-              : "/placeholder.png"
-          }
+          src={previewImage || "/placeholder.png"}
           style={
-            item.metadata["og:image"] || item.metadata["image-array"]
+            previewImage
               ? { opacity: "1" }
               : { opacity: "0.5" }
           }
@@ -55,7 +65,11 @@ function URLCardList(props) {
           <Card.Title className="Url-card-title">
             {getHostname(item.url)}
           </Card.Title>
-          <Card.Text>{truncateString(item.metadata["og:title"])}</Card.Text>
+          <Card.Text>
+            {previewTitle
+              ? truncateString(previewTitle)
+              : t("fetchURLPreviewUnavailableShort")}
+          </Card.Text>
           <Button
             className="Url-card-button"
             onClick={() => removeCard(item.url)}
