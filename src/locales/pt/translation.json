@@ -1472,6 +1472,9 @@
     "verifyMaxRetries": "Tentativas de verificação",
     "verifyInitialDelaySeconds": "Espera inicial da verificação",
     "saveSettings": "Salvar configurações",
+    "autoSaving": "Salvando automaticamente…",
+    "autoSavePending": "As alterações serão salvas automaticamente…",
+    "autoSaved": "Todas as alterações foram salvas automaticamente.",
     "savingSettings": "Salvando...",
     "settingsAutosaveHint": "As alterações são salvas automaticamente",
     "settingsAutosavePending": "Aguardando para salvar...",
@@ -1852,9 +1855,95 @@
     "loading": "Carregando a saúde do workflow…",
     "recoveryNotice": "A recuperação automática expirou {{assignments}} atribuição(ões) obsoleta(s) e reabriu {{tasks}} tarefa(s).",
     "views": {
+      "prescreen": "Pré-triagem",
       "overview": "Visão geral",
       "queue": "Fila de revisão",
       "reviewers": "Revisores"
+    },
+    "prescreen": {
+      "healthEyebrow": "Segurança de entrada",
+      "healthTitle": "Pré-triagem em um relance",
+      "healthSubtitle": "Resultados de submissões e segurança nas últimas {{hours}} horas.",
+      "capabilitiesEyebrow": "Serviços de segurança",
+      "capabilitiesTitle": "Prontidão do runtime",
+      "capabilitiesSubtitle": "Veja quais recursos locais e externos de segurança estão realmente disponíveis antes de ativá-los.",
+      "settingsEyebrow": "Política de runtime",
+      "settingsTitle": "Configurações de pré-triagem",
+      "settingsSubtitle": "Configure como as submissões são triadas quanto à segurança, processabilidade e risco antes de seguirem para análise.",
+      "recentEyebrow": "Visibilidade de auditoria",
+      "recentTitle": "Atividade recente de pré-triagem",
+      "recentSubtitle": "Inspecione resultados de entrada, sinalizações de segurança, itens bloqueados e cobertura incompleta.",
+      "stats": {
+        "screened": "Triadas",
+        "screenedCaption": "Pré-triagens de submissões nesta janela.",
+        "accepted": "Aceitas",
+        "acceptedCaption": "Submissões liberadas para análise.",
+        "flagged": "Itens sinalizados",
+        "flaggedCaption": "Conteúdo aceito com sinais de segurança.",
+        "blocked": "Itens bloqueados",
+        "blockedCaption": "Quarentenados ou rejeitados pela política de segurança."
+      },
+      "capabilities": {
+        "moderation": "Moderação externa",
+        "ocr": "Inspeção por OCR",
+        "clamav": "Varredura de malware",
+        "remoteSemantic": "Inspeção semântica remota",
+        "openaiConfigured": "A credencial da API da OpenAI está configurada. A credencial em si nunca é exibida aqui.",
+        "openaiNotConfigured": "A credencial da API da OpenAI não está configurada. A moderação não ficará pronta até que o segredo esteja disponível.",
+        "command": "Comando de runtime: {{command}}",
+        "remoteSemanticHelp": "Busca uma amostra limitada e protegida contra SSRF de URLs públicas antes da análise mais custosa."
+      },
+      "states": {
+        "ready": "Pronto",
+        "needsConfiguration": "Requer configuração",
+        "available": "Disponível",
+        "unavailable": "Indisponível",
+        "enabled": "Ativado",
+        "disabled": "Desativado"
+      },
+      "settings": {
+        "moderation": "Ativar moderação externa",
+        "moderationHelp": "Usa o provedor de moderação OpenAI configurado para entradas de texto e imagem compatíveis.",
+        "ocr": "Inspeção por OCR",
+        "ocrHelp": "Auto usa Tesseract quando disponível; Ativado solicita OCR independentemente da detecção automática; Desativado ignora o OCR.",
+        "clamav": "Varredura de malware",
+        "clamavHelp": "Auto usa ClamAV quando disponível; Ativado solicita o scanner independentemente da detecção automática; Desativado ignora a varredura.",
+        "remoteSemantic": "Ativar inspeção semântica remota",
+        "remoteSemanticHelp": "Lê uma amostra limitada de URL pública pelo cliente HTTP seguro existente para detectar injeção de prompt e sinais de segredos.",
+        "failClosed": "Falhar de forma fechada em erros dos scanners",
+        "failClosedHelp": "Coloca o conteúdo em quarentena quando a moderação ou a varredura de malware reporta erro de execução, em vez de continuar com cobertura incompleta."
+      },
+      "modes": {
+        "disabled": "Desativado",
+        "auto": "Auto",
+        "enabled": "Ativado"
+      },
+      "saveSettings": "Salvar configurações",
+      "lastUpdated": "Última atualização {{time}}",
+      "defaultsActive": "Os padrões do banco de dados estão ativos.",
+      "columns": {
+        "time": "Horário",
+        "submission": "Submissão",
+        "ingress": "Entrada",
+        "outcome": "Resultado",
+        "items": "Itens",
+        "safety": "Segurança",
+        "coverage": "Cobertura",
+        "topic": "Tópico"
+      },
+      "safetySummary": "{{flagged}} sinalizado(s) · {{blocked}} bloqueado(s)",
+      "noSafetyFlags": "Sem sinalizações de segurança",
+      "coverageComplete": "Completa",
+      "coverageIncomplete": "{{count}} incompleta(s)",
+      "recentEmpty": "Nenhuma atividade de pré-triagem foi registrada ainda.",
+      "toasts": {
+        "saved": "Configurações de pré-triagem salvas."
+      },
+      "errors": {
+        "load": "Não foi possível carregar as operações de pré-triagem.",
+        "save": "Não foi possível salvar as configurações de pré-triagem."
+      },
+      "openTopic": "Abrir #{{id}}"
     },
     "healthEyebrow": "Saúde operacional",
     "healthTitle": "Fluxo de revisão em um relance",
@@ -2179,6 +2268,7 @@
     "challengesDescription": "Acredito que esta fonte contesta ou enfraquece a alegação.",
     "submitted": "Evidência enviada",
     "processed": "Contribuição de evidência processada.",
+    "duplicate": "Esta fonte de evidência exata já foi contribuída para este tópico. Nenhum novo processamento ou débito de créditos foi criado.",
     "processingFailed": "Não foi possível processar esta fonte de evidência. Tente novamente.",
     "contributionCount_one": "1 contribuição",
     "contributionCount_other": "{{count}} contribuições",

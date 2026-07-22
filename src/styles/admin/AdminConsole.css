@@ -2195,3 +2195,124 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 [data-workspace-theme="paper"] .DfctAdminRewards-modal .modal-content {
   box-shadow: 0 22px 60px rgba(24, 31, 42, 0.16) !important;
 }
+
+/* Pre-screen operations: runtime safety readiness, DB-backed policy, and audit activity. */
+.DfctAdminPreScreen-capabilityGrid,
+.DfctAdminPreScreen-settingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.DfctAdminPreScreen-capability,
+.DfctAdminPreScreen-settingCard {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminPreScreen-capability {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.DfctAdminPreScreen-capability strong {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminPreScreen-capability p,
+.DfctAdminPreScreen-settingCard .form-text,
+.DfctAdminPreScreen-settingActions > span {
+  color: var(--theme-muted);
+}
+
+.DfctAdminPreScreen-capability p {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+}
+
+.DfctAdminPreScreen-settingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.DfctAdminPreScreen-settingCard.is-critical {
+  border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+}
+
+.DfctAdminPreScreen-settingCard .form-label,
+.DfctAdminPreScreen-settingCard .form-check-label {
+  color: var(--theme-text);
+  font-weight: 800;
+}
+
+.DfctAdminPreScreen-settingActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.DfctAdminPreScreen-settingActions > span {
+  font-size: 0.82rem;
+}
+
+.DfctAdminPreScreen-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.DfctAdminPreScreen-table {
+  width: 100%;
+  min-width: 920px;
+}
+
+.DfctAdminPreScreen-table td.is-mono {
+  font-family: var(--theme-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 820px) {
+  .DfctAdminPreScreen-capabilityGrid,
+  .DfctAdminPreScreen-settingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminPreScreen-settingActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminPreScreen-settingActions .btn {
+    width: 100%;
+  }
+}
+
+.DfctAdminPreScreen-table .DfctAdmin-tableEmpty {
+  padding: 1.5rem;
+  color: var(--theme-muted);
+  text-align: center;
+}
+
+
+.DfctAdminPreScreen-refreshControls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.DfctAdminPreScreen-autoSaveStatus {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+  min-height: 2rem;
+}

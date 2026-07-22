@@ -20,6 +20,16 @@ function post(authRequest, url, payload = {}) {
   return authRequest.post(url).send(payload).then(unwrap);
 }
 
+function put(authRequest, url, payload = {}) {
+  return authRequest.put(url).send(payload).then(unwrap);
+}
+
+export const fetchAdminWorkflowPreScreen = (authRequest, params = {}) =>
+  get(authRequest, "/api/admin/workflow/pre-screen", params);
+
+export const updateAdminWorkflowPreScreenSettings = (authRequest, payload = {}) =>
+  put(authRequest, "/api/admin/workflow/pre-screen/settings", payload);
+
 export const fetchAdminWorkflowSummary = (authRequest, params = {}) =>
   get(authRequest, "/api/admin/workflow/summary", params);
 
