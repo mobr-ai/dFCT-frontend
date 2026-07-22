@@ -141,7 +141,14 @@ function Layout() {
       <ToastContainer
         position="bottom-end"
         className="p-3"
-        style={{ zIndex: 9999 }}
+        style={{
+          position: "fixed",
+          right: 0,
+          bottom: 0,
+          top: "auto",
+          left: "auto",
+          zIndex: 9999,
+        }}
       >
         <Toast
           bg={toast.variant}

@@ -6,6 +6,7 @@ import AdminBillingCreditsPage from "./AdminBillingCreditsPage";
 import AdminTabs from "../components/admin/AdminTabs";
 import AdminAnchorJobsPanel from "../components/admin/AdminAnchorJobsPanel";
 import AdminWorkflowPanel from "../components/admin/AdminWorkflowPanel";
+import AdminAiPanel from "../components/admin/AdminAiPanel";
 import AdminRewardsPanel from "../components/admin/AdminRewardsPanel";
 import { hasAdminClaim, useAdminAccess } from "../hooks/useAdminAccess";
 
@@ -21,7 +22,7 @@ function ConsoleStat({ label, value, caption, tone }) {
   );
 }
 
-function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenRewards, onOpenAnchoring }) {
+function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenAi, onOpenRewards, onOpenAnchoring }) {
   return (
     <>
       <section className="DfctAdmin-section">
@@ -87,6 +88,15 @@ function OverviewPanel({ t, onOpenBilling, onOpenWorkflow, onOpenRewards, onOpen
             <span>{t("adminConsole.actionWorkflowEyebrow")}</span>
             <strong>{t("adminConsole.actionWorkflowTitle")}</strong>
             <p>{t("adminConsole.actionWorkflowText")}</p>
+          </button>
+          <button
+            type="button"
+            className="DfctAdminConsole-actionCard DfctAdminConsole-actionCardButton"
+            onClick={onOpenAi}
+          >
+            <span>{t("adminConsole.actionAIEyebrow")}</span>
+            <strong>{t("adminConsole.actionAITitle")}</strong>
+            <p>{t("adminConsole.actionAIText")}</p>
           </button>
           <button
             type="button"
@@ -212,6 +222,7 @@ export default function AdminPage() {
       { key: "overview" },
       { key: "workflow" },
       { key: "billing" },
+      { key: "ai" },
       { key: "rewards" },
       { key: "anchoring" },
     ],
@@ -284,6 +295,7 @@ export default function AdminPage() {
             t={t}
             onOpenBilling={() => changeTab("billing")}
             onOpenWorkflow={() => changeTab("workflow")}
+            onOpenAi={() => changeTab("ai")}
             onOpenRewards={() => changeTab("rewards")}
             onOpenAnchoring={() => changeTab("anchoring")}
           />
@@ -297,6 +309,10 @@ export default function AdminPage() {
           <div className="DfctAdminConsole-embeddedPage">
             <AdminBillingCreditsPage />
           </div>
+        )}
+
+        {activeTab === "ai" && (
+          <AdminAiPanel t={t} user={userData} showToast={showToast} />
         )}
 
         {activeTab === "rewards" && (
