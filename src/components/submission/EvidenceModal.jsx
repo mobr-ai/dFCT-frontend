@@ -189,6 +189,16 @@ function EvidenceModal(props) {
     async function waitProcessing(res) {
       var nextProgress = progress;
       const topic = res.body;
+      if (
+        topic?.duplicate === true ||
+        topic?.preScreen?.outcome === "duplicate"
+      ) {
+        setDropMsg(t("evidenceContribution.duplicate"));
+        setShowProgress(false);
+        setDisableDrop(false);
+        setLoading(false);
+        return;
+      }
       // const topicId = Object.keys(res.body)[0]
       // const topicURL = res.body['topic_url']
       const checkStatus = (res) => {

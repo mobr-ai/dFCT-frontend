@@ -3,9 +3,10 @@ import { Alert, Badge, Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { useAdminWorkflow } from "../../hooks/useAdminWorkflow";
+import AdminPreScreenPanel from "./AdminPreScreenPanel";
 import AdminSyncPill from "./AdminSyncPill";
 
-const WORKFLOW_VIEWS = ["overview", "queue", "reviewers"];
+const WORKFLOW_VIEWS = ["overview", "prescreen", "queue", "reviewers"];
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -498,6 +499,10 @@ export default function AdminWorkflowPanel({ t, user, showToast }) {
             tasks: workflow.summary.recovery.reopenedTasks || 0,
           })}
         </Alert>
+      ) : null}
+
+      {activeView === "prescreen" ? (
+        <AdminPreScreenPanel t={t} user={user} showToast={showToast} />
       ) : null}
 
       {activeView === "overview" ? (

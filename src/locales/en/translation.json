@@ -1472,6 +1472,9 @@
     "verifyMaxRetries": "Verification retries",
     "verifyInitialDelaySeconds": "Initial verification delay",
     "saveSettings": "Save settings",
+    "autoSaving": "Saving automatically…",
+    "autoSavePending": "Changes will be saved automatically…",
+    "autoSaved": "All changes saved automatically.",
     "savingSettings": "Saving...",
     "settingsAutosaveHint": "Changes save automatically",
     "settingsAutosavePending": "Waiting to save...",
@@ -1852,9 +1855,95 @@
     "loading": "Loading workflow health…",
     "recoveryNotice": "Automatic recovery expired {{assignments}} stale assignment(s) and reopened {{tasks}} task(s).",
     "views": {
+      "prescreen": "Pre-screen",
       "overview": "Overview",
       "queue": "Review queue",
       "reviewers": "Reviewers"
+    },
+    "prescreen": {
+      "healthEyebrow": "Ingress safety",
+      "healthTitle": "Pre-screen at a glance",
+      "healthSubtitle": "Submission and safety outcomes from the last {{hours}} hours.",
+      "capabilitiesEyebrow": "Safety services",
+      "capabilitiesTitle": "Runtime readiness",
+      "capabilitiesSubtitle": "See which local and external safety capabilities are actually available before enabling them.",
+      "settingsEyebrow": "Runtime policy",
+      "settingsTitle": "Pre-screen settings",
+      "settingsSubtitle": "Configure how submissions are screened for safety, processability, and risk before they enter analysis.",
+      "recentEyebrow": "Audit visibility",
+      "recentTitle": "Recent pre-screen activity",
+      "recentSubtitle": "Inspect ingress outcomes, safety flags, blocked items, and incomplete screening coverage.",
+      "stats": {
+        "screened": "Screened",
+        "screenedCaption": "Submission pre-screens in this window.",
+        "accepted": "Accepted",
+        "acceptedCaption": "Submissions allowed into analysis.",
+        "flagged": "Flagged items",
+        "flaggedCaption": "Accepted content carrying safety signals.",
+        "blocked": "Blocked items",
+        "blockedCaption": "Quarantined or rejected by safety policy."
+      },
+      "capabilities": {
+        "moderation": "External moderation",
+        "ocr": "OCR inspection",
+        "clamav": "Malware scanning",
+        "remoteSemantic": "Remote semantic inspection",
+        "openaiConfigured": "OpenAI API credential is configured. The credential itself is never exposed here.",
+        "openaiNotConfigured": "OpenAI API credential is not configured. Enabling moderation will not be ready until the secret is available.",
+        "command": "Runtime command: {{command}}",
+        "remoteSemanticHelp": "Fetches a bounded, SSRF-safe sample from public URLs before expensive analysis."
+      },
+      "states": {
+        "ready": "Ready",
+        "needsConfiguration": "Needs configuration",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "settings": {
+        "moderation": "Enable external moderation",
+        "moderationHelp": "Uses the configured OpenAI moderation provider for supported text and image inputs.",
+        "ocr": "OCR inspection",
+        "ocrHelp": "Auto uses Tesseract when available; Enabled requests OCR regardless of auto-detection; Disabled skips it.",
+        "clamav": "Malware scanning",
+        "clamavHelp": "Auto uses ClamAV when available; Enabled requests the scanner regardless of auto-detection; Disabled skips it.",
+        "remoteSemantic": "Enable remote semantic inspection",
+        "remoteSemanticHelp": "Reads a bounded public-URL sample through the existing safe HTTP client to detect prompt-injection and secret signals.",
+        "failClosed": "Fail closed on safety scanner errors",
+        "failClosedHelp": "Quarantine content when moderation or malware scanning reports an execution error instead of continuing with incomplete coverage."
+      },
+      "modes": {
+        "disabled": "Disabled",
+        "auto": "Auto",
+        "enabled": "Enabled"
+      },
+      "saveSettings": "Save settings",
+      "lastUpdated": "Last updated {{time}}",
+      "defaultsActive": "Database defaults are active.",
+      "columns": {
+        "time": "Time",
+        "submission": "Submission",
+        "ingress": "Ingress",
+        "outcome": "Outcome",
+        "items": "Items",
+        "safety": "Safety",
+        "coverage": "Coverage",
+        "topic": "Topic"
+      },
+      "safetySummary": "{{flagged}} flagged · {{blocked}} blocked",
+      "noSafetyFlags": "No safety flags",
+      "coverageComplete": "Complete",
+      "coverageIncomplete": "{{count}} incomplete",
+      "recentEmpty": "No pre-screen activity has been recorded yet.",
+      "toasts": {
+        "saved": "Pre-screen settings saved."
+      },
+      "errors": {
+        "load": "Unable to load pre-screen operations.",
+        "save": "Unable to save pre-screen settings."
+      },
+      "openTopic": "Open #{{id}}"
     },
     "healthEyebrow": "Operational health",
     "healthTitle": "Review flow at a glance",
@@ -2179,6 +2268,7 @@
     "challengesDescription": "I believe this source challenges or weakens the claim.",
     "submitted": "Evidence submitted",
     "processed": "Evidence contribution processed.",
+    "duplicate": "This exact evidence source is already contributed to this topic. No new processing or credit charge was created.",
     "processingFailed": "We couldn't process this evidence source. Please try again.",
     "contributionCount_one": "1 contribution",
     "contributionCount_other": "{{count}} contributions",
