@@ -1349,7 +1349,8 @@
       "billing": "Billing",
       "anchoring": "Ancoragem",
       "workflow": "Workflow",
-      "rewards": "Recompensas"
+      "rewards": "Recompensas",
+      "ai": "IA"
     },
     "overviewTitle": "Visão geral admin",
     "overviewSubtitle": "Uma visão operacional compacta das áreas admin atualmente disponíveis no d-FCT.",
@@ -1412,7 +1413,10 @@
     "overviewRewardsCaption": "Monitore fundos, pontuações pendentes, prévias e premiações concluídas.",
     "actionRewardsEyebrow": "Recompensas",
     "actionRewardsTitle": "Abrir operações de recompensas",
-    "actionRewardsText": "Inspecione a saúde dos fundos, simule distribuições determinísticas e execute rodadas aprovadas."
+    "actionRewardsText": "Inspecione a saúde dos fundos, simule distribuições determinísticas e execute rodadas aprovadas.",
+    "actionAIEyebrow": "Operações de IA",
+    "actionAITitle": "Configurar modelos e quick-check",
+    "actionAIText": "Gerencie credenciais de provedores, papéis dos modelos, limites da experiência pública, recursos forenses e consumo observado de IA."
   },
   "adminAnchorJobs": {
     "eyebrow": "Proveniência verificável",
@@ -2278,6 +2282,217 @@
       "processed": "Processada",
       "failed": "Falhou",
       "unknown": "Status indisponível"
+    }
+  },
+  "adminAI": {
+    "eyebrow": "Operações de IA",
+    "title": "Modelos, provedores e quick-check",
+    "subtitle": "Configure credenciais de provedores, atribua modelos a papéis explícitos, controle o acesso público ao quick-check e acompanhe o consumo observado.",
+    "accessDenied": "É necessário ter acesso de administrador do sistema para gerenciar as operações de IA.",
+    "syncing": "Sincronizando runtime de IA",
+    "syncWaiting": "Aguardando runtime de IA",
+    "syncedAt": "Sincronizado às {{time}}",
+    "loading": "Carregando operações de IA…",
+    "views": {
+      "providers": "Provedores",
+      "roles": "Papéis dos modelos",
+      "quickCheck": "Quick-check",
+      "usage": "Consumo"
+    },
+    "states": {
+      "ready": "Pronto",
+      "notReady": "Não pronto",
+      "needsConfiguration": "Requer configuração",
+      "disabled": "Desabilitado"
+    },
+    "readiness": {
+      "primary": "Análise primária",
+      "multiModel": "Revisão multimodelo",
+      "publicQuickCheck": "Quick-check público",
+      "forensic": "Quick-check forense",
+      "noModel": "Nenhum modelo primário efetivo",
+      "noChallenger": "Nenhum modelo Challenger pronto",
+      "publicQuickCheckHelp": "Requer acesso público e o papel Primary pronto",
+      "noForensic": "Nenhum modelo forense pronto",
+      "credentialVault": "Cofre de credenciais",
+      "credentialVaultHelp": "Requer a chave compartilhada de criptografia das configurações nos runtimes web e worker",
+      "groundedSourceIntelligence": "Inteligência de fontes com grounding",
+      "groundedSourceIntelligenceHelp": "Habilite o Gemini com um modelo de Visão configurado para usar descoberta multimodal de fontes com Google Search nas análises Full e Forensic."
+    },
+    "actions": {
+      "test": "Testar conexão",
+      "save": "Salvar",
+      "saveQuickCheck": "Salvar configurações do quick-check"
+    },
+    "providers": {
+      "eyebrow": "Runtime de provedores",
+      "title": "Provedores e credenciais",
+      "subtitle": "Habilite apenas os provedores que devem ficar disponíveis no d-FCT. As chaves armazenadas são criptografadas e nunca retornam pela API.",
+      "credentialConfigured": "Credencial via {{source}} · final {{hint}}",
+      "unknownSource": "origem configurada",
+      "credentialMissing": "Nenhuma credencial configurada para o provedor",
+      "enabled": "Provedor habilitado",
+      "enabledHelp": "Provedores desabilitados não podem deixar papéis de modelo prontos.",
+      "displayName": "Nome de exibição",
+      "baseUrl": "URL base da API",
+      "baseUrlPlaceholder": "Usar o endpoint padrão do provedor",
+      "baseUrlHelp": "Deixe em branco quando o adaptador já utilizar o endpoint oficial padrão.",
+      "chatModel": "Modelo de chat",
+      "visionModel": "Modelo de visão",
+      "reasoningModel": "Modelo de raciocínio",
+      "apiKey": "Chave da API",
+      "apiKeyReplacePlaceholder": "Digite uma nova chave para substituir a credencial armazenada",
+      "apiKeyPlaceholder": "Digite a chave da API do provedor",
+      "apiKeyHelp": "O valor é enviado apenas ao salvar e não será exibido novamente.",
+      "clearApiKey": "Remover a credencial armazenada no banco",
+      "autoSave": {
+        "saving": "Salvando…",
+        "saved": "Salvo",
+        "pending": "Alterações pendentes…",
+        "failed": "Falha ao salvar"
+      }
+    },
+    "roles": {
+      "eyebrow": "Política de orquestração",
+      "title": "Papéis dos modelos",
+      "subtitle": "Associe provedores e modelos opcionais aos papéis explícitos utilizados no quick-check e nas análises mais profundas.",
+      "enabled": "Papel habilitado",
+      "provider": "Provedor",
+      "modelOverride": "Modelo específico",
+      "modelPlaceholder": "Usar o modelo padrão do provedor",
+      "effectiveModel": "Modelo efetivo: {{model}}",
+      "providerReady": "O provedor atribuído está pronto",
+      "providerNotReady": "O provedor atribuído não está pronto",
+      "autoSave": {
+        "saving": "Salvando…",
+        "saved": "Salvo",
+        "pending": "Alterações pendentes…",
+        "failed": "Falha ao salvar"
+      },
+      "names": {
+        "primary": "Primary",
+        "challenger": "Challenger",
+        "reconciler": "Reconciler",
+        "forensic": "Forensic"
+      },
+      "descriptions": {
+        "primary": "Produz a primeira análise estruturada e a avaliação fundamentada nas evidências.",
+        "challenger": "Questiona de forma independente premissas, omissões e conclusões sem suporte.",
+        "reconciler": "Resolve divergências entre modelos no resultado estruturado apresentado ao usuário.",
+        "forensic": "Executa verificação premium mais profunda e raciocínio forense de mídia quando habilitado."
+      }
+    },
+    "quickCheck": {
+      "accessEyebrow": "Política de acesso",
+      "accessTitle": "Acesso público e autenticado",
+      "accessSubtitle": "Controle quais canais podem chamar o quick-check, incluindo os futuros gateways do Telegram e WhatsApp.",
+      "quotaEyebrow": "Experiência anônima",
+      "quotaTitle": "Limites gratuitos e cooldown",
+      "quotaSubtitle": "Defina a franquia inicial, a janela de renovação, o cooldown, o teto diário compartilhado e o destino de conversão.",
+      "analysisEyebrow": "Perfil de análise",
+      "analysisTitle": "Profundidade do quick-check",
+      "analysisSubtitle": "Escolha o nível padrão e defina se recursos multimodelo, premium e de reuso exato estarão disponíveis.",
+      "forensicEyebrow": "Controles premium",
+      "forensicTitle": "Quick-check forense",
+      "forensicSubtitle": "Mantenha a análise forense com controle separado e selecione os recursos aprofundados que o quick-check pode utilizar.",
+      "fields": {
+        "publicEnabled": "Endpoint público habilitado",
+        "authenticatedEnabled": "Usuários autenticados habilitados",
+        "anonymousEnabled": "Experiência anônima habilitada",
+        "browserChannelEnabled": "Canal público pelo navegador habilitado",
+        "botGatewayEnabled": "Gateways assinados de bots habilitados",
+        "anonymousTrialLimit": "Consultas anônimas gratuitas",
+        "replenishHours": "Intervalo de renovação (horas)",
+        "cooldownSeconds": "Cooldown entre consultas (segundos)",
+        "globalDailyCap": "Teto diário global para anônimos",
+        "ctaUrl": "Destino após o limite gratuito",
+        "defaultServiceLevel": "Nível de serviço padrão",
+        "multiModelEnabled": "Revisão Primary + Challenger habilitada",
+        "premiumFeaturesEnabled": "Recursos premium habilitados",
+        "exactMatchReuseEnabled": "Reutilizar inteligência exata existente",
+        "forensicEnabled": "Quick-check forense habilitado",
+        "forensicAllowAuthenticated": "Permitir forense para usuários autenticados",
+        "forensicAllowAnonymous": "Permitir forense durante a experiência anônima",
+        "forensicAnonymousLimit": "Franquia forense anônima"
+      },
+      "help": {
+        "publicEnabled": "Chave geral do produto público de quick-check.",
+        "authenticatedEnabled": "Permite que usuários logados no d-FCT utilizem o mesmo endpoint.",
+        "anonymousEnabled": "Permite que novos usuários experimentem o quick-check sem criar uma conta.",
+        "browserChannelEnabled": "Aceita identidades anônimas emitidas pelo navegador.",
+        "botGatewayEnabled": "Aceita solicitações de gateways de mensagens confiáveis e assinados.",
+        "anonymousTrialLimit": "Verificações concluídas disponíveis por solicitante pseudônimo em cada janela de renovação.",
+        "replenishHours": "720 horas correspondem a uma janela móvel de renovação de 30 dias.",
+        "cooldownSeconds": "Espera mínima entre envios anônimos concluídos.",
+        "globalDailyCap": "Quantidade de verificações anônimas patrocinadas em todos os canais por dia. Zero desabilita a franquia.",
+        "ctaUrl": "Telegram, WhatsApp e web devem direcionar para este endereço após o esgotamento da franquia.",
+        "multiModelEnabled": "Executa o papel Challenger além do Primary quando ambos estiverem prontos.",
+        "premiumFeaturesEnabled": "Chave geral dos recursos mais profundos ou pagos do quick-check.",
+        "exactMatchReuseEnabled": "Retorna inteligência de uma fonte exatamente igual antes de iniciar nova aquisição e novas chamadas de modelos.",
+        "forensicEnabled": "Disponibiliza o perfil de serviço forense para a política do quick-check.",
+        "forensicAllowAuthenticated": "Permite que usuários autenticados com direito de acesso solicitem análise forense.",
+        "forensicAllowAnonymous": "Use com cautela: verificações forenses podem ter custo consideravelmente maior.",
+        "forensicAnonymousLimit": "Máximo de verificações forenses dentro da franquia anônima."
+      },
+      "serviceLevels": {
+        "basic_draft": "Rascunho básico",
+        "full": "Verificação multimodelo completa",
+        "forensic": "Forense"
+      },
+      "forensicCapabilities": {
+        "multi_provider_reverse_search": "Busca reversa de imagem com múltiplos provedores",
+        "deeper_video_frame_search": "Busca aprofundada em frames de vídeo",
+        "earliest_known_appearance": "Análise da ocorrência mais antiga conhecida",
+        "multi_model_ensemble": "Conjunto multimodelo ampliado",
+        "challenger_and_verifier_models": "Modelos adicionais Challenger e Verifier",
+        "model_influence_attribution": "Atribuição de influência dos modelos"
+      },
+      "unsaved": "As configurações do quick-check possuem alterações não salvas.",
+      "saved": "As configurações do quick-check estão sincronizadas."
+    },
+    "usage": {
+      "empty": "Nenhuma execução observada nesta janela.",
+      "quickCheckEyebrow": "Tráfego do produto",
+      "quickCheckTitle": "Uso do quick-check",
+      "quickCheckSubtitle": "Execuções de análise do quick-check observadas nos últimos {{days}} dias.",
+      "providerEyebrow": "Consumo por provedor",
+      "providerTitle": "Uso por provedor",
+      "providerSubtitle": "Execuções de LLM, tokens, latência e custo estimado observados nos últimos {{days}} dias. Estes dados não representam a fatura do provedor.",
+      "roleEyebrow": "Consumo da orquestração",
+      "roleTitle": "Uso por papel de modelo",
+      "roleSubtitle": "Compare como os papéis Primary, Challenger, Reconciler e Forensic estão sendo utilizados.",
+      "columns": {
+        "requests": "Requisições",
+        "successRate": "Taxa de sucesso",
+        "tokens": "Tokens",
+        "latency": "Latência média",
+        "cost": "Custo estimado",
+        "provider": "Provedor",
+        "role": "Papel",
+        "lastExecution": "Execução mais recente"
+      },
+      "stats": {
+        "requests": "Execuções de quick-check",
+        "succeeded": "Concluídas",
+        "failed": "Falhas",
+        "forensic": "Execuções forenses",
+        "forensicCaption": "Execuções no nível de serviço forense",
+        "queued": "Na fila",
+        "running": "Em execução"
+      }
+    },
+    "toasts": {
+      "providerSaved": "Configurações do provedor {{provider}} salvas.",
+      "providerTested": "Teste de conexão com {{provider}} concluído com sucesso.",
+      "roleSaved": "Papel de modelo {{role}} salvo.",
+      "quickCheckSaved": "Configurações do quick-check salvas."
+    },
+    "errors": {
+      "load": "Não foi possível carregar as operações de IA.",
+      "saveProvider": "Não foi possível salvar as configurações do provedor.",
+      "testProvider": "Não foi possível testar este provedor.",
+      "saveRole": "Não foi possível salvar o papel do modelo.",
+      "saveQuickCheck": "Não foi possível salvar as configurações do quick-check."
     }
   }
 }

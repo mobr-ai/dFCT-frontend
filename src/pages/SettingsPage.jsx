@@ -53,7 +53,6 @@ function SettingsPage() {
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const avatarInputRef = useRef(null);
-  const parsedSettings = parseUserSettings(user?.settings);
   const navigate = useNavigate();
   const usernameRef = useRef(null);
 
@@ -446,32 +445,6 @@ function SettingsPage() {
               <Form.Text className="Settings-language-hint-mobile">
                 {t("languageCommunicationHint")}
               </Form.Text>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>{t("llmEngine")}</Form.Label>
-              <Form.Control
-                as="select"
-                value={parsedSettings.llmEngine || ""}
-                onChange={(e) => {
-                  saveSettings({
-                    ...parseUserSettings(user?.settings),
-                    llmEngine: e.target.value,
-                  });
-                }}
-              >
-                <option value="">{t("selectAnOption")}</option>
-                <option value="openai">OpenAI</option>
-                <option value="xai">xAI</option>
-                <option value="deepseek" disabled>
-                  Deepseek
-                </option>
-                <option value="anthropic" disabled>
-                  Anthropic
-                </option>
-                <option value="all" disabled>
-                  {t("allEngines")} ({t("premiumOnly")})
-                </option>
-              </Form.Control>
             </Form.Group>
           </Form>
 

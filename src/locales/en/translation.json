@@ -1349,7 +1349,8 @@
       "billing": "Billing",
       "anchoring": "Anchoring",
       "workflow": "Workflow",
-      "rewards": "Rewards"
+      "rewards": "Rewards",
+      "ai": "AI"
     },
     "overviewTitle": "Admin overview",
     "overviewSubtitle": "A compact operational view of the admin areas currently available in d-FCT.",
@@ -1412,7 +1413,10 @@
     "overviewRewardsCaption": "Monitor funded pools, pending contribution scores, previews, and completed awards.",
     "actionRewardsEyebrow": "Rewards",
     "actionRewardsTitle": "Open reward operations",
-    "actionRewardsText": "Inspect pool health, preview deterministic distributions, and execute approved reward rounds."
+    "actionRewardsText": "Inspect pool health, preview deterministic distributions, and execute approved reward rounds.",
+    "actionAIEyebrow": "AI operations",
+    "actionAITitle": "Configure models and quick-check",
+    "actionAIText": "Manage provider credentials, model roles, public trial limits, forensic capabilities, and observed AI consumption."
   },
   "adminAnchorJobs": {
     "eyebrow": "Verifiable provenance",
@@ -2278,6 +2282,217 @@
       "processed": "Processed",
       "failed": "Failed",
       "unknown": "Status unavailable"
+    }
+  },
+  "adminAI": {
+    "eyebrow": "AI operations",
+    "title": "Models, providers and quick-check",
+    "subtitle": "Configure provider credentials, assign models to explicit roles, control public quick-check access, and inspect observed consumption.",
+    "accessDenied": "System administrator access is required to manage AI operations.",
+    "syncing": "Syncing AI runtime",
+    "syncWaiting": "Waiting for AI runtime",
+    "syncedAt": "Synced at {{time}}",
+    "loading": "Loading AI operations…",
+    "views": {
+      "providers": "Providers",
+      "roles": "Model roles",
+      "quickCheck": "Quick-check",
+      "usage": "Usage"
+    },
+    "states": {
+      "ready": "Ready",
+      "notReady": "Not ready",
+      "needsConfiguration": "Needs configuration",
+      "disabled": "Disabled"
+    },
+    "readiness": {
+      "primary": "Primary analysis",
+      "multiModel": "Multi-model review",
+      "publicQuickCheck": "Public quick-check",
+      "forensic": "Forensic quick-check",
+      "noModel": "No effective primary model",
+      "noChallenger": "No ready challenger model",
+      "publicQuickCheckHelp": "Requires public access and a ready Primary role",
+      "noForensic": "No ready forensic model",
+      "credentialVault": "Credential vault",
+      "credentialVaultHelp": "Requires the shared settings-encryption key in web and worker runtimes",
+      "groundedSourceIntelligence": "Grounded source intelligence",
+      "groundedSourceIntelligenceHelp": "Enable Gemini with a configured Vision model to use multimodal Google Search source discovery in Full and Forensic analysis."
+    },
+    "actions": {
+      "test": "Test connection",
+      "save": "Save",
+      "saveQuickCheck": "Save quick-check settings"
+    },
+    "providers": {
+      "eyebrow": "Provider runtime",
+      "title": "Providers and credentials",
+      "subtitle": "Enable only providers that should be available to d-FCT. Stored API keys are encrypted and never returned by the API.",
+      "credentialConfigured": "Credential from {{source}} · ending {{hint}}",
+      "unknownSource": "configured source",
+      "credentialMissing": "No provider credential is configured",
+      "enabled": "Provider enabled",
+      "enabledHelp": "Disabled providers cannot be assigned to ready model roles.",
+      "displayName": "Display name",
+      "baseUrl": "API base URL",
+      "baseUrlPlaceholder": "Use the provider default endpoint",
+      "baseUrlHelp": "Leave blank when the provider adapter supplies its official default.",
+      "chatModel": "Chat model",
+      "visionModel": "Vision model",
+      "reasoningModel": "Reasoning model",
+      "apiKey": "API key",
+      "apiKeyReplacePlaceholder": "Enter a new key to replace the stored credential",
+      "apiKeyPlaceholder": "Enter the provider API key",
+      "apiKeyHelp": "The value is sent only when saving and is never displayed again.",
+      "clearApiKey": "Remove the stored database credential",
+      "autoSave": {
+        "saving": "Saving…",
+        "saved": "Saved",
+        "pending": "Changes pending…",
+        "failed": "Save failed"
+      }
+    },
+    "roles": {
+      "eyebrow": "Orchestration policy",
+      "title": "Model roles",
+      "subtitle": "Assign providers and model overrides to the explicit roles used by quick-check and deeper analysis.",
+      "enabled": "Role enabled",
+      "provider": "Provider",
+      "modelOverride": "Model override",
+      "modelPlaceholder": "Use the provider default model",
+      "effectiveModel": "Effective model: {{model}}",
+      "providerReady": "Assigned provider is ready",
+      "providerNotReady": "Assigned provider is not ready",
+      "autoSave": {
+        "saving": "Saving…",
+        "saved": "Saved",
+        "pending": "Changes pending…",
+        "failed": "Save failed"
+      },
+      "names": {
+        "primary": "Primary",
+        "challenger": "Challenger",
+        "reconciler": "Reconciler",
+        "forensic": "Forensic"
+      },
+      "descriptions": {
+        "primary": "Produces the first structured analysis and evidence-grounded assessment.",
+        "challenger": "Independently challenges assumptions, omissions, and unsupported conclusions.",
+        "reconciler": "Resolves model disagreements into the structured user-facing result.",
+        "forensic": "Runs deeper premium verification and media-forensics reasoning when enabled."
+      }
+    },
+    "quickCheck": {
+      "accessEyebrow": "Access policy",
+      "accessTitle": "Public and authenticated access",
+      "accessSubtitle": "Control which entry points may call quick-check, including future Telegram and WhatsApp gateways.",
+      "quotaEyebrow": "Anonymous trial",
+      "quotaTitle": "Free-query limits and cooldown",
+      "quotaSubtitle": "Set the onboarding allowance, replenishment window, cooldown, shared daily ceiling, and conversion destination.",
+      "analysisEyebrow": "Analysis profile",
+      "analysisTitle": "Quick-check depth",
+      "analysisSubtitle": "Choose the default service level and whether multi-model, premium, and exact-reuse capabilities are available.",
+      "forensicEyebrow": "Premium controls",
+      "forensicTitle": "Forensic quick-check",
+      "forensicSubtitle": "Keep forensic analysis separately gated and select the deeper capabilities that quick-check may invoke.",
+      "fields": {
+        "publicEnabled": "Public endpoint enabled",
+        "authenticatedEnabled": "Authenticated users enabled",
+        "anonymousEnabled": "Anonymous trial enabled",
+        "browserChannelEnabled": "Public browser channel enabled",
+        "botGatewayEnabled": "Signed bot gateways enabled",
+        "anonymousTrialLimit": "Free anonymous queries",
+        "replenishHours": "Replenishment interval (hours)",
+        "cooldownSeconds": "Cooldown between queries (seconds)",
+        "globalDailyCap": "Global anonymous daily ceiling",
+        "ctaUrl": "Post-trial destination",
+        "defaultServiceLevel": "Default service level",
+        "multiModelEnabled": "Primary + Challenger review enabled",
+        "premiumFeaturesEnabled": "Premium capabilities enabled",
+        "exactMatchReuseEnabled": "Reuse exact existing intelligence",
+        "forensicEnabled": "Forensic quick-check enabled",
+        "forensicAllowAuthenticated": "Allow forensic for authenticated users",
+        "forensicAllowAnonymous": "Allow forensic during anonymous trials",
+        "forensicAnonymousLimit": "Anonymous forensic allowance"
+      },
+      "help": {
+        "publicEnabled": "Master switch for the public quick-check product.",
+        "authenticatedEnabled": "Allows signed-in d-FCT users to use the same quick-check endpoint.",
+        "anonymousEnabled": "Allows new users to try quick-check without creating an account.",
+        "browserChannelEnabled": "Accept browser-issued anonymous requester identities.",
+        "botGatewayEnabled": "Accept requests from trusted, signed messaging gateways.",
+        "anonymousTrialLimit": "Successful checks available to one pseudonymous requester per replenishment window.",
+        "replenishHours": "720 hours equals a 30-day rolling replenishment window.",
+        "cooldownSeconds": "Minimum wait between successful anonymous submissions.",
+        "globalDailyCap": "Sponsored anonymous checks allowed across all channels per day. Zero disables the allowance.",
+        "ctaUrl": "Telegram, WhatsApp, and web clients should direct exhausted users here.",
+        "multiModelEnabled": "Runs the configured Challenger role in addition to Primary when both are ready.",
+        "premiumFeaturesEnabled": "Master switch for paid/deeper quick-check capabilities.",
+        "exactMatchReuseEnabled": "Return existing exact-source intelligence before starting new acquisition and model work.",
+        "forensicEnabled": "Makes the forensic service profile available to quick-check policy.",
+        "forensicAllowAuthenticated": "Permits entitled signed-in users to request forensic analysis.",
+        "forensicAllowAnonymous": "Use sparingly: forensic checks can be substantially more expensive.",
+        "forensicAnonymousLimit": "Maximum forensic checks within the anonymous trial allowance."
+      },
+      "serviceLevels": {
+        "basic_draft": "Basic draft",
+        "full": "Full multi-model check",
+        "forensic": "Forensic"
+      },
+      "forensicCapabilities": {
+        "multi_provider_reverse_search": "Multi-provider reverse-image search",
+        "deeper_video_frame_search": "Deeper video-frame search",
+        "earliest_known_appearance": "Earliest-known appearance analysis",
+        "multi_model_ensemble": "Expanded multi-model ensemble",
+        "challenger_and_verifier_models": "Additional challenger and verifier models",
+        "model_influence_attribution": "Model influence attribution"
+      },
+      "unsaved": "Quick-check settings have unsaved changes.",
+      "saved": "Quick-check settings are synchronized."
+    },
+    "usage": {
+      "empty": "No observed executions in this reporting window.",
+      "quickCheckEyebrow": "Product traffic",
+      "quickCheckTitle": "Quick-check usage",
+      "quickCheckSubtitle": "Observed quick-check analysis runs during the last {{days}} days.",
+      "providerEyebrow": "Provider consumption",
+      "providerTitle": "Usage by provider",
+      "providerSubtitle": "Observed LLM executions, tokens, latency, and estimated cost during the last {{days}} days. This is not provider invoice data.",
+      "roleEyebrow": "Orchestration consumption",
+      "roleTitle": "Usage by model role",
+      "roleSubtitle": "Compare how Primary, Challenger, Reconciler, and Forensic roles are being used.",
+      "columns": {
+        "requests": "Requests",
+        "successRate": "Success rate",
+        "tokens": "Tokens",
+        "latency": "Avg. latency",
+        "cost": "Estimated cost",
+        "provider": "Provider",
+        "role": "Role",
+        "lastExecution": "Latest execution"
+      },
+      "stats": {
+        "requests": "Quick-check runs",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "forensic": "Forensic runs",
+        "forensicCaption": "Runs using the forensic service level",
+        "queued": "Queued",
+        "running": "Running"
+      }
+    },
+    "toasts": {
+      "providerSaved": "{{provider}} provider settings saved.",
+      "providerTested": "{{provider}} connection test succeeded.",
+      "roleSaved": "{{role}} model role saved.",
+      "quickCheckSaved": "Quick-check settings saved."
+    },
+    "errors": {
+      "load": "Unable to load AI operations.",
+      "saveProvider": "Unable to save provider settings.",
+      "testProvider": "Unable to test this provider.",
+      "saveRole": "Unable to save the model role.",
+      "saveQuickCheck": "Unable to save quick-check settings."
     }
   }
 }
