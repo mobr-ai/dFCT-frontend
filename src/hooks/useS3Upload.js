@@ -52,6 +52,12 @@ export function useS3Upload() {
 
         const uploadPromises = signedResponses.map(async (signedData, index) => {
             const file = newFiles[index];
+
+            // Preserve the exact object key issued by the backend.
+            // This avoids having downstream services rediscover the object's
+            // storage location and remains compatible with legacy flat keys.
+            file.s3Key = signedData.s3Key || signedData.s3_key || null;
+
             if (signedData.upload_required) {
                 try {
                     setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));

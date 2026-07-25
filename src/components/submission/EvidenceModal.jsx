@@ -269,6 +269,7 @@ function EvidenceModal(props) {
             type: file.type,
             lastModified: file.lastModified,
             hash: file.hash,
+            s3Key: file.s3Key,
           })),
           urls: urls,
           topicId: props.topicId,
