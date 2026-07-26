@@ -437,19 +437,15 @@ function TopicSubmissionPage() {
 
           terminalStatus = status.status;
 
-          if (import.meta.env.DEV) {
-            console.log(
-              "Analysis processing status=",
-              status
-            );
-          }
+          if (import.meta.env.DEV) console.log(
+            "Analysis processing status=",
+            status
+          );
         } catch (error) {
-          if (import.meta.env.DEV) {
-            console.log(
-              "Error retrieving analysis progress:",
-              error
-            );
-          }
+          if (import.meta.env.DEV) console.log(
+            "Error retrieving analysis progress:",
+            error
+          );
 
           showError(
             t("topicCreationFailed")
