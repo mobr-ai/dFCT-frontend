@@ -524,3 +524,122 @@
     max-width: 100% !important;
   }
 } */
+
+
+/* ---- Analysis progress ---- */
+
+.Submission-processing {
+  background: var(--theme-surface, #343a40);
+  border: 1px solid var(--theme-border, #607d8b);
+  border-radius: var(--theme-radius-lg, 14px);
+  color: var(--theme-text, #f5f5f5);
+  font-family: monospace;
+  margin: 0 auto 1.25rem;
+  max-width: 42rem;
+  padding: 1rem;
+  text-align: left;
+  width: min(90vw, 42rem);
+}
+
+.Submission-processing-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.Submission-processing-message {
+  color: var(--theme-text, #f5f5f5);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.Submission-processing-percent {
+  color: var(--theme-text-soft, #d0d7dc);
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+}
+
+.Submission-processing-track {
+  background: var(--theme-surface-3, #455a64);
+  border-radius: 999px;
+  height: 0.55rem;
+  margin-top: 0.8rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.Submission-processing-fill {
+  background: currentColor;
+  border-radius: inherit;
+  height: 100%;
+  opacity: 0.72;
+  transition: width 300ms ease;
+}
+
+.Submission-processing-parallel {
+  color: var(--theme-text-muted, #aeb8bf);
+  font-size: 0.76rem;
+  margin-top: 0.65rem;
+}
+
+.Submission-processing-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+}
+
+.Submission-processing-stage {
+  align-items: center;
+  color: var(--theme-text-muted, #aeb8bf);
+  display: flex;
+  font-size: 0.8rem;
+  gap: 0.5rem;
+}
+
+.Submission-processing-stage.is-running {
+  color: var(--theme-text, #f5f5f5);
+  font-weight: 600;
+}
+
+.Submission-processing-stage-marker {
+  display: inline-block;
+  text-align: center;
+  width: 1rem;
+}
+
+.Submission-processing-stage.is-running
+.Submission-processing-stage-marker {
+  animation: Submission-processing-pulse 1.2s ease-in-out infinite;
+}
+
+.Submission-processing-note {
+  border-top: 1px solid var(--theme-border, #607d8b);
+  color: var(--theme-text-muted, #aeb8bf);
+  font-size: 0.72rem;
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+}
+
+@keyframes Submission-processing-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Submission-processing-fill {
+    transition: none;
+  }
+
+  .Submission-processing-stage.is-running
+  .Submission-processing-stage-marker {
+    animation: none;
+  }
+}

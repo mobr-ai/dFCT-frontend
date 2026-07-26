@@ -7,7 +7,10 @@ import { URLCardList } from "../components/content";
 import { FileUploadArea } from "../components/submission";
 import { URLInputField } from "../components/submission";
 import { ContextInputField } from "../components/submission";
-import { SubmissionControls } from "../components/submission";
+import {
+  SubmissionControls,
+  ProcessingProgress,
+} from "../components/submission";
 import { RelatedTopicsModal } from "../components/topic";
 import logo from "../icons/logo.svg";
 import Form from "react-bootstrap/Form";
@@ -41,6 +44,7 @@ function TopicSubmissionPage() {
   const [fetching, setFetching] = useState(false);
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState(10);
+  const [processingStatus, setProcessingStatus] = useState(null);
   const [providedContext, setProvidedContext] = useState("");
   const [showFiles, setShowFiles] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
@@ -91,6 +95,7 @@ function TopicSubmissionPage() {
 
       setShowFiles(false);
       setShowProgress(false);
+      setProcessingStatus(null);
       setDropBackground("#ff000045");
       setDropBorder("#eeeeee");
       setDisableDrop(false);
@@ -369,48 +374,111 @@ function TopicSubmissionPage() {
     }
 
     async function waitProcessing(res) {
-      var nextProgress = progress;
       const topic = res.body;
-      const topicURL = res.body["topic_url"];
-      const checkStatus = (res) => {
+      const topicURL = topic["topic_url"];
+      const analysisRunId = topic.analysisRunId;
+
+      if (!analysisRunId) {
+        showError(t("topicCreationFailed"));
+        return;
+      }
+
+      let nextProgress = 1;
+      let terminalStatus = null;
+
+      setProgress((current) =>
+        Math.max(current, 1)
+      );
+
+      while (
+        terminalStatus !== "succeeded" &&
+        terminalStatus !== "failed"
+      ) {
         try {
-          var p = Number(res.text);
-          if (p === -1) {
-            throw new Error("Could not read metadata");
-          }
-          setProgress(p);
-          nextProgress = p;
-          if (import.meta.env.DEV) console.log("Topic processing progress=" + p);
-        } catch (e) {
-          if (import.meta.env.DEV) console.log("Error retrieving processing progress: " + e.message);
-          setProgress(0);
-          nextProgress = -1;
-          showError(t("topicCreationFailed"));
-        }
-      };
+          const statusResponse = await authRequest
+            .get(
+              `/api/analysis-progress/${analysisRunId}`
+            )
+            .set("Accept", "application/json");
 
-      // request progress and wait for topic to be processed
-      while (nextProgress >= 0 && nextProgress < 100) {
-        await authRequest
-          .post("/api/check")
-          .send(topic)
-          .then((res) => checkStatus(res))
-          .catch((err) => {
-            showError(t("topicCreationFailed"));
-            if (import.meta.env.DEV) console.log(
-              "Topic (id = " + topicId + ") processing failed: [" + err + "]"
+          const status = statusResponse.body || {};
+          const reported = Number(
+            status.progress
+          );
+
+          if (!Number.isFinite(reported)) {
+            throw new Error(
+              "Invalid analysis progress response"
             );
-          });
-        await sleep(2000);
+          }
+
+          // Defensive monotonicity. The backend contract is designed
+          // to be monotonic, but the UI must never visually move
+          // backwards if polling observes concurrent transactions.
+          nextProgress = Math.max(
+            nextProgress,
+            reported,
+          );
+
+          setProgress((current) =>
+            Math.max(
+              Number(current) || 0,
+              nextProgress,
+            )
+          );
+
+          setProcessingStatus(status);
+
+          if (status.messageKey) {
+            setDropMsg(
+              t(status.messageKey)
+            );
+          }
+
+          terminalStatus = status.status;
+
+          if (import.meta.env.DEV) {
+            console.log(
+              "Analysis processing status=",
+              status
+            );
+          }
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.log(
+              "Error retrieving analysis progress:",
+              error
+            );
+          }
+
+          showError(
+            t("topicCreationFailed")
+          );
+          return;
+        }
+
+        if (
+          terminalStatus !== "succeeded" &&
+          terminalStatus !== "failed"
+        ) {
+          await sleep(1500);
+        }
       }
 
-      // send user to topic breakdown page
-      if (nextProgress === 100) {
-        setDropMsg(t("topicProcessed"));
-        setLoading(false);
-        // react soft navigation
-        navigate(topicURL);
+      if (terminalStatus === "failed") {
+        showError(
+          t("topicCreationFailed")
+        );
+        return;
       }
+
+      setProgress(100);
+      setDropMsg(
+        t("topicProcessing.complete")
+      );
+      setLoading(false);
+
+      navigate(topicURL);
     }
 
     // all files completed
@@ -420,7 +488,19 @@ function TopicSubmissionPage() {
     ) {
       if (import.meta.env.DEV) console.log("All files available, processing content...");
 
-      setDropMsg(t("processingContent"));
+      setDropMsg(
+        t("topicProcessing.preparing")
+      );
+      setProcessingStatus({
+        status: "queued",
+        progress: 1,
+        phase: "preparing",
+        messageKey:
+          "topicProcessing.preparing",
+        activeStages: [],
+        stages: [],
+      });
+      setProgress(1);
       setShowFiles(false);
       setShowURLs(false);
       setShowProgress(true);
@@ -459,11 +539,21 @@ function TopicSubmissionPage() {
               dropBackground={dropBackground}
               dropBorder={dropBorder}
               showFiles={showFiles}
-              showProgress={showProgress}
+              showProgress={
+                showProgress &&
+                !processingStatus
+              }
               progress={progress}
               files={files}
               onDropAccepted={onDropAccepted}
             />
+
+            {processingStatus && loading && (
+              <ProcessingProgress
+                progress={progress}
+                status={processingStatus}
+              />
+            )}
 
             {!loading && (
               <>
