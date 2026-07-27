@@ -37,6 +37,25 @@ export const fetchAdminAiCosts = (
     params,
   );
 
+export const fetchAdminAiFinances = (
+  authRequest,
+  params = {},
+) =>
+  get(
+    authRequest,
+    "/api/admin/ai/finances",
+    params,
+  );
+
+export const syncAdminAiOpenAiFinances = (
+  authRequest,
+  params = {},
+) =>
+  post(
+    authRequest,
+    `/api/admin/ai/finances/openai/sync${queryString(params)}`,
+  );
+
 export const fetchAdminAiBenchmarks = (
   authRequest,
   params = {},

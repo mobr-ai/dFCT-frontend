@@ -3624,3 +3624,164 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
     grid-template-columns: 1fr;
   }
 }
+
+/* Provider-reported finance observations. */
+
+.DfctAdminConsole .DfctAdminAI-financeHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeProviderStack {
+  display: grid;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCard {
+  min-width: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.95rem;
+  background: var(--theme-card-bg);
+  overflow: hidden;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--theme-border);
+  background:
+    color-mix(
+      in srgb,
+      var(--theme-primary) 3%,
+      var(--theme-card-bg)
+    );
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader h3 {
+  margin: 0.12rem 0 0;
+  color: var(--theme-text);
+  font-size: 1.05rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader p {
+  margin: 0.2rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.76rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeActions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeMetrics {
+  margin: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(180px, 1fr)
+    );
+  gap: 0.65rem;
+  padding: 0 1rem 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope > div {
+  min-width: 0;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope span,
+.DfctAdminConsole .DfctAdminAI-financeScope small {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope strong {
+  display: block;
+  margin: 0.15rem 0;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  margin: 0 1rem 1rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--bs-warning) 45%,
+      var(--theme-border)
+    );
+  border-radius: 0.75rem;
+  background:
+    color-mix(
+      in srgb,
+      var(--bs-warning) 7%,
+      var(--theme-card-bg)
+    );
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice strong {
+  color: var(--theme-text);
+  font-size: 0.78rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice span {
+  color: var(--theme-muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeLineItems {
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeTable td {
+  vertical-align: middle;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeTable td:first-child {
+  min-width: 260px;
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-financeHeader,
+  .DfctAdminConsole .DfctAdminAI-financeCardHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-financeActions {
+    justify-content: flex-start;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-financeScope {
+    grid-template-columns: 1fr;
+  }
+}

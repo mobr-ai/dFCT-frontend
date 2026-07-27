@@ -5,8 +5,10 @@ import {
   fetchAdminAiBenchmarks,
   fetchAdminAiCosts,
   fetchAdminAiExecutionDetail,
+  fetchAdminAiFinances,
   fetchAdminAiRuntime,
   fetchAdminQuickCheckRuntime,
+  syncAdminAiOpenAiFinances,
   testAdminAiProvider,
   updateAdminAiProvider,
   updateAdminAiRole,
@@ -24,9 +26,12 @@ export function useAdminAi(user, showToast, t) {
   const authRequestRef = useRef(authRequest);
   authRequestRef.current = authRequest;
 
+  const costWindowDaysRef = useRef(30);
+
   const [aiData, setAiData] = useState(null);
   const [quickCheckData, setQuickCheckData] = useState(null);
   const [costData, setCostData] = useState(null);
+  const [financeData, setFinanceData] = useState(null);
   const [benchmarkData, setBenchmarkData] = useState(null);
   const [benchmarkDetail, setBenchmarkDetail] = useState(null);
   const [executionDetail, setExecutionDetail] = useState(null);
@@ -65,6 +70,7 @@ export function useAdminAi(user, showToast, t) {
           aiPayload,
           quickCheckPayload,
           costPayload,
+          financePayload,
           benchmarkPayload,
         ] = await Promise.all([
           fetchAdminAiRuntime(
@@ -77,7 +83,17 @@ export function useAdminAi(user, showToast, t) {
           ),
           fetchAdminAiCosts(
             authRequestRef.current,
-            { windowDays: 30 },
+            {
+              windowDays:
+                costWindowDaysRef.current,
+            },
+          ),
+          fetchAdminAiFinances(
+            authRequestRef.current,
+            {
+              windowDays:
+                costWindowDaysRef.current,
+            },
           ),
           fetchAdminAiBenchmarks(
             authRequestRef.current,
@@ -88,6 +104,7 @@ export function useAdminAi(user, showToast, t) {
         setAiData(aiPayload);
         setQuickCheckData(quickCheckPayload);
         setCostData(costPayload);
+        setFinanceData(financePayload);
         setBenchmarkData(benchmarkPayload);
         setLastUpdatedAt(new Date());
 
@@ -95,6 +112,7 @@ export function useAdminAi(user, showToast, t) {
           ai: aiPayload,
           quickCheck: quickCheckPayload,
           costs: costPayload,
+          finances: financePayload,
           benchmarks: benchmarkPayload,
         };
       } catch (err) {
@@ -241,12 +259,26 @@ export function useAdminAi(user, showToast, t) {
     async (windowDays = 30) => {
       if (!canLoad) return null;
 
+      const safeWindowDays = Math.max(
+        1,
+        Math.min(
+          Number(windowDays) || 30,
+          365,
+        ),
+      );
+
+      costWindowDaysRef.current =
+        safeWindowDays;
+
       setError("");
 
       try {
         const payload = await fetchAdminAiCosts(
           authRequestRef.current,
-          { windowDays },
+          {
+            windowDays:
+              safeWindowDays,
+          },
         );
 
         setCostData(payload);
@@ -263,6 +295,110 @@ export function useAdminAi(user, showToast, t) {
       }
     },
     [canLoad, handleError, showToast, t],
+  );
+
+  const loadFinances = useCallback(
+    async (windowDays = 30) => {
+      if (!canLoad) return null;
+
+      const safeWindowDays = Math.max(
+        1,
+        Math.min(
+          Number(windowDays) || 30,
+          365,
+        ),
+      );
+
+      costWindowDaysRef.current =
+        safeWindowDays;
+
+      setError("");
+
+      try {
+        const payload = await fetchAdminAiFinances(
+          authRequestRef.current,
+          {
+            windowDays:
+              safeWindowDays,
+          },
+        );
+
+        setFinanceData(payload);
+        setLastUpdatedAt(new Date());
+        return payload;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadFinances") ||
+            "Unable to load provider billing.",
+        );
+        if (message) showToast?.(message, "danger");
+        return null;
+      }
+    },
+    [canLoad, handleError, showToast, t],
+  );
+
+  const syncProviderFinances = useCallback(
+    async (providerKey, windowDays = 30) => {
+      if (!canLoad) return null;
+
+      if (providerKey !== "openai") {
+        const message =
+          t?.("adminAI.errors.unsupportedFinanceProvider") ||
+          "Finance synchronization is not available for this provider.";
+
+        showToast?.(message, "warning");
+        return null;
+      }
+
+      const action = `finance-sync:${providerKey}`;
+
+      setActionLoading(action);
+      setError("");
+
+      try {
+        const response = await syncAdminAiOpenAiFinances(
+          authRequestRef.current,
+          { windowDays },
+        );
+
+        if (response?.finances) {
+          setFinanceData(response.finances);
+        }
+
+        setLastUpdatedAt(new Date());
+
+        showToast?.(
+          t?.("adminAI.toasts.financesSynced", {
+            provider: "OpenAI",
+          }) || "OpenAI provider billing synchronized.",
+          "success",
+        );
+
+        return response;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.syncFinances") ||
+            "Unable to synchronize provider billing.",
+        );
+
+        if (message) {
+          showToast?.(message, "danger");
+        }
+
+        return null;
+      } finally {
+        setActionLoading("");
+      }
+    },
+    [
+      canLoad,
+      handleError,
+      showToast,
+      t,
+    ],
   );
 
   const loadBenchmarks = useCallback(
@@ -378,6 +514,7 @@ export function useAdminAi(user, showToast, t) {
     quickCheckCapabilities: quickCheckData?.capabilities || {},
     quickCheckUsage: quickCheckData?.usage || {},
     costData,
+    financeData,
     benchmarkData,
     benchmarkDetail,
     executionDetail,
@@ -395,6 +532,8 @@ export function useAdminAi(user, showToast, t) {
     saveRole,
     saveQuickCheckSettings,
     loadCosts,
+    loadFinances,
+    syncProviderFinances,
     loadBenchmarks,
     loadBenchmarkDetail,
     loadExecutionDetail,

@@ -760,6 +760,478 @@ function ProviderCostTable({
 }
 
 
+function maskedProviderApiKey(value) {
+  const text = String(value || "").trim();
+
+  if (!text) {
+    return "—";
+  }
+
+  const suffix = text.slice(-4);
+
+  return `••••${suffix}`;
+}
+
+
+function reconciliationTone(reconciliation) {
+  return reconciliation?.comparable
+    ? "success"
+    : "warning";
+}
+
+
+function ProviderFinanceLineItems({
+  rows,
+  t,
+}) {
+  const items = asArray(rows);
+
+  if (!items.length) {
+    return (
+      <div className="DfctAdminAI-empty">
+        {t(
+          "adminAI.costs.finance.noLineItems",
+        )}
+      </div>
+    );
+  }
+
+  const ordered = [...items].sort(
+    (left, right) => (
+      Number(
+        right?.providerReportedCostUsd
+        || 0,
+      )
+      - Number(
+        left?.providerReportedCostUsd
+        || 0,
+      )
+    ),
+  );
+
+  return (
+    <div className="DfctAdmin-tableWrap">
+      <table className="DfctAdmin-table DfctAdminAI-financeTable">
+        <thead>
+          <tr>
+            <th>
+              {t(
+                "adminAI.costs.finance.columns.lineItem",
+              )}
+            </th>
+            <th>
+              {t(
+                "adminAI.costs.finance.columns.observations",
+              )}
+            </th>
+            <th>
+              {t(
+                "adminAI.costs.finance.columns.quantity",
+              )}
+            </th>
+            <th>
+              {t(
+                "adminAI.costs.finance.columns.billed",
+              )}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {ordered.map((row) => (
+            <tr
+              key={row.lineItem}
+            >
+              <td>
+                <strong>
+                  {row.lineItem}
+                </strong>
+              </td>
+
+              <td>
+                {formatNumber(
+                  row.observationCount,
+                )}
+              </td>
+
+              <td>
+                {formatNumber(
+                  row.quantityKnown,
+                )}
+              </td>
+
+              <td>
+                {formatCurrency(
+                  row.providerReportedCostUsd,
+                  {
+                    maximumFractionDigits: 8,
+                  },
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
+function ProviderFinanceSection({
+  adminAi,
+  windowDays,
+  t,
+}) {
+  const data = (
+    adminAi.financeData
+    || {}
+  );
+
+  const providers = (
+    data.providers
+    || {}
+  );
+
+  const entries = Object.entries(
+    providers,
+  );
+
+  const syncingOpenAi = (
+    adminAi.actionLoading
+    === "finance-sync:openai"
+  );
+
+  return (
+    <section className="DfctAdmin-section">
+      <div className="DfctAdminAI-financeHeader">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">
+            {t(
+              "adminAI.costs.finance.eyebrow",
+            )}
+          </span>
+
+          <h2>
+            {t(
+              "adminAI.costs.finance.title",
+            )}
+          </h2>
+
+          <p>
+            {t(
+              "adminAI.costs.finance.subtitle",
+            )}
+          </p>
+        </div>
+      </div>
+
+      {!entries.length ? (
+        <div className="DfctAdminAI-empty">
+          {t(
+            "adminAI.costs.finance.empty",
+          )}
+        </div>
+      ) : (
+        <div className="DfctAdminAI-financeProviderStack">
+          {entries.map(
+            ([providerKey, finance]) => {
+              const organization = (
+                asArray(
+                  finance.organizations,
+                )[0]
+                || {}
+              );
+
+              const project = (
+                asArray(
+                  finance.projects,
+                )[0]
+                || {}
+              );
+
+              const apiKeyId = (
+                asArray(
+                  finance.apiKeyIds,
+                )[0]
+                || ""
+              );
+
+              const reconciliation = (
+                finance.reconciliation
+                || {}
+              );
+
+              const canSync = (
+                providerKey === "openai"
+              );
+
+              return (
+                <article
+                  key={providerKey}
+                  className="DfctAdminAI-financeCard"
+                >
+                  <div className="DfctAdminAI-financeCardHeader">
+                    <div>
+                      <span className="DfctAdmin-eyebrow">
+                        {providerKey}
+                      </span>
+
+                      <h3>
+                        {providerKey === "openai"
+                          ? "OpenAI"
+                          : providerKey}
+                      </h3>
+
+                      <p>
+                        {t(
+                          "adminAI.costs.finance.period",
+                          {
+                            from:
+                              data.fromDate
+                              || "—",
+                            through:
+                              data.throughDate
+                              || "—",
+                          },
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="DfctAdminAI-financeActions">
+                      <Badge
+                        bg={reconciliationTone(
+                          reconciliation,
+                        )}
+                      >
+                        {reconciliation.comparable
+                          ? t(
+                              "adminAI.costs.finance.reconciliationComparable",
+                            )
+                          : t(
+                              "adminAI.costs.finance.reconciliationNotComparable",
+                            )}
+                      </Badge>
+
+                      {canSync ? (
+                        <Button
+                          size="sm"
+                          variant="outline-primary"
+                          disabled={syncingOpenAi}
+                          onClick={() => (
+                            adminAi.syncProviderFinances(
+                              providerKey,
+                              windowDays,
+                            )
+                          )}
+                        >
+                          {syncingOpenAi ? (
+                            <>
+                              <Spinner
+                                animation="border"
+                                size="sm"
+                              />
+                              {" "}
+                              {t(
+                                "adminAI.costs.finance.syncing",
+                              )}
+                            </>
+                          ) : (
+                            t(
+                              "adminAI.costs.finance.sync",
+                            )
+                          )}
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="DfctAdminAI-metricGrid DfctAdminAI-financeMetrics">
+                    <Metric
+                      label={t(
+                        "adminAI.costs.finance.stats.providerBilled",
+                      )}
+                      value={formatCurrency(
+                        finance.providerReportedCostUsd,
+                        {
+                          maximumFractionDigits: 8,
+                        },
+                      )}
+                      caption={t(
+                        "adminAI.costs.finance.stats.providerBilledHelp",
+                      )}
+                    />
+
+                    <Metric
+                      label={t(
+                        "adminAI.costs.finance.stats.recorded",
+                      )}
+                      value={formatCurrency(
+                        finance.knownRecordedCostUsd,
+                        {
+                          maximumFractionDigits: 8,
+                        },
+                      )}
+                      caption={t(
+                        "adminAI.costs.finance.stats.recordedHelp",
+                      )}
+                    />
+
+                    <Metric
+                      label={t(
+                        "adminAI.costs.finance.stats.delta",
+                      )}
+                      value={formatCurrency(
+                        finance.knownRecordedDeltaUsd,
+                        {
+                          maximumFractionDigits: 8,
+                        },
+                      )}
+                      caption={t(
+                        "adminAI.costs.finance.stats.deltaHelp",
+                      )}
+                      tone="warning"
+                    />
+
+                    <Metric
+                      label={t(
+                        "adminAI.costs.finance.stats.lastSync",
+                      )}
+                      value={formatCompactDate(
+                        finance.lastSyncedAt,
+                      )}
+                      caption={t(
+                        "adminAI.costs.finance.stats.lastSyncHelp",
+                      )}
+                    />
+                  </div>
+
+                  <div className="DfctAdminAI-financeScope">
+                    <div>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.scope.organization",
+                        )}
+                      </span>
+                      <strong>
+                        {organization.organizationName
+                          || organization.organizationId
+                          || "—"}
+                      </strong>
+                      {organization.organizationId ? (
+                        <small>
+                          {organization.organizationId}
+                        </small>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.scope.project",
+                        )}
+                      </span>
+                      <strong>
+                        {project.projectName
+                          || project.projectId
+                          || "—"}
+                      </strong>
+                      {project.projectId ? (
+                        <small>
+                          {project.projectId}
+                        </small>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.scope.apiKey",
+                        )}
+                      </span>
+                      <strong>
+                        {maskedProviderApiKey(
+                          apiKeyId,
+                        )}
+                      </strong>
+                      <small>
+                        {t(
+                          "adminAI.costs.finance.scope.apiKeyHelp",
+                        )}
+                      </small>
+                    </div>
+
+                    <div>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.scope.localCoverage",
+                        )}
+                      </span>
+                      <strong>
+                        {formatNumber(
+                          finance.localExecutionCount,
+                        )}
+                      </strong>
+                      <small>
+                        {t(
+                          "adminAI.costs.finance.scope.localCoverageHelp",
+                          {
+                            unknown:
+                              formatNumber(
+                                finance.localCostUnknownExecutionCount,
+                              ),
+                          },
+                        )}
+                      </small>
+                    </div>
+                  </div>
+
+                  {!reconciliation.comparable ? (
+                    <div className="DfctAdminAI-financeNotice">
+                      <strong>
+                        {t(
+                          "adminAI.costs.finance.reconciliationTitle",
+                        )}
+                      </strong>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.reconciliationHelp",
+                        )}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  <div className="DfctAdminAI-financeLineItems">
+                    <div className="DfctAdminAI-chartHeader">
+                      <div>
+                        <strong>
+                          {t(
+                            "adminAI.costs.finance.lineItemsTitle",
+                          )}
+                        </strong>
+                        <span>
+                          {t(
+                            "adminAI.costs.finance.lineItemsSubtitle",
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    <ProviderFinanceLineItems
+                      rows={finance.lineItems}
+                      t={t}
+                    />
+                  </div>
+                </article>
+              );
+            },
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+
 export function CostsView({
   adminAi,
   t,
@@ -778,8 +1250,10 @@ export function CostsView({
     }
 
     adminAi.loadCosts(windowDays);
+    adminAi.loadFinances(windowDays);
   }, [
-    adminAi,
+    adminAi.loadCosts,
+    adminAi.loadFinances,
     data.windowDays,
     windowDays,
   ]);
@@ -941,6 +1415,12 @@ export function CostsView({
           />
         </div>
       </section>
+
+      <ProviderFinanceSection
+        adminAi={adminAi}
+        windowDays={windowDays}
+        t={t}
+      />
 
       <section className="DfctAdmin-section">
         <div className="DfctAdmin-sectionHeader">
