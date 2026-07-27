@@ -2314,7 +2314,9 @@
       "providers": "Provedores",
       "roles": "Papéis dos modelos",
       "quickCheck": "Quick-check",
-      "usage": "Consumo"
+      "usage": "Consumo",
+      "costs": "Custos",
+      "benchmarks": "Benchmarks"
     },
     "states": {
       "ready": "Pronto",
@@ -2465,7 +2467,13 @@
         "model_influence_attribution": "Atribuição de influência dos modelos"
       },
       "unsaved": "As configurações do quick-check possuem alterações não salvas.",
-      "saved": "As configurações do quick-check estão sincronizadas."
+      "saved": "As configurações do quick-check estão sincronizadas.",
+      "autoSave": {
+        "saving": "Salvando…",
+        "saved": "Salvo",
+        "pending": "Alterações pendentes…",
+        "failed": "Falha ao salvar"
+      }
     },
     "usage": {
       "empty": "Nenhuma execução observada nesta janela.",
@@ -2509,7 +2517,139 @@
       "saveProvider": "Não foi possível salvar as configurações do provedor.",
       "testProvider": "Não foi possível testar este provedor.",
       "saveRole": "Não foi possível salvar o papel do modelo.",
-      "saveQuickCheck": "Não foi possível salvar as configurações do quick-check."
+      "saveQuickCheck": "Não foi possível salvar as configurações do quick-check.",
+      "loadCosts": "Não foi possível carregar a observabilidade de custos de IA.",
+      "loadBenchmarks": "Não foi possível carregar o histórico de benchmarks.",
+      "loadBenchmarkDetail": "Não foi possível carregar os detalhes da execução do benchmark.",
+      "loadExecutionDetail": "Não foi possível carregar os detalhes da execução de extração."
+    },
+    "costs": {
+      "eyebrow": "Observabilidade de custos",
+      "title": "Custos registrados de IA e provedores",
+      "subtitle": "Gasto conhecido registrado nos ledgers de execuções de LLMs e provedores externos. Custos históricos desconhecidos permanecem desconhecidos em vez de serem tratados como zero.",
+      "days": "{{days}}d",
+      "empty": "Nenhuma execução de provedor registrada nesta janela.",
+      "providersEyebrow": "Contabilidade por provedor",
+      "providersTitle": "Custo registrado por provedor",
+      "providersSubtitle": "A cobertura descreve as execuções atualmente representadas na telemetria do d-FCT; ela não implica que toda despesa externa possível tenha sido instrumentada historicamente.",
+      "coverageStates": {
+        "complete": "Completa",
+        "partial": "Parcial",
+        "unavailable": "Indisponível"
+      },
+      "stats": {
+        "knownSpend": "Gasto conhecido registrado",
+        "knownSpendHelp": "Subtotal conhecido atual das execuções registradas",
+        "coverage": "Cobertura de custos registrados",
+        "coverageHelp": "Parcela das execuções registradas com custo conhecido",
+        "executions": "Execuções registradas",
+        "unknown": "Execuções com custo desconhecido"
+      },
+      "chart": {
+        "title": "Histórico de custo por provedor",
+        "subtitle": "Custo conhecido registrado empilhado e volume de execuções com custo desconhecido.",
+        "knownCostAxis": "Custo conhecido (USD)",
+        "unknownAxis": "Execuções com custo desconhecido",
+        "unknownExecutions": "Execuções com custo desconhecido"
+      },
+      "columns": {
+        "provider": "Provedor",
+        "executions": "Execuções",
+        "known": "Conhecidas",
+        "unknown": "Desconhecidas",
+        "coverage": "Cobertura",
+        "knownCost": "Custo conhecido registrado"
+      }
+    },
+    "benchmarks": {
+      "eyebrow": "Gates de qualidade",
+      "title": "Histórico de benchmarks",
+      "subtitle": "Compare qualidade factual, resultado do hard gate, custo, latência e topologia de execução entre execuções persistentes dos benchmarks.",
+      "empty": "Nenhuma execução de benchmark corresponde à seleção.",
+      "loadingDetail": "Carregando execução do benchmark…",
+      "runsEyebrow": "Execuções persistentes",
+      "runsTitle": "Execuções de benchmark",
+      "runsSubtitle": "As versões são mantidas separadas para que mudanças no gate nunca sejam comparadas silenciosamente como o mesmo teste.",
+      "chart": {
+        "title": "Qualidade versus custo conhecido registrado",
+        "subtitle": "Colunas de custo e histórico da pontuação do benchmark. Selecione um ponto para inspecionar a execução correspondente.",
+        "costAxis": "Custo conhecido (USD)",
+        "qualityAxis": "Asserções aprovadas",
+        "knownCost": "Custo conhecido registrado",
+        "score": "Pontuação do benchmark",
+        "hardGate": "Hard gate",
+        "gateBadge": "Hard gate 12/12"
+      },
+      "columns": {
+        "date": "Data",
+        "benchmark": "Benchmark",
+        "score": "Pontuação",
+        "outcome": "Resultado",
+        "cost": "Custo conhecido",
+        "coverage": "Cobertura",
+        "duration": "Duração"
+      },
+      "detail": {
+        "pass": "Hard gate aprovado",
+        "fail": "Hard gate não satisfeito",
+        "runMeta": "Tópico {{topic}} · {{environment}}",
+        "hardGate": "Gate do benchmark",
+        "hardGateHelp": "Griselda exige aprovação nas 12 asserções",
+        "knownCost": "Custo conhecido registrado",
+        "duration": "Duração",
+        "commit": "Revisão Git"
+      },
+      "filterBenchmark": "Filtrar por benchmark",
+      "filterVersion": "Filtrar por versão do benchmark",
+      "searchPlaceholder": "Buscar execuções de benchmark…",
+      "searchAria": "Buscar execuções de benchmark",
+      "sortBy": "Ordenar por {{column}}",
+      "executionPageEyebrow": "Execução de benchmark",
+      "executionPageTitle": "Detalhes da execução do benchmark",
+      "executionPageSubtitle": "Inspecione o quality gate persistente, as asserções, o custo registrado, os serviços, o DAG de execução e os tempos desta execução.",
+      "backToBenchmarks": "Histórico de benchmarks"
+    },
+    "execution": {
+      "empty": "Nenhum grafo de execução foi registrado para esta análise.",
+      "noTimeline": "Nenhum nó de execução com tempo registrado foi encontrado.",
+      "dagAria": "Grafo de execução da extração de informações",
+      "dagEyebrow": "Topologia da execução",
+      "dagTitle": "DAG da extração de informações",
+      "dagSubtitle": "Contenção estrutural obtida do grafo de execução persistido. As arestas descrevem a topologia registrada e não são reinterpretadas como dependências causais.",
+      "timelineEyebrow": "Tempos de execução",
+      "timelineTitle": "Linha do tempo da execução",
+      "timelineSubtitle": "Os horários registrados de início e fim mostram a ordem real e os trabalhos que ocorreram simultaneamente.",
+      "timeline": "Execução",
+      "timelineAxis": "Deslocamento desde o início da análise",
+      "parallel": "Paralelo",
+      "parallelBadge": "Até {{count}}× em paralelo",
+      "serviceExecutions": "{{count}} execuções",
+      "selectNode": "Selecione um nó do DAG ou uma barra da linha do tempo para inspecionar sua telemetria.",
+      "references": "Referências da execução",
+      "stats": {
+        "duration": "Tempo total",
+        "nodes": "Nós do grafo",
+        "work": "Nós de trabalho",
+        "parallelism": "Paralelismo máximo",
+        "parallelismDetected": "{{count}} janela(s) de paralelismo registrada(s)",
+        "serial": "Nenhum nó de trabalho sobreposto registrado",
+        "knownCost": "Custo conhecido dos nós"
+      },
+      "fields": {
+        "provider": "Provedor",
+        "model": "Modelo",
+        "role": "Papel",
+        "operation": "Operação",
+        "duration": "Duração",
+        "offset": "Início",
+        "cost": "Custo conhecido",
+        "costProvenance": "Proveniência do custo"
+      },
+      "lookupEyebrow": "Execuções gerais de análise",
+      "lookupTitle": "Inspecionar qualquer execução de extração",
+      "lookupSubtitle": "Use o mesmo DAG, linha do tempo e inspetor de telemetria para um AnalysisRun que não seja benchmark.",
+      "lookupPlaceholder": "UUID do AnalysisRun",
+      "inspect": "Inspecionar execução"
     }
   }
 }
