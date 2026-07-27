@@ -2509,6 +2509,7 @@
     "toasts": {
       "providerSaved": "{{provider}} provider settings saved.",
       "providerTested": "{{provider}} connection test succeeded.",
+      "financesSynced": "{{provider}} provider billing synchronized.",
       "roleSaved": "{{role}} model role saved.",
       "quickCheckSaved": "Quick-check settings saved."
     },
@@ -2519,6 +2520,9 @@
       "saveRole": "Unable to save the model role.",
       "saveQuickCheck": "Unable to save quick-check settings.",
       "loadCosts": "Unable to load AI cost observability.",
+      "loadFinances": "Unable to load provider billing.",
+      "syncFinances": "Unable to synchronize provider billing.",
+      "unsupportedFinanceProvider": "Finance synchronization is not available for this provider.",
       "loadBenchmarks": "Unable to load benchmark history.",
       "loadBenchmarkDetail": "Unable to load benchmark execution details.",
       "loadExecutionDetail": "Unable to load extraction execution details."
@@ -2559,6 +2563,46 @@
         "unknown": "Unknown",
         "coverage": "Coverage",
         "knownCost": "Known recorded cost"
+      },
+      "finance": {
+        "eyebrow": "Provider billing",
+        "title": "Provider-reported billing",
+        "subtitle": "Billing observations reported by provider finance APIs. These values are kept separate from per-execution estimates and are not allocated arbitrarily across d-FCT runs.",
+        "empty": "No provider billing observations are stored for this reporting window.",
+        "period": "{{from}} through {{through}} · UTC billing window",
+        "sync": "Sync provider finances",
+        "syncing": "Syncing…",
+        "reconciliationComparable": "Comparable scope",
+        "reconciliationNotComparable": "Scope not comparable",
+        "reconciliationTitle": "Reconciliation is intentionally not asserted",
+        "reconciliationHelp": "Provider billing is scoped by organization, project and API key. The local execution ledger does not yet persist provider API-key identity, so the observed delta is diagnostic rather than a reconciled variance.",
+        "noLineItems": "No provider billing line items are available.",
+        "lineItemsTitle": "Provider billing line items",
+        "lineItemsSubtitle": "Provider-reported quantities and monetary amounts preserved at their original billing granularity.",
+        "stats": {
+          "providerBilled": "Provider billed",
+          "providerBilledHelp": "Provider-reported monetary spend in this window",
+          "recorded": "Known recorded d-FCT cost",
+          "recordedHelp": "Known subtotal from d-FCT execution telemetry",
+          "delta": "Observed delta",
+          "deltaHelp": "Provider billed minus known local cost; not a formal reconciliation variance",
+          "lastSync": "Last provider sync",
+          "lastSyncHelp": "Latest successful finance observation"
+        },
+        "scope": {
+          "organization": "Organization",
+          "project": "Project",
+          "apiKey": "API key",
+          "apiKeyHelp": "Provider API-key identifier, masked for display",
+          "localCoverage": "Local executions",
+          "localCoverageHelp": "{{unknown}} execution(s) still have unknown local cost"
+        },
+        "columns": {
+          "lineItem": "Line item",
+          "observations": "Observations",
+          "quantity": "Provider quantity",
+          "billed": "Provider billed"
+        }
       }
     },
     "benchmarks": {

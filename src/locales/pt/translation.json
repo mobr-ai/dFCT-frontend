@@ -2509,6 +2509,7 @@
     "toasts": {
       "providerSaved": "Configurações do provedor {{provider}} salvas.",
       "providerTested": "Teste de conexão com {{provider}} concluído com sucesso.",
+      "financesSynced": "Cobrança do provedor {{provider}} sincronizada.",
       "roleSaved": "Papel de modelo {{role}} salvo.",
       "quickCheckSaved": "Configurações do quick-check salvas."
     },
@@ -2519,6 +2520,9 @@
       "saveRole": "Não foi possível salvar o papel do modelo.",
       "saveQuickCheck": "Não foi possível salvar as configurações do quick-check.",
       "loadCosts": "Não foi possível carregar a observabilidade de custos de IA.",
+      "loadFinances": "Não foi possível carregar a cobrança dos provedores.",
+      "syncFinances": "Não foi possível sincronizar a cobrança do provedor.",
+      "unsupportedFinanceProvider": "A sincronização financeira não está disponível para este provedor.",
       "loadBenchmarks": "Não foi possível carregar o histórico de benchmarks.",
       "loadBenchmarkDetail": "Não foi possível carregar os detalhes da execução do benchmark.",
       "loadExecutionDetail": "Não foi possível carregar os detalhes da execução de extração."
@@ -2559,6 +2563,46 @@
         "unknown": "Desconhecidas",
         "coverage": "Cobertura",
         "knownCost": "Custo conhecido registrado"
+      },
+      "finance": {
+        "eyebrow": "Cobrança dos provedores",
+        "title": "Cobrança informada pelos provedores",
+        "subtitle": "Observações de cobrança retornadas pelas APIs financeiras dos provedores. Esses valores permanecem separados das estimativas por execução e não são distribuídos arbitrariamente entre execuções do d-FCT.",
+        "empty": "Nenhuma observação de cobrança do provedor está armazenada para este período.",
+        "period": "{{from}} até {{through}} · período de cobrança em UTC",
+        "sync": "Sincronizar finanças do provedor",
+        "syncing": "Sincronizando…",
+        "reconciliationComparable": "Escopo comparável",
+        "reconciliationNotComparable": "Escopo não comparável",
+        "reconciliationTitle": "A reconciliação não é afirmada neste momento",
+        "reconciliationHelp": "A cobrança do provedor possui escopo de organização, projeto e chave de API. O ledger local de execuções ainda não persiste a identidade da chave de API no provedor; portanto, a diferença observada é diagnóstica e não uma divergência reconciliada.",
+        "noLineItems": "Nenhum item de cobrança do provedor está disponível.",
+        "lineItemsTitle": "Itens de cobrança do provedor",
+        "lineItemsSubtitle": "Quantidades e valores monetários informados pelo provedor, preservados na granularidade original de cobrança.",
+        "stats": {
+          "providerBilled": "Cobrado pelo provedor",
+          "providerBilledHelp": "Gasto monetário informado pelo provedor neste período",
+          "recorded": "Custo conhecido registrado no d-FCT",
+          "recordedHelp": "Subtotal conhecido da telemetria de execuções do d-FCT",
+          "delta": "Diferença observada",
+          "deltaHelp": "Cobrança do provedor menos o custo local conhecido; não representa uma divergência formalmente reconciliada",
+          "lastSync": "Última sincronização",
+          "lastSyncHelp": "Observação financeira mais recente sincronizada com sucesso"
+        },
+        "scope": {
+          "organization": "Organização",
+          "project": "Projeto",
+          "apiKey": "Chave de API",
+          "apiKeyHelp": "Identificador da chave de API no provedor, mascarado para exibição",
+          "localCoverage": "Execuções locais",
+          "localCoverageHelp": "{{unknown}} execução(ões) ainda possuem custo local desconhecido"
+        },
+        "columns": {
+          "lineItem": "Item de cobrança",
+          "observations": "Observações",
+          "quantity": "Quantidade do provedor",
+          "billed": "Cobrado pelo provedor"
+        }
       }
     },
     "benchmarks": {
