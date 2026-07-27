@@ -27,6 +27,7 @@ export function useAdminAi(user, showToast, t) {
   authRequestRef.current = authRequest;
 
   const costWindowDaysRef = useRef(30);
+  const financeSyncInFlightRef = useRef(false);
 
   const [aiData, setAiData] = useState(null);
   const [quickCheckData, setQuickCheckData] = useState(null);
@@ -340,27 +341,36 @@ export function useAdminAi(user, showToast, t) {
   );
 
   const syncProviderFinances = useCallback(
-    async (providerKey, windowDays = 30) => {
-      if (!canLoad) return null;
+    async (
+      providerKey,
+      windowDays = 30,
+      { silent = false } = {},
+    ) => {
+      if (!canLoad || financeSyncInFlightRef.current) return null;
 
       if (providerKey !== "openai") {
         const message =
           t?.("adminAI.errors.unsupportedFinanceProvider") ||
           "Finance synchronization is not available for this provider.";
 
-        showToast?.(message, "warning");
+        if (!silent) showToast?.(message, "warning");
         return null;
       }
 
       const action = `finance-sync:${providerKey}`;
+      const safeWindowDays = Math.max(
+        1,
+        Math.min(Number(windowDays) || 30, 365),
+      );
 
+      financeSyncInFlightRef.current = true;
       setActionLoading(action);
       setError("");
 
       try {
         const response = await syncAdminAiOpenAiFinances(
           authRequestRef.current,
-          { windowDays },
+          { windowDays: safeWindowDays },
         );
 
         if (response?.finances) {
@@ -369,12 +379,14 @@ export function useAdminAi(user, showToast, t) {
 
         setLastUpdatedAt(new Date());
 
-        showToast?.(
-          t?.("adminAI.toasts.financesSynced", {
-            provider: "OpenAI",
-          }) || "OpenAI provider billing synchronized.",
-          "success",
-        );
+        if (!silent) {
+          showToast?.(
+            t?.("adminAI.toasts.financesSynced", {
+              provider: "OpenAI",
+            }) || "OpenAI provider billing synchronized.",
+            "success",
+          );
+        }
 
         return response;
       } catch (err) {
@@ -384,12 +396,13 @@ export function useAdminAi(user, showToast, t) {
             "Unable to synchronize provider billing.",
         );
 
-        if (message) {
+        if (message && !silent) {
           showToast?.(message, "danger");
         }
 
         return null;
       } finally {
+        financeSyncInFlightRef.current = false;
         setActionLoading("");
       }
     },
