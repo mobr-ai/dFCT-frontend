@@ -2618,10 +2618,14 @@
       },
       "chart": {
         "title": "Cost history by provider",
-        "subtitle": "Stacked known recorded cost with unknown-cost execution volume.",
+        "subtitle": "Known recorded cost over time, with unknown-cost execution volume shown separately.",
         "knownCostAxis": "Known cost (USD)",
         "unknownAxis": "Unknown-cost executions",
-        "unknownExecutions": "Unknown-cost executions"
+        "unknownExecutions": "Unknown-cost executions",
+        "providerTitle": "Known cost by provider",
+        "providerSubtitle": "Local execution-ledger cost only. Provider billing observations are kept separate below.",
+        "providerCoverageSuffix": "cost coverage",
+        "knownRecorded": "Known recorded cost"
       },
       "columns": {
         "provider": "Provider",
@@ -2631,6 +2635,17 @@
         "coverage": "Coverage",
         "knownCost": "Known recorded cost"
       },
+      "basis": {
+        "title": "Cost basis",
+        "providerBilled": "Provider billed",
+        "providerBilledHelp": "Finance API billing observation",
+        "reported": "Provider reported",
+        "reportedHelp": "Cost returned directly with an execution",
+        "estimated": "Estimated",
+        "estimatedHelp": "Observed usage priced with immutable official rates",
+        "unknown": "Unknown",
+        "unknownHelp": "Insufficient billing information; never assumed to be zero"
+      },
       "finance": {
         "eyebrow": "Provider billing",
         "title": "Provider-reported billing",
@@ -2639,10 +2654,11 @@
         "period": "{{from}} through {{through}} · UTC billing window",
         "sync": "Sync provider finances",
         "syncing": "Syncing…",
+        "details": "Billing details",
         "reconciliationComparable": "Comparable scope",
         "reconciliationNotComparable": "Scope not comparable",
         "reconciliationTitle": "Reconciliation is intentionally not asserted",
-        "reconciliationHelp": "Provider billing is scoped by organization, project and API key. The local execution ledger does not yet persist provider API-key identity, so the observed delta is diagnostic rather than a reconciled variance.",
+        "reconciliationHelp": "Provider and local billing populations are not assumed equivalent. Newly instrumented executions preserve provider scope, but historical rows may be unscoped and provider finance APIs can expose coarser billing dimensions. Observed deltas remain diagnostic unless equivalent scope and coverage are proven.",
         "noLineItems": "No provider billing line items are available.",
         "lineItemsTitle": "Provider billing line items",
         "lineItemsSubtitle": "Provider-reported quantities and monetary amounts preserved at their original billing granularity.",
@@ -2655,6 +2671,38 @@
           "deltaHelp": "Provider billed minus known local cost; not a formal reconciliation variance",
           "lastSync": "Last provider sync",
           "lastSyncHelp": "Latest successful finance observation"
+        },
+        "scoped": {
+          "title": "Scoped billing coverage",
+          "subtitle": "Provider and local costs grouped only where a common provider scope is explicitly available.",
+          "workspace": "Workspace",
+          "defaultWorkspace": "Default workspace",
+          "namedWorkspace": "d-FCT workspace",
+          "providerBilled": "Provider billed",
+          "pendingProviderReport": "Pending provider report",
+          "pendingProviderReportHelp": "No provider cost observation exists yet for this workspace and coverage window; this is not treated as $0.",
+          "providerObservations": "{{count}} provider billing observation(s)",
+          "localExecutions": "Local executions in provider coverage",
+          "outsideCoverage": "{{count}} local execution(s) outside current provider coverage",
+          "localKnownCost": "Known local cost in coverage",
+          "localCostCoverage": "{{known}} known-cost · {{unknown}} unknown-cost execution(s)",
+          "observedDelta": "Observed delta",
+          "observedDeltaHelp": "Diagnostic only; not a formal reconciliation variance",
+          "apiKeys": "Local API-key IDs",
+          "providerCoverage": "Provider coverage",
+          "noProviderCoverage": "Provider coverage not available yet",
+          "status": {
+            "provider_observation_not_available": "Awaiting provider observation",
+            "local_execution_scope_not_observed": "Historical local scope unavailable",
+            "local_cost_incomplete": "Local cost incomplete",
+            "workspace_scope_aligned": "Workspace scope aligned"
+          },
+          "reason": {
+            "provider_cost_report_has_not_observed_workspace": "The provider cost report has not yet published billing observations for this workspace.",
+            "no_scoped_local_execution_in_provider_coverage": "Provider billing exists for this workspace, but no local execution in the same provider coverage interval carries that scope.",
+            "scoped_local_execution_cost_unknown": "At least one scoped local execution in provider coverage still has unknown cost.",
+            "anthropic_cost_report_is_workspace_aggregate_without_api_key_cost_attribution": "Anthropic workspace scope aligns, but the Cost Report does not attribute cost to individual API keys."
+          }
         },
         "scope": {
           "organization": "Organization",

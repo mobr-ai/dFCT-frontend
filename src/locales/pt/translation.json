@@ -2618,10 +2618,14 @@
       },
       "chart": {
         "title": "Histórico de custo por provedor",
-        "subtitle": "Custo conhecido registrado empilhado e volume de execuções com custo desconhecido.",
+        "subtitle": "Custo conhecido registrado ao longo do tempo, com o volume de execuções sem custo conhecido exibido separadamente.",
         "knownCostAxis": "Custo conhecido (USD)",
         "unknownAxis": "Execuções com custo desconhecido",
-        "unknownExecutions": "Execuções com custo desconhecido"
+        "unknownExecutions": "Execuções com custo desconhecido",
+        "providerTitle": "Custo conhecido por provedor",
+        "providerSubtitle": "Apenas custos do ledger local de execuções. As cobranças informadas pelos provedores permanecem separadas abaixo.",
+        "providerCoverageSuffix": "de cobertura de custo",
+        "knownRecorded": "Custo conhecido registrado"
       },
       "columns": {
         "provider": "Provedor",
@@ -2631,6 +2635,17 @@
         "coverage": "Cobertura",
         "knownCost": "Custo conhecido registrado"
       },
+      "basis": {
+        "title": "Base do custo",
+        "providerBilled": "Cobrado pelo provedor",
+        "providerBilledHelp": "Observação de cobrança obtida pela API financeira",
+        "reported": "Informado pelo provedor",
+        "reportedHelp": "Custo retornado diretamente junto à execução",
+        "estimated": "Estimado",
+        "estimatedHelp": "Uso observado calculado com tarifas oficiais versionadas",
+        "unknown": "Desconhecido",
+        "unknownHelp": "Informação de cobrança insuficiente; nunca tratado como zero"
+      },
       "finance": {
         "eyebrow": "Cobrança dos provedores",
         "title": "Cobrança informada pelos provedores",
@@ -2639,10 +2654,11 @@
         "period": "{{from}} até {{through}} · período de cobrança em UTC",
         "sync": "Sincronizar finanças do provedor",
         "syncing": "Sincronizando…",
+        "details": "Detalhes de cobrança",
         "reconciliationComparable": "Escopo comparável",
         "reconciliationNotComparable": "Escopo não comparável",
         "reconciliationTitle": "A reconciliação não é afirmada neste momento",
-        "reconciliationHelp": "A cobrança do provedor possui escopo de organização, projeto e chave de API. O ledger local de execuções ainda não persiste a identidade da chave de API no provedor; portanto, a diferença observada é diagnóstica e não uma divergência reconciliada.",
+        "reconciliationHelp": "Os conjuntos de cobrança do provedor e do ledger local não são considerados equivalentes automaticamente. Novas execuções instrumentadas preservam o escopo do provedor, mas registros históricos podem não possuir esse escopo e as APIs financeiras podem expor dimensões de cobrança mais amplas. Diferenças observadas permanecem diagnósticas até que escopo e cobertura equivalentes sejam comprovados.",
         "noLineItems": "Nenhum item de cobrança do provedor está disponível.",
         "lineItemsTitle": "Itens de cobrança do provedor",
         "lineItemsSubtitle": "Quantidades e valores monetários informados pelo provedor, preservados na granularidade original de cobrança.",
@@ -2655,6 +2671,38 @@
           "deltaHelp": "Cobrança do provedor menos o custo local conhecido; não representa uma divergência formalmente reconciliada",
           "lastSync": "Última sincronização",
           "lastSyncHelp": "Observação financeira mais recente sincronizada com sucesso"
+        },
+        "scoped": {
+          "title": "Cobertura de cobrança por escopo",
+          "subtitle": "Custos do provedor e locais agrupados apenas quando há um escopo comum explicitamente disponível.",
+          "workspace": "Workspace",
+          "defaultWorkspace": "Workspace padrão",
+          "namedWorkspace": "Workspace d-FCT",
+          "providerBilled": "Cobrado pelo provedor",
+          "pendingProviderReport": "Aguardando relatório do provedor",
+          "pendingProviderReportHelp": "Ainda não existe observação de custo do provedor para este workspace e período de cobertura; isso não é tratado como US$ 0.",
+          "providerObservations": "{{count}} observação(ões) de cobrança do provedor",
+          "localExecutions": "Execuções locais na cobertura do provedor",
+          "outsideCoverage": "{{count}} execução(ões) local(is) fora da cobertura atual do provedor",
+          "localKnownCost": "Custo local conhecido na cobertura",
+          "localCostCoverage": "{{known}} com custo conhecido · {{unknown}} com custo desconhecido",
+          "observedDelta": "Diferença observada",
+          "observedDeltaHelp": "Apenas diagnóstica; não representa divergência formalmente reconciliada",
+          "apiKeys": "IDs locais de chaves de API",
+          "providerCoverage": "Cobertura do provedor",
+          "noProviderCoverage": "Cobertura do provedor ainda indisponível",
+          "status": {
+            "provider_observation_not_available": "Aguardando observação do provedor",
+            "local_execution_scope_not_observed": "Escopo local histórico indisponível",
+            "local_cost_incomplete": "Custo local incompleto",
+            "workspace_scope_aligned": "Escopo do workspace alinhado"
+          },
+          "reason": {
+            "provider_cost_report_has_not_observed_workspace": "O relatório de custos do provedor ainda não publicou observações de cobrança para este workspace.",
+            "no_scoped_local_execution_in_provider_coverage": "Existe cobrança do provedor para este workspace, mas nenhuma execução local no mesmo intervalo de cobertura possui esse escopo.",
+            "scoped_local_execution_cost_unknown": "Pelo menos uma execução local com esse escopo ainda possui custo desconhecido no período coberto.",
+            "anthropic_cost_report_is_workspace_aggregate_without_api_key_cost_attribution": "O escopo do workspace da Anthropic está alinhado, mas o Cost Report não atribui custos a chaves de API individuais."
+          }
         },
         "scope": {
           "organization": "Organização",
