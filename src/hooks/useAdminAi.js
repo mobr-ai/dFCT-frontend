@@ -8,6 +8,7 @@ import {
   fetchAdminAiFinances,
   fetchAdminAiRuntime,
   fetchAdminQuickCheckRuntime,
+  syncAdminAiAnthropicFinances,
   syncAdminAiOpenAiFinances,
   testAdminAiProvider,
   updateAdminAiProvider,
@@ -348,7 +349,14 @@ export function useAdminAi(user, showToast, t) {
     ) => {
       if (!canLoad || financeSyncInFlightRef.current) return null;
 
-      if (providerKey !== "openai") {
+      const syncProvider = {
+        openai:
+          syncAdminAiOpenAiFinances,
+        anthropic:
+          syncAdminAiAnthropicFinances,
+      }[providerKey];
+
+      if (!syncProvider) {
         const message =
           t?.("adminAI.errors.unsupportedFinanceProvider") ||
           "Finance synchronization is not available for this provider.";
@@ -368,7 +376,7 @@ export function useAdminAi(user, showToast, t) {
       setError("");
 
       try {
-        const response = await syncAdminAiOpenAiFinances(
+        const response = await syncProvider(
           authRequestRef.current,
           { windowDays: safeWindowDays },
         );
@@ -380,10 +388,19 @@ export function useAdminAi(user, showToast, t) {
         setLastUpdatedAt(new Date());
 
         if (!silent) {
+          const providerLabel = (
+            providerKey === "openai"
+              ? "OpenAI"
+              : providerKey === "anthropic"
+                ? "Anthropic"
+                : providerKey
+          );
+
           showToast?.(
             t?.("adminAI.toasts.financesSynced", {
-              provider: "OpenAI",
-            }) || "OpenAI provider billing synchronized.",
+              provider: providerLabel,
+            }) ||
+              `${providerLabel} provider billing synchronized.`,
             "success",
           );
         }

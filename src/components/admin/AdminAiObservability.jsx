@@ -651,110 +651,249 @@ function CostsChart({
 }
 
 
-function ProviderCostTable({
+function ProviderCostChart({
   providers,
   t,
 }) {
+  const theme = themeTokens();
+
   const rows = Object.entries(
     providers || {},
-  );
-
-  if (!rows.length) {
-    return (
-      <div className="DfctAdminAI-empty">
-        {t("adminAI.costs.empty")}
-      </div>
+  )
+    .map(([provider, metrics]) => ({
+      provider,
+      metrics,
+      cost: knownCostValue(metrics),
+    }))
+    .filter(
+      (row) => row.cost !== null,
+    )
+    .sort(
+      (left, right) => (
+        Number(right.cost || 0)
+        - Number(left.cost || 0)
+      ),
     );
-  }
+
+  const options = {
+    chart: {
+      type: "bar",
+      background: "transparent",
+      toolbar: {
+        show: false,
+      },
+      animations: {
+        enabled: true,
+        speed: 280,
+      },
+      fontFamily: "inherit",
+      foreColor: theme.muted,
+    },
+    theme: {
+      mode: theme.mode,
+    },
+    colors: [
+      ...rows.map(
+        (_, index) => (
+          theme.series[
+            index % theme.series.length
+          ]
+        ),
+      ),
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        distributed: true,
+        borderRadius: 5,
+        barHeight: "54%",
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: (value) => (
+        formatCurrency(
+          value,
+          {
+            maximumFractionDigits: 4,
+          },
+        )
+      ),
+      style: {
+        fontSize: "11px",
+        fontWeight: 700,
+      },
+    },
+    grid: {
+      borderColor: theme.border,
+      strokeDashArray: 3,
+    },
+    legend: {
+      show: false,
+    },
+    xaxis: {
+      categories: rows.map(
+        (row) => (
+          providerDisplayName(
+            row.provider,
+          )
+        ),
+      ),
+      min: 0,
+      labels: {
+        formatter: (value) => (
+          `$${Number(value).toFixed(2)}`
+        ),
+      },
+    },
+    yaxis: {
+      labels: {
+        maxWidth: 130,
+        style: {
+          fontWeight: 700,
+        },
+      },
+    },
+    tooltip: {
+      theme: theme.mode,
+      y: {
+        formatter: (
+          value,
+          { dataPointIndex },
+        ) => {
+          const row = (
+            rows[dataPointIndex]
+            || {}
+          );
+
+          const metrics = (
+            row.metrics
+            || {}
+          );
+
+          const executions = Number(
+            metrics.executionCount || 0,
+          );
+
+          const known = Number(
+            metrics.costKnownExecutionCount
+            || 0,
+          );
+
+          const coverage = percent(
+            known,
+            executions,
+          );
+
+          const coverageText = (
+            coverage === null
+              ? "—"
+              : `${coverage.toFixed(1)}%`
+          );
+
+          return (
+            `${formatCurrency(
+              value,
+              {
+                maximumFractionDigits: 8,
+              },
+            )}`
+            + ` · ${coverageText} `
+            + t(
+              "adminAI.costs.chart.providerCoverageSuffix",
+            )
+          );
+        },
+      },
+    },
+    noData: {
+      text: t(
+        "adminAI.costs.empty",
+      ),
+    },
+  };
 
   return (
-    <div className="DfctAdmin-tableWrap">
-      <table className="DfctAdmin-table DfctAdminAI-costTable">
-        <thead>
-          <tr>
-            <th>
-              {t(
-                "adminAI.costs.columns.provider",
-              )}
-            </th>
-            <th>
-              {t(
-                "adminAI.costs.columns.executions",
-              )}
-            </th>
-            <th>
-              {t(
-                "adminAI.costs.columns.known",
-              )}
-            </th>
-            <th>
-              {t(
-                "adminAI.costs.columns.unknown",
-              )}
-            </th>
-            <th>
-              {t(
-                "adminAI.costs.columns.coverage",
-              )}
-            </th>
-            <th>
-              {t(
-                "adminAI.costs.columns.knownCost",
-              )}
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {rows.map(
-            ([provider, metrics]) => (
-              <tr key={provider}>
-                <td>
-                  <strong>
-                    {provider}
-                  </strong>
-                </td>
-
-                <td>
-                  {formatNumber(
-                    metrics.executionCount,
-                  )}
-                </td>
-
-                <td>
-                  {formatNumber(
-                    metrics
-                      .costKnownExecutionCount,
-                  )}
-                </td>
-
-                <td>
-                  {formatNumber(
-                    metrics
-                      .costUnknownExecutionCount,
-                  )}
-                </td>
-
-                <td>
-                  <CoverageBadge
-                    cost={metrics}
-                    t={t}
-                  />
-                </td>
-
-                <td>
-                  {formatCurrency(
-                    knownCostValue(metrics),
-                    {
-                      maximumFractionDigits: 8,
-                    },
-                  )}
-                </td>
-              </tr>
+    <Chart
+      type="bar"
+      height={Math.max(
+        250,
+        rows.length * 48,
+      )}
+      options={options}
+      series={[
+        {
+          name: t(
+            "adminAI.costs.chart.knownRecorded",
+          ),
+          data: rows.map(
+            (row) => Number(
+              row.cost || 0,
             ),
+          ),
+        },
+      ]}
+    />
+  );
+}
+
+
+function CostBasisLegend({
+  t,
+}) {
+  return (
+    <div className="DfctAdminAI-costBasis">
+      <span className="DfctAdminAI-costBasisLabel">
+        {t(
+          "adminAI.costs.basis.title",
+        )}
+      </span>
+
+      <div className="DfctAdminAI-costBasisItems">
+        <span>
+          <Badge bg="primary">
+            {t(
+              "adminAI.costs.basis.providerBilled",
+            )}
+          </Badge>
+          {t(
+            "adminAI.costs.basis.providerBilledHelp",
           )}
-        </tbody>
-      </table>
+        </span>
+
+        <span>
+          <Badge bg="info">
+            {t(
+              "adminAI.costs.basis.reported",
+            )}
+          </Badge>
+          {t(
+            "adminAI.costs.basis.reportedHelp",
+          )}
+        </span>
+
+        <span>
+          <Badge bg="secondary">
+            {t(
+              "adminAI.costs.basis.estimated",
+            )}
+          </Badge>
+          {t(
+            "adminAI.costs.basis.estimatedHelp",
+          )}
+        </span>
+
+        <span>
+          <Badge bg="light" text="dark">
+            {t(
+              "adminAI.costs.basis.unknown",
+            )}
+          </Badge>
+          {t(
+            "adminAI.costs.basis.unknownHelp",
+          )}
+        </span>
+      </div>
     </div>
   );
 }
@@ -777,6 +916,313 @@ function reconciliationTone(reconciliation) {
   return reconciliation?.comparable
     ? "success"
     : "warning";
+}
+
+
+function providerDisplayName(providerKey) {
+  if (providerKey === "openai") {
+    return "OpenAI";
+  }
+
+  if (providerKey === "anthropic") {
+    return "Anthropic";
+  }
+
+  return providerKey;
+}
+
+
+function scopedComparisonTone(status) {
+  if (status === "workspace_scope_aligned") {
+    return "info";
+  }
+
+  if (status === "local_cost_incomplete") {
+    return "warning";
+  }
+
+  return "secondary";
+}
+
+
+function ProviderFinanceScopedComparisons({
+  rows,
+  t,
+}) {
+  const comparisons = asArray(rows);
+
+  if (!comparisons.length) {
+    return null;
+  }
+
+  return (
+    <div className="DfctAdminAI-financeScoped">
+      <div className="DfctAdminAI-chartHeader">
+        <div>
+          <strong>
+            {t(
+              "adminAI.costs.finance.scoped.title",
+            )}
+          </strong>
+
+          <span>
+            {t(
+              "adminAI.costs.finance.scoped.subtitle",
+            )}
+          </span>
+        </div>
+      </div>
+
+      <div className="DfctAdminAI-financeScopedGrid">
+        {comparisons.map((row, index) => {
+          const workspaceId = (
+            row.workspaceId
+            ?? null
+          );
+
+          const isDefault = (
+            row.includesDefaultWorkspace
+            || workspaceId === null
+          );
+
+          const apiKeyIds = asArray(
+            row.localApiKeyIds,
+          );
+
+          const pendingProvider = (
+            row.providerReportedCostUsd
+            === null
+            || row.providerReportedCostUsd
+            === undefined
+          );
+
+          return (
+            <div
+              key={
+                workspaceId
+                || `default-${index}`
+              }
+              className="DfctAdminAI-financeScopedCard"
+            >
+              <div className="DfctAdminAI-financeScopedHeader">
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.workspace",
+                    )}
+                  </span>
+
+                  <strong>
+                    {isDefault
+                      ? t(
+                          "adminAI.costs.finance.scoped.defaultWorkspace",
+                        )
+                      : t(
+                          "adminAI.costs.finance.scoped.namedWorkspace",
+                        )}
+                  </strong>
+
+                  {!isDefault ? (
+                    <small>
+                      {workspaceId}
+                    </small>
+                  ) : null}
+                </div>
+
+                <Badge
+                  bg={scopedComparisonTone(
+                    row.status,
+                  )}
+                >
+                  {t(
+                    `adminAI.costs.finance.scoped.status.${row.status}`,
+                    {
+                      defaultValue:
+                        row.status
+                        || "—",
+                    },
+                  )}
+                </Badge>
+              </div>
+
+              <div className="DfctAdminAI-financeScopedMetrics">
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.providerBilled",
+                    )}
+                  </span>
+
+                  <strong>
+                    {formatCurrency(
+                      row.providerReportedCostUsd,
+                      {
+                        unavailable: t(
+                          "adminAI.costs.finance.scoped.pendingProviderReport",
+                        ),
+                        maximumFractionDigits: 8,
+                      },
+                    )}
+                  </strong>
+
+                  <small>
+                    {pendingProvider
+                      ? t(
+                          "adminAI.costs.finance.scoped.pendingProviderReportHelp",
+                        )
+                      : t(
+                          "adminAI.costs.finance.scoped.providerObservations",
+                          {
+                            count:
+                              formatNumber(
+                                row.providerObservationCount,
+                              ),
+                          },
+                        )}
+                  </small>
+                </div>
+
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.localExecutions",
+                    )}
+                  </span>
+
+                  <strong>
+                    {formatNumber(
+                      row.localExecutionCount,
+                    )}
+                  </strong>
+
+                  <small>
+                    {t(
+                      "adminAI.costs.finance.scoped.outsideCoverage",
+                      {
+                        count:
+                          formatNumber(
+                            row.localExecutionCountOutsideProviderCoverage,
+                          ),
+                      },
+                    )}
+                  </small>
+                </div>
+
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.localKnownCost",
+                    )}
+                  </span>
+
+                  <strong>
+                    {formatCurrency(
+                      row.knownRecordedCostUsd,
+                      {
+                        maximumFractionDigits: 8,
+                      },
+                    )}
+                  </strong>
+
+                  <small>
+                    {t(
+                      "adminAI.costs.finance.scoped.localCostCoverage",
+                      {
+                        known:
+                          formatNumber(
+                            row.localCostKnownExecutionCount,
+                          ),
+                        unknown:
+                          formatNumber(
+                            row.localCostUnknownExecutionCount,
+                          ),
+                      },
+                    )}
+                  </small>
+                </div>
+
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.observedDelta",
+                    )}
+                  </span>
+
+                  <strong>
+                    {formatCurrency(
+                      row.observedDeltaUsd,
+                      {
+                        unavailable: "—",
+                        maximumFractionDigits: 8,
+                      },
+                    )}
+                  </strong>
+
+                  <small>
+                    {t(
+                      "adminAI.costs.finance.scoped.observedDeltaHelp",
+                    )}
+                  </small>
+                </div>
+              </div>
+
+              <div className="DfctAdminAI-financeScopedMeta">
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.apiKeys",
+                    )}
+                  </span>
+
+                  <strong>
+                    {apiKeyIds.length
+                      ? apiKeyIds
+                          .map(
+                            maskedProviderApiKey,
+                          )
+                          .join(", ")
+                      : "—"}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>
+                    {t(
+                      "adminAI.costs.finance.scoped.providerCoverage",
+                    )}
+                  </span>
+
+                  <strong>
+                    {row.providerCoverageStart
+                      && row.providerCoverageEnd
+                      ? `${formatCompactDate(
+                          row.providerCoverageStart,
+                        )} – ${formatCompactDate(
+                          row.providerCoverageEnd,
+                        )}`
+                      : t(
+                          "adminAI.costs.finance.scoped.noProviderCoverage",
+                        )}
+                  </strong>
+                </div>
+              </div>
+
+              <p className="DfctAdminAI-financeScopedReason">
+                {t(
+                  `adminAI.costs.finance.scoped.reason.${row.reason}`,
+                  {
+                    defaultValue:
+                      row.reason
+                      || "—",
+                  },
+                )}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 
@@ -896,11 +1342,6 @@ function ProviderFinanceSection({
     providers,
   );
 
-  const syncingOpenAi = (
-    adminAi.actionLoading
-    === "finance-sync:openai"
-  );
-
   return (
     <section className="DfctAdmin-section">
       <div className="DfctAdminAI-financeHeader">
@@ -963,6 +1404,17 @@ function ProviderFinanceSection({
 
               const canSync = (
                 providerKey === "openai"
+                || providerKey === "anthropic"
+              );
+
+              const syncingProvider = (
+                adminAi.actionLoading
+                === `finance-sync:${providerKey}`
+              );
+
+              const scopedComparisons = (
+                reconciliation.scopedComparisons
+                || []
               );
 
               return (
@@ -977,9 +1429,9 @@ function ProviderFinanceSection({
                       </span>
 
                       <h3>
-                        {providerKey === "openai"
-                          ? "OpenAI"
-                          : providerKey}
+                        {providerDisplayName(
+                          providerKey,
+                        )}
                       </h3>
 
                       <p>
@@ -1012,17 +1464,37 @@ function ProviderFinanceSection({
                             )}
                       </Badge>
 
-                      {canSync && syncingOpenAi ? (
-                        <Badge bg="info">
-                          <Spinner
-                            animation="border"
-                            size="sm"
-                          />
-                          {" "}
-                          {t(
-                            "adminAI.costs.finance.syncing",
+                      {canSync ? (
+                        <Button
+                          size="sm"
+                          variant="outline-secondary"
+                          disabled={Boolean(
+                            adminAi.actionLoading,
                           )}
-                        </Badge>
+                          onClick={() => {
+                            adminAi.syncProviderFinances(
+                              providerKey,
+                              windowDays,
+                            );
+                          }}
+                        >
+                          {syncingProvider ? (
+                            <>
+                              <Spinner
+                                animation="border"
+                                size="sm"
+                              />
+                              {" "}
+                              {t(
+                                "adminAI.costs.finance.syncing",
+                              )}
+                            </>
+                          ) : (
+                            t(
+                              "adminAI.costs.finance.sync",
+                            )
+                          )}
+                        </Button>
                       ) : null}
                     </div>
                   </div>
@@ -1086,6 +1558,15 @@ function ProviderFinanceSection({
                       )}
                     />
                   </div>
+
+                  <details className="DfctAdminAI-financeDetails">
+                    <summary>
+                      <span>
+                        {t(
+                          "adminAI.costs.finance.details",
+                        )}
+                      </span>
+                    </summary>
 
                   <div className="DfctAdminAI-financeScope">
                     <div>
@@ -1182,6 +1663,11 @@ function ProviderFinanceSection({
                     </div>
                   ) : null}
 
+                  <ProviderFinanceScopedComparisons
+                    rows={scopedComparisons}
+                    t={t}
+                  />
+
                   <div className="DfctAdminAI-financeLineItems">
                     <div className="DfctAdminAI-chartHeader">
                       <div>
@@ -1203,6 +1689,7 @@ function ProviderFinanceSection({
                       t={t}
                     />
                   </div>
+                  </details>
                 </article>
               );
             },
@@ -1229,11 +1716,18 @@ export function CostsView({
     const sync = async () => {
       if (cancelled) return;
 
-      await adminAi.syncProviderFinances(
+      for (const providerKey of [
         "openai",
-        windowDays,
-        { silent: true },
-      );
+        "anthropic",
+      ]) {
+        if (cancelled) return;
+
+        await adminAi.syncProviderFinances(
+          providerKey,
+          windowDays,
+          { silent: true },
+        );
+      }
     };
 
     void sync();
@@ -1396,37 +1890,66 @@ export function CostsView({
           />
         </div>
 
-        <div className="DfctAdminAI-chartCard">
-          <div className="DfctAdminAI-chartHeader">
-            <div>
-              <strong>
-                {t(
-                  "adminAI.costs.chart.title",
-                )}
-              </strong>
+        <div className="DfctAdminAI-costVisualGrid">
+          <div className="DfctAdminAI-chartCard">
+            <div className="DfctAdminAI-chartHeader">
+              <div>
+                <strong>
+                  {t(
+                    "adminAI.costs.chart.title",
+                  )}
+                </strong>
 
-              <span>
-                {t(
-                  "adminAI.costs.chart.subtitle",
-                )}
-              </span>
+                <span>
+                  {t(
+                    "adminAI.costs.chart.subtitle",
+                  )}
+                </span>
+              </div>
+
+              <CoverageBadge
+                cost={{
+                  ...summary,
+                  telemetryState:
+                    data.telemetryState,
+                }}
+                t={t}
+              />
             </div>
 
-            <CoverageBadge
-              cost={{
-                ...summary,
-                telemetryState:
-                  data.telemetryState,
-              }}
+            <CostsChart
+              data={data}
               t={t}
             />
           </div>
 
-          <CostsChart
-            data={data}
-            t={t}
-          />
+          <div className="DfctAdminAI-chartCard">
+            <div className="DfctAdminAI-chartHeader">
+              <div>
+                <strong>
+                  {t(
+                    "adminAI.costs.chart.providerTitle",
+                  )}
+                </strong>
+
+                <span>
+                  {t(
+                    "adminAI.costs.chart.providerSubtitle",
+                  )}
+                </span>
+              </div>
+            </div>
+
+            <ProviderCostChart
+              providers={data.byProvider}
+              t={t}
+            />
+          </div>
         </div>
+
+        <CostBasisLegend
+          t={t}
+        />
       </section>
 
       <ProviderFinanceSection
@@ -1435,32 +1958,7 @@ export function CostsView({
         t={t}
       />
 
-      <section className="DfctAdmin-section">
-        <div className="DfctAdmin-sectionHeader">
-          <span className="DfctAdmin-eyebrow">
-            {t(
-              "adminAI.costs.providersEyebrow",
-            )}
-          </span>
 
-          <h2>
-            {t(
-              "adminAI.costs.providersTitle",
-            )}
-          </h2>
-
-          <p>
-            {t(
-              "adminAI.costs.providersSubtitle",
-            )}
-          </p>
-        </div>
-
-        <ProviderCostTable
-          providers={data.byProvider}
-          t={t}
-        />
-      </section>
     </>
   );
 }

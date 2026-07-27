@@ -56,6 +56,15 @@ export const syncAdminAiOpenAiFinances = (
     `/api/admin/ai/finances/openai/sync${queryString(params)}`,
   );
 
+export const syncAdminAiAnthropicFinances = (
+  authRequest,
+  params = {},
+) =>
+  post(
+    authRequest,
+    `/api/admin/ai/finances/anthropic/sync${queryString(params)}`,
+  );
+
 export const fetchAdminAiBenchmarks = (
   authRequest,
   params = {},
