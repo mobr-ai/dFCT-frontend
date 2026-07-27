@@ -1,7 +1,13 @@
 .DfctAdminConsole {
   --dfct-admin-bg: var(--theme-bg, var(--bs-body-bg));
-  --dfct-admin-surface: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
-  --dfct-admin-surface-soft: var(--theme-surface-soft, var(--theme-card-bg, var(--bs-tertiary-bg)));
+  --dfct-admin-surface: var(
+    --theme-surface,
+    var(--theme-card-bg, var(--bs-body-bg))
+  );
+  --dfct-admin-surface-soft: var(
+    --theme-surface-soft,
+    var(--theme-card-bg, var(--bs-tertiary-bg))
+  );
   --dfct-admin-text: var(--theme-text, var(--bs-body-color));
   --dfct-admin-muted: var(--theme-muted, var(--bs-secondary-color));
   --dfct-admin-border: var(--theme-border, var(--bs-border-color));
@@ -467,9 +473,14 @@
   align-items: flex-start;
   gap: 14px;
   padding: 16px;
-  border: 1px solid color-mix(in srgb, var(--bs-success, #198754) 38%, var(--theme-border));
+  border: 1px solid
+    color-mix(in srgb, var(--bs-success, #198754) 38%, var(--theme-border));
   border-radius: 16px;
-  background: color-mix(in srgb, var(--bs-success, #198754) 8%, var(--theme-surface));
+  background: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 8%,
+    var(--theme-surface)
+  );
 }
 
 .DfctAdminAnchorJobs-confirmedIcon {
@@ -615,7 +626,7 @@
 
 .DfctAdminConsole .DfctAdmin-section {
   width: 100%;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
   padding: 1rem;
   border: 1px solid var(--theme-border);
   border-radius: var(--theme-radius-xl, 18px);
@@ -821,7 +832,11 @@
 
 .DfctAdminAnchorJobs-modalClose:hover,
 .DfctAdminAnchorJobs-modalClose:focus {
-  background: color-mix(in srgb, var(--theme-primary) 14%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 14%,
+    transparent
+  ) !important;
   color: var(--theme-text) !important;
 }
 
@@ -942,7 +957,6 @@
   margin-top: 0.3rem;
   color: var(--theme-muted);
 }
-
 
 .DfctAdminAnchorExecution ::selection {
   background: var(--dfct-admin-accent);
@@ -1093,9 +1107,14 @@
 .DfctAdminAnchorExecution-rollout {
   margin-top: 0.85rem;
   padding: 0.9rem 1rem;
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 24%, var(--theme-border));
+  border: 1px solid
+    color-mix(in srgb, var(--accent-primary) 24%, var(--theme-border));
   border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--accent-primary) 7%, var(--theme-card-bg));
+  background: color-mix(
+    in srgb,
+    var(--accent-primary) 7%,
+    var(--theme-card-bg)
+  );
 }
 
 .DfctAdminAnchorExecution-rolloutHeader {
@@ -1286,19 +1305,35 @@
 }
 
 .DfctAdminConsole .DfctAdmin-stat--success {
-  border-color: color-mix(in srgb, var(--bs-success, #198754) 34%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 34%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminConsole .DfctAdmin-stat--info {
-  border-color: color-mix(in srgb, var(--bs-info, #0dcaf0) 36%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--bs-info, #0dcaf0) 36%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminConsole .DfctAdmin-stat--warning {
-  border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 42%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminConsole .DfctAdmin-stat--danger {
-  border-color: color-mix(in srgb, var(--bs-danger, #dc3545) 38%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 38%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminWorkflow-poweredBy {
@@ -1396,9 +1431,14 @@
 .DfctAdminWorkflow-reasonList > span {
   display: inline-flex;
   padding: 0.28rem 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--bs-danger, #dc3545) 30%, var(--theme-border));
+  border: 1px solid
+    color-mix(in srgb, var(--bs-danger, #dc3545) 30%, var(--theme-border));
   border-radius: 999px;
-  background: color-mix(in srgb, var(--bs-danger, #dc3545) 7%, var(--theme-surface));
+  background: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 7%,
+    var(--theme-surface)
+  );
   color: var(--theme-text);
   font-size: 0.74rem;
   font-weight: 800;
@@ -1440,7 +1480,9 @@
 
 .DfctAdminWorkflow-filters {
   display: grid;
-  grid-template-columns: minmax(150px, 0.8fr) minmax(190px, 1fr) minmax(150px, 0.75fr) auto;
+  grid-template-columns:
+    minmax(150px, 0.8fr) minmax(190px, 1fr) minmax(150px, 0.75fr)
+    auto;
   align-items: end;
   gap: 0.75rem;
   margin-bottom: 1rem;
@@ -1676,7 +1718,9 @@
 }
 
 .DfctAdminWorkflow-filters {
-  grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 0.9fr) minmax(260px, 1.5fr) minmax(130px, 0.65fr);
+  grid-template-columns:
+    minmax(140px, 0.7fr) minmax(180px, 0.9fr) minmax(260px, 1.5fr)
+    minmax(130px, 0.65fr);
 }
 
 .DfctAdminWorkflow-tableWrap {
@@ -1793,7 +1837,11 @@
 /* Final Workflow modal close-button override.
    Must outrank the global themed modal button rules. */
 html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close,
-html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close {
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close {
   appearance: none !important;
   align-items: center !important;
   background-color: transparent !important;
@@ -1814,8 +1862,16 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
   align-content: center !important;
 }
 
-html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close::before,
-html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close::before {
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close::before,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close::before {
   color: currentColor !important;
   content: "×" !important;
   display: grid !important;
@@ -1831,10 +1887,26 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
   height: 100% !important;
 }
 
-html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:hover,
-html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:focus-visible,
-html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:hover,
-html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close:focus-visible {
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:focus-visible,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:focus-visible {
   background-color: var(--theme-surface-soft) !important;
   border-color: var(--theme-primary) !important;
   color: var(--theme-primary) !important;
@@ -1942,7 +2014,8 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
 
 .DfctAdminRewards-reasonList span {
   padding: 5px 8px;
-  border: 1px solid color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+  border: 1px solid
+    color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
   border-radius: 999px;
   background: color-mix(in srgb, var(--bs-warning, #ffc107) 8%, transparent);
   color: var(--theme-text);
@@ -2087,13 +2160,15 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
   }
 }
 
-
 /* Admin Rewards themed modals. */
 .DfctAdminRewards-modal .modal-content {
   background: var(--theme-surface) !important;
   border: 1px solid var(--theme-border) !important;
   border-radius: 12px !important;
-  box-shadow: var(--theme-shadow-lg, 0 24px 70px rgba(0, 0, 0, 0.34)) !important;
+  box-shadow: var(
+    --theme-shadow-lg,
+    0 24px 70px rgba(0, 0, 0, 0.34)
+  ) !important;
   color: var(--theme-text) !important;
   filter: none !important;
   opacity: 1 !important;
@@ -2124,7 +2199,11 @@ html[data-workspace-theme] body .DfctAdminWorkflow-modal .modal-header > button.
 
 /* Override global themed close-button rules for Rewards modals. */
 html[data-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close,
-html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close {
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close {
   appearance: none !important;
   align-items: center !important;
   background-color: transparent !important;
@@ -2143,8 +2222,16 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   width: 2rem !important;
 }
 
-html[data-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close::before,
-html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close::before {
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close::before,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close::before {
   align-content: center !important;
   color: currentColor !important;
   content: "×" !important;
@@ -2160,10 +2247,26 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   width: 100% !important;
 }
 
-html[data-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close:hover,
-html[data-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close:focus-visible,
-html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close:hover,
-html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close:focus-visible {
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:focus-visible,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:focus-visible {
   background-color: var(--theme-surface-soft) !important;
   border-color: var(--theme-primary) !important;
   color: var(--theme-primary) !important;
@@ -2177,11 +2280,8 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
     var(--theme-warning, #d9a400) 12%,
     var(--theme-surface)
   ) !important;
-  border: 1px solid color-mix(
-    in srgb,
-    var(--theme-warning, #d9a400) 48%,
-    var(--theme-border)
-  ) !important;
+  border: 1px solid
+    color-mix(in srgb, var(--theme-warning, #d9a400) 48%, var(--theme-border)) !important;
   color: var(--theme-text) !important;
 }
 
@@ -2243,7 +2343,11 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminPreScreen-settingCard.is-critical {
-  border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 42%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminPreScreen-settingCard .form-label,
@@ -2275,7 +2379,13 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminPreScreen-table td.is-mono {
-  font-family: var(--theme-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-family: var(
+    --theme-font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace
+  );
   font-size: 0.8rem;
 }
 
@@ -2301,7 +2411,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   text-align: center;
 }
 
-
 .DfctAdminPreScreen-refreshControls {
   align-items: center;
   display: flex;
@@ -2321,7 +2430,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 .DfctAdminAI-panel {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0;
 }
 
 .DfctAdminAI-readinessGrid,
@@ -2447,7 +2556,8 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 .DfctAdminAI-fieldCard .form-control:focus,
 .DfctAdminAI-fieldCard .form-select:focus {
   border-color: var(--theme-primary);
-  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--theme-primary) 18%, transparent);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 18%, transparent);
 }
 
 .DfctAdminAI-fieldCard .form-control:disabled,
@@ -2477,36 +2587,12 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   font-size: 0.78rem;
 }
 
-.DfctAdminAI-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  padding: 0.3rem;
-  border: 1px solid var(--theme-border);
-  border-radius: 14px;
-  background: var(--theme-surface-soft, var(--theme-card-bg));
-}
-
-.DfctAdminAI-tabs .nav-link {
-  border: 0;
-  border-radius: 10px;
-  color: var(--theme-muted);
-  font-weight: 800;
-}
-
-.DfctAdminAI-tabs .nav-link:hover,
-.DfctAdminAI-tabs .nav-link:focus-visible {
-  background: var(--theme-surface);
-  color: var(--theme-text);
-}
-
-.DfctAdminAI-tabs .nav-link.active {
-  background: var(--theme-primary);
-  color: var(--theme-primary-contrast, #fff);
-}
-
 .DfctAdminAI-forensicSection {
-  border-color: color-mix(in srgb, var(--theme-warning, #d9a400) 42%, var(--theme-border));
+  border-color: color-mix(
+    in srgb,
+    var(--theme-warning, #d9a400) 42%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminAI-capabilityList {
@@ -2620,7 +2706,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   }
 }
 
-
 /* === d-FCT AI OBSERVABILITY === */
 
 /* d-FCT observability theme aliases */
@@ -2628,7 +2713,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   --theme-card-bg: var(--theme-surface);
   --theme-muted: var(--theme-text-muted);
 }
-
 
 .DfctAdminConsole .DfctAdminAI-observabilityHeader {
   display: flex;
@@ -2668,29 +2752,19 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-rangeSelector button.is-active {
   color: var(--theme-primary);
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 12%,
-      var(--theme-card-bg)
-    );
-  box-shadow:
-    inset 0 0 0 1px
-    color-mix(
-      in srgb,
-      var(--theme-primary) 28%,
-      transparent
-    );
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 12%,
+    var(--theme-card-bg)
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--theme-primary) 28%, transparent);
 }
 
 .DfctAdminConsole .DfctAdminAI-metricGrid,
 .DfctAdminConsole .DfctAdminAI-executionSummary {
   display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(145px, 1fr)
-    );
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
   gap: 0.7rem;
   margin: 1rem 0;
 }
@@ -2720,39 +2794,19 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-metric.is-warning {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-warning) 45%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-warning) 45%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-metric.is-success {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-success) 42%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-success) 42%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-metric.is-danger {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-danger) 42%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-danger) 42%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-metric.is-info {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-info) 42%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-info) 42%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-chartCard,
@@ -2798,12 +2852,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-benchmarkTable tbody tr:hover,
 .DfctAdminConsole .DfctAdminAI-benchmarkTable tbody tr.is-selected {
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 7%,
-      var(--theme-card-bg)
-    );
+  background: color-mix(in srgb, var(--theme-primary) 7%, var(--theme-card-bg));
 }
 
 .DfctAdminConsole .DfctAdminAI-benchmarkTable td small {
@@ -2849,11 +2898,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-assertionStrip {
   display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(150px, 1fr)
-    );
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.45rem;
   margin: 1rem 0;
 }
@@ -2885,21 +2930,11 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-assertion.is-passed {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-success) 35%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-success) 35%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-assertion.is-failed {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--bs-danger) 45%,
-      var(--theme-border)
-    );
+  border-color: color-mix(in srgb, var(--bs-danger) 45%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-execution {
@@ -2910,11 +2945,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-serviceStrip {
   display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(155px, 1fr)
-    );
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
   gap: 0.55rem;
 }
 
@@ -3001,32 +3032,16 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-dagNode:hover rect,
 .DfctAdminConsole .DfctAdminAI-dagNode:focus-visible rect {
-  stroke:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 55%,
-      var(--theme-border)
-    );
+  stroke: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-border));
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
   stroke: var(--theme-primary);
   stroke-width: 2;
-  fill:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 8%,
-      var(--theme-card-bg)
-    );
-  filter:
-    drop-shadow(
-      0 3px 6px
-      color-mix(
-        in srgb,
-        var(--theme-primary) 18%,
-        transparent
-      )
-    );
+  fill: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-card-bg));
+  filter: drop-shadow(
+    0 3px 6px color-mix(in srgb, var(--theme-primary) 18%, transparent)
+  );
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode circle {
@@ -3101,8 +3116,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-inspectorGrid {
   display: grid;
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
 }
 
@@ -3169,13 +3183,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   background: var(--theme-card-bg);
   color: var(--theme-text);
   border: 1px solid var(--theme-border);
-  box-shadow:
-    0 8px 22px
-    color-mix(
-      in srgb,
-      var(--theme-text) 12%,
-      transparent
-    );
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--theme-text) 12%, transparent);
 }
 
 .DfctAdminConsole .DfctAdminAI-chartTooltip strong {
@@ -3270,7 +3278,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   }
 }
 
-
 /* === d-FCT AI OBSERVABILITY UX REFINEMENT === */
 
 /*
@@ -3283,31 +3290,22 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 .DfctAdminConsole .apexcharts-tooltip.apexcharts-theme-dark,
 .DfctAdminConsole .apexcharts-xaxistooltip,
 .DfctAdminConsole .apexcharts-yaxistooltip {
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-surface) 94%,
-      transparent
-    ) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-surface) 94%,
+    transparent
+  ) !important;
   color: var(--theme-text) !important;
   border: 1px solid var(--theme-border-strong) !important;
   backdrop-filter: blur(8px) saturate(1.08);
   -webkit-backdrop-filter: blur(8px) saturate(1.08);
-  box-shadow:
-    0 12px 30px
-    color-mix(
-      in srgb,
-      var(--theme-bg) 38%,
-      transparent
-    ) !important;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--theme-bg) 38%, transparent) !important;
 }
 
 .DfctAdminConsole .apexcharts-tooltip-title {
   background: var(--theme-surface-2) !important;
   color: var(--theme-text) !important;
-  border-bottom:
-    1px solid
-    var(--theme-border) !important;
+  border-bottom: 1px solid var(--theme-border) !important;
 }
 
 .DfctAdminConsole .apexcharts-tooltip-series-group {
@@ -3324,12 +3322,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-chartTooltip {
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-surface) 94%,
-      transparent
-    );
+  background: color-mix(in srgb, var(--theme-surface) 94%, transparent);
   color: var(--theme-text);
   border-color: var(--theme-border-strong);
   backdrop-filter: blur(8px) saturate(1.08);
@@ -3343,8 +3336,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-chartTooltipGrid {
   display: grid;
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.42rem;
   margin-top: 0.35rem;
 }
@@ -3362,7 +3354,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   color: var(--theme-text);
   font-weight: 700;
 }
-
 
 /* Benchmark table controls. */
 
@@ -3390,13 +3381,8 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   background: var(--theme-surface);
   color: var(--theme-text);
   border-color: var(--theme-primary);
-  box-shadow:
-    0 0 0 0.2rem
-    color-mix(
-      in srgb,
-      var(--theme-primary) 14%,
-      transparent
-    );
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 14%, transparent);
 }
 
 .DfctAdminConsole .DfctAdminAI-sortButton {
@@ -3423,13 +3409,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-sortButton:focus-visible {
-  outline:
-    2px solid
-    color-mix(
-      in srgb,
-      var(--theme-primary) 70%,
-      transparent
-    );
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 70%, transparent);
   outline-offset: 3px;
   border-radius: 0.2rem;
 }
@@ -3439,11 +3419,9 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   font-size: 0.72rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-sortButton.is-active
-  .DfctAdminAI-sortIndicator {
+.DfctAdminConsole .DfctAdminAI-sortButton.is-active .DfctAdminAI-sortIndicator {
   color: var(--theme-primary);
 }
-
 
 /* Execution DAG. */
 
@@ -3452,16 +3430,11 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   padding: 0.8rem;
   border: 1px solid var(--theme-border);
   border-radius: 0.78rem;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(
-        in srgb,
-        var(--theme-surface-2) 94%,
-        var(--theme-primary) 6%
-      ),
-      var(--theme-surface)
-    );
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-surface-2) 94%, var(--theme-primary) 6%),
+    var(--theme-surface)
+  );
 }
 
 .DfctAdminConsole .DfctAdminAI-dag {
@@ -3471,12 +3444,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-dagEdges path {
-  stroke:
-    color-mix(
-      in srgb,
-      var(--theme-text-muted) 46%,
-      var(--theme-border)
-    );
+  stroke: color-mix(in srgb, var(--theme-text-muted) 46%, var(--theme-border));
   stroke-width: 1.35;
   opacity: 0.78;
 }
@@ -3487,88 +3455,44 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode.is-work rect {
-  fill:
-    color-mix(
-      in srgb,
-      var(--theme-surface-2) 94%,
-      var(--theme-primary) 6%
-    );
+  fill: color-mix(in srgb, var(--theme-surface-2) 94%, var(--theme-primary) 6%);
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode.is-container rect {
-  fill:
-    color-mix(
-      in srgb,
-      var(--theme-surface) 92%,
-      var(--theme-bg) 8%
-    );
-  stroke:
-    color-mix(
-      in srgb,
-      var(--theme-text-muted) 52%,
-      var(--theme-border)
-    );
+  fill: color-mix(in srgb, var(--theme-surface) 92%, var(--theme-bg) 8%);
+  stroke: color-mix(in srgb, var(--theme-text-muted) 52%, var(--theme-border));
   stroke-dasharray: 5 4;
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode.is-llm rect {
-  stroke:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 48%,
-      var(--theme-border)
-    );
+  stroke: color-mix(in srgb, var(--theme-primary) 48%, var(--theme-border));
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNode.is-external_provider rect {
-  stroke:
-    color-mix(
-      in srgb,
-      var(--bs-warning) 54%,
-      var(--theme-border)
-    );
+.DfctAdminConsole .DfctAdminAI-dagNode.is-external_provider rect {
+  stroke: color-mix(in srgb, var(--bs-warning) 54%, var(--theme-border));
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNode.is-orchestration rect {
-  stroke:
-    color-mix(
-      in srgb,
-      var(--bs-info) 54%,
-      var(--theme-border)
-    );
+.DfctAdminConsole .DfctAdminAI-dagNode.is-orchestration rect {
+  stroke: color-mix(in srgb, var(--bs-info) 54%, var(--theme-border));
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNode.is-pipeline_stage circle {
+.DfctAdminConsole .DfctAdminAI-dagNode.is-pipeline_stage circle {
   fill: var(--theme-accent);
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNode.is-provenance circle {
+.DfctAdminConsole .DfctAdminAI-dagNode.is-provenance circle {
   fill: var(--bs-success);
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode:hover rect,
 .DfctAdminConsole .DfctAdminAI-dagNode:focus-visible rect {
-  fill:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 9%,
-      var(--theme-surface)
-    );
+  fill: color-mix(in srgb, var(--theme-primary) 9%, var(--theme-surface));
   stroke: var(--theme-primary);
   stroke-width: 1.8;
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
-  fill:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 14%,
-      var(--theme-surface)
-    );
+  fill: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface));
   stroke: var(--theme-primary);
   stroke-width: 2.2;
 }
@@ -3589,7 +3513,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   font-size: 8px;
 }
 
-
 /* Dedicated durable benchmark execution page. */
 
 .DfctAdminConsole .DfctAdminAI-benchmarkExecutionPage {
@@ -3606,7 +3529,6 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 .DfctAdminConsole .DfctAdminAI-dedicatedBenchmarkHeader .btn {
   flex-shrink: 0;
 }
-
 
 @media (max-width: 720px) {
   .DfctAdminConsole .DfctAdminAI-benchmarkListHeader,
@@ -3654,12 +3576,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   gap: 1rem;
   padding: 1rem;
   border-bottom: 1px solid var(--theme-border);
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 3%,
-      var(--theme-card-bg)
-    );
+  background: color-mix(in srgb, var(--theme-primary) 3%, var(--theme-card-bg));
 }
 
 .DfctAdminConsole .DfctAdminAI-financeCardHeader h3 {
@@ -3694,11 +3611,7 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
 .DfctAdminConsole .DfctAdminAI-financeScope {
   display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(180px, 1fr)
-    );
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.65rem;
   padding: 0 1rem 1rem;
 }
@@ -3733,18 +3646,9 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
   margin: 0 1rem 1rem;
   padding: 0.72rem 0.8rem;
   border: 1px solid
-    color-mix(
-      in srgb,
-      var(--bs-warning) 45%,
-      var(--theme-border)
-    );
+    color-mix(in srgb, var(--bs-warning) 45%, var(--theme-border));
   border-radius: 0.75rem;
-  background:
-    color-mix(
-      in srgb,
-      var(--bs-warning) 7%,
-      var(--theme-card-bg)
-    );
+  background: color-mix(in srgb, var(--bs-warning) 7%, var(--theme-card-bg));
 }
 
 .DfctAdminConsole .DfctAdminAI-financeNotice strong {
@@ -3783,5 +3687,263 @@ html[data-workspace-theme] body .DfctAdminRewards-modal .modal-header > button.b
 
   .DfctAdminConsole .DfctAdminAI-financeScope {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Admin overview: compact cross-domain operational dashboard. */
+.DfctAdminOverview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.DfctAdminOverview-sectionHeaderSplit {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminOverview-statusGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminOverview-statusCard {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.DfctAdminOverview-statusCard:hover,
+.DfctAdminOverview-statusCard:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--theme-border-strong, var(--theme-border));
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminOverview-statusCard.is-danger { border-color: color-mix(in srgb, var(--bs-danger, #dc3545) 42%, var(--theme-border)); }
+.DfctAdminOverview-statusCard.is-warning { border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 48%, var(--theme-border)); }
+.DfctAdminOverview-statusCard.is-success { border-color: color-mix(in srgb, var(--bs-success, #198754) 36%, var(--theme-border)); }
+.DfctAdminOverview-statusCard.is-info { border-color: color-mix(in srgb, var(--bs-info, #0dcaf0) 38%, var(--theme-border)); }
+
+.DfctAdminOverview-statusHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-statusHead > span,
+.DfctAdminOverview-snapshotGrid span {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminOverview-statusBadge {
+  padding: 0.18rem 0.42rem;
+  border-radius: 999px;
+  background: var(--theme-surface);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.DfctAdminOverview-statusCard h3 {
+  margin: 0.7rem 0 0.8rem;
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+.DfctAdminOverview-statusMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-statusMetrics div {
+  min-width: 0;
+}
+
+.DfctAdminOverview-statusMetrics strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.DfctAdminOverview-statusMetrics span,
+.DfctAdminOverview-statusCard > small {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--theme-muted);
+  font-size: 0.69rem;
+}
+
+.DfctAdminOverview-statusCard > small {
+  margin-top: 0.8rem;
+  font-weight: 800;
+}
+
+.DfctAdminOverview-attentionCount {
+  display: grid;
+  place-items: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  border: 1px solid var(--theme-border);
+}
+
+.DfctAdminOverview-attentionList {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-attentionItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+}
+
+.DfctAdminOverview-attentionItem > span:last-child {
+  color: var(--theme-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.DfctAdminOverview-attentionDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--bs-secondary, #6c757d);
+}
+
+.DfctAdminOverview-attentionItem.is-danger .DfctAdminOverview-attentionDot { background: var(--bs-danger, #dc3545); }
+.DfctAdminOverview-attentionItem.is-warning .DfctAdminOverview-attentionDot { background: var(--bs-warning, #ffc107); }
+
+.DfctAdminOverview-clearState {
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, var(--bs-success, #198754) 45%, var(--theme-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bs-success, #198754) 5%, var(--theme-surface));
+}
+
+.DfctAdminOverview-clearState p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminOverview-snapshotGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminOverview-snapshotGrid > div {
+  min-width: 0;
+  padding: 0.85rem;
+  border-left: 3px solid var(--theme-border-strong, var(--theme-border));
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminOverview-snapshotGrid strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.15rem;
+}
+
+.DfctAdminOverview-snapshotGrid small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminOverview-inlineLink {
+  border: 0;
+  background: transparent;
+  color: var(--theme-primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.DfctAdminOverview-areaLinks {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.DfctAdminOverview-areaLinks button {
+  position: relative;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+}
+
+.DfctAdminOverview-areaLinks strong,
+.DfctAdminOverview-areaLinks span {
+  display: block;
+}
+
+.DfctAdminOverview-areaLinks span {
+  margin-top: 0.3rem;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.DfctAdminOverview-areaLinks small {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  color: var(--theme-muted);
+}
+
+@media (max-width: 1100px) {
+  .DfctAdminOverview-statusGrid,
+  .DfctAdminOverview-areaLinks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .DfctAdminOverview-snapshotGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminOverview-sectionHeaderSplit {
+    flex-direction: column;
+  }
+
+  .DfctAdminOverview-statusGrid,
+  .DfctAdminOverview-snapshotGrid,
+  .DfctAdminOverview-areaLinks {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminOverview-attentionItem {
+    grid-template-columns: auto 1fr;
+  }
+
+  .DfctAdminOverview-attentionItem > span:last-child {
+    grid-column: 2;
   }
 }

@@ -113,6 +113,69 @@ function ReadinessCard({ label, value, detail, ready, enabled = true }) {
   );
 }
 
+export function AdminAiReadinessGrid({ adminAi, t }) {
+  const readiness = useMemo(() => {
+    const primary = adminAi.roles.find((role) => role.roleKey === "primary");
+    const challenger = adminAi.roles.find((role) => role.roleKey === "challenger");
+    const forensic = adminAi.roles.find((role) => role.roleKey === "forensic");
+    const gemini = adminAi.providers.find(
+      (provider) => provider.providerKey === "gemini",
+    );
+
+    return { primary, challenger, forensic, gemini };
+  }, [adminAi.providers, adminAi.roles]);
+
+  return (
+    <div className="DfctAdminAI-readinessGrid">
+      <ReadinessCard
+        label={t("adminAI.readiness.credentialVault")}
+        value={adminAi.aiCapabilities.encryptedDatabaseCredentials ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={t("adminAI.readiness.credentialVaultHelp")}
+        ready={Boolean(adminAi.aiCapabilities.encryptedDatabaseCredentials)}
+      />
+      <ReadinessCard
+        label={t("adminAI.readiness.primary")}
+        value={readiness.primary?.ready ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={readiness.primary?.effectiveModel || t("adminAI.readiness.noModel")}
+        ready={Boolean(readiness.primary?.ready)}
+        enabled={Boolean(readiness.primary?.enabled)}
+      />
+      <ReadinessCard
+        label={t("adminAI.readiness.multiModel")}
+        value={adminAi.aiCapabilities.multiModelReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={readiness.challenger?.effectiveModel || t("adminAI.readiness.noChallenger")}
+        ready={Boolean(adminAi.aiCapabilities.multiModelReady)}
+        enabled={Boolean(readiness.challenger?.enabled)}
+      />
+      <ReadinessCard
+        label={t("adminAI.readiness.groundedSourceIntelligence")}
+        value={adminAi.aiCapabilities.geminiGroundedSourceIntelligenceReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={
+          readiness.gemini?.models?.vision ||
+          t("adminAI.readiness.groundedSourceIntelligenceHelp")
+        }
+        ready={Boolean(
+          adminAi.aiCapabilities.geminiGroundedSourceIntelligenceReady,
+        )}
+        enabled={Boolean(readiness.gemini?.enabled)}
+      />
+      <ReadinessCard
+        label={t("adminAI.readiness.publicQuickCheck")}
+        value={adminAi.quickCheckCapabilities.publicReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={t("adminAI.readiness.publicQuickCheckHelp")}
+        ready={Boolean(adminAi.quickCheckCapabilities.publicReady)}
+      />
+      <ReadinessCard
+        label={t("adminAI.readiness.forensic")}
+        value={adminAi.quickCheckCapabilities.forensicReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
+        detail={readiness.forensic?.effectiveModel || t("adminAI.readiness.noForensic")}
+        ready={Boolean(adminAi.quickCheckCapabilities.forensicReady)}
+        enabled={Boolean(adminAi.quickCheckSettings?.forensicEnabled)}
+      />
+    </div>
+  );
+}
+
 function providerDraftFrom(provider) {
   return {
     enabled: Boolean(provider?.enabled),
@@ -1029,15 +1092,7 @@ export default function AdminAiPanel({ t, user, showToast }) {
     }
   }, [adminAi.quickCheckSettings, quickCheckDirty]);
 
-  const readiness = useMemo(() => {
-    const primary = adminAi.roles.find((role) => role.roleKey === "primary");
-    const challenger = adminAi.roles.find((role) => role.roleKey === "challenger");
-    const forensic = adminAi.roles.find((role) => role.roleKey === "forensic");
-    const gemini = adminAi.providers.find(
-      (provider) => provider.providerKey === "gemini",
-    );
-    return { primary, challenger, forensic, gemini };
-  }, [adminAi.providers, adminAi.roles]);
+
 
   if (adminAi.accessDenied) {
     return <Alert variant="danger">{t("adminAI.accessDenied")}</Alert>;
@@ -1060,55 +1115,9 @@ export default function AdminAiPanel({ t, user, showToast }) {
         />
       </div>
 
-      <div className="DfctAdminAI-readinessGrid">
-        <ReadinessCard
-          label={t("adminAI.readiness.credentialVault")}
-          value={adminAi.aiCapabilities.encryptedDatabaseCredentials ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={t("adminAI.readiness.credentialVaultHelp")}
-          ready={Boolean(adminAi.aiCapabilities.encryptedDatabaseCredentials)}
-        />
-        <ReadinessCard
-          label={t("adminAI.readiness.primary")}
-          value={readiness.primary?.ready ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={readiness.primary?.effectiveModel || t("adminAI.readiness.noModel")}
-          ready={Boolean(readiness.primary?.ready)}
-          enabled={Boolean(readiness.primary?.enabled)}
-        />
-        <ReadinessCard
-          label={t("adminAI.readiness.multiModel")}
-          value={adminAi.aiCapabilities.multiModelReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={readiness.challenger?.effectiveModel || t("adminAI.readiness.noChallenger")}
-          ready={Boolean(adminAi.aiCapabilities.multiModelReady)}
-          enabled={Boolean(readiness.challenger?.enabled)}
-        />
-        <ReadinessCard
-          label={t("adminAI.readiness.groundedSourceIntelligence")}
-          value={adminAi.aiCapabilities.geminiGroundedSourceIntelligenceReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={
-            readiness.gemini?.models?.vision ||
-            t("adminAI.readiness.groundedSourceIntelligenceHelp")
-          }
-          ready={Boolean(
-            adminAi.aiCapabilities.geminiGroundedSourceIntelligenceReady,
-          )}
-          enabled={Boolean(readiness.gemini?.enabled)}
-        />
-        <ReadinessCard
-          label={t("adminAI.readiness.publicQuickCheck")}
-          value={adminAi.quickCheckCapabilities.publicReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={t("adminAI.readiness.publicQuickCheckHelp")}
-          ready={Boolean(adminAi.quickCheckCapabilities.publicReady)}
-        />
-        <ReadinessCard
-          label={t("adminAI.readiness.forensic")}
-          value={adminAi.quickCheckCapabilities.forensicReady ? t("adminAI.states.ready") : t("adminAI.states.notReady")}
-          detail={readiness.forensic?.effectiveModel || t("adminAI.readiness.noForensic")}
-          ready={Boolean(adminAi.quickCheckCapabilities.forensicReady)}
-          enabled={Boolean(adminAi.quickCheckSettings?.forensicEnabled)}
-        />
-      </div>
 
-      <div className="DfctAdmin-tabs nav nav-tabs DfctAdminAI-tabs" role="tablist">
+
+      <div className="DfctAdmin-tabs nav nav-tabs DfctAdminConsole-subtabs" role="tablist">
         {VIEWS.map((view) => (
           <button
             key={view}

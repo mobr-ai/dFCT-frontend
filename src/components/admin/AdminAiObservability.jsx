@@ -1012,35 +1012,17 @@ function ProviderFinanceSection({
                             )}
                       </Badge>
 
-                      {canSync ? (
-                        <Button
-                          size="sm"
-                          variant="outline-primary"
-                          disabled={syncingOpenAi}
-                          onClick={() => (
-                            adminAi.syncProviderFinances(
-                              providerKey,
-                              windowDays,
-                            )
+                      {canSync && syncingOpenAi ? (
+                        <Badge bg="info">
+                          <Spinner
+                            animation="border"
+                            size="sm"
+                          />
+                          {" "}
+                          {t(
+                            "adminAI.costs.finance.syncing",
                           )}
-                        >
-                          {syncingOpenAi ? (
-                            <>
-                              <Spinner
-                                animation="border"
-                                size="sm"
-                              />
-                              {" "}
-                              {t(
-                                "adminAI.costs.finance.syncing",
-                              )}
-                            </>
-                          ) : (
-                            t(
-                              "adminAI.costs.finance.sync",
-                            )
-                          )}
-                        </Button>
+                        </Badge>
                       ) : null}
                     </div>
                   </div>
@@ -1240,6 +1222,37 @@ export function CostsView({
   const [windowDays, setWindowDays] = useState(
     Number(data.windowDays || 30),
   );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const sync = async () => {
+      if (cancelled) return;
+
+      await adminAi.syncProviderFinances(
+        "openai",
+        windowDays,
+        { silent: true },
+      );
+    };
+
+    void sync();
+
+    const interval = window.setInterval(
+      () => {
+        void sync();
+      },
+      5 * 60 * 1000,
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [
+    adminAi.syncProviderFinances,
+    windowDays,
+  ]);
 
   useEffect(() => {
     if (

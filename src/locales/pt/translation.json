@@ -1433,7 +1433,74 @@
     "actionRewardsText": "Inspecione a saúde dos fundos, simule distribuições determinísticas e execute rodadas aprovadas.",
     "actionAIEyebrow": "Operações de IA",
     "actionAITitle": "Configurar modelos e quick-check",
-    "actionAIText": "Gerencie credenciais de provedores, papéis dos modelos, limites da experiência pública, recursos forenses e consumo observado de IA."
+    "actionAIText": "Gerencie credenciais de provedores, papéis dos modelos, limites da experiência pública, recursos forenses e consumo observado de IA.",
+    "overview": {
+      "syncing": "Atualizando visão geral",
+      "syncWaiting": "Aguardando dados da visão geral",
+      "syncedAt": "Sincronizado às {{time}}",
+      "openArea": "Abrir operações →",
+      "states": {
+        "healthy": "Saudável",
+        "ready": "Pronta",
+        "active": "Ativa",
+        "pending": "Pendente",
+        "attention": "Requer atenção"
+      },
+      "cards": {
+        "workflow": "Operações de revisão",
+        "billing": "Billing e acesso",
+        "ai": "Modelos e quick-check",
+        "rewards": "Distribuição de recompensas",
+        "anchoring": "Ancoragem de proveniência"
+      },
+      "metrics": {
+        "awaiting": "aguardando revisão",
+        "inProgress": "em andamento",
+        "users": "usuários",
+        "paymentIntents": "pagamentos pendentes",
+        "rolesReady": "papéis prontos",
+        "providersReady": "provedores prontos",
+        "pendingEvents": "eventos pendentes",
+        "readyPools": "fundos prontos",
+        "pendingAnchors": "pendentes",
+        "confirmedAnchors": "confirmados"
+      },
+      "attentionEyebrow": "Atenção operacional",
+      "attentionTitle": "O que requer atenção",
+      "attentionSubtitle": "{{count}} item(ns) atual(is) identificado(s) nas áreas admin monitoradas.",
+      "attention": {
+        "noReviewer": "{{count}} item(ns) de workflow sem revisor elegível",
+        "atRisk": "{{count}} item(ns) de revisão em risco ou expirado(s)",
+        "rewards": "{{count}} fundo(s) de recompensa requer(em) atenção",
+        "anchors": "{{count}} anchor job(s) falharam",
+        "forensic": "O quick-check forense ainda não está pronto",
+        "openWorkflow": "Abrir workflow",
+        "openRewards": "Abrir recompensas",
+        "openAnchoring": "Abrir ancoragem",
+        "openAI": "Configurar IA"
+      },
+      "clearTitle": "Nenhum problema operacional imediato",
+      "clearText": "Todas as áreas admin monitoradas estão dentro do estado operacional esperado.",
+      "snapshotEyebrow": "Atividade atual",
+      "snapshotTitle": "Snapshot operacional",
+      "snapshotSubtitle": "Uma visão compacta do trabalho que está passando pelo d-FCT agora.",
+      "snapshot": {
+        "reviewQueue": "Fila de revisão",
+        "reviewQueueDetail": "{{count}} sem cobertura de revisor",
+        "billing": "Payment intents",
+        "billingDetail": "{{count}} pendente(s)",
+        "rewards": "Liquidez de recompensas",
+        "rewardsDetail": "{{count}} evento(s) avaliado(s) pendente(s)",
+        "anchoring": "Anchor jobs",
+        "anchoringDetail": "{{pending}} pendente(s) · {{submitted}} submetido(s)"
+      },
+      "aiEyebrow": "Prontidão de IA",
+      "aiTitle": "Capacidades de modelos e quick-check",
+      "aiSubtitle": "Prontidão ao vivo para credenciais de provedores, papéis explícitos de modelos e caminhos públicos de análise.",
+      "openAI": "Abrir operações de IA",
+      "areasEyebrow": "Workspace admin",
+      "areasSubtitle": "Acesse diretamente a área operacional que precisa de inspeção mais detalhada."
+    }
   },
   "adminAnchorJobs": {
     "eyebrow": "Proveniência verificável",

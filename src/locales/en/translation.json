@@ -1433,7 +1433,74 @@
     "actionRewardsText": "Inspect pool health, preview deterministic distributions, and execute approved reward rounds.",
     "actionAIEyebrow": "AI operations",
     "actionAITitle": "Configure models and quick-check",
-    "actionAIText": "Manage provider credentials, model roles, public trial limits, forensic capabilities, and observed AI consumption."
+    "actionAIText": "Manage provider credentials, model roles, public trial limits, forensic capabilities, and observed AI consumption.",
+    "overview": {
+      "syncing": "Refreshing overview",
+      "syncWaiting": "Waiting for overview data",
+      "syncedAt": "Synced at {{time}}",
+      "openArea": "Open operations →",
+      "states": {
+        "healthy": "Healthy",
+        "ready": "Ready",
+        "active": "Active",
+        "pending": "Pending",
+        "attention": "Needs attention"
+      },
+      "cards": {
+        "workflow": "Review operations",
+        "billing": "Billing and access",
+        "ai": "Models and quick-check",
+        "rewards": "Reward distribution",
+        "anchoring": "Provenance anchoring"
+      },
+      "metrics": {
+        "awaiting": "awaiting review",
+        "inProgress": "in progress",
+        "users": "users",
+        "paymentIntents": "pending payments",
+        "rolesReady": "roles ready",
+        "providersReady": "providers ready",
+        "pendingEvents": "pending events",
+        "readyPools": "ready pools",
+        "pendingAnchors": "pending",
+        "confirmedAnchors": "confirmed"
+      },
+      "attentionEyebrow": "Operational attention",
+      "attentionTitle": "What needs attention",
+      "attentionSubtitle": "{{count}} current item(s) surfaced across monitored admin areas.",
+      "attention": {
+        "noReviewer": "{{count}} workflow item(s) have no eligible reviewer",
+        "atRisk": "{{count}} review item(s) are at risk or expired",
+        "rewards": "{{count}} reward pool(s) require attention",
+        "anchors": "{{count}} anchor job(s) have failed",
+        "forensic": "Forensic quick-check is not ready",
+        "openWorkflow": "Open workflow",
+        "openRewards": "Open rewards",
+        "openAnchoring": "Open anchoring",
+        "openAI": "Configure AI"
+      },
+      "clearTitle": "No immediate operational issues",
+      "clearText": "All monitored admin areas are within their expected operating state.",
+      "snapshotEyebrow": "Current activity",
+      "snapshotTitle": "Operations snapshot",
+      "snapshotSubtitle": "A compact view of the work currently moving through d-FCT.",
+      "snapshot": {
+        "reviewQueue": "Review queue",
+        "reviewQueueDetail": "{{count}} without reviewer coverage",
+        "billing": "Payment intents",
+        "billingDetail": "{{count}} pending",
+        "rewards": "Reward liquidity",
+        "rewardsDetail": "{{count}} evaluated events pending",
+        "anchoring": "Anchor jobs",
+        "anchoringDetail": "{{pending}} pending · {{submitted}} submitted"
+      },
+      "aiEyebrow": "AI readiness",
+      "aiTitle": "Model and quick-check capabilities",
+      "aiSubtitle": "Live readiness for provider credentials, explicit model roles and public analysis paths.",
+      "openAI": "Open AI operations",
+      "areasEyebrow": "Admin workspace",
+      "areasSubtitle": "Jump directly to the operational area that needs deeper inspection."
+    }
   },
   "adminAnchorJobs": {
     "eyebrow": "Verifiable provenance",
