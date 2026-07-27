@@ -27,6 +27,44 @@ function put(authRequest, url, payload = {}) {
 export const fetchAdminAiRuntime = (authRequest, params = {}) =>
   get(authRequest, "/api/admin/ai", params);
 
+export const fetchAdminAiCosts = (
+  authRequest,
+  params = {},
+) =>
+  get(
+    authRequest,
+    "/api/admin/ai/costs",
+    params,
+  );
+
+export const fetchAdminAiBenchmarks = (
+  authRequest,
+  params = {},
+) =>
+  get(
+    authRequest,
+    "/api/admin/ai/benchmarks",
+    params,
+  );
+
+export const fetchAdminAiBenchmarkDetail = (
+  authRequest,
+  benchmarkRunId,
+) =>
+  get(
+    authRequest,
+    `/api/admin/ai/benchmarks/${encodeURIComponent(benchmarkRunId)}`,
+  );
+
+export const fetchAdminAiExecutionDetail = (
+  authRequest,
+  analysisRunId,
+) =>
+  get(
+    authRequest,
+    `/api/admin/ai/executions/${encodeURIComponent(analysisRunId)}`,
+  );
+
 export const updateAdminAiProvider = (
   authRequest,
   providerKey,

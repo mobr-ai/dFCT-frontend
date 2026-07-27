@@ -1,10 +1,36 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Badge, Button, Form, Spinner } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 
 import { useAdminAi } from "../../hooks/useAdminAi";
 import AdminSyncPill from "./AdminSyncPill";
 
-const VIEWS = ["providers", "roles", "quickCheck", "usage"];
+
+const CostsView = React.lazy(
+  () =>
+    import("./AdminAiObservability").then(
+      (module) => ({
+        default: module.CostsView,
+      }),
+    ),
+);
+
+const BenchmarksView = React.lazy(
+  () =>
+    import("./AdminAiObservability").then(
+      (module) => ({
+        default: module.BenchmarksView,
+      }),
+    ),
+);
+
+const VIEWS = [
+  "providers",
+  "roles",
+  "quickCheck",
+  "costs",
+  "benchmarks",
+];
 
 const FORENSIC_CAPABILITIES = [
   "multi_provider_reverse_search",
@@ -598,25 +624,105 @@ function RolesView({ adminAi, drafts, setDrafts, t }) {
 
 function QuickCheckView({ adminAi, draft, setDraft, dirty, setDirty, t }) {
   const settings = draft || {};
+  const timerRef = useRef(null);
+  const desiredRef = useRef(settings);
+  const dirtyRef = useRef(Boolean(dirty));
+  const inFlightRef = useRef(false);
+  const [saveState, setSaveState] = useState("");
 
-  const update = (field, value) => {
-    setDraft((current) => ({ ...current, [field]: value }));
+  useEffect(() => {
+    desiredRef.current = settings;
+    dirtyRef.current = Boolean(dirty);
+  }, [settings, dirty]);
+
+  const sameSettings = (left, right) =>
+    JSON.stringify(left || {}) === JSON.stringify(right || {});
+
+  const persist = async () => {
+    if (inFlightRef.current || !dirtyRef.current) return;
+
+    const snapshot = desiredRef.current;
+    inFlightRef.current = true;
+    setSaveState("saving");
+
+    const response = await adminAi.saveQuickCheckSettings(snapshot);
+
+    inFlightRef.current = false;
+
+    if (!response) {
+      setSaveState("failed");
+      return;
+    }
+
+    const latest = desiredRef.current;
+
+    if (!sameSettings(latest, snapshot)) {
+      dirtyRef.current = true;
+      setDirty(true);
+      setSaveState("pending");
+
+      window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(
+        persist,
+        0,
+      );
+      return;
+    }
+
+    const persisted = response.settings || snapshot;
+    desiredRef.current = persisted;
+    dirtyRef.current = false;
+    setDraft(persisted);
+    setDirty(false);
+    setSaveState("saved");
+  };
+
+  const scheduleSave = (next, immediate = false) => {
+    desiredRef.current = next;
+    dirtyRef.current = true;
     setDirty(true);
+    setSaveState("pending");
+
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(
+      persist,
+      immediate ? 0 : 700,
+    );
+  };
+
+  const update = (field, value, { immediate = false } = {}) => {
+    const next = {
+      ...(desiredRef.current || {}),
+      [field]: value,
+    };
+
+    setDraft(next);
+    scheduleSave(next, immediate);
   };
 
   const toggleCapability = (capability, enabled) => {
-    const current = new Set(asArray(settings.forensicCapabilities));
+    const current = new Set(
+      asArray(
+        desiredRef.current?.forensicCapabilities,
+      ),
+    );
+
     if (enabled) current.add(capability);
     else current.delete(capability);
-    update("forensicCapabilities", Array.from(current));
+
+    update(
+      "forensicCapabilities",
+      Array.from(current),
+      { immediate: true },
+    );
   };
 
-  const save = async () => {
-    const response = await adminAi.saveQuickCheckSettings(settings);
-    if (!response) return;
-    setDraft(response.settings || settings);
-    setDirty(false);
-  };
+  useEffect(
+    () => () => {
+      window.clearTimeout(timerRef.current);
+    },
+    [],
+  );
 
   return (
     <>
@@ -641,7 +747,13 @@ function QuickCheckView({ adminAi, draft, setDraft, dirty, setDirty, t }) {
                 id={`quick-check-${field}`}
                 label={t(`adminAI.quickCheck.fields.${key}`)}
                 checked={Boolean(settings[field])}
-                onChange={(event) => update(field, event.target.checked)}
+                onChange={(event) =>
+                  update(
+                    field,
+                    event.target.checked,
+                    { immediate: true },
+                  )
+                }
               />
               <Form.Text>{t(`adminAI.quickCheck.help.${key}`)}</Form.Text>
             </Form.Group>
@@ -755,7 +867,13 @@ function QuickCheckView({ adminAi, draft, setDraft, dirty, setDirty, t }) {
                 id={`quick-check-${field}`}
                 label={t(`adminAI.quickCheck.fields.${key}`)}
                 checked={Boolean(settings[field])}
-                onChange={(event) => update(field, event.target.checked)}
+                onChange={(event) =>
+                  update(
+                    field,
+                    event.target.checked,
+                    { immediate: true },
+                  )
+                }
               />
               <Form.Text>{t(`adminAI.quickCheck.help.${key}`)}</Form.Text>
             </Form.Group>
@@ -783,7 +901,13 @@ function QuickCheckView({ adminAi, draft, setDraft, dirty, setDirty, t }) {
                 label={t(`adminAI.quickCheck.fields.${key}`)}
                 checked={Boolean(settings[field])}
                 disabled={field !== "forensicEnabled" && !settings.forensicEnabled}
-                onChange={(event) => update(field, event.target.checked)}
+                onChange={(event) =>
+                  update(
+                    field,
+                    event.target.checked,
+                    { immediate: true },
+                  )
+                }
               />
               <Form.Text>{t(`adminAI.quickCheck.help.${key}`)}</Form.Text>
             </Form.Group>
@@ -821,130 +945,55 @@ function QuickCheckView({ adminAi, draft, setDraft, dirty, setDirty, t }) {
       </section>
 
       <div className="DfctAdminAI-stickyActions">
-        <span>
-          {dirty
-            ? t("adminAI.quickCheck.unsaved")
-            : t("adminAI.quickCheck.saved")}
-        </span>
-        <Button
-          variant="primary"
-          disabled={!dirty || adminAi.actionLoading === "quick-check"}
-          onClick={save}
+        <span
+          className={`DfctAdminAI-roleSaveState is-${
+            adminAi.actionLoading === "quick-check" || saveState === "saving"
+              ? "saving"
+              : saveState || (dirty ? "pending" : "saved")
+          }`}
+          aria-live="polite"
         >
-          {adminAi.actionLoading === "quick-check" ? (
-            <Spinner animation="border" size="sm" />
-          ) : (
-            t("adminAI.actions.saveQuickCheck")
-          )}
-        </Button>
+          {adminAi.actionLoading === "quick-check" || saveState === "saving"
+            ? t("adminAI.quickCheck.autoSave.saving")
+            : saveState === "failed"
+              ? t("adminAI.quickCheck.autoSave.failed")
+              : dirty
+                ? t("adminAI.quickCheck.autoSave.pending")
+                : t("adminAI.quickCheck.autoSave.saved")}
+        </span>
       </div>
     </>
   );
 }
 
-function UsageTable({ rows, keyLabel, keyField, t }) {
-  const entries = Object.entries(rows || {});
-  if (!entries.length) {
-    return <div className="DfctAdminAI-empty">{t("adminAI.usage.empty")}</div>;
-  }
-
-  return (
-    <div className="DfctAdmin-tableWrap">
-      <table className="DfctAdmin-table DfctAdminAI-usageTable">
-        <thead>
-          <tr>
-            <th>{keyLabel}</th>
-            <th>{t("adminAI.usage.columns.requests")}</th>
-            <th>{t("adminAI.usage.columns.successRate")}</th>
-            <th>{t("adminAI.usage.columns.tokens")}</th>
-            <th>{t("adminAI.usage.columns.latency")}</th>
-            <th>{t("adminAI.usage.columns.cost")}</th>
-            <th>{t("adminAI.usage.columns.lastExecution")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map(([key, metrics]) => (
-            <tr key={`${keyField}-${key}`}>
-              <td><strong>{key}</strong></td>
-              <td>{formatNumber(metrics.requests)}</td>
-              <td>
-                {metrics.successRate === null || metrics.successRate === undefined
-                  ? "—"
-                  : `${Math.round(Number(metrics.successRate) * 100)}%`}
-              </td>
-              <td>{formatNumber(metrics.totalTokens)}</td>
-              <td>{formatLatency(metrics.averageLatencyMs)}</td>
-              <td>{formatCurrency(metrics.estimatedCostUsd)}</td>
-              <td>{formatDate(metrics.lastExecutionAt)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function UsageView({ adminAi, t }) {
-  const quickUsage = adminAi.quickCheckUsage || {};
-  const serviceLevels = quickUsage.serviceLevels || {};
-
-  return (
-    <>
-      <section className="DfctAdmin-section">
-        <div className="DfctAdmin-sectionHeader">
-          <span className="DfctAdmin-eyebrow">{t("adminAI.usage.quickCheckEyebrow")}</span>
-          <h2>{t("adminAI.usage.quickCheckTitle")}</h2>
-          <p>{t("adminAI.usage.quickCheckSubtitle", { days: quickUsage.windowDays || 30 })}</p>
-        </div>
-
-        <div className="DfctAdmin-statGrid">
-          <Stat label={t("adminAI.usage.stats.requests")} value={formatNumber(quickUsage.requests)} />
-          <Stat label={t("adminAI.usage.stats.queued")} value={formatNumber(quickUsage.queued)} />
-          <Stat label={t("adminAI.usage.stats.running")} value={formatNumber(quickUsage.running)} tone="info" />
-          <Stat label={t("adminAI.usage.stats.succeeded")} value={formatNumber(quickUsage.succeeded)} tone="success" />
-          <Stat label={t("adminAI.usage.stats.failed")} value={formatNumber(quickUsage.failed)} tone="danger" />
-          <Stat
-            label={t("adminAI.usage.stats.forensic")}
-            value={formatNumber(serviceLevels.forensic)}
-            caption={t("adminAI.usage.stats.forensicCaption")}
-          />
-        </div>
-      </section>
-
-      <section className="DfctAdmin-section">
-        <div className="DfctAdmin-sectionHeader">
-          <span className="DfctAdmin-eyebrow">{t("adminAI.usage.providerEyebrow")}</span>
-          <h2>{t("adminAI.usage.providerTitle")}</h2>
-          <p>{t("adminAI.usage.providerSubtitle", { days: adminAi.aiUsage.windowDays || 30 })}</p>
-        </div>
-        <UsageTable
-          rows={adminAi.aiUsage.providers}
-          keyLabel={t("adminAI.usage.columns.provider")}
-          keyField="provider"
-          t={t}
-        />
-      </section>
-
-      <section className="DfctAdmin-section">
-        <div className="DfctAdmin-sectionHeader">
-          <span className="DfctAdmin-eyebrow">{t("adminAI.usage.roleEyebrow")}</span>
-          <h2>{t("adminAI.usage.roleTitle")}</h2>
-          <p>{t("adminAI.usage.roleSubtitle")}</p>
-        </div>
-        <UsageTable
-          rows={adminAi.aiUsage.roles}
-          keyLabel={t("adminAI.usage.columns.role")}
-          keyField="role"
-          t={t}
-        />
-      </section>
-    </>
-  );
-}
 
 export default function AdminAiPanel({ t, user, showToast }) {
   const adminAi = useAdminAi(user, showToast, t);
-  const [activeView, setActiveView] = useState("providers");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const requestedView = searchParams.get("view");
+
+  const activeView = VIEWS.includes(
+    requestedView,
+  )
+    ? requestedView
+    : "providers";
+
+  const changeView = (view) => {
+    const next = new URLSearchParams(
+      searchParams,
+    );
+
+    next.set("tab", "ai");
+    next.set("view", view);
+
+    setSearchParams(
+      next,
+      {
+        replace: true,
+      },
+    );
+  };
   const [providerDrafts, setProviderDrafts] = useState({});
   const [roleDrafts, setRoleDrafts] = useState({});
   const [quickCheckDraft, setQuickCheckDraft] = useState(null);
@@ -1065,7 +1114,7 @@ export default function AdminAiPanel({ t, user, showToast }) {
             key={view}
             type="button"
             className={`nav-link ${activeView === view ? "active" : ""}`}
-            onClick={() => setActiveView(view)}
+            onClick={() => changeView(view)}
             role="tab"
             aria-selected={activeView === view}
           >
@@ -1111,7 +1160,37 @@ export default function AdminAiPanel({ t, user, showToast }) {
         />
       ) : null}
 
-      {activeView === "usage" ? <UsageView adminAi={adminAi} t={t} /> : null}
+      {activeView === "costs" ? (
+        <React.Suspense
+          fallback={
+            <div className="DfctAdminAI-loading">
+              <Spinner animation="border" size="sm" />
+              <span>{t("adminAI.loading")}</span>
+            </div>
+          }
+        >
+          <CostsView
+            adminAi={adminAi}
+            t={t}
+          />
+        </React.Suspense>
+      ) : null}
+
+      {activeView === "benchmarks" ? (
+        <React.Suspense
+          fallback={
+            <div className="DfctAdminAI-loading">
+              <Spinner animation="border" size="sm" />
+              <span>{t("adminAI.loading")}</span>
+            </div>
+          }
+        >
+          <BenchmarksView
+            adminAi={adminAi}
+            t={t}
+          />
+        </React.Suspense>
+      ) : null}
     </div>
   );
 }

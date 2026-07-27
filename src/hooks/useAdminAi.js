@@ -1,6 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 
 import {
+  fetchAdminAiBenchmarkDetail,
+  fetchAdminAiBenchmarks,
+  fetchAdminAiCosts,
+  fetchAdminAiExecutionDetail,
   fetchAdminAiRuntime,
   fetchAdminQuickCheckRuntime,
   testAdminAiProvider,
@@ -22,6 +26,11 @@ export function useAdminAi(user, showToast, t) {
 
   const [aiData, setAiData] = useState(null);
   const [quickCheckData, setQuickCheckData] = useState(null);
+  const [costData, setCostData] = useState(null);
+  const [benchmarkData, setBenchmarkData] = useState(null);
+  const [benchmarkDetail, setBenchmarkDetail] = useState(null);
+  const [executionDetail, setExecutionDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
   const [error, setError] = useState("");
@@ -52,15 +61,42 @@ export function useAdminAi(user, showToast, t) {
       setError("");
 
       try {
-        const [aiPayload, quickCheckPayload] = await Promise.all([
-          fetchAdminAiRuntime(authRequestRef.current, { windowDays: 30 }),
-          fetchAdminQuickCheckRuntime(authRequestRef.current, { windowDays: 30 }),
+        const [
+          aiPayload,
+          quickCheckPayload,
+          costPayload,
+          benchmarkPayload,
+        ] = await Promise.all([
+          fetchAdminAiRuntime(
+            authRequestRef.current,
+            { windowDays: 30 },
+          ),
+          fetchAdminQuickCheckRuntime(
+            authRequestRef.current,
+            { windowDays: 30 },
+          ),
+          fetchAdminAiCosts(
+            authRequestRef.current,
+            { windowDays: 30 },
+          ),
+          fetchAdminAiBenchmarks(
+            authRequestRef.current,
+            { limit: 50 },
+          ),
         ]);
 
         setAiData(aiPayload);
         setQuickCheckData(quickCheckPayload);
+        setCostData(costPayload);
+        setBenchmarkData(benchmarkPayload);
         setLastUpdatedAt(new Date());
-        return { ai: aiPayload, quickCheck: quickCheckPayload };
+
+        return {
+          ai: aiPayload,
+          quickCheck: quickCheckPayload,
+          costs: costPayload,
+          benchmarks: benchmarkPayload,
+        };
       } catch (err) {
         handleError(
           err,
@@ -90,11 +126,6 @@ export function useAdminAi(user, showToast, t) {
         );
         if (response.runtime) setAiData(response.runtime);
         setLastUpdatedAt(new Date());
-        showToast?.(
-          t?.("adminAI.toasts.providerSaved", { provider: providerKey }) ||
-            "Provider settings saved.",
-          "success",
-        );
         return response;
       } catch (err) {
         const message = handleError(
@@ -160,11 +191,6 @@ export function useAdminAi(user, showToast, t) {
         );
         if (response.runtime) setAiData(response.runtime);
         setLastUpdatedAt(new Date());
-        showToast?.(
-          t?.("adminAI.toasts.roleSaved", { role: roleKey }) ||
-            "Model role saved.",
-          "success",
-        );
         return response;
       } catch (err) {
         const message = handleError(
@@ -195,11 +221,6 @@ export function useAdminAi(user, showToast, t) {
         );
         setQuickCheckData(response);
         setLastUpdatedAt(new Date());
-        showToast?.(
-          t?.("adminAI.toasts.quickCheckSaved") ||
-            "Quick-check settings saved.",
-          "success",
-        );
         return response;
       } catch (err) {
         const message = handleError(
@@ -211,6 +232,125 @@ export function useAdminAi(user, showToast, t) {
         return null;
       } finally {
         setActionLoading("");
+      }
+    },
+    [canLoad, handleError, showToast, t],
+  );
+
+  const loadCosts = useCallback(
+    async (windowDays = 30) => {
+      if (!canLoad) return null;
+
+      setError("");
+
+      try {
+        const payload = await fetchAdminAiCosts(
+          authRequestRef.current,
+          { windowDays },
+        );
+
+        setCostData(payload);
+        setLastUpdatedAt(new Date());
+        return payload;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadCosts") ||
+            "Unable to load AI cost observability.",
+        );
+        if (message) showToast?.(message, "danger");
+        return null;
+      }
+    },
+    [canLoad, handleError, showToast, t],
+  );
+
+  const loadBenchmarks = useCallback(
+    async (params = {}) => {
+      if (!canLoad) return null;
+
+      setError("");
+
+      try {
+        const payload = await fetchAdminAiBenchmarks(
+          authRequestRef.current,
+          {
+            limit: 50,
+            ...params,
+          },
+        );
+
+        setBenchmarkData(payload);
+        setLastUpdatedAt(new Date());
+        return payload;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadBenchmarks") ||
+            "Unable to load benchmark history.",
+        );
+        if (message) showToast?.(message, "danger");
+        return null;
+      }
+    },
+    [canLoad, handleError, showToast, t],
+  );
+
+  const loadBenchmarkDetail = useCallback(
+    async (benchmarkRunId) => {
+      if (!canLoad || !benchmarkRunId) return null;
+
+      setDetailLoading(true);
+      setError("");
+
+      try {
+        const payload = await fetchAdminAiBenchmarkDetail(
+          authRequestRef.current,
+          benchmarkRunId,
+        );
+
+        setBenchmarkDetail(payload);
+        return payload;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadBenchmarkDetail") ||
+            "Unable to load benchmark execution details.",
+        );
+        if (message) showToast?.(message, "danger");
+        return null;
+      } finally {
+        setDetailLoading(false);
+      }
+    },
+    [canLoad, handleError, showToast, t],
+  );
+
+  const loadExecutionDetail = useCallback(
+    async (analysisRunId) => {
+      if (!canLoad || !analysisRunId) return null;
+
+      setDetailLoading(true);
+      setError("");
+
+      try {
+        const payload = await fetchAdminAiExecutionDetail(
+          authRequestRef.current,
+          analysisRunId,
+        );
+
+        setExecutionDetail(payload);
+        return payload;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadExecutionDetail") ||
+            "Unable to load extraction execution details.",
+        );
+        if (message) showToast?.(message, "danger");
+        return null;
+      } finally {
+        setDetailLoading(false);
       }
     },
     [canLoad, handleError, showToast, t],
@@ -237,6 +377,11 @@ export function useAdminAi(user, showToast, t) {
     quickCheckSettings: quickCheckData?.settings || null,
     quickCheckCapabilities: quickCheckData?.capabilities || {},
     quickCheckUsage: quickCheckData?.usage || {},
+    costData,
+    benchmarkData,
+    benchmarkDetail,
+    executionDetail,
+    detailLoading,
     loading,
     accessDenied,
     error,
@@ -249,6 +394,12 @@ export function useAdminAi(user, showToast, t) {
     probeProvider,
     saveRole,
     saveQuickCheckSettings,
+    loadCosts,
+    loadBenchmarks,
+    loadBenchmarkDetail,
+    loadExecutionDetail,
+    setBenchmarkDetail,
+    setExecutionDetail,
   };
 }
 

@@ -2314,7 +2314,9 @@
       "providers": "Providers",
       "roles": "Model roles",
       "quickCheck": "Quick-check",
-      "usage": "Usage"
+      "usage": "Usage",
+      "costs": "Costs",
+      "benchmarks": "Benchmarks"
     },
     "states": {
       "ready": "Ready",
@@ -2465,7 +2467,13 @@
         "model_influence_attribution": "Model influence attribution"
       },
       "unsaved": "Quick-check settings have unsaved changes.",
-      "saved": "Quick-check settings are synchronized."
+      "saved": "Quick-check settings are synchronized.",
+      "autoSave": {
+        "saving": "Saving…",
+        "saved": "Saved",
+        "pending": "Changes pending…",
+        "failed": "Save failed"
+      }
     },
     "usage": {
       "empty": "No observed executions in this reporting window.",
@@ -2509,7 +2517,139 @@
       "saveProvider": "Unable to save provider settings.",
       "testProvider": "Unable to test this provider.",
       "saveRole": "Unable to save the model role.",
-      "saveQuickCheck": "Unable to save quick-check settings."
+      "saveQuickCheck": "Unable to save quick-check settings.",
+      "loadCosts": "Unable to load AI cost observability.",
+      "loadBenchmarks": "Unable to load benchmark history.",
+      "loadBenchmarkDetail": "Unable to load benchmark execution details.",
+      "loadExecutionDetail": "Unable to load extraction execution details."
+    },
+    "costs": {
+      "eyebrow": "Cost observability",
+      "title": "Recorded AI and provider costs",
+      "subtitle": "Known recorded spend across LLM and external-provider execution ledgers. Unknown historical costs are preserved as unknown rather than treated as zero.",
+      "days": "{{days}}d",
+      "empty": "No recorded provider executions in this reporting window.",
+      "providersEyebrow": "Provider accounting",
+      "providersTitle": "Recorded cost by provider",
+      "providersSubtitle": "Coverage describes the executions currently represented in d-FCT telemetry; it does not imply that every possible external expense was instrumented historically.",
+      "coverageStates": {
+        "complete": "Complete",
+        "partial": "Partial",
+        "unavailable": "Unavailable"
+      },
+      "stats": {
+        "knownSpend": "Known recorded spend",
+        "knownSpendHelp": "Current known subtotal from recorded execution rows",
+        "coverage": "Recorded-cost coverage",
+        "coverageHelp": "Share of recorded executions with known cost",
+        "executions": "Recorded executions",
+        "unknown": "Unknown-cost executions"
+      },
+      "chart": {
+        "title": "Cost history by provider",
+        "subtitle": "Stacked known recorded cost with unknown-cost execution volume.",
+        "knownCostAxis": "Known cost (USD)",
+        "unknownAxis": "Unknown-cost executions",
+        "unknownExecutions": "Unknown-cost executions"
+      },
+      "columns": {
+        "provider": "Provider",
+        "executions": "Executions",
+        "known": "Known",
+        "unknown": "Unknown",
+        "coverage": "Coverage",
+        "knownCost": "Known recorded cost"
+      }
+    },
+    "benchmarks": {
+      "eyebrow": "Quality gates",
+      "title": "Benchmark history",
+      "subtitle": "Compare factual quality, hard-gate outcomes, cost, latency and execution topology across durable benchmark runs.",
+      "empty": "No benchmark runs match this selection.",
+      "loadingDetail": "Loading benchmark execution…",
+      "runsEyebrow": "Durable runs",
+      "runsTitle": "Benchmark executions",
+      "runsSubtitle": "Benchmark versions are kept separate so changes to the gate are never silently compared as the same test.",
+      "chart": {
+        "title": "Quality versus known recorded cost",
+        "subtitle": "Cost columns and benchmark score history. Select a point to inspect the underlying execution.",
+        "costAxis": "Known cost (USD)",
+        "qualityAxis": "Assertions passed",
+        "knownCost": "Known recorded cost",
+        "score": "Benchmark score",
+        "hardGate": "Hard gate",
+        "gateBadge": "12/12 hard gate"
+      },
+      "columns": {
+        "date": "Date",
+        "benchmark": "Benchmark",
+        "score": "Score",
+        "outcome": "Outcome",
+        "cost": "Known cost",
+        "coverage": "Coverage",
+        "duration": "Duration"
+      },
+      "detail": {
+        "pass": "Hard gate passed",
+        "fail": "Hard gate not satisfied",
+        "runMeta": "Topic {{topic}} · {{environment}}",
+        "hardGate": "Benchmark gate",
+        "hardGateHelp": "Griselda requires all 12 assertions",
+        "knownCost": "Known recorded cost",
+        "duration": "Duration",
+        "commit": "Git revision"
+      },
+      "filterBenchmark": "Filter by benchmark",
+      "filterVersion": "Filter by benchmark version",
+      "searchPlaceholder": "Search benchmark executions…",
+      "searchAria": "Search benchmark executions",
+      "sortBy": "Sort by {{column}}",
+      "executionPageEyebrow": "Benchmark execution",
+      "executionPageTitle": "Benchmark execution details",
+      "executionPageSubtitle": "Inspect the durable quality gate, assertions, recorded cost, services, execution DAG and timing for this run.",
+      "backToBenchmarks": "Benchmark history"
+    },
+    "execution": {
+      "empty": "No execution graph was recorded for this analysis.",
+      "noTimeline": "No timed execution nodes were recorded.",
+      "dagAria": "Information-extraction execution graph",
+      "dagEyebrow": "Execution topology",
+      "dagTitle": "Information-extraction DAG",
+      "dagSubtitle": "Structural containment from the persisted execution graph. Edges describe recorded topology and are not relabeled as causal dependencies.",
+      "timelineEyebrow": "Execution timing",
+      "timelineTitle": "Execution timeline",
+      "timelineSubtitle": "Recorded start and finish times reveal actual ordering and overlapping work.",
+      "timeline": "Execution",
+      "timelineAxis": "Offset from analysis start",
+      "parallel": "Parallel",
+      "parallelBadge": "Up to {{count}}× parallel",
+      "serviceExecutions": "{{count}} executions",
+      "selectNode": "Select a DAG node or timeline bar to inspect its telemetry.",
+      "references": "Execution references",
+      "stats": {
+        "duration": "Wall time",
+        "nodes": "Graph nodes",
+        "work": "Work nodes",
+        "parallelism": "Max parallelism",
+        "parallelismDetected": "{{count}} parallel window(s) recorded",
+        "serial": "No overlapping work nodes recorded",
+        "knownCost": "Known node cost"
+      },
+      "fields": {
+        "provider": "Provider",
+        "model": "Model",
+        "role": "Role",
+        "operation": "Operation",
+        "duration": "Duration",
+        "offset": "Started",
+        "cost": "Known cost",
+        "costProvenance": "Cost provenance"
+      },
+      "lookupEyebrow": "General analysis runs",
+      "lookupTitle": "Inspect any extraction execution",
+      "lookupSubtitle": "Use the same DAG, timeline and telemetry inspector for a non-benchmark AnalysisRun.",
+      "lookupPlaceholder": "Analysis run UUID",
+      "inspect": "Inspect run"
     }
   }
 }

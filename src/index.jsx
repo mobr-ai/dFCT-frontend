@@ -15,6 +15,7 @@ import WaitingList from "./pages/WaitingListPage";
 import SettingsPage from "./pages/SettingsPage";
 import BillingAccessPage from "./pages/BillingAccessPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
+import AdminBenchmarkExecutionPage from "./pages/AdminBenchmarkExecutionPage.jsx";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -369,6 +370,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/billing",
         element: <AdminPage />,
+      },
+      {
+        path: "/admin/ai/benchmarks/:benchmarkRunId",
+        element: <AdminBenchmarkExecutionPage />,
       },
       {
         path: "/gov",
