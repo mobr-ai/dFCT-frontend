@@ -1343,7 +1343,7 @@ function ProviderFinanceSection({
   );
 
   return (
-    <section className="DfctAdmin-section">
+    <section className="DfctAdmin-section DfctAdminAI-financeSection">
       <div className="DfctAdminAI-financeHeader">
         <div className="DfctAdmin-sectionHeader">
           <span className="DfctAdmin-eyebrow">
