@@ -2578,7 +2578,8 @@
       "providerTested": "{{provider}} connection test succeeded.",
       "financesSynced": "{{provider}} provider billing synchronized.",
       "roleSaved": "{{role}} model role saved.",
-      "quickCheckSaved": "Quick-check settings saved."
+      "quickCheckSaved": "Quick-check settings saved.",
+      "benchmarkLaunched": "Benchmark accepted for execution."
     },
     "errors": {
       "load": "Unable to load AI operations.",
@@ -2592,7 +2593,10 @@
       "unsupportedFinanceProvider": "Finance synchronization is not available for this provider.",
       "loadBenchmarks": "Unable to load benchmark history.",
       "loadBenchmarkDetail": "Unable to load benchmark execution details.",
-      "loadExecutionDetail": "Unable to load extraction execution details."
+      "loadExecutionDetail": "Unable to load extraction execution details.",
+      "loadBenchmarkCatalog": "Unable to load benchmark catalog.",
+      "preflightBenchmark": "Unable to preflight this benchmark.",
+      "launchBenchmark": "Unable to launch this benchmark."
     },
     "costs": {
       "eyebrow": "Cost observability",
@@ -2721,23 +2725,23 @@
       }
     },
     "benchmarks": {
-      "eyebrow": "Quality gates",
-      "title": "Benchmark history",
-      "subtitle": "Compare factual quality, hard-gate outcomes, cost, latency and execution topology across durable benchmark runs.",
+      "eyebrow": "Quality observability",
+      "title": "Benchmark performance",
+      "subtitle": "Track versioned quality gates, known recorded cost, latency and execution topology across durable benchmark runs.",
       "empty": "No benchmark runs match this selection.",
       "loadingDetail": "Loading benchmark execution…",
-      "runsEyebrow": "Durable runs",
+      "runsEyebrow": "Durable history",
       "runsTitle": "Benchmark executions",
-      "runsSubtitle": "Benchmark versions are kept separate so changes to the gate are never silently compared as the same test.",
+      "runsSubtitle": "Each benchmark version remains isolated so gate changes are never silently compared as the same test.",
       "chart": {
         "title": "Quality versus known recorded cost",
-        "subtitle": "Cost columns and benchmark score history. Select a point to inspect the underlying execution.",
+        "subtitle": "Known cost and benchmark quality over time. Select a point to inspect its durable execution.",
         "costAxis": "Known cost (USD)",
         "qualityAxis": "Assertions passed",
         "knownCost": "Known recorded cost",
         "score": "Benchmark score",
         "hardGate": "Hard gate",
-        "gateBadge": "12/12 hard gate"
+        "gateBadge": "Versioned hard gate"
       },
       "columns": {
         "date": "Date",
@@ -2753,7 +2757,7 @@
         "fail": "Hard gate not satisfied",
         "runMeta": "Topic {{topic}} · {{environment}}",
         "hardGate": "Benchmark gate",
-        "hardGateHelp": "Griselda requires all 12 assertions",
+        "hardGateHelp": "All required assertions for this benchmark version must pass.",
         "knownCost": "Known recorded cost",
         "duration": "Duration",
         "commit": "Git revision"
@@ -2766,7 +2770,110 @@
       "executionPageEyebrow": "Benchmark execution",
       "executionPageTitle": "Benchmark execution details",
       "executionPageSubtitle": "Inspect the durable quality gate, assertions, recorded cost, services, execution DAG and timing for this run.",
-      "backToBenchmarks": "Benchmark history"
+      "backToBenchmarks": "Benchmark operations",
+      "profileStatus": {
+        "validated": "Validated",
+        "candidate": "Candidate"
+      },
+      "states": {
+        "queued": "Queued",
+        "running": "Running",
+        "succeeded": "Succeeded",
+        "passed": "Passed",
+        "failed": "Failed",
+        "incomplete": "Incomplete"
+      },
+      "operations": {
+        "eyebrow": "Benchmark operations",
+        "title": "Configure and run a benchmark",
+        "subtitle": "Select an immutable benchmark version and analysis profile, run a zero-cost preflight, then explicitly authorize the real provider-backed execution.",
+        "benchmark": "Benchmark use case",
+        "version": "Benchmark version",
+        "profile": "Analysis profile",
+        "validatedProfiles": "Validated profiles",
+        "candidateProfiles": "Candidate profiles",
+        "showCandidateProfiles": "Show candidate profiles",
+        "defaultVersion": "Default",
+        "assertions": "Assertions",
+        "input": "Input",
+        "serviceLevel": "Service level",
+        "profileHash": "Profile hash",
+        "loadingCatalog": "Loading benchmark catalog…",
+        "liveRefresh": "Live run · refreshing about every 5 seconds",
+        "idleRefresh": "Idle · normal Admin refresh cadence"
+      },
+      "preflight": {
+        "eyebrow": "Safety gate",
+        "title": "Safe preflight",
+        "subtitle": "Resolve the exact benchmark and immutable profile before authorizing any paid provider work.",
+        "noProviders": "No provider calls",
+        "noCredentials": "No credentials",
+        "noWrites": "No writes",
+        "pending": "Run preflight after changing the benchmark, version or profile.",
+        "ready": "Preflight passed",
+        "assertionsSuffix": "required assertions",
+        "inherited": "Inherited runtime policy",
+        "action": "Run safe preflight",
+        "running": "Preflighting…"
+      },
+      "launch": {
+        "action": "Run benchmark",
+        "confirmTitle": "Authorize real benchmark execution?",
+        "confirmText": "{{benchmark}} v{{version}} will run with {{profile}} against real provider-backed production analysis paths.",
+        "realProviders": "Real provider calls",
+        "realProvidersHelp": "This execution may call configured paid AI and acquisition providers and can incur real USD cost.",
+        "billingBypassed": "Operator run · user billing bypassed",
+        "billingBypassedHelp": "Benchmark spend is operational testing cost and is not charged against an end-user credit balance.",
+        "disposableTopic": "Disposable benchmark topic",
+        "disposableTopicHelp": "Execution uses a disposable benchmark topic and must not mutate the historical fixture topic.",
+        "confirmCheckbox": "I understand this run may incur real provider costs.",
+        "cancel": "Cancel",
+        "confirmAction": "Authorize and run",
+        "launching": "Launching…"
+      },
+      "active": {
+        "eyebrow": "Live benchmark",
+        "accepted": "Launch accepted",
+        "awaitingRun": "Awaiting durable run",
+        "persisted": "Run persisted",
+        "executing": "Executing",
+        "resultReady": "Result ready",
+        "taskId": "Celery task",
+        "runId": "Benchmark run",
+        "pending": "Pending",
+        "score": "Gate score",
+        "cost": "Known cost",
+        "autoRefreshActive": "This state updates automatically while the benchmark is active.",
+        "autoRefreshComplete": "Automatic fast refresh stopped because the run reached a terminal state.",
+        "inspect": "Inspect execution"
+      },
+      "assertions": {
+        "analysis_succeeds": "Analysis completed successfully",
+        "dog_food_choice_identified": "Dog food choice identified",
+        "audio_transcription_executed": "Audio transcription completed",
+        "media_provenance_recorded": "Media provenance recorded",
+        "source_native_preference_hypothesis_recovered": "Source-native preference hypothesis recovered",
+        "preference_claim_not_overstated": "Preference claim not overstated",
+        "scientific_preference_research_executed": "Scientific preference research completed",
+        "canine_preference_behavior_independently_assessed": "Canine preference behavior independently assessed",
+        "independent_source_retrieval": "Independent sources retrieved",
+        "semantic_source_verification": "Semantic source verification",
+        "multimodel_required": "Multi-model analysis used",
+        "canonical_evidence_safety": "Canonical evidence safety",
+        "execution_graph_complete": "Execution graph complete",
+        "griselda_identity": "Griselda identity established",
+        "netflix_campaign": "Netflix campaign established",
+        "mirrored_artifact": "Mirrored artifact identified",
+        "cgi_not_physical_stunt": "CGI distinguished from physical stunt",
+        "paris_location": "Paris location established",
+        "busterwood_not_blindly_trusted": "Busterwood not blindly trusted",
+        "who_projection_identified": "WHO projection identified",
+        "who_projection_independently_verified": "WHO projection independently verified",
+        "vaccine_cancer_implication_investigated": "Vaccine–cancer implication investigated",
+        "vaccine_implication_not_promoted_as_explicit_quote": "Vaccine implication not presented as an explicit quote",
+        "source_extraction_recorded": "Source extraction recorded",
+        "social_context_stage_recorded": "Social context stage recorded"
+      }
     },
     "execution": {
       "empty": "No execution graph was recorded for this analysis.",
@@ -2808,7 +2915,15 @@
       "lookupTitle": "Inspect any extraction execution",
       "lookupSubtitle": "Use the same DAG, timeline and telemetry inspector for a non-benchmark AnalysisRun.",
       "lookupPlaceholder": "Analysis run UUID",
-      "inspect": "Inspect run"
+      "inspect": "Inspect run",
+      "closeInspector": "Close stage details",
+      "dagZoomControls": "Execution graph zoom controls",
+      "dagZoomOut": "Zoom out",
+      "dagZoomIn": "Zoom in",
+      "dagFit": "Fit",
+      "dagInteractionHint": "Hover or focus a node for telemetry; tap on mobile to open details.",
+      "dagReset": "Reset",
+      "dagResetHelp": "Reset to the initial 80% view and center the first execution step"
     }
   }
 }

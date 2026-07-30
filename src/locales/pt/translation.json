@@ -2578,7 +2578,8 @@
       "providerTested": "Teste de conexão com {{provider}} concluído com sucesso.",
       "financesSynced": "Cobrança do provedor {{provider}} sincronizada.",
       "roleSaved": "Papel de modelo {{role}} salvo.",
-      "quickCheckSaved": "Configurações do quick-check salvas."
+      "quickCheckSaved": "Configurações do quick-check salvas.",
+      "benchmarkLaunched": "Benchmark aceito para execução."
     },
     "errors": {
       "load": "Não foi possível carregar as operações de IA.",
@@ -2592,7 +2593,10 @@
       "unsupportedFinanceProvider": "A sincronização financeira não está disponível para este provedor.",
       "loadBenchmarks": "Não foi possível carregar o histórico de benchmarks.",
       "loadBenchmarkDetail": "Não foi possível carregar os detalhes da execução do benchmark.",
-      "loadExecutionDetail": "Não foi possível carregar os detalhes da execução de extração."
+      "loadExecutionDetail": "Não foi possível carregar os detalhes da execução de extração.",
+      "loadBenchmarkCatalog": "Não foi possível carregar o catálogo de benchmarks.",
+      "preflightBenchmark": "Não foi possível pré-verificar este benchmark.",
+      "launchBenchmark": "Não foi possível iniciar este benchmark."
     },
     "costs": {
       "eyebrow": "Observabilidade de custos",
@@ -2721,23 +2725,23 @@
       }
     },
     "benchmarks": {
-      "eyebrow": "Gates de qualidade",
-      "title": "Histórico de benchmarks",
-      "subtitle": "Compare qualidade factual, resultado do hard gate, custo, latência e topologia de execução entre execuções persistentes dos benchmarks.",
+      "eyebrow": "Observabilidade de qualidade",
+      "title": "Desempenho dos benchmarks",
+      "subtitle": "Acompanhe gates de qualidade versionados, custo conhecido registrado, latência e topologia de execução entre execuções persistentes.",
       "empty": "Nenhuma execução de benchmark corresponde à seleção.",
       "loadingDetail": "Carregando execução do benchmark…",
-      "runsEyebrow": "Execuções persistentes",
+      "runsEyebrow": "Histórico persistente",
       "runsTitle": "Execuções de benchmark",
-      "runsSubtitle": "As versões são mantidas separadas para que mudanças no gate nunca sejam comparadas silenciosamente como o mesmo teste.",
+      "runsSubtitle": "Cada versão do benchmark permanece isolada para que mudanças no gate nunca sejam comparadas silenciosamente como o mesmo teste.",
       "chart": {
         "title": "Qualidade versus custo conhecido registrado",
-        "subtitle": "Colunas de custo e histórico da pontuação do benchmark. Selecione um ponto para inspecionar a execução correspondente.",
+        "subtitle": "Custo conhecido e qualidade do benchmark ao longo do tempo. Selecione um ponto para inspecionar a execução persistente.",
         "costAxis": "Custo conhecido (USD)",
         "qualityAxis": "Asserções aprovadas",
         "knownCost": "Custo conhecido registrado",
         "score": "Pontuação do benchmark",
-        "hardGate": "Hard gate",
-        "gateBadge": "Hard gate 12/12"
+        "hardGate": "Gate obrigatório",
+        "gateBadge": "Gate versionado"
       },
       "columns": {
         "date": "Data",
@@ -2749,11 +2753,11 @@
         "duration": "Duração"
       },
       "detail": {
-        "pass": "Hard gate aprovado",
-        "fail": "Hard gate não satisfeito",
+        "pass": "Gate obrigatório aprovado",
+        "fail": "Gate obrigatório não satisfeito",
         "runMeta": "Tópico {{topic}} · {{environment}}",
         "hardGate": "Gate do benchmark",
-        "hardGateHelp": "Griselda exige aprovação nas 12 asserções",
+        "hardGateHelp": "Todas as asserções obrigatórias desta versão do benchmark devem ser aprovadas.",
         "knownCost": "Custo conhecido registrado",
         "duration": "Duração",
         "commit": "Revisão Git"
@@ -2765,8 +2769,111 @@
       "sortBy": "Ordenar por {{column}}",
       "executionPageEyebrow": "Execução de benchmark",
       "executionPageTitle": "Detalhes da execução do benchmark",
-      "executionPageSubtitle": "Inspecione o quality gate persistente, as asserções, o custo registrado, os serviços, o DAG de execução e os tempos desta execução.",
-      "backToBenchmarks": "Histórico de benchmarks"
+      "executionPageSubtitle": "Inspecione o gate persistente, as asserções, o custo registrado, os serviços, o DAG de execução e os tempos desta execução.",
+      "backToBenchmarks": "Operações de benchmark",
+      "profileStatus": {
+        "validated": "Validado",
+        "candidate": "Candidato"
+      },
+      "states": {
+        "queued": "Na fila",
+        "running": "Em execução",
+        "succeeded": "Concluído",
+        "passed": "Aprovado",
+        "failed": "Falhou",
+        "incomplete": "Incompleto"
+      },
+      "operations": {
+        "eyebrow": "Operações de benchmark",
+        "title": "Configure e execute um benchmark",
+        "subtitle": "Selecione uma versão imutável do benchmark e um perfil de análise, execute a pré-verificação sem custo e depois autorize explicitamente a execução real com provedores.",
+        "benchmark": "Caso de uso do benchmark",
+        "version": "Versão do benchmark",
+        "profile": "Perfil de análise",
+        "validatedProfiles": "Perfis validados",
+        "candidateProfiles": "Perfis candidatos",
+        "showCandidateProfiles": "Mostrar perfis candidatos",
+        "defaultVersion": "Padrão",
+        "assertions": "Asserções",
+        "input": "Entrada",
+        "serviceLevel": "Nível de serviço",
+        "profileHash": "Hash do perfil",
+        "loadingCatalog": "Carregando catálogo de benchmarks…",
+        "liveRefresh": "Execução ao vivo · atualização a cada ~5 segundos",
+        "idleRefresh": "Ocioso · atualização normal do Admin"
+      },
+      "preflight": {
+        "eyebrow": "Gate de segurança",
+        "title": "Pré-verificação segura",
+        "subtitle": "Resolva o benchmark exato e o perfil imutável antes de autorizar qualquer trabalho pago dos provedores.",
+        "noProviders": "Sem chamadas a provedores",
+        "noCredentials": "Sem credenciais",
+        "noWrites": "Sem gravações",
+        "pending": "Execute novamente a pré-verificação após alterar benchmark, versão ou perfil.",
+        "ready": "Pré-verificação aprovada",
+        "assertionsSuffix": "asserções obrigatórias",
+        "inherited": "Política de runtime herdada",
+        "action": "Executar pré-verificação",
+        "running": "Pré-verificando…"
+      },
+      "launch": {
+        "action": "Executar benchmark",
+        "confirmTitle": "Autorizar execução real do benchmark?",
+        "confirmText": "{{benchmark}} v{{version}} será executado com {{profile}} pelos caminhos reais de análise com provedores.",
+        "realProviders": "Chamadas reais aos provedores",
+        "realProvidersHelp": "Esta execução pode chamar provedores pagos de IA e aquisição configurados e pode gerar custo real em USD.",
+        "billingBypassed": "Execução operacional · cobrança do usuário ignorada",
+        "billingBypassedHelp": "O gasto do benchmark é custo operacional de teste e não é debitado do saldo de créditos de um usuário.",
+        "disposableTopic": "Tópico descartável de benchmark",
+        "disposableTopicHelp": "A execução usa um tópico descartável de benchmark e não deve alterar o tópico histórico usado como fixture.",
+        "confirmCheckbox": "Entendo que esta execução pode gerar custos reais de provedores.",
+        "cancel": "Cancelar",
+        "confirmAction": "Autorizar e executar",
+        "launching": "Iniciando…"
+      },
+      "active": {
+        "eyebrow": "Benchmark ao vivo",
+        "accepted": "Execução aceita",
+        "awaitingRun": "Aguardando registro persistente",
+        "persisted": "Execução persistida",
+        "executing": "Executando",
+        "resultReady": "Resultado disponível",
+        "taskId": "Tarefa Celery",
+        "runId": "Execução do benchmark",
+        "pending": "Pendente",
+        "score": "Pontuação do gate",
+        "cost": "Custo conhecido",
+        "autoRefreshActive": "Este estado é atualizado automaticamente enquanto o benchmark estiver ativo.",
+        "autoRefreshComplete": "A atualização rápida automática parou porque a execução chegou a um estado terminal.",
+        "inspect": "Inspecionar execução"
+      },
+      "assertions": {
+        "analysis_succeeds": "Análise concluída com sucesso",
+        "dog_food_choice_identified": "Escolha alimentar do cão identificada",
+        "audio_transcription_executed": "Transcrição de áudio concluída",
+        "media_provenance_recorded": "Proveniência da mídia registrada",
+        "source_native_preference_hypothesis_recovered": "Hipótese de preferência da fonte original recuperada",
+        "preference_claim_not_overstated": "Alegação de preferência não exagerada",
+        "scientific_preference_research_executed": "Pesquisa científica sobre preferência concluída",
+        "canine_preference_behavior_independently_assessed": "Comportamento de preferência canina avaliado independentemente",
+        "independent_source_retrieval": "Fontes independentes recuperadas",
+        "semantic_source_verification": "Verificação semântica das fontes",
+        "multimodel_required": "Análise multimodelo utilizada",
+        "canonical_evidence_safety": "Segurança da evidência canônica",
+        "execution_graph_complete": "Grafo de execução completo",
+        "griselda_identity": "Identidade de Griselda estabelecida",
+        "netflix_campaign": "Campanha da Netflix estabelecida",
+        "mirrored_artifact": "Artefato espelhado identificado",
+        "cgi_not_physical_stunt": "CGI distinguido de ação física real",
+        "paris_location": "Localização em Paris estabelecida",
+        "busterwood_not_blindly_trusted": "Busterwood não tratado como fonte automaticamente confiável",
+        "who_projection_identified": "Projeção da OMS identificada",
+        "who_projection_independently_verified": "Projeção da OMS verificada independentemente",
+        "vaccine_cancer_implication_investigated": "Implicação entre vacina e câncer investigada",
+        "vaccine_implication_not_promoted_as_explicit_quote": "Implicação sobre vacina não apresentada como citação explícita",
+        "source_extraction_recorded": "Extração da fonte registrada",
+        "social_context_stage_recorded": "Etapa de contexto social registrada"
+      }
     },
     "execution": {
       "empty": "Nenhum grafo de execução foi registrado para esta análise.",
@@ -2808,7 +2915,15 @@
       "lookupTitle": "Inspecionar qualquer execução de extração",
       "lookupSubtitle": "Use o mesmo DAG, linha do tempo e inspetor de telemetria para um AnalysisRun que não seja benchmark.",
       "lookupPlaceholder": "UUID do AnalysisRun",
-      "inspect": "Inspecionar execução"
+      "inspect": "Inspecionar execução",
+      "closeInspector": "Fechar detalhes da etapa",
+      "dagZoomControls": "Controles de zoom do grafo de execução",
+      "dagZoomOut": "Reduzir zoom",
+      "dagZoomIn": "Aumentar zoom",
+      "dagFit": "Ajustar",
+      "dagInteractionHint": "Passe o cursor ou foque um nó para ver a telemetria; toque em dispositivos móveis para abrir detalhes.",
+      "dagReset": "Redefinir",
+      "dagResetHelp": "Voltar à visualização inicial em 80% e centralizar a primeira etapa da execução"
     }
   }
 }
