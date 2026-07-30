@@ -19,6 +19,7 @@ import {
   useAdminAccess,
 } from "../hooks/useAdminAccess";
 import { useAdminAi } from "../hooks/useAdminAi";
+import { useAutoRefresh } from "../hooks/useAutoRefresh";
 
 import "../styles/admin/AdminConsole.css";
 
@@ -87,6 +88,63 @@ export default function AdminBenchmarkExecutionPage() {
     benchmarkRunId,
     isAdmin,
   ]);
+
+  const detailSummary = (
+    adminAi.benchmarkDetail?.summary
+    || {}
+  );
+
+  const detailBenchmark = (
+    adminAi.benchmarkDetail?.benchmark
+    || {}
+  );
+
+  const detailTerminal = Boolean(
+    [
+      "succeeded",
+      "failed",
+    ].includes(
+      String(
+        detailSummary.status
+        || detailBenchmark.status
+        || "",
+      ).toLowerCase(),
+    )
+    || [
+      "passed",
+      "failed",
+      "incomplete",
+    ].includes(
+      String(
+        detailSummary.outcome
+        || detailBenchmark.outcome
+        || "",
+      ).toLowerCase(),
+    )
+  );
+
+  const detailRefresh = useAutoRefresh({
+    enabled: Boolean(
+      isAdmin
+      && benchmarkRunId
+      && adminAi.benchmarkDetail
+      && !detailTerminal
+    ),
+    refresh: async () => {
+      await adminAi.loadBenchmarkDetail(
+        benchmarkRunId,
+        {
+          silent: true,
+        },
+      );
+    },
+    intervalMs: 5000,
+    maxIntervalMs: 30000,
+    refreshWhenHidden: false,
+    runImmediately: false,
+    jitterRatio: 0.04,
+    onError: () => {},
+  });
 
   if (!isAdmin) {
     return (
@@ -166,6 +224,7 @@ export default function AdminBenchmarkExecutionPage() {
           <BenchmarkDetail
             detail={adminAi.benchmarkDetail}
             loading={adminAi.detailLoading}
+            refreshing={detailRefresh.isRefreshing}
             t={t}
           />
         </Suspense>

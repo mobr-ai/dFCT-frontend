@@ -1,12 +1,15 @@
 import React, {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
+  Alert,
   Badge,
   Button,
   Form,
+  Modal,
   Spinner,
 } from "react-bootstrap";
 import Chart from "react-apexcharts";
@@ -2333,11 +2336,1794 @@ function ExecutionDag({
   onSelect,
   t,
 }) {
+  const viewportRef = useRef(null);
+  const svgRef = useRef(null);
+
+  const tooltipDismissRef = useRef(null);
+  const tooltipRemoveRef = useRef(null);
+  const panAnimationRef = useRef(null);
+  const zoomFrameRef = useRef(null);
+
+  const touchPointersRef = useRef(
+    new Map(),
+  );
+
+  const touchGestureRef = useRef(null);
+  const dagIdentityRef = useRef("");
+
+  const effectiveZoomRef = useRef(0.8);
+
+  const [viewportSize, setViewportSize] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  const [fitScale, setFitScale] = useState(1);
+  const [zoomMode, setZoomMode] = useState(
+    "manual",
+  );
+  const [manualZoom, setManualZoom] = useState(
+    0.8,
+  );
+
+  const [pinnedNodeId, setPinnedNodeId] = useState(
+    "",
+  );
+
+  const [tooltip, setTooltip] = useState(null);
+
   const dag = visual?.dag || {};
   const nodes = asArray(dag.nodes);
   const edges = asArray(dag.edges);
   const columns = asArray(
     dag.columns,
+  );
+
+  const nodeWidth = 204;
+  const nodeHeight = 64;
+  const columnPitch = 232;
+  const rowPitch = 108;
+  const paddingX = 34;
+  const paddingY = 30;
+
+  const minZoom = 0.06;
+  const maxZoom = 2.2;
+
+  const maxNodesAtDepth = Math.max(
+    1,
+    ...columns.map(
+      (column) => (
+        asArray(
+          column.nodeIds,
+        ).length
+      ),
+    ),
+  );
+
+  const width = Math.max(
+    680,
+    (
+      maxNodesAtDepth
+      * columnPitch
+    ) + (paddingX * 2),
+  );
+
+  const height = Math.max(
+    320,
+    (
+      Math.max(
+        1,
+        columns.length,
+      )
+      * rowPitch
+    ) + (paddingY * 2),
+  );
+
+  const positions = new Map();
+
+  for (const column of columns) {
+    const ids = asArray(
+      column.nodeIds,
+    );
+
+    const depth = Number(
+      column.depth || 0,
+    );
+
+    const y = (
+      paddingY
+      + (depth * rowPitch)
+    );
+
+    const groupWidth = (
+      ids.length
+      * columnPitch
+    );
+
+    const groupStart = (
+      (width - groupWidth) / 2
+      + (
+        columnPitch
+        - nodeWidth
+      ) / 2
+    );
+
+    ids.forEach(
+      (nodeId, index) => {
+        positions.set(
+          nodeId,
+          {
+            x: (
+              groupStart
+              + (
+                index
+                * columnPitch
+              )
+            ),
+            y,
+          },
+        );
+      },
+    );
+  }
+
+  const clampZoom = (value) => (
+    Math.min(
+      maxZoom,
+      Math.max(
+        minZoom,
+        Number(value) || minZoom,
+      ),
+    )
+  );
+
+  const finePointerAvailable = () => (
+    typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    ).matches
+  );
+
+  const clearTooltipTimers = () => {
+    if (tooltipDismissRef.current !== null) {
+      window.clearTimeout(
+        tooltipDismissRef.current,
+      );
+
+      tooltipDismissRef.current = null;
+    }
+
+    if (tooltipRemoveRef.current !== null) {
+      window.clearTimeout(
+        tooltipRemoveRef.current,
+      );
+
+      tooltipRemoveRef.current = null;
+    }
+  };
+
+  const removePinnedTooltip = ({
+    fade = false,
+    clearSelection = true,
+  } = {}) => {
+    clearTooltipTimers();
+
+    if (
+      fade
+      && tooltip?.node
+    ) {
+      setTooltip(
+        (current) => (
+          current
+            ? {
+                ...current,
+                fading: true,
+              }
+            : null
+        ),
+      );
+
+      tooltipRemoveRef.current = (
+        window.setTimeout(
+          () => {
+            setTooltip(null);
+            setPinnedNodeId("");
+
+            if (clearSelection) {
+              onSelect("");
+            }
+
+            tooltipRemoveRef.current = null;
+          },
+          220,
+        )
+      );
+
+      return;
+    }
+
+    setTooltip(null);
+    setPinnedNodeId("");
+
+    if (clearSelection) {
+      onSelect("");
+    }
+  };
+
+  const schedulePinnedTooltipDismiss = () => {
+    clearTooltipTimers();
+
+    tooltipDismissRef.current = (
+      window.setTimeout(
+        () => {
+          setTooltip(
+            (current) => (
+              current
+                ? {
+                    ...current,
+                    fading: true,
+                  }
+                : null
+            ),
+          );
+
+          tooltipRemoveRef.current = (
+            window.setTimeout(
+              () => {
+                setTooltip(null);
+                setPinnedNodeId("");
+                onSelect("");
+
+                tooltipRemoveRef.current = null;
+              },
+              220,
+            )
+          );
+        },
+        7000,
+      )
+    );
+  };
+
+  const cancelPanAnimation = () => {
+    if (panAnimationRef.current !== null) {
+      window.cancelAnimationFrame(
+        panAnimationRef.current,
+      );
+
+      panAnimationRef.current = null;
+    }
+  };
+
+  const animateViewportTo = (
+    targetLeft,
+    targetTop,
+    {
+      animated = true,
+      duration = 240,
+    } = {},
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return;
+    }
+
+    cancelPanAnimation();
+
+    const maxLeft = Math.max(
+      0,
+      viewport.scrollWidth
+      - viewport.clientWidth,
+    );
+
+    const maxTop = Math.max(
+      0,
+      viewport.scrollHeight
+      - viewport.clientHeight,
+    );
+
+    const destinationLeft = Math.max(
+      0,
+      Math.min(
+        maxLeft,
+        Number(targetLeft) || 0,
+      ),
+    );
+
+    const destinationTop = Math.max(
+      0,
+      Math.min(
+        maxTop,
+        Number(targetTop) || 0,
+      ),
+    );
+
+    if (!animated) {
+      viewport.scrollLeft = (
+        destinationLeft
+      );
+
+      viewport.scrollTop = (
+        destinationTop
+      );
+
+      return;
+    }
+
+    const initialLeft = (
+      viewport.scrollLeft
+    );
+
+    const initialTop = (
+      viewport.scrollTop
+    );
+
+    const deltaLeft = (
+      destinationLeft
+      - initialLeft
+    );
+
+    const deltaTop = (
+      destinationTop
+      - initialTop
+    );
+
+    if (
+      Math.abs(deltaLeft) < 0.5
+      && Math.abs(deltaTop) < 0.5
+    ) {
+      return;
+    }
+
+    const startedAt = (
+      performance.now()
+    );
+
+    const frame = (now) => {
+      const progress = Math.min(
+        1,
+        (
+          now - startedAt
+        ) / duration,
+      );
+
+      const eased = (
+        1
+        - Math.pow(
+          1 - progress,
+          5,
+        )
+      );
+
+      viewport.scrollLeft = (
+        initialLeft
+        + deltaLeft * eased
+      );
+
+      viewport.scrollTop = (
+        initialTop
+        + deltaTop * eased
+      );
+
+      if (progress < 1) {
+        panAnimationRef.current = (
+          window.requestAnimationFrame(
+            frame,
+          )
+        );
+      } else {
+        panAnimationRef.current = null;
+      }
+    };
+
+    panAnimationRef.current = (
+      window.requestAnimationFrame(
+        frame,
+      )
+    );
+  };
+
+  const nodeElement = (
+    nodeId,
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return null;
+    }
+
+    return Array.from(
+      viewport.querySelectorAll(
+        ".DfctAdminAI-dagNode",
+      ),
+    ).find(
+      (element) => (
+        element.getAttribute(
+          "data-dag-node-id",
+        ) === String(nodeId)
+      ),
+    ) || null;
+  };
+
+  const centerElement = (
+    element,
+    {
+      animated = true,
+      duration = 260,
+    } = {},
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (
+      !viewport
+      || !element
+    ) {
+      return;
+    }
+
+    const viewportRect = (
+      viewport.getBoundingClientRect()
+    );
+
+    const elementRect = (
+      element.getBoundingClientRect()
+    );
+
+    const deltaX = (
+      (
+        elementRect.left
+        + elementRect.width / 2
+      )
+      - (
+        viewportRect.left
+        + viewportRect.width / 2
+      )
+    );
+
+    const deltaY = (
+      (
+        elementRect.top
+        + elementRect.height / 2
+      )
+      - (
+        viewportRect.top
+        + viewportRect.height / 2
+      )
+    );
+
+    animateViewportTo(
+      viewport.scrollLeft + deltaX,
+      viewport.scrollTop + deltaY,
+      {
+        animated,
+        duration,
+      },
+    );
+  };
+
+  const firstNodeId = (
+    asArray(
+      columns
+        .slice()
+        .sort(
+          (left, right) => (
+            Number(left.depth || 0)
+            - Number(right.depth || 0)
+          ),
+        )[0]?.nodeIds,
+    )[0]
+    || nodes[0]?.nodeId
+    || ""
+  );
+
+  const centerFirstStep = (
+    animated = true,
+  ) => {
+    const element = (
+      nodeElement(
+        firstNodeId,
+      )
+    );
+
+    if (element) {
+      centerElement(
+        element,
+        {
+          animated,
+          duration: 260,
+        },
+      );
+    }
+  };
+
+  /*
+   * Tooltip coordinates are stored in the scrollable viewport's own
+   * content coordinate system. This is important: absolute coordinates
+   * without scrollLeft/scrollTop are what previously allowed the tooltip
+   * to visually escape above the DAG.
+   */
+  const positionTooltip = (
+    element,
+    node,
+    {
+      pinned = false,
+    } = {},
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (
+      !viewport
+      || !element
+      || !finePointerAvailable()
+    ) {
+      return false;
+    }
+
+    const viewportRect = (
+      viewport.getBoundingClientRect()
+    );
+
+    const nodeRect = (
+      element.getBoundingClientRect()
+    );
+
+    const viewportVisible = (
+      viewportRect.bottom > 0
+      && viewportRect.right > 0
+      && viewportRect.top < window.innerHeight
+      && viewportRect.left < window.innerWidth
+    );
+
+    if (!viewportVisible) {
+      setTooltip(null);
+      return false;
+    }
+
+    const nodeVisible = !(
+      nodeRect.bottom
+        <= viewportRect.top
+      || nodeRect.top
+        >= viewportRect.bottom
+      || nodeRect.right
+        <= viewportRect.left
+      || nodeRect.left
+        >= viewportRect.right
+    );
+
+    if (!nodeVisible) {
+      setTooltip(null);
+      return false;
+    }
+
+    const margin = 10;
+
+    const visibleLeft = Math.max(
+      viewportRect.left + margin,
+      margin,
+    );
+
+    const visibleRight = Math.min(
+      viewportRect.right - margin,
+      window.innerWidth - margin,
+    );
+
+    const visibleTop = Math.max(
+      viewportRect.top + margin,
+      margin,
+    );
+
+    const visibleBottom = Math.min(
+      viewportRect.bottom - margin,
+      window.innerHeight - margin,
+    );
+
+    const tooltipWidth = Math.min(
+      300,
+      Math.max(
+        180,
+        visibleRight
+        - visibleLeft,
+      ),
+    );
+
+    const tooltipHeight = 205;
+
+    const centerX = (
+      nodeRect.left
+      + nodeRect.width / 2
+    );
+
+    const clientLeft = Math.max(
+      visibleLeft,
+      Math.min(
+        centerX
+        - tooltipWidth / 2,
+        visibleRight
+        - tooltipWidth,
+      ),
+    );
+
+    const roomBelow = (
+      visibleBottom
+      - nodeRect.bottom
+    );
+
+    const roomAbove = (
+      nodeRect.top
+      - visibleTop
+    );
+
+    const above = (
+      roomBelow
+        < tooltipHeight + margin
+      && roomAbove > roomBelow
+    );
+
+    const idealClientTop = above
+      ? (
+          nodeRect.top
+          - tooltipHeight
+          - margin
+        )
+      : (
+          nodeRect.bottom
+          + margin
+        );
+
+    const clientTop = Math.max(
+      visibleTop,
+      Math.min(
+        idealClientTop,
+        visibleBottom
+        - tooltipHeight,
+      ),
+    );
+
+    /*
+     * Convert client coordinates to scroll-content coordinates.
+     * The viewport's overflow then becomes the final clipping boundary.
+     */
+    const left = (
+      viewport.scrollLeft
+      + clientLeft
+      - viewportRect.left
+    );
+
+    const top = (
+      viewport.scrollTop
+      + clientTop
+      - viewportRect.top
+    );
+
+    setTooltip({
+      node,
+      left,
+      top,
+      width: tooltipWidth,
+      pinned,
+      fading: false,
+    });
+
+    return true;
+  };
+
+  const showTransientTooltip = (
+    event,
+    node,
+  ) => {
+    if (
+      !finePointerAvailable()
+      || pinnedNodeId
+    ) {
+      return;
+    }
+
+    positionTooltip(
+      event.currentTarget,
+      node,
+    );
+  };
+
+  const hideTransientTooltip = () => {
+    if (!pinnedNodeId) {
+      setTooltip(null);
+    }
+  };
+
+  const pinDesktopNode = (
+    element,
+    node,
+  ) => {
+    clearTooltipTimers();
+
+    setPinnedNodeId(
+      node.nodeId,
+    );
+
+    onSelect(
+      node.nodeId,
+    );
+
+    positionTooltip(
+      element,
+      node,
+      {
+        pinned: true,
+      },
+    );
+
+    centerElement(
+      element,
+      {
+        animated: true,
+        duration: 280,
+      },
+    );
+
+    schedulePinnedTooltipDismiss();
+  };
+
+  const activateNode = (
+    event,
+    node,
+  ) => {
+    if (finePointerAvailable()) {
+      pinDesktopNode(
+        event.currentTarget,
+        node,
+      );
+
+      return;
+    }
+
+    onSelect(
+      selectedNodeId === node.nodeId
+        ? ""
+        : node.nodeId,
+    );
+  };
+
+  /*
+   * Fit is responsive to the actual DAG viewport, not the whole window.
+   */
+  useEffect(() => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return undefined;
+    }
+
+    const update = () => {
+      const rect = (
+        viewport.getBoundingClientRect()
+      );
+
+      const availableWidth = Math.max(
+        1,
+        rect.width - 28,
+      );
+
+      const availableHeight = Math.max(
+        1,
+        rect.height - 28,
+      );
+
+      const nextFit = Math.min(
+        1,
+        Math.max(
+          minZoom,
+          Math.min(
+            availableWidth / width,
+            availableHeight / height,
+          ),
+        ),
+      );
+
+      setViewportSize({
+        width: rect.width,
+        height: rect.height,
+      });
+
+      setFitScale(nextFit);
+    };
+
+    update();
+
+    if (
+      typeof ResizeObserver
+      === "undefined"
+    ) {
+      window.addEventListener(
+        "resize",
+        update,
+      );
+
+      return () => {
+        window.removeEventListener(
+          "resize",
+          update,
+        );
+      };
+    }
+
+    const observer = new ResizeObserver(
+      update,
+    );
+
+    observer.observe(
+      viewport,
+    );
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [
+    height,
+    width,
+  ]);
+
+  const effectiveZoom = (
+    zoomMode === "fit"
+      ? fitScale
+      : manualZoom
+  );
+
+  effectiveZoomRef.current = (
+    effectiveZoom
+  );
+
+  const renderedWidth = (
+    width * effectiveZoom
+  );
+
+  const renderedHeight = (
+    height * effectiveZoom
+  );
+
+  const zoomPercent = Math.round(
+    effectiveZoom * 100,
+  );
+
+  /*
+   * Reset whenever a different durable DAG is loaded.
+   */
+  useEffect(() => {
+    const identity = [
+      nodes.length,
+      edges.length,
+      firstNodeId,
+      width,
+      height,
+    ].join(":");
+
+    if (
+      !nodes.length
+      || dagIdentityRef.current
+        === identity
+    ) {
+      return;
+    }
+
+    dagIdentityRef.current = (
+      identity
+    );
+
+    effectiveZoomRef.current = 0.8;
+
+    setZoomMode(
+      "manual",
+    );
+
+    setManualZoom(
+      0.8,
+    );
+
+    setPinnedNodeId("");
+    setTooltip(null);
+    onSelect("");
+
+    window.requestAnimationFrame(
+      () => {
+        window.requestAnimationFrame(
+          () => {
+            centerFirstStep(
+              false,
+            );
+          },
+        );
+      },
+    );
+  }, [
+    edges.length,
+    firstNodeId,
+    height,
+    nodes.length,
+    width,
+  ]);
+
+  /*
+   * Keep a pinned tooltip attached to its node while the DAG itself pans.
+   * Window scrolling is also observed so an off-screen DAG never leaves a
+   * floating inspector behind.
+   */
+  useEffect(() => {
+    if (
+      !pinnedNodeId
+      || !finePointerAvailable()
+    ) {
+      return undefined;
+    }
+
+    const viewport = (
+      viewportRef.current
+    );
+
+    const node = nodes.find(
+      (candidate) => (
+        candidate.nodeId
+        === pinnedNodeId
+      ),
+    );
+
+    if (
+      !viewport
+      || !node
+    ) {
+      return undefined;
+    }
+
+    let frame = null;
+
+    const update = () => {
+      if (frame !== null) {
+        window.cancelAnimationFrame(
+          frame,
+        );
+      }
+
+      frame = window.requestAnimationFrame(
+        () => {
+          frame = null;
+
+          const element = nodeElement(
+            pinnedNodeId,
+          );
+
+          if (!element) {
+            setTooltip(null);
+            return;
+          }
+
+          positionTooltip(
+            element,
+            node,
+            {
+              pinned: true,
+            },
+          );
+        },
+      );
+    };
+
+    viewport.addEventListener(
+      "scroll",
+      update,
+      {
+        passive: true,
+      },
+    );
+
+    /*
+     * capture=true catches page/ancestor scrolling as well.
+     */
+    window.addEventListener(
+      "scroll",
+      update,
+      true,
+    );
+
+    window.addEventListener(
+      "resize",
+      update,
+    );
+
+    update();
+
+    return () => {
+      viewport.removeEventListener(
+        "scroll",
+        update,
+      );
+
+      window.removeEventListener(
+        "scroll",
+        update,
+        true,
+      );
+
+      window.removeEventListener(
+        "resize",
+        update,
+      );
+
+      if (frame !== null) {
+        window.cancelAnimationFrame(
+          frame,
+        );
+      }
+    };
+  }, [
+    nodes,
+    pinnedNodeId,
+  ]);
+
+  const prepareForZoom = () => {
+    /*
+     * A zoom changes the inspection context. Dismiss persistent telemetry
+     * immediately rather than letting it float over a moving graph.
+     */
+    if (
+      pinnedNodeId
+      || tooltip?.pinned
+    ) {
+      removePinnedTooltip({
+        fade: true,
+      });
+    } else {
+      setTooltip(null);
+    }
+  };
+
+  const setManualZoomValue = (
+    value,
+  ) => {
+    const next = clampZoom(
+      value,
+    );
+
+    effectiveZoomRef.current = (
+      next
+    );
+
+    setZoomMode(
+      "manual",
+    );
+
+    setManualZoom(
+      next,
+    );
+
+    return next;
+  };
+
+  /*
+   * Zoom around a client-space focal point and then bring that point toward
+   * the middle of the viewport. This provides the camera-style navigation
+   * requested for mouse-wheel zoom.
+   */
+  const zoomTowardPoint = (
+    nextZoom,
+    clientX,
+    clientY,
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return;
+    }
+
+    const previousZoom = (
+      effectiveZoomRef.current
+    );
+
+    const normalized = (
+      clampZoom(
+        nextZoom,
+      )
+    );
+
+    if (
+      Math.abs(
+        normalized
+        - previousZoom
+      ) < 0.0001
+    ) {
+      return;
+    }
+
+    prepareForZoom();
+
+    const rect = (
+      viewport.getBoundingClientRect()
+    );
+
+    const pointerX = (
+      clientX
+      - rect.left
+    );
+
+    const pointerY = (
+      clientY
+      - rect.top
+    );
+
+    const contentX = (
+      viewport.scrollLeft
+      + pointerX
+    );
+
+    const contentY = (
+      viewport.scrollTop
+      + pointerY
+    );
+
+    const ratio = (
+      normalized
+      / previousZoom
+    );
+
+    setManualZoomValue(
+      normalized,
+    );
+
+    if (zoomFrameRef.current !== null) {
+      window.cancelAnimationFrame(
+        zoomFrameRef.current,
+      );
+    }
+
+    zoomFrameRef.current = (
+      window.requestAnimationFrame(
+        () => {
+          zoomFrameRef.current = null;
+
+          animateViewportTo(
+            (
+              contentX * ratio
+              - viewport.clientWidth / 2
+            ),
+            (
+              contentY * ratio
+              - viewport.clientHeight / 2
+            ),
+            {
+              animated: true,
+              duration: 175,
+            },
+          );
+        },
+      )
+    );
+  };
+
+  /*
+   * Native non-passive wheel listener is intentional.
+   *
+   * Chromium reports trackpad pinch as Ctrl+wheel.
+   * High-resolution pixel deltas are treated as trackpad panning.
+   * Coarser discrete wheel deltas remain mouse-wheel zoom.
+   */
+  useEffect(() => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return undefined;
+    }
+
+    const normalizeDelta = (
+      value,
+      mode,
+    ) => {
+      let delta = Number(
+        value || 0,
+      );
+
+      if (mode === 1) {
+        delta *= 16;
+      } else if (mode === 2) {
+        delta *= Math.max(
+          320,
+          viewport.clientHeight,
+        );
+      }
+
+      return Math.max(
+        -240,
+        Math.min(
+          240,
+          delta,
+        ),
+      );
+    };
+
+    const canPanX = (
+      delta,
+    ) => (
+      delta < 0
+        ? viewport.scrollLeft > 0
+        : viewport.scrollLeft
+          < (
+            viewport.scrollWidth
+            - viewport.clientWidth
+            - 1
+          )
+    );
+
+    const canPanY = (
+      delta,
+    ) => (
+      delta < 0
+        ? viewport.scrollTop > 0
+        : viewport.scrollTop
+          < (
+            viewport.scrollHeight
+            - viewport.clientHeight
+            - 1
+          )
+    );
+
+    const handleWheel = (
+      event,
+    ) => {
+      let deltaX = normalizeDelta(
+        event.deltaX,
+        event.deltaMode,
+      );
+
+      let deltaY = normalizeDelta(
+        event.deltaY,
+        event.deltaMode,
+      );
+
+      /*
+       * Browser/OS trackpad pinch gesture.
+       */
+      if (event.ctrlKey) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const factor = Math.exp(
+          -deltaY * 0.003,
+        );
+
+        zoomTowardPoint(
+          effectiveZoomRef.current
+          * factor,
+          event.clientX,
+          event.clientY,
+        );
+
+        return;
+      }
+
+      if (
+        event.shiftKey
+        && Math.abs(deltaX) < 0.25
+      ) {
+        deltaX = deltaY;
+        deltaY = 0;
+      }
+
+      const pixelPrecision = (
+        event.deltaMode === 0
+      );
+
+      /*
+       * Chromium has no reliable "trackpad" flag. In practice trackpads
+       * generate pixel deltas and either a horizontal component, fractional
+       * values, or substantially smaller Y steps than a physical wheel.
+       */
+      const likelyTrackpad = (
+        pixelPrecision
+        && (
+          Math.abs(deltaX) > 0.01
+          || Math.abs(deltaY) < 80
+          || !Number.isInteger(deltaY)
+        )
+      );
+
+      if (likelyTrackpad) {
+        const panX = (
+          Math.abs(deltaX) >= 0.15
+          && canPanX(deltaX)
+        );
+
+        const panY = (
+          Math.abs(deltaY) >= 0.15
+          && canPanY(deltaY)
+        );
+
+        /*
+         * When the DAG cannot consume the gesture at its boundary, allow
+         * normal page scrolling instead of trapping the user.
+         */
+        if (!panX && !panY) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        cancelPanAnimation();
+
+        if (panX) {
+          viewport.scrollLeft += (
+            deltaX
+          );
+        }
+
+        if (panY) {
+          viewport.scrollTop += (
+            deltaY
+          );
+        }
+
+        return;
+      }
+
+      /*
+       * Discrete mouse wheel = zoom.
+       */
+      if (Math.abs(deltaY) >= 0.15) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const factor = Math.exp(
+          -deltaY * 0.0019,
+        );
+
+        zoomTowardPoint(
+          effectiveZoomRef.current
+          * factor,
+          event.clientX,
+          event.clientY,
+        );
+      }
+    };
+
+    viewport.addEventListener(
+      "wheel",
+      handleWheel,
+      {
+        passive: false,
+        capture: true,
+      },
+    );
+
+    return () => {
+      viewport.removeEventListener(
+        "wheel",
+        handleWheel,
+        {
+          capture: true,
+        },
+      );
+    };
+  }, [
+    pinnedNodeId,
+    tooltip,
+  ]);
+
+  /*
+   * Touch canvas:
+   *
+   * 1 pointer -> pan
+   * 2 pointers -> pinch zoom
+   *
+   * This also works with Chromium DevTools mobile touch emulation because it
+   * uses Pointer Events rather than browser-specific touch events.
+   */
+  useEffect(() => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return undefined;
+    }
+
+    const distance = (
+      left,
+      right,
+    ) => (
+      Math.hypot(
+        right.x - left.x,
+        right.y - left.y,
+      )
+    );
+
+    const midpoint = (
+      left,
+      right,
+    ) => ({
+      x: (
+        left.x + right.x
+      ) / 2,
+      y: (
+        left.y + right.y
+      ) / 2,
+    });
+
+    const beginGesture = () => {
+      const pointers = Array.from(
+        touchPointersRef.current.values(),
+      );
+
+      if (pointers.length === 1) {
+        const pointer = pointers[0];
+
+        touchGestureRef.current = {
+          mode: "pan",
+          pointerId: pointer.id,
+          x: pointer.x,
+          y: pointer.y,
+          scrollLeft:
+            viewport.scrollLeft,
+          scrollTop:
+            viewport.scrollTop,
+        };
+
+        return;
+      }
+
+      if (pointers.length >= 2) {
+        const left = pointers[0];
+        const right = pointers[1];
+
+        touchGestureRef.current = {
+          mode: "pinch",
+          distance: Math.max(
+            1,
+            distance(
+              left,
+              right,
+            ),
+          ),
+          zoom:
+            effectiveZoomRef.current,
+          midpoint: midpoint(
+            left,
+            right,
+          ),
+        };
+
+        prepareForZoom();
+      }
+    };
+
+    const handlePointerDown = (
+      event,
+    ) => {
+      if (
+        event.pointerType !== "touch"
+      ) {
+        return;
+      }
+
+      touchPointersRef.current.set(
+        event.pointerId,
+        {
+          id: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+        },
+      );
+
+      try {
+        viewport.setPointerCapture(
+          event.pointerId,
+        );
+      } catch {
+        // Pointer capture can be unavailable in some emulation modes.
+      }
+
+      beginGesture();
+    };
+
+    const handlePointerMove = (
+      event,
+    ) => {
+      if (
+        event.pointerType !== "touch"
+        || !touchPointersRef.current.has(
+          event.pointerId,
+        )
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      touchPointersRef.current.set(
+        event.pointerId,
+        {
+          id: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+        },
+      );
+
+      const pointers = Array.from(
+        touchPointersRef.current.values(),
+      );
+
+      if (
+        pointers.length >= 2
+      ) {
+        const left = pointers[0];
+        const right = pointers[1];
+
+        if (
+          touchGestureRef.current?.mode
+          !== "pinch"
+        ) {
+          beginGesture();
+        }
+
+        const gesture = (
+          touchGestureRef.current
+        );
+
+        if (
+          !gesture
+          || gesture.mode !== "pinch"
+        ) {
+          return;
+        }
+
+        const currentDistance = Math.max(
+          1,
+          distance(
+            left,
+            right,
+          ),
+        );
+
+        const currentMidpoint = midpoint(
+          left,
+          right,
+        );
+
+        const nextZoom = clampZoom(
+          gesture.zoom
+          * (
+            currentDistance
+            / gesture.distance
+          ),
+        );
+
+        const previousZoom = (
+          effectiveZoomRef.current
+        );
+
+        if (
+          Math.abs(
+            nextZoom
+            - previousZoom
+          ) >= 0.001
+        ) {
+          const rect = (
+            viewport.getBoundingClientRect()
+          );
+
+          const localX = (
+            currentMidpoint.x
+            - rect.left
+          );
+
+          const localY = (
+            currentMidpoint.y
+            - rect.top
+          );
+
+          const contentX = (
+            viewport.scrollLeft
+            + localX
+          );
+
+          const contentY = (
+            viewport.scrollTop
+            + localY
+          );
+
+          const ratio = (
+            nextZoom
+            / previousZoom
+          );
+
+          effectiveZoomRef.current = (
+            nextZoom
+          );
+
+          setZoomMode(
+            "manual",
+          );
+
+          setManualZoom(
+            nextZoom,
+          );
+
+          window.requestAnimationFrame(
+            () => {
+              viewport.scrollLeft = Math.max(
+                0,
+                (
+                  contentX * ratio
+                  - localX
+                ),
+              );
+
+              viewport.scrollTop = Math.max(
+                0,
+                (
+                  contentY * ratio
+                  - localY
+                ),
+              );
+            },
+          );
+        }
+
+        return;
+      }
+
+      if (
+        pointers.length === 1
+      ) {
+        const pointer = pointers[0];
+
+        if (
+          touchGestureRef.current?.mode
+          !== "pan"
+          || touchGestureRef.current
+            .pointerId !== pointer.id
+        ) {
+          beginGesture();
+        }
+
+        const gesture = (
+          touchGestureRef.current
+        );
+
+        if (
+          !gesture
+          || gesture.mode !== "pan"
+        ) {
+          return;
+        }
+
+        cancelPanAnimation();
+
+        viewport.scrollLeft = (
+          gesture.scrollLeft
+          - (
+            pointer.x
+            - gesture.x
+          )
+        );
+
+        viewport.scrollTop = (
+          gesture.scrollTop
+          - (
+            pointer.y
+            - gesture.y
+          )
+        );
+      }
+    };
+
+    const finishPointer = (
+      event,
+    ) => {
+      if (
+        event.pointerType !== "touch"
+      ) {
+        return;
+      }
+
+      touchPointersRef.current.delete(
+        event.pointerId,
+      );
+
+      if (
+        touchPointersRef.current.size
+        === 0
+      ) {
+        touchGestureRef.current = null;
+      } else {
+        beginGesture();
+      }
+    };
+
+    viewport.addEventListener(
+      "pointerdown",
+      handlePointerDown,
+      {
+        passive: true,
+      },
+    );
+
+    viewport.addEventListener(
+      "pointermove",
+      handlePointerMove,
+      {
+        passive: false,
+      },
+    );
+
+    viewport.addEventListener(
+      "pointerup",
+      finishPointer,
+      {
+        passive: true,
+      },
+    );
+
+    viewport.addEventListener(
+      "pointercancel",
+      finishPointer,
+      {
+        passive: true,
+      },
+    );
+
+    return () => {
+      viewport.removeEventListener(
+        "pointerdown",
+        handlePointerDown,
+      );
+
+      viewport.removeEventListener(
+        "pointermove",
+        handlePointerMove,
+      );
+
+      viewport.removeEventListener(
+        "pointerup",
+        finishPointer,
+      );
+
+      viewport.removeEventListener(
+        "pointercancel",
+        finishPointer,
+      );
+
+      touchPointersRef.current.clear();
+      touchGestureRef.current = null;
+    };
+  }, [
+    pinnedNodeId,
+    tooltip,
+  ]);
+
+  useEffect(
+    () => () => {
+      clearTooltipTimers();
+      cancelPanAnimation();
+
+      if (zoomFrameRef.current !== null) {
+        window.cancelAnimationFrame(
+          zoomFrameRef.current,
+        );
+      }
+    },
+    [],
   );
 
   if (!nodes.length) {
@@ -2350,283 +4136,535 @@ function ExecutionDag({
     );
   }
 
-  const nodeById = new Map(
-    nodes.map(
-      (node) => [
-        node.nodeId,
-        node,
-      ],
-    ),
-  );
-
-  const columnWidth = 246;
-  const nodeWidth = 204;
-  const nodeHeight = 64;
-  const paddingX = 28;
-  const paddingY = 28;
-
-  const maxRows = Math.max(
-    1,
-    ...columns.map(
-      (column) => (
-        asArray(
-          column.nodeIds,
-        ).length
-      ),
-    ),
-  );
-
-  const rowPitch = 88;
-
-  const height = Math.max(
-    260,
-    (
-      maxRows
-      * rowPitch
-    ) + (paddingY * 2),
-  );
-
-  const width = Math.max(
-    520,
-    (
-      columns.length
-      * columnWidth
-    ) + (paddingX * 2),
-  );
-
-  const positions = new Map();
-
-  for (const column of columns) {
-    const ids = asArray(
-      column.nodeIds,
-    );
-
-    const x = (
-      paddingX
-      + (
-        Number(column.depth)
-        * columnWidth
-      )
-    );
-
-    ids.forEach(
-      (nodeId, index) => {
-        const center = (
-          (
-            index + 1
-          )
-          * height
-          / (
-            ids.length + 1
-          )
-        );
-
-        positions.set(
-          nodeId,
-          {
-            x,
-            y: (
-              center
-              - nodeHeight / 2
-            ),
-          },
-        );
-      },
-    );
-  }
-
   return (
-    <div className="DfctAdminAI-dagScroll">
-      <svg
-        className="DfctAdminAI-dag"
-        viewBox={`0 0 ${width} ${height}`}
-        style={{
-          width: `${width}px`,
-          height: `${height}px`,
-        }}
-        role="img"
-        aria-label={t(
-          "adminAI.execution.dagAria",
-        )}
-      >
-        <g className="DfctAdminAI-dagEdges">
-          {edges.map(
-            (edge, index) => {
-              const source = positions.get(
-                edge.sourceNodeId,
-              );
-
-              const target = positions.get(
-                edge.targetNodeId,
-              );
-
-              if (
-                !source
-                || !target
-              ) {
-                return null;
-              }
-
-              const x1 = (
-                source.x
-                + nodeWidth
-              );
-
-              const y1 = (
-                source.y
-                + nodeHeight / 2
-              );
-
-              const x2 = target.x;
-
-              const y2 = (
-                target.y
-                + nodeHeight / 2
-              );
-
-              const middle = (
-                x1
-                + (x2 - x1) / 2
-              );
-
-              return (
-                <path
-                  key={`${edge.sourceNodeId}-${edge.targetNodeId}-${index}`}
-                  d={[
-                    `M ${x1} ${y1}`,
-                    `C ${middle} ${y1}`,
-                    `${middle} ${y2}`,
-                    `${x2} ${y2}`,
-                  ].join(" ")}
-                />
-              );
-            },
+    <div className="DfctAdminAI-dagWorkspace">
+      <div className="DfctAdminAI-dagToolbar">
+        <div
+          className="DfctAdminAI-dagZoom"
+          role="group"
+          aria-label={t(
+            "adminAI.execution.dagZoomControls",
           )}
-        </g>
+        >
+          <button
+            type="button"
+            aria-label={t(
+              "adminAI.execution.dagZoomOut",
+            )}
+            title={t(
+              "adminAI.execution.dagZoomOut",
+            )}
+            onClick={() => {
+              prepareForZoom();
 
-        <g className="DfctAdminAI-dagNodes">
-          {nodes.map(
-            (node) => {
-              const position = positions.get(
-                node.nodeId,
+              setManualZoomValue(
+                effectiveZoomRef.current
+                / 1.2,
+              );
+            }}
+          >
+            −
+          </button>
+
+          <span
+            className="DfctAdminAI-dagZoomValue"
+            aria-live="polite"
+          >
+            {zoomPercent}%
+          </span>
+
+          <button
+            type="button"
+            aria-label={t(
+              "adminAI.execution.dagZoomIn",
+            )}
+            title={t(
+              "adminAI.execution.dagZoomIn",
+            )}
+            onClick={() => {
+              prepareForZoom();
+
+              setManualZoomValue(
+                effectiveZoomRef.current
+                * 1.2,
+              );
+            }}
+          >
+            +
+          </button>
+
+          <button
+            type="button"
+            className={
+              zoomMode === "fit"
+                ? "is-active"
+                : ""
+            }
+            onClick={() => {
+              prepareForZoom();
+
+              effectiveZoomRef.current = (
+                fitScale
               );
 
-              if (!position) {
-                return null;
-              }
-
-              const selected = (
-                selectedNodeId
-                === node.nodeId
+              setZoomMode(
+                "fit",
               );
 
-              const subtitle = (
-                node.model
-                || node.provider
-                || node.operation
-                || node.kind
-              );
-
-              return (
-                <g
-                  key={node.nodeId}
-                  className={[
-                    "DfctAdminAI-dagNode",
-                    `is-${node.kind}`,
-                    node.isContainer
-                      ? "is-container"
-                      : "is-work",
-                    selected
-                      ? "is-selected"
-                      : "",
-                  ].join(" ")}
-                  transform={
-                    `translate(${position.x} ${position.y})`
-                  }
-                  tabIndex="0"
-                  role="button"
-                  onClick={() => {
-                    onSelect(
-                      node.nodeId,
-                    );
-                  }}
-                  onKeyDown={(event) => {
-                    if (
-                      event.key === "Enter"
-                      || event.key === " "
-                    ) {
-                      event.preventDefault();
-
-                      onSelect(
-                        node.nodeId,
+              window.requestAnimationFrame(
+                () => {
+                  window.requestAnimationFrame(
+                    () => {
+                      centerFirstStep(
+                        true,
                       );
-                    }
-                  }}
-                >
-                  <rect
-                    width={nodeWidth}
-                    height={nodeHeight}
-                    rx="9"
-                  />
-
-                  <circle
-                    cx="15"
-                    cy="17"
-                    r="4"
-                  />
-
-                  <text
-                    className="DfctAdminAI-dagNodeTitle"
-                    x="26"
-                    y="21"
-                  >
-                    {truncated(
-                      node.label
-                      || node.operation
-                      || node.kind,
-                      24,
-                    )}
-                  </text>
-
-                  <text
-                    className="DfctAdminAI-dagNodeMeta"
-                    x="14"
-                    y="42"
-                  >
-                    {truncated(
-                      subtitle,
-                      27,
-                    )}
-                  </text>
-
-                  {node.resolvedCostUsd
-                    !== null
-                    && node.resolvedCostUsd
-                    !== undefined ? (
-                    <text
-                      className="DfctAdminAI-dagNodeCost"
-                      x={nodeWidth - 10}
-                      y="42"
-                      textAnchor="end"
-                    >
-                      {formatCurrency(
-                        node.resolvedCostUsd,
-                        {
-                          maximumFractionDigits: 5,
-                        },
-                      )}
-                    </text>
-                  ) : null}
-                </g>
+                    },
+                  );
+                },
               );
-            },
-          )}
-        </g>
-      </svg>
+            }}
+          >
+            {t(
+              "adminAI.execution.dagFit",
+            )}
+          </button>
+
+          <button
+            type="button"
+            aria-label={t(
+              "adminAI.execution.dagResetHelp",
+            )}
+            title={t(
+              "adminAI.execution.dagResetHelp",
+            )}
+            onClick={() => {
+              prepareForZoom();
+
+              effectiveZoomRef.current = 0.8;
+
+              setZoomMode(
+                "manual",
+              );
+
+              setManualZoom(
+                0.8,
+              );
+
+              window.requestAnimationFrame(
+                () => {
+                  window.requestAnimationFrame(
+                    () => {
+                      centerFirstStep(
+                        true,
+                      );
+                    },
+                  );
+                },
+              );
+            }}
+          >
+            {t(
+              "adminAI.execution.dagReset",
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref={viewportRef}
+        className="DfctAdminAI-dagScroll DfctAdminAI-dagViewport"
+      >
+        <div
+          className="DfctAdminAI-dagStage"
+          style={{
+            minWidth: `${
+              Math.max(
+                0,
+                viewportSize.width - 2,
+              )
+            }px`,
+            minHeight: `${
+              Math.max(
+                0,
+                viewportSize.height - 2,
+              )
+            }px`,
+          }}
+        >
+          <svg
+            ref={svgRef}
+            className="DfctAdminAI-dag"
+            viewBox={`0 0 ${width} ${height}`}
+            style={{
+              width: `${renderedWidth}px`,
+              height: `${renderedHeight}px`,
+            }}
+            role="img"
+            aria-label={t(
+              "adminAI.execution.dagAria",
+            )}
+          >
+            <g className="DfctAdminAI-dagEdges">
+              {edges.map(
+                (edge, index) => {
+                  const source = positions.get(
+                    edge.sourceNodeId,
+                  );
+
+                  const target = positions.get(
+                    edge.targetNodeId,
+                  );
+
+                  if (
+                    !source
+                    || !target
+                  ) {
+                    return null;
+                  }
+
+                  const x1 = (
+                    source.x
+                    + nodeWidth / 2
+                  );
+
+                  const y1 = (
+                    source.y
+                    + nodeHeight
+                  );
+
+                  const x2 = (
+                    target.x
+                    + nodeWidth / 2
+                  );
+
+                  const y2 = target.y;
+
+                  const middle = (
+                    y1
+                    + (y2 - y1) / 2
+                  );
+
+                  return (
+                    <path
+                      key={`${edge.sourceNodeId}-${edge.targetNodeId}-${index}`}
+                      d={[
+                        `M ${x1} ${y1}`,
+                        `C ${x1} ${middle}`,
+                        `${x2} ${middle}`,
+                        `${x2} ${y2}`,
+                      ].join(" ")}
+                    />
+                  );
+                },
+              )}
+            </g>
+
+            <g className="DfctAdminAI-dagNodes">
+              {nodes.map(
+                (node) => {
+                  const position = (
+                    positions.get(
+                      node.nodeId,
+                    )
+                  );
+
+                  if (!position) {
+                    return null;
+                  }
+
+                  const selected = (
+                    selectedNodeId
+                    === node.nodeId
+                  );
+
+                  const subtitle = (
+                    node.model
+                    || node.provider
+                    || node.operation
+                    || node.kind
+                  );
+
+                  return (
+                    <g
+                      key={node.nodeId}
+                      className={[
+                        "DfctAdminAI-dagNode",
+                        `is-${node.kind}`,
+                        node.isContainer
+                          ? "is-container"
+                          : "is-work",
+                        selected
+                          ? "is-selected"
+                          : "",
+                      ].join(" ")}
+                      transform={
+                        `translate(${position.x} ${position.y})`
+                      }
+                      tabIndex="0"
+                      role="button"
+                      data-dag-node-id={
+                        node.nodeId
+                      }
+                      onMouseEnter={(event) => {
+                        showTransientTooltip(
+                          event,
+                          node,
+                        );
+                      }}
+                      onMouseMove={(event) => {
+                        showTransientTooltip(
+                          event,
+                          node,
+                        );
+                      }}
+                      onMouseLeave={
+                        hideTransientTooltip
+                      }
+                      onFocus={(event) => {
+                        showTransientTooltip(
+                          event,
+                          node,
+                        );
+                      }}
+                      onBlur={
+                        hideTransientTooltip
+                      }
+                      onClick={(event) => {
+                        activateNode(
+                          event,
+                          node,
+                        );
+                      }}
+                      onKeyDown={(event) => {
+                        if (
+                          event.key === "Enter"
+                          || event.key === " "
+                        ) {
+                          event.preventDefault();
+
+                          activateNode(
+                            event,
+                            node,
+                          );
+                        }
+                      }}
+                    >
+                      <rect
+                        width={nodeWidth}
+                        height={nodeHeight}
+                        rx="9"
+                      />
+
+                      <circle
+                        cx="15"
+                        cy="17"
+                        r="4"
+                      />
+
+                      <text
+                        className="DfctAdminAI-dagNodeTitle"
+                        x="26"
+                        y="21"
+                      >
+                        {truncated(
+                          node.label
+                          || node.operation
+                          || node.kind,
+                          24,
+                        )}
+                      </text>
+
+                      <text
+                        className="DfctAdminAI-dagNodeMeta"
+                        x="14"
+                        y="42"
+                      >
+                        {truncated(
+                          subtitle,
+                          27,
+                        )}
+                      </text>
+
+                      {node.resolvedCostUsd
+                        !== null
+                        && node.resolvedCostUsd
+                        !== undefined ? (
+                        <text
+                          className="DfctAdminAI-dagNodeCost"
+                          x={nodeWidth - 10}
+                          y="42"
+                          textAnchor="end"
+                        >
+                          {formatCurrency(
+                            node.resolvedCostUsd,
+                            {
+                              maximumFractionDigits: 5,
+                            },
+                          )}
+                        </text>
+                      ) : null}
+                    </g>
+                  );
+                },
+              )}
+            </g>
+          </svg>
+        </div>
+
+        {tooltip?.node ? (
+          <div
+            className={[
+              "DfctAdminAI-dagNodeTooltip",
+              tooltip.pinned
+                ? "is-pinned"
+                : "",
+              tooltip.fading
+                ? "is-fading"
+                : "",
+            ].join(" ")}
+            style={{
+              left: `${tooltip.left}px`,
+              top: `${tooltip.top}px`,
+              width: `${tooltip.width || 300}px`,
+            }}
+            role="tooltip"
+          >
+            <div className="DfctAdminAI-dagNodeTooltipHeader">
+              <div>
+                <span>
+                  {tooltip.node.kind || "—"}
+                </span>
+
+                <strong>
+                  {tooltip.node.label
+                    || tooltip.node.operation
+                    || tooltip.node.kind
+                    || "—"}
+                </strong>
+              </div>
+
+              <div className="DfctAdminAI-dagNodeTooltipActions">
+                <Badge
+                  bg={
+                    tooltip.node.status === "succeeded"
+                      ? "success"
+                      : tooltip.node.status === "failed"
+                        ? "danger"
+                        : tooltip.node.status === "partial"
+                          ? "warning"
+                          : "secondary"
+                  }
+                >
+                  {tooltip.node.status || "—"}
+                </Badge>
+
+                {tooltip.pinned ? (
+                  <button
+                    type="button"
+                    className="DfctAdminAI-dagNodeTooltipClose"
+                    aria-label={t(
+                      "adminAI.execution.closeInspector",
+                    )}
+                    title={t(
+                      "adminAI.execution.closeInspector",
+                    )}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+
+                      removePinnedTooltip({
+                        fade: true,
+                      });
+                    }}
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="DfctAdminAI-dagNodeTooltipGrid">
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.provider",
+                  )}
+                </span>
+                <strong>
+                  {tooltip.node.provider || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.model",
+                  )}
+                </span>
+                <strong>
+                  {tooltip.node.model || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.operation",
+                  )}
+                </span>
+                <strong>
+                  {tooltip.node.operation || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.duration",
+                  )}
+                </span>
+                <strong>
+                  {formatDuration(
+                    tooltip.node.durationMs,
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.offset",
+                  )}
+                </span>
+                <strong>
+                  {formatOffset(
+                    tooltip.node.startOffsetMs,
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {t(
+                    "adminAI.execution.fields.cost",
+                  )}
+                </span>
+                <strong>
+                  {formatCurrency(
+                    tooltip.node.resolvedCostUsd,
+                    {
+                      maximumFractionDigits: 8,
+                    },
+                  )}
+                </strong>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
-
 
 function ExecutionTimeline({
   visual,
@@ -2941,16 +4979,11 @@ function ExecutionServices({
 
 function NodeInspector({
   node,
+  onClose,
   t,
 }) {
   if (!node) {
-    return (
-      <div className="DfctAdminAI-nodeInspector is-empty">
-        {t(
-          "adminAI.execution.selectNode",
-        )}
-      </div>
-    );
+    return null;
   }
 
   const refs = Object.entries(
@@ -2963,8 +4996,68 @@ function NodeInspector({
     ),
   );
 
+  const facts = [
+    [
+      t(
+        "adminAI.execution.fields.provider",
+      ),
+      node.provider || "—",
+    ],
+    [
+      t(
+        "adminAI.execution.fields.model",
+      ),
+      node.model || "—",
+    ],
+    [
+      t(
+        "adminAI.execution.fields.role",
+      ),
+      node.roleKey || "—",
+    ],
+    [
+      t(
+        "adminAI.execution.fields.operation",
+      ),
+      node.operation || "—",
+    ],
+    [
+      t(
+        "adminAI.execution.fields.duration",
+      ),
+      formatDuration(
+        node.durationMs,
+      ),
+    ],
+    [
+      t(
+        "adminAI.execution.fields.offset",
+      ),
+      formatOffset(
+        node.startOffsetMs,
+      ),
+    ],
+    [
+      t(
+        "adminAI.execution.fields.cost",
+      ),
+      formatCurrency(
+        node.resolvedCostUsd,
+        {
+          maximumFractionDigits: 8,
+        },
+      ),
+    ],
+    [
+      t(
+        "adminAI.execution.fields.costProvenance",
+      ),
+      node.costProvenance || "—",
+    ],
+  ];
+
   return (
-    <aside className="DfctAdminAI-nodeInspector">
+    <aside className="DfctAdminAI-nodeInspector DfctAdminAI-nodeInspector--compact">
       <div className="DfctAdminAI-nodeInspectorHeader">
         <div>
           <span className="DfctAdmin-eyebrow">
@@ -2982,144 +5075,72 @@ function NodeInspector({
           </p>
         </div>
 
-        <Badge
-          bg={
-            node.status === "succeeded"
-              ? "success"
-              : node.status === "failed"
-                ? "danger"
-                : node.status === "partial"
-                  ? "warning"
-                  : "secondary"
-          }
-        >
-          {node.status || "—"}
-        </Badge>
+        <div className="DfctAdminAI-nodeInspectorActions">
+          <Badge
+            bg={
+              node.status === "succeeded"
+                ? "success"
+                : node.status === "failed"
+                  ? "danger"
+                  : node.status === "partial"
+                    ? "warning"
+                    : "secondary"
+            }
+          >
+            {node.status || "—"}
+          </Badge>
+
+          <button
+            type="button"
+            className="DfctAdminAI-nodeInspectorClose"
+            aria-label={t(
+              "adminAI.execution.closeInspector",
+            )}
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       <div className="DfctAdminAI-inspectorGrid">
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.provider",
-            )}
-          </span>
-          <strong>
-            {node.provider || "—"}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.model",
-            )}
-          </span>
-          <strong>
-            {node.model || "—"}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.role",
-            )}
-          </span>
-          <strong>
-            {node.roleKey || "—"}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.operation",
-            )}
-          </span>
-          <strong>
-            {node.operation || "—"}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.duration",
-            )}
-          </span>
-          <strong>
-            {formatDuration(
-              node.durationMs,
-            )}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.offset",
-            )}
-          </span>
-          <strong>
-            {formatOffset(
-              node.startOffsetMs,
-            )}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.cost",
-            )}
-          </span>
-          <strong>
-            {formatCurrency(
-              node.resolvedCostUsd,
-              {
-                maximumFractionDigits: 8,
-              },
-            )}
-          </strong>
-        </div>
-
-        <div>
-          <span>
-            {t(
-              "adminAI.execution.fields.costProvenance",
-            )}
-          </span>
-          <strong>
-            {node.costProvenance || "—"}
-          </strong>
-        </div>
+        {facts.map(
+          ([label, value]) => (
+            <div key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ),
+        )}
       </div>
 
       {refs.length ? (
-        <div className="DfctAdminAI-nodeRefs">
-          <strong>
+        <details className="DfctAdminAI-nodeRefs">
+          <summary>
             {t(
               "adminAI.execution.references",
             )}
-          </strong>
+            {" · "}
+            {refs.length}
+          </summary>
 
-          {refs.map(
-            ([key, value]) => (
-              <div key={key}>
-                <span>{key}</span>
-                <code>
-                  {String(value)}
-                </code>
-              </div>
-            ),
-          )}
-        </div>
+          <div className="DfctAdminAI-nodeRefsBody">
+            {refs.map(
+              ([key, value]) => (
+                <div key={key}>
+                  <span>{key}</span>
+                  <code>
+                    {String(value)}
+                  </code>
+                </div>
+              ),
+            )}
+          </div>
+        </details>
       ) : null}
     </aside>
   );
 }
-
 
 export function ExecutionVisualization({
   visual,
@@ -3129,44 +5150,20 @@ export function ExecutionVisualization({
     visual?.dag?.nodes,
   );
 
-  const initialNode = (
-    nodes.find(
-      (node) => node.isWorkNode,
-    )
-    || nodes[0]
-  );
-
-  const [selectedNodeId, setSelectedNodeId] = useState(
-    initialNode?.nodeId || "",
-  );
+  const [selectedNodeId, setSelectedNodeId] = useState("");
 
   useEffect(() => {
-    if (!nodes.length) {
-      setSelectedNodeId("");
-      return;
-    }
-
     if (
-      nodes.some(
+      selectedNodeId
+      && !nodes.some(
         (node) => (
           node.nodeId
           === selectedNodeId
         ),
       )
     ) {
-      return;
+      setSelectedNodeId("");
     }
-
-    const next = (
-      nodes.find(
-        (node) => node.isWorkNode,
-      )
-      || nodes[0]
-    );
-
-    setSelectedNodeId(
-      next?.nodeId || "",
-    );
   }, [
     nodes,
     selectedNodeId,
@@ -3261,46 +5258,55 @@ export function ExecutionVisualization({
         t={t}
       />
 
-      <div className="DfctAdminAI-executionSplit">
-        <div className="DfctAdminAI-visualCard">
-          <div className="DfctAdminAI-visualCardHeader">
-            <div>
-              <span className="DfctAdmin-eyebrow">
-                {t(
-                  "adminAI.execution.dagEyebrow",
-                )}
-              </span>
+      <div className="DfctAdminAI-visualCard DfctAdminAI-dagCard">
+        <div className="DfctAdminAI-visualCardHeader">
+          <div>
+            <span className="DfctAdmin-eyebrow">
+              {t(
+                "adminAI.execution.dagEyebrow",
+              )}
+            </span>
 
-              <h3>
-                {t(
-                  "adminAI.execution.dagTitle",
-                )}
-              </h3>
+            <h3>
+              {t(
+                "adminAI.execution.dagTitle",
+              )}
+            </h3>
 
-              <p>
-                {t(
-                  "adminAI.execution.dagSubtitle",
-                )}
-              </p>
-            </div>
+            <p>
+              {t(
+                "adminAI.execution.dagSubtitle",
+              )}
+            </p>
           </div>
 
-          <ExecutionDag
-            visual={visual}
-            selectedNodeId={
-              selectedNodeId
-            }
-            onSelect={
-              setSelectedNodeId
-            }
+          <span className="DfctAdminAI-dagHint">
+            {t(
+              "adminAI.execution.dagInteractionHint",
+            )}
+          </span>
+        </div>
+
+        <ExecutionDag
+          visual={visual}
+          selectedNodeId={
+            selectedNodeId
+          }
+          onSelect={
+            setSelectedNodeId
+          }
+          t={t}
+        />
+
+        <div className="DfctAdminAI-mobileNodeInspector">
+          <NodeInspector
+            node={selectedNode}
+            onClose={() => {
+              setSelectedNodeId("");
+            }}
             t={t}
           />
         </div>
-
-        <NodeInspector
-          node={selectedNode}
-          t={t}
-        />
       </div>
 
       <div className="DfctAdminAI-visualCard">
@@ -3352,7 +5358,6 @@ export function ExecutionVisualization({
     </div>
   );
 }
-
 
 function BenchmarkSortHeader({
   field,
@@ -3542,6 +5547,13 @@ function BenchmarkRunsTable({
                   </strong>
                   <small>
                     v{run.benchmarkVersion}
+                    {benchmarkProfileReference(
+                      run.analysisProfile,
+                    )
+                      ? ` · ${benchmarkProfileReference(
+                          run.analysisProfile,
+                        )}`
+                      : ""}
                   </small>
                 </td>
 
@@ -3596,9 +5608,45 @@ function BenchmarkRunsTable({
 }
 
 
+function benchmarkAssertionLabel(
+  assertionKey,
+  t,
+) {
+  const key = String(
+    assertionKey || "",
+  ).trim();
+
+  if (!key) {
+    return "—";
+  }
+
+  const fallbackWords = key
+    .split("_")
+    .filter(Boolean)
+    .join(" ");
+
+  const fallback = fallbackWords
+    ? (
+        fallbackWords
+          .charAt(0)
+          .toUpperCase()
+        + fallbackWords.slice(1)
+      )
+    : key;
+
+  return t(
+    `adminAI.benchmarks.assertions.${key}`,
+    {
+      defaultValue: fallback,
+    },
+  );
+}
+
+
 export function BenchmarkDetail({
   detail,
   loading,
+  refreshing = false,
   t,
 }) {
   if (loading) {
@@ -3633,6 +5681,43 @@ export function BenchmarkDetail({
     benchmark.assertions,
   );
 
+  const runStatus = String(
+    summary.outcome
+    || benchmark.outcome
+    || summary.status
+    || benchmark.status
+    || "",
+  ).toLowerCase();
+
+  const terminal = Boolean(
+    [
+      "succeeded",
+      "failed",
+    ].includes(
+      String(
+        summary.status
+        || benchmark.status
+        || "",
+      ).toLowerCase(),
+    )
+    || [
+      "passed",
+      "failed",
+      "incomplete",
+    ].includes(
+      String(
+        summary.outcome
+        || benchmark.outcome
+        || "",
+      ).toLowerCase(),
+    )
+  );
+
+  const gatePassed = Boolean(
+    terminal
+    && summary.score?.gatePassed
+  );
+
   return (
     <section className="DfctAdmin-section DfctAdminAI-benchmarkDetail">
       <div className="DfctAdminAI-benchmarkHero">
@@ -3644,13 +5729,18 @@ export function BenchmarkDetail({
           </span>
 
           <h2>
-            {summary.score?.gatePassed
-              ? t(
-                  "adminAI.benchmarks.detail.pass",
+            {!terminal
+              ? benchmarkStateLabel(
+                  runStatus || "running",
+                  t,
                 )
-              : t(
-                  "adminAI.benchmarks.detail.fail",
-                )}
+              : gatePassed
+                ? t(
+                    "adminAI.benchmarks.detail.pass",
+                  )
+                : t(
+                    "adminAI.benchmarks.detail.fail",
+                  )}
           </h2>
 
           <p>
@@ -3668,36 +5758,46 @@ export function BenchmarkDetail({
 
         <Badge
           bg={
-            summary.score?.gatePassed
-              ? "success"
-              : "danger"
+            terminal
+              ? (
+                  gatePassed
+                    ? "success"
+                    : "danger"
+                )
+              : benchmarkStateTone(
+                  runStatus || "running",
+                )
           }
           className="DfctAdminAI-hardGateBadge"
         >
-          {benchmarkScoreLabel(
-            summary,
-          )}
+          {!terminal && refreshing ? (
+            <>
+              <Spinner
+                animation="border"
+                size="sm"
+              />
+              {" "}
+            </>
+          ) : null}
+
+          {terminal
+            ? benchmarkScoreLabel(
+                summary,
+              )
+            : benchmarkStateLabel(
+                runStatus || "running",
+                t,
+              )}
         </Badge>
       </div>
 
-      <div className="DfctAdminAI-metricGrid">
-        <Metric
-          label={t(
-            "adminAI.benchmarks.detail.hardGate",
-          )}
-          value={benchmarkScoreLabel(
-            summary,
-          )}
-          caption={t(
-            "adminAI.benchmarks.detail.hardGateHelp",
-          )}
-          tone={
-            summary.score?.gatePassed
-              ? "success"
-              : "danger"
-          }
-        />
+      <BenchmarkLifecycleTimeline
+        durableRun
+        terminal={terminal}
+        t={t}
+      />
 
+      <div className="DfctAdminAI-metricGrid DfctAdminAI-benchmarkMetricGrid">
         <Metric
           label={t(
             "adminAI.benchmarks.detail.knownCost",
@@ -3762,11 +5862,17 @@ export function BenchmarkDetail({
               }
             >
               <span>
-                {assertion.assertionKey}
+                {benchmarkAssertionLabel(
+                  assertion.assertionKey,
+                  t,
+                )}
               </span>
 
               <strong>
-                {assertion.status}
+                {benchmarkStateLabel(
+                  assertion.status,
+                  t,
+                )}
               </strong>
             </div>
           ),
@@ -3862,6 +5968,1415 @@ function GeneralExecutionLookup({
           />
         </div>
       ) : null}
+    </section>
+  );
+}
+
+
+
+function localizedCatalogText(
+  value,
+  language,
+) {
+  if (
+    typeof value === "string"
+  ) {
+    return value;
+  }
+
+  if (
+    !value
+    || typeof value !== "object"
+  ) {
+    return "";
+  }
+
+  const normalized = String(
+    language || "en",
+  ).toLowerCase();
+
+  if (
+    normalized.startsWith("pt")
+  ) {
+    return (
+      value["pt-BR"]
+      || value.pt
+      || value.en
+      || Object.values(value)[0]
+      || ""
+    );
+  }
+
+  return (
+    value.en
+    || value["pt-BR"]
+    || Object.values(value)[0]
+    || ""
+  );
+}
+
+
+function benchmarkProfileReference(
+  value,
+) {
+  if (!value) return "";
+
+  if (
+    typeof value === "string"
+  ) {
+    return value;
+  }
+
+  if (value.reference) {
+    return String(
+      value.reference,
+    );
+  }
+
+  if (
+    value.key
+    && value.version !== undefined
+    && value.version !== null
+  ) {
+    return (
+      `${value.key}@${value.version}`
+    );
+  }
+
+  return "";
+}
+
+
+function benchmarkStateTone(
+  value,
+) {
+  const state = String(
+    value || "",
+  ).toLowerCase();
+
+  if (
+    state === "passed"
+    || state === "succeeded"
+  ) {
+    return "success";
+  }
+
+  if (
+    state === "failed"
+  ) {
+    return "danger";
+  }
+
+  if (
+    state === "running"
+  ) {
+    return "primary";
+  }
+
+  if (
+    state === "queued"
+    || state === "incomplete"
+  ) {
+    return "warning";
+  }
+
+  return "secondary";
+}
+
+
+function benchmarkStateLabel(
+  value,
+  t,
+) {
+  const state = String(
+    value || "",
+  ).toLowerCase();
+
+  if (!state) {
+    return "—";
+  }
+
+  return t(
+    `adminAI.benchmarks.states.${state}`,
+    {
+      defaultValue: state,
+    },
+  );
+}
+
+
+function BenchmarkLifecycleTimeline({
+  durableRun = false,
+  terminal = false,
+  t,
+}) {
+  return (
+    <div className="DfctAdminAI-runProgress">
+      <div className="is-complete">
+        <span>1</span>
+        <strong>
+          {t(
+            "adminAI.benchmarks.active.accepted",
+          )}
+        </strong>
+      </div>
+
+      <div
+        className={
+          durableRun
+            ? "is-complete"
+            : "is-current"
+        }
+      >
+        <span>2</span>
+        <strong>
+          {durableRun
+            ? t(
+                "adminAI.benchmarks.active.persisted",
+              )
+            : t(
+                "adminAI.benchmarks.active.awaitingRun",
+              )}
+        </strong>
+      </div>
+
+      <div
+        className={
+          terminal
+            ? "is-complete"
+            : durableRun
+              ? "is-current"
+              : ""
+        }
+      >
+        <span>3</span>
+        <strong>
+          {terminal
+            ? t(
+                "adminAI.benchmarks.active.resultReady",
+              )
+            : t(
+                "adminAI.benchmarks.active.executing",
+              )}
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+
+function profileStatusTone(
+  status,
+) {
+  if (status === "validated") {
+    return "success";
+  }
+
+  if (status === "candidate") {
+    return "info";
+  }
+
+  return "secondary";
+}
+
+
+function BenchmarkOperations({
+  adminAi,
+  onInspect,
+  t,
+}) {
+  const catalog = (
+    adminAi.benchmarkCatalog
+    || {}
+  );
+
+  const benchmarks = asArray(
+    catalog.benchmarks,
+  );
+
+  const profiles = asArray(
+    catalog.analysisProfiles,
+  );
+
+  const [benchmarkKey, setBenchmarkKey] = useState("");
+  const [benchmarkVersion, setBenchmarkVersion] = useState("");
+  const [profileReference, setProfileReference] = useState("");
+  const [showCandidateProfiles, setShowCandidateProfiles] = useState(false);
+  const [preflightSignature, setPreflightSignature] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [paidRunConfirmed, setPaidRunConfirmed] = useState(false);
+
+  const language = (
+    t?.i18n?.resolvedLanguage
+    || t?.i18n?.language
+    || (
+      typeof document !== "undefined"
+        ? document.documentElement.lang
+        : "en"
+    )
+    || "en"
+  );
+
+  useEffect(() => {
+    if (
+      !adminAi.benchmarkCatalog
+      && !adminAi.actionLoading
+    ) {
+      void adminAi.loadBenchmarkCatalog();
+    }
+  }, [
+    adminAi.actionLoading,
+    adminAi.benchmarkCatalog,
+    adminAi.loadBenchmarkCatalog,
+  ]);
+
+  const selectedBenchmark = useMemo(
+    () => (
+      benchmarks.find(
+        (item) => (
+          item.key === benchmarkKey
+        ),
+      )
+      || null
+    ),
+    [
+      benchmarkKey,
+      benchmarks,
+    ],
+  );
+
+  const versionOptions = asArray(
+    selectedBenchmark?.versions,
+  );
+
+  const selectedVersion = (
+    versionOptions.find(
+      (item) => (
+        String(
+          item.version,
+        )
+        === String(
+          benchmarkVersion,
+        )
+      ),
+    )
+    || null
+  );
+
+  const validatedProfiles = useMemo(
+    () => (
+      profiles.filter(
+        (profile) => (
+          profile.status === "validated"
+        ),
+      )
+    ),
+    [
+      profiles,
+    ],
+  );
+
+  const candidateProfiles = useMemo(
+    () => (
+      profiles
+        .filter(
+          (profile) => (
+            profile.status !== "validated"
+          ),
+        )
+        .sort(
+          (left, right) => {
+            const keyCompare = String(
+              left.key || "",
+            ).localeCompare(
+              String(
+                right.key || "",
+              ),
+            );
+
+            if (keyCompare !== 0) {
+              return keyCompare;
+            }
+
+            return (
+              Number(
+                right.version || 0,
+              )
+              - Number(
+                left.version || 0,
+              )
+            );
+          },
+        )
+    ),
+    [
+      profiles,
+    ],
+  );
+
+  const visibleProfiles = useMemo(
+    () => (
+      showCandidateProfiles
+        ? [
+            ...validatedProfiles,
+            ...candidateProfiles,
+          ]
+        : validatedProfiles
+    ),
+    [
+      candidateProfiles,
+      showCandidateProfiles,
+      validatedProfiles,
+    ],
+  );
+
+  const selectedProfile = useMemo(
+    () => (
+      profiles.find(
+        (profile) => (
+          profile.reference
+          === profileReference
+        ),
+      )
+      || null
+    ),
+    [
+      profileReference,
+      profiles,
+    ],
+  );
+
+  useEffect(() => {
+    if (!benchmarks.length) {
+      return;
+    }
+
+    if (
+      !benchmarkKey
+      || !benchmarks.some(
+        (item) => (
+          item.key === benchmarkKey
+        ),
+      )
+    ) {
+      setBenchmarkKey(
+        benchmarks[0].key,
+      );
+    }
+  }, [
+    benchmarkKey,
+    benchmarks,
+  ]);
+
+  useEffect(() => {
+    if (!selectedBenchmark) {
+      return;
+    }
+
+    const available = asArray(
+      selectedBenchmark.versions,
+    ).map(
+      (item) => String(
+        item.version,
+      ),
+    );
+
+    const preferred = String(
+      selectedBenchmark.defaultVersion
+      || available[0]
+      || "",
+    );
+
+    if (
+      !benchmarkVersion
+      || !available.includes(
+        String(
+          benchmarkVersion,
+        ),
+      )
+    ) {
+      setBenchmarkVersion(
+        preferred,
+      );
+      setPreflightSignature("");
+    }
+  }, [
+    benchmarkVersion,
+    selectedBenchmark,
+  ]);
+
+  useEffect(() => {
+    if (!profiles.length) {
+      return;
+    }
+
+    if (
+      profileReference
+      && profiles.some(
+        (profile) => (
+          profile.reference
+          === profileReference
+        ),
+      )
+    ) {
+      return;
+    }
+
+    const recommended = (
+      selectedBenchmark
+        ?.recommendedAnalysisProfile
+    );
+
+    const preferred = (
+      visibleProfiles.find(
+        (profile) => (
+          profile.reference
+          === recommended
+        ),
+      )
+      || validatedProfiles[0]
+      || visibleProfiles[0]
+      || null
+    );
+
+    setProfileReference(
+      preferred?.reference
+      || "",
+    );
+    setPreflightSignature("");
+  }, [
+    profileReference,
+    profiles,
+    selectedBenchmark,
+    validatedProfiles,
+    visibleProfiles,
+  ]);
+
+  const selectionSignature = [
+    benchmarkKey,
+    benchmarkVersion,
+    profileReference,
+  ].join(":");
+
+  const preflightReady = Boolean(
+    adminAi.benchmarkPreflight
+    && preflightSignature
+    === selectionSignature
+  );
+
+  const preflight = preflightReady
+    ? adminAi.benchmarkPreflight
+    : null;
+
+  const preflightProfile = (
+    preflight?.analysisProfile
+    || preflight?.profile
+    || preflight?.profileSnapshot
+    || preflight?.analysisProfileSnapshot
+    || {}
+  );
+
+  const preflightRoles = Object.entries(
+    preflightProfile.roles
+    || {},
+  );
+
+  const safety = (
+    catalog.safety
+    || {}
+  );
+
+  const launch = (
+    adminAi.benchmarkLaunch
+    || null
+  );
+
+  const activeRun = (
+    adminAi.activeBenchmarkRun
+    || null
+  );
+
+  const launchTaskId = (
+    launch?.celeryTaskId
+    || launch?.taskId
+    || activeRun?.celeryTaskId
+    || ""
+  );
+
+  const activeStatus = (
+    activeRun?.outcome
+    || activeRun?.status
+    || launch?.status
+    || (
+      launchTaskId
+        ? "queued"
+        : ""
+    )
+  );
+
+  const activeTerminal = Boolean(
+    activeRun
+    && (
+      [
+        "succeeded",
+        "failed",
+      ].includes(
+        String(
+          activeRun.status
+          || "",
+        ).toLowerCase(),
+      )
+      || [
+        "passed",
+        "failed",
+        "incomplete",
+      ].includes(
+        String(
+          activeRun.outcome
+          || "",
+        ).toLowerCase(),
+      )
+    ),
+  );
+
+  const runPayload = {
+    benchmarkKey,
+    benchmarkVersion,
+    analysisProfile:
+      profileReference,
+  };
+
+  const runPreflight = async () => {
+    const result = (
+      await adminAi.preflightBenchmark(
+        runPayload,
+      )
+    );
+
+    if (result) {
+      setPreflightSignature(
+        selectionSignature,
+      );
+    }
+  };
+
+  const launchPaidRun = async () => {
+    if (!paidRunConfirmed) {
+      return;
+    }
+
+    const result = (
+      await adminAi.launchBenchmark({
+        ...runPayload,
+        confirmPaidRun: true,
+      })
+    );
+
+    if (result) {
+      setConfirmOpen(false);
+      setPaidRunConfirmed(false);
+    }
+  };
+
+  const selectionReady = Boolean(
+    selectedBenchmark
+    && selectedVersion
+    && selectedProfile
+  );
+
+  return (
+    <section className="DfctAdmin-section DfctAdminAI-benchmarkOps">
+      <div className="DfctAdminAI-benchmarkOpsHeader">
+        <div className="DfctAdmin-sectionHeader">
+          <span className="DfctAdmin-eyebrow">
+            {t(
+              "adminAI.benchmarks.operations.eyebrow",
+            )}
+          </span>
+
+          <h2>
+            {t(
+              "adminAI.benchmarks.operations.title",
+            )}
+          </h2>
+
+          <p>
+            {t(
+              "adminAI.benchmarks.operations.subtitle",
+            )}
+          </p>
+        </div>
+
+        <div className="DfctAdminAI-benchmarkLiveStatus">
+          {adminAi.benchmarkActiveRefreshing ? (
+            <Spinner
+              animation="border"
+              size="sm"
+            />
+          ) : (
+            <span className="DfctAdminAI-liveDot" />
+          )}
+
+          <span>
+            {launchTaskId && !activeTerminal
+              ? t(
+                  "adminAI.benchmarks.operations.liveRefresh",
+                )
+              : t(
+                  "adminAI.benchmarks.operations.idleRefresh",
+                )}
+          </span>
+        </div>
+      </div>
+
+      {!benchmarks.length ? (
+        <div className="DfctAdminAI-loading">
+          <Spinner
+            animation="border"
+            size="sm"
+          />
+          <span>
+            {t(
+              "adminAI.benchmarks.operations.loadingCatalog",
+            )}
+          </span>
+        </div>
+      ) : (
+        <>
+          <div className="DfctAdminAI-benchmarkConfigGrid">
+            <Form.Group>
+              <Form.Label>
+                {t(
+                  "adminAI.benchmarks.operations.benchmark",
+                )}
+              </Form.Label>
+
+              <Form.Select
+                value={benchmarkKey}
+                onChange={(event) => {
+                  setBenchmarkKey(
+                    event.target.value,
+                  );
+                  setBenchmarkVersion("");
+                  setPreflightSignature("");
+                }}
+              >
+                {benchmarks.map(
+                  (benchmark) => (
+                    <option
+                      key={benchmark.key}
+                      value={benchmark.key}
+                    >
+                      {benchmark.title
+                        || benchmark.key}
+                    </option>
+                  ),
+                )}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>
+                {t(
+                  "adminAI.benchmarks.operations.version",
+                )}
+              </Form.Label>
+
+              <Form.Select
+                value={benchmarkVersion}
+                onChange={(event) => {
+                  setBenchmarkVersion(
+                    event.target.value,
+                  );
+                  setPreflightSignature("");
+                }}
+              >
+                {versionOptions.map(
+                  (version) => (
+                    <option
+                      key={version.version}
+                      value={version.version}
+                    >
+                      v{version.version}
+                      {version.isDefault
+                        ? ` · ${t(
+                            "adminAI.benchmarks.operations.defaultVersion",
+                          )}`
+                        : ""}
+                    </option>
+                  ),
+                )}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>
+                {t(
+                  "adminAI.benchmarks.operations.profile",
+                )}
+              </Form.Label>
+
+              <Form.Select
+                value={profileReference}
+                onChange={(event) => {
+                  setProfileReference(
+                    event.target.value,
+                  );
+                  setPreflightSignature("");
+                }}
+              >
+                {visibleProfiles.map(
+                  (profile) => (
+                    <option
+                      key={profile.reference}
+                      value={profile.reference}
+                    >
+                      {profile.reference}
+                      {" · "}
+                      {t(
+                        `adminAI.benchmarks.profileStatus.${profile.status}`,
+                        {
+                          defaultValue:
+                            profile.status
+                            || "—",
+                        },
+                      )}
+                    </option>
+                  ),
+                )}
+              </Form.Select>
+
+              <Form.Check
+                className="DfctAdminAI-candidateProfileToggle"
+                type="switch"
+                id="admin-ai-show-candidate-profiles"
+                checked={showCandidateProfiles}
+                label={t(
+                  "adminAI.benchmarks.operations.showCandidateProfiles",
+                )}
+                onChange={(event) => {
+                  const next = event.target.checked;
+
+                  setShowCandidateProfiles(
+                    next,
+                  );
+
+                  if (
+                    !next
+                    && selectedProfile?.status
+                    !== "validated"
+                  ) {
+                    setProfileReference(
+                      validatedProfiles[0]
+                        ?.reference
+                      || "",
+                    );
+                    setPreflightSignature("");
+                  }
+                }}
+              />
+            </Form.Group>
+          </div>
+
+          <div className="DfctAdminAI-benchmarkSelection">
+            <div className="DfctAdminAI-benchmarkSelectionMain">
+            <div className="DfctAdminAI-benchmarkIdentity">
+              <div className="DfctAdminAI-benchmarkPreview">
+                <img
+                  src={
+                    selectedBenchmark?.preview?.dataUrl
+                    || "/placeholder.png"
+                  }
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div className="DfctAdminAI-benchmarkIdentityCopy">
+              <div className="DfctAdminAI-benchmarkSelectionTitle">
+                <strong>
+                  {selectedBenchmark?.title
+                    || benchmarkKey}
+                </strong>
+
+                {selectedVersion ? (
+                  <Badge bg="secondary">
+                    v{selectedVersion.version}
+                  </Badge>
+                ) : null}
+
+                {selectedProfile ? (
+                  <Badge
+                    bg={profileStatusTone(
+                      selectedProfile.status,
+                    )}
+                  >
+                    {t(
+                      `adminAI.benchmarks.profileStatus.${selectedProfile.status}`,
+                      {
+                        defaultValue:
+                          selectedProfile.status
+                          || "—",
+                      },
+                    )}
+                  </Badge>
+                ) : null}
+              </div>
+
+              <p>
+                {selectedVersion?.description
+                  || selectedBenchmark?.description
+                  || ""}
+              </p>
+
+              {selectedProfile ? (
+                <small>
+                  {localizedCatalogText(
+                    selectedProfile.description,
+                    language,
+                  )}
+                </small>
+              ) : null}
+            </div>
+
+                </div>
+            </div>
+
+          <div className="DfctAdminAI-benchmarkSelectionFacts">
+              <span>
+                <small>
+                  {t(
+                    "adminAI.benchmarks.operations.assertions",
+                  )}
+                </small>
+                <strong>
+                  {selectedVersion?.assertionCount
+                    ?? "—"}
+                </strong>
+              </span>
+
+              <span>
+                <small>
+                  {t(
+                    "adminAI.benchmarks.operations.input",
+                  )}
+                </small>
+                <strong>
+                  {selectedVersion?.inputKind
+                    || "—"}
+                </strong>
+              </span>
+
+              <span>
+                <small>
+                  {t(
+                    "adminAI.benchmarks.operations.serviceLevel",
+                  )}
+                </small>
+                <strong>
+                  {selectedVersion?.serviceLevel
+                    || "—"}
+                </strong>
+              </span>
+
+              <span>
+                <small>
+                  {t(
+                    "adminAI.benchmarks.operations.profileHash",
+                  )}
+                </small>
+                <strong
+                  className="is-mono"
+                  title={
+                    selectedProfile
+                      ?.definitionSha256
+                    || ""
+                  }
+                >
+                  {selectedProfile
+                    ?.definitionSha256
+                    ? truncated(
+                        selectedProfile
+                          .definitionSha256,
+                        15,
+                      )
+                    : "—"}
+                </strong>
+              </span>
+            </div>
+          </div>
+
+          <div className="DfctAdminAI-preflightPanel">
+            <div className="DfctAdminAI-preflightHeader">
+              <div>
+                <span className="DfctAdmin-eyebrow">
+                  {t(
+                    "adminAI.benchmarks.preflight.eyebrow",
+                  )}
+                </span>
+
+                <strong>
+                  {t(
+                    "adminAI.benchmarks.preflight.title",
+                  )}
+                </strong>
+
+                <p>
+                  {t(
+                    "adminAI.benchmarks.preflight.subtitle",
+                  )}
+                </p>
+              </div>
+
+              <div className="DfctAdminAI-safetyBadges">
+                <Badge bg="success">
+                  {t(
+                    "adminAI.benchmarks.preflight.noProviders",
+                  )}
+                </Badge>
+
+                <Badge bg="success">
+                  {t(
+                    "adminAI.benchmarks.preflight.noCredentials",
+                  )}
+                </Badge>
+
+                <Badge bg="success">
+                  {t(
+                    "adminAI.benchmarks.preflight.noWrites",
+                  )}
+                </Badge>
+              </div>
+            </div>
+
+            {preflightReady ? (
+              <Alert
+                variant="success"
+                className="DfctAdminAI-preflightResult"
+              >
+                <div>
+                  <strong>
+                    {t(
+                      "adminAI.benchmarks.preflight.ready",
+                    )}
+                  </strong>
+
+                  <span>
+                    {selectedProfile?.reference}
+                    {" · "}
+                    {selectedVersion?.assertionCount}
+                    {" "}
+                    {t(
+                      "adminAI.benchmarks.preflight.assertionsSuffix",
+                    )}
+                  </span>
+                </div>
+
+                {preflightRoles.length ? (
+                  <div className="DfctAdminAI-preflightRoles">
+                    {preflightRoles.map(
+                      ([roleKey, role]) => (
+                        <span key={roleKey}>
+                          <small>
+                            {t(
+                              `adminAI.roles.names.${roleKey}`,
+                              {
+                                defaultValue:
+                                  roleKey,
+                              },
+                            )}
+                          </small>
+
+                          <strong>
+                            {[
+                              role?.providerKey,
+                              role?.model,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")
+                              || t(
+                                "adminAI.benchmarks.preflight.inherited",
+                              )}
+                          </strong>
+                        </span>
+                      ),
+                    )}
+                  </div>
+                ) : null}
+              </Alert>
+            ) : (
+              <div className="DfctAdminAI-preflightPending">
+                <span>
+                  {t(
+                    "adminAI.benchmarks.preflight.pending",
+                  )}
+                </span>
+              </div>
+            )}
+
+            <div className="DfctAdminAI-benchmarkActions">
+              <Button
+                variant="outline-primary"
+                disabled={
+                  !selectionReady
+                  || Boolean(
+                    adminAi.actionLoading,
+                  )
+                }
+                onClick={runPreflight}
+              >
+                {adminAi.actionLoading
+                  === "benchmark-preflight" ? (
+                    <>
+                      <Spinner
+                        animation="border"
+                        size="sm"
+                      />
+                      {" "}
+                      {t(
+                        "adminAI.benchmarks.preflight.running",
+                      )}
+                    </>
+                  ) : (
+                    t(
+                      "adminAI.benchmarks.preflight.action",
+                    )
+                  )}
+              </Button>
+
+              <Button
+                variant="primary"
+                disabled={
+                  !preflightReady
+                  || Boolean(
+                    adminAi.actionLoading,
+                  )
+                }
+                onClick={() => {
+                  setPaidRunConfirmed(false);
+                  setConfirmOpen(true);
+                }}
+              >
+                {t(
+                  "adminAI.benchmarks.launch.action",
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {launchTaskId ? (
+            <div
+              className={[
+                "DfctAdminAI-activeBenchmark",
+                activeTerminal
+                  ? "is-terminal"
+                  : "is-active",
+              ].join(" ")}
+            >
+              <div className="DfctAdminAI-activeBenchmarkHeader">
+                <div>
+                  <span className="DfctAdmin-eyebrow">
+                    {t(
+                      "adminAI.benchmarks.active.eyebrow",
+                    )}
+                  </span>
+
+                  <h3>
+                    {activeRun?.benchmarkKey
+                      || launch?.benchmarkKey
+                      || benchmarkKey}
+                    {" · "}
+                    v{activeRun?.benchmarkVersion
+                      || launch?.benchmarkVersion
+                      || benchmarkVersion}
+                  </h3>
+
+                  <p>
+                    {benchmarkProfileReference(
+                      activeRun?.analysisProfile,
+                    )
+                      || benchmarkProfileReference(
+                        launch?.analysisProfile,
+                      )
+                      || profileReference}
+                  </p>
+                </div>
+
+                <Badge
+                  bg={benchmarkStateTone(
+                    activeStatus,
+                  )}
+                  className="DfctAdminAI-activeBenchmarkBadge"
+                >
+                  {!activeTerminal
+                  && adminAi.benchmarkActiveRefreshing ? (
+                    <Spinner
+                      animation="border"
+                      size="sm"
+                    />
+                  ) : null}
+                  {" "}
+                  {benchmarkStateLabel(
+                    activeStatus,
+                    t,
+                  )}
+                </Badge>
+              </div>
+
+              <BenchmarkLifecycleTimeline
+                durableRun={Boolean(activeRun)}
+                terminal={activeTerminal}
+                t={t}
+              />
+
+              <div className="DfctAdminAI-activeBenchmarkFacts">
+                <span>
+                  <small>
+                    {t(
+                      "adminAI.benchmarks.active.taskId",
+                    )}
+                  </small>
+                  <strong className="is-mono">
+                    {truncated(
+                      launchTaskId,
+                      24,
+                    )}
+                  </strong>
+                </span>
+
+                <span>
+                  <small>
+                    {t(
+                      "adminAI.benchmarks.active.runId",
+                    )}
+                  </small>
+                  <strong className="is-mono">
+                    {activeRun?.benchmarkRunId
+                      ? truncated(
+                          activeRun
+                            .benchmarkRunId,
+                          24,
+                        )
+                      : t(
+                          "adminAI.benchmarks.active.pending",
+                        )}
+                  </strong>
+                </span>
+
+                <span>
+                  <small>
+                    {t(
+                      "adminAI.benchmarks.active.score",
+                    )}
+                  </small>
+                  <strong>
+                    {activeRun
+                      ? benchmarkScoreLabel(
+                          activeRun,
+                        )
+                      : "—"}
+                  </strong>
+                </span>
+
+                <span>
+                  <small>
+                    {t(
+                      "adminAI.benchmarks.active.cost",
+                    )}
+                  </small>
+                  <strong>
+                    {activeRun
+                      ? formatCurrency(
+                          knownCostValue(
+                            activeRun.cost,
+                          ),
+                          {
+                            maximumFractionDigits: 8,
+                          },
+                        )
+                      : "—"}
+                  </strong>
+                </span>
+              </div>
+
+              <div className="DfctAdminAI-activeBenchmarkFooter">
+                <span>
+                  {activeTerminal
+                    ? t(
+                        "adminAI.benchmarks.active.autoRefreshComplete",
+                      )
+                    : t(
+                        "adminAI.benchmarks.active.autoRefreshActive",
+                      )}
+                </span>
+
+                {activeRun?.benchmarkRunId ? (
+                  <Button
+                    size="sm"
+                    variant="outline-primary"
+                    onClick={() => {
+                      onInspect(
+                        activeRun,
+                      );
+                    }}
+                  >
+                    {t(
+                      "adminAI.benchmarks.active.inspect",
+                    )}
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+        </>
+      )}
+
+      <Modal
+        show={confirmOpen}
+        onHide={() => {
+          setConfirmOpen(false);
+          setPaidRunConfirmed(false);
+        }}
+        centered
+        className="DfctAdminAI-benchmarkConfirmModal"
+      >
+        <Modal.Header>
+          <Modal.Title>
+            {t(
+              "adminAI.benchmarks.launch.confirmTitle",
+            )}
+          </Modal.Title>
+
+          <button
+            type="button"
+            className="DfctAdminAI-modalClose"
+            aria-label={t(
+              "adminAI.benchmarks.launch.cancel",
+            )}
+            onClick={() => {
+              setConfirmOpen(false);
+              setPaidRunConfirmed(false);
+            }}
+          >
+            ×
+          </button>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>
+            {t(
+              "adminAI.benchmarks.launch.confirmText",
+              {
+                benchmark:
+                  selectedBenchmark?.title
+                  || benchmarkKey,
+                version:
+                  benchmarkVersion,
+                profile:
+                  profileReference,
+              },
+            )}
+          </p>
+
+          <div className="DfctAdminAI-paidRunWarnings">
+            <div>
+              <strong>
+                {t(
+                  "adminAI.benchmarks.launch.realProviders",
+                )}
+              </strong>
+              <span>
+                {t(
+                  "adminAI.benchmarks.launch.realProvidersHelp",
+                )}
+              </span>
+            </div>
+
+            <div>
+              <strong>
+                {t(
+                  "adminAI.benchmarks.launch.billingBypassed",
+                )}
+              </strong>
+              <span>
+                {t(
+                  "adminAI.benchmarks.launch.billingBypassedHelp",
+                )}
+              </span>
+            </div>
+
+            <div>
+              <strong>
+                {t(
+                  "adminAI.benchmarks.launch.disposableTopic",
+                )}
+              </strong>
+              <span>
+                {t(
+                  "adminAI.benchmarks.launch.disposableTopicHelp",
+                )}
+              </span>
+            </div>
+          </div>
+
+          <Form.Check
+            className="DfctAdminAI-paidRunConfirm"
+            type="checkbox"
+            id="benchmark-paid-run-confirm"
+            checked={paidRunConfirmed}
+            label={t(
+              "adminAI.benchmarks.launch.confirmCheckbox",
+            )}
+            onChange={(event) => {
+              setPaidRunConfirmed(
+                event.target.checked,
+              );
+            }}
+          />
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => {
+              setConfirmOpen(false);
+              setPaidRunConfirmed(false);
+            }}
+          >
+            {t(
+              "adminAI.benchmarks.launch.cancel",
+            )}
+          </Button>
+
+          <Button
+            variant="danger"
+            disabled={
+              !paidRunConfirmed
+              || adminAi.actionLoading
+              === "benchmark-launch"
+            }
+            onClick={launchPaidRun}
+          >
+            {adminAi.actionLoading
+            === "benchmark-launch" ? (
+              <>
+                <Spinner
+                  animation="border"
+                  size="sm"
+                />
+                {" "}
+                {t(
+                  "adminAI.benchmarks.launch.launching",
+                )}
+              </>
+            ) : (
+              t(
+                "adminAI.benchmarks.launch.confirmAction",
+              )
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </section>
   );
 }
@@ -4231,6 +7746,12 @@ export function BenchmarksView({
 
   return (
     <>
+      <BenchmarkOperations
+        adminAi={adminAi}
+        onInspect={selectRun}
+        t={t}
+      />
+
       <section className="DfctAdmin-section">
         <div className="DfctAdminAI-observabilityHeader">
           <div className="DfctAdmin-sectionHeader">

@@ -1,6 +1,7 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
+  fetchAdminAiBenchmarkCatalog,
   fetchAdminAiBenchmarkDetail,
   fetchAdminAiBenchmarks,
   fetchAdminAiCosts,
@@ -8,6 +9,8 @@ import {
   fetchAdminAiFinances,
   fetchAdminAiRuntime,
   fetchAdminQuickCheckRuntime,
+  launchAdminAiBenchmark,
+  preflightAdminAiBenchmark,
   syncAdminAiAnthropicFinances,
   syncAdminAiOpenAiFinances,
   testAdminAiProvider,
@@ -35,6 +38,9 @@ export function useAdminAi(user, showToast, t) {
   const [costData, setCostData] = useState(null);
   const [financeData, setFinanceData] = useState(null);
   const [benchmarkData, setBenchmarkData] = useState(null);
+  const [benchmarkCatalog, setBenchmarkCatalog] = useState(null);
+  const [benchmarkPreflight, setBenchmarkPreflight] = useState(null);
+  const [benchmarkLaunch, setBenchmarkLaunch] = useState(null);
   const [benchmarkDetail, setBenchmarkDetail] = useState(null);
   const [executionDetail, setExecutionDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -431,6 +437,50 @@ export function useAdminAi(user, showToast, t) {
     ],
   );
 
+  const loadBenchmarkCatalog = useCallback(
+    async () => {
+      if (!canLoad) return null;
+
+      setError("");
+
+      try {
+        const response = await fetchAdminAiBenchmarkCatalog(
+          authRequestRef.current,
+        );
+
+        const catalog = (
+          response?.catalog
+          || response
+          || null
+        );
+
+        setBenchmarkCatalog(catalog);
+        return catalog;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.loadBenchmarkCatalog") ||
+            "Unable to load benchmark catalog.",
+        );
+
+        if (message) {
+          showToast?.(
+            message,
+            "danger",
+          );
+        }
+
+        return null;
+      }
+    },
+    [
+      canLoad,
+      handleError,
+      showToast,
+      t,
+    ],
+  );
+
   const loadBenchmarks = useCallback(
     async (params = {}) => {
       if (!canLoad) return null;
@@ -462,11 +512,151 @@ export function useAdminAi(user, showToast, t) {
     [canLoad, handleError, showToast, t],
   );
 
+  const preflightBenchmark = useCallback(
+    async (payload) => {
+      if (!canLoad) return null;
+
+      setActionLoading(
+        "benchmark-preflight",
+      );
+      setError("");
+
+      try {
+        const response = await preflightAdminAiBenchmark(
+          authRequestRef.current,
+          payload,
+        );
+
+        const preflight = (
+          response?.preflight
+          || response
+          || null
+        );
+
+        setBenchmarkPreflight(
+          preflight,
+        );
+        setLastUpdatedAt(
+          new Date(),
+        );
+
+        return preflight;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.preflightBenchmark") ||
+            "Unable to preflight this benchmark.",
+        );
+
+        if (message) {
+          showToast?.(
+            message,
+            "danger",
+          );
+        }
+
+        return null;
+      } finally {
+        setActionLoading("");
+      }
+    },
+    [
+      canLoad,
+      handleError,
+      showToast,
+      t,
+    ],
+  );
+
+  const launchBenchmark = useCallback(
+    async (payload) => {
+      if (!canLoad) return null;
+
+      setActionLoading(
+        "benchmark-launch",
+      );
+      setError("");
+
+      try {
+        const response = await launchAdminAiBenchmark(
+          authRequestRef.current,
+          payload,
+        );
+
+        const launch = (
+          response?.launch
+          || response
+          || null
+        );
+
+        setBenchmarkLaunch(
+          launch,
+        );
+
+        if (response?.preflight) {
+          setBenchmarkPreflight(
+            response.preflight,
+          );
+        }
+
+        setLastUpdatedAt(
+          new Date(),
+        );
+
+        showToast?.(
+          t?.(
+            "adminAI.toasts.benchmarkLaunched",
+          ) ||
+            "Benchmark accepted for execution.",
+          "success",
+        );
+
+        await loadBenchmarks({
+          limit: 50,
+        });
+
+        return launch;
+      } catch (err) {
+        const message = handleError(
+          err,
+          t?.("adminAI.errors.launchBenchmark") ||
+            "Unable to launch this benchmark.",
+        );
+
+        if (message) {
+          showToast?.(
+            message,
+            "danger",
+          );
+        }
+
+        return null;
+      } finally {
+        setActionLoading("");
+      }
+    },
+    [
+      canLoad,
+      handleError,
+      loadBenchmarks,
+      showToast,
+      t,
+    ],
+  );
+
   const loadBenchmarkDetail = useCallback(
-    async (benchmarkRunId) => {
+    async (
+      benchmarkRunId,
+      {
+        silent = false,
+      } = {},
+    ) => {
       if (!canLoad || !benchmarkRunId) return null;
 
-      setDetailLoading(true);
+      if (!silent) {
+        setDetailLoading(true);
+      }
+
       setError("");
 
       try {
@@ -483,10 +673,19 @@ export function useAdminAi(user, showToast, t) {
           t?.("adminAI.errors.loadBenchmarkDetail") ||
             "Unable to load benchmark execution details.",
         );
-        if (message) showToast?.(message, "danger");
+
+        if (message && !silent) {
+          showToast?.(
+            message,
+            "danger",
+          );
+        }
+
         return null;
       } finally {
-        setDetailLoading(false);
+        if (!silent) {
+          setDetailLoading(false);
+        }
       }
     },
     [canLoad, handleError, showToast, t],
@@ -522,6 +721,130 @@ export function useAdminAi(user, showToast, t) {
     [canLoad, handleError, showToast, t],
   );
 
+  const benchmarkLaunchTaskId = (
+    benchmarkLaunch?.celeryTaskId
+    || benchmarkLaunch?.taskId
+    || ""
+  );
+
+  const activeBenchmarkRun = useMemo(
+    () => {
+      const items = Array.isArray(
+        benchmarkData?.items,
+      )
+        ? benchmarkData.items
+        : [];
+
+      const launchedRun = benchmarkLaunchTaskId
+        ? (
+            items.find(
+              (run) => (
+                String(
+                  run?.celeryTaskId
+                  || "",
+                )
+                === String(
+                  benchmarkLaunchTaskId,
+                )
+              ),
+            )
+            || null
+          )
+        : null;
+
+      if (launchedRun) {
+        return launchedRun;
+      }
+
+      /*
+       * The launch response is volatile React state. BenchmarkRun is the
+       * durable source of truth, so recover the newest non-terminal run
+       * when this view is remounted after navigation or refresh.
+       */
+      return (
+        items.find(
+          (run) => {
+            const status = String(
+              run?.status || "",
+            ).toLowerCase();
+
+            const outcome = String(
+              run?.outcome || "",
+            ).toLowerCase();
+
+            return (
+              ![
+                "succeeded",
+                "failed",
+              ].includes(status)
+              && ![
+                "passed",
+                "failed",
+                "incomplete",
+              ].includes(outcome)
+            );
+          },
+        )
+        || null
+      );
+    },
+    [
+      benchmarkData,
+      benchmarkLaunchTaskId,
+    ],
+  );
+
+  const activeBenchmarkTerminal = Boolean(
+    activeBenchmarkRun
+    && (
+      [
+        "succeeded",
+        "failed",
+      ].includes(
+        String(
+          activeBenchmarkRun.status
+          || "",
+        ).toLowerCase(),
+      )
+      || [
+        "passed",
+        "failed",
+        "incomplete",
+      ].includes(
+        String(
+          activeBenchmarkRun.outcome
+          || "",
+        ).toLowerCase(),
+      )
+    ),
+  );
+
+  const benchmarkActiveTrackingId = (
+    benchmarkLaunchTaskId
+    || activeBenchmarkRun?.celeryTaskId
+    || activeBenchmarkRun?.benchmarkRunId
+    || ""
+  );
+
+  const benchmarkActiveRefresh = useAutoRefresh({
+    enabled: Boolean(
+      canLoad
+      && benchmarkActiveTrackingId
+      && !activeBenchmarkTerminal
+    ),
+    refresh: async () => {
+      await loadBenchmarks({
+        limit: 50,
+      });
+    },
+    intervalMs: 5000,
+    maxIntervalMs: 30000,
+    refreshWhenHidden: false,
+    runImmediately: true,
+    jitterRatio: 0.04,
+    onError: () => {},
+  });
+
   const autoRefresh = useAutoRefresh({
     enabled: canLoad,
     refresh: async () => {
@@ -546,6 +869,14 @@ export function useAdminAi(user, showToast, t) {
     costData,
     financeData,
     benchmarkData,
+    benchmarkCatalog,
+    benchmarkPreflight,
+    benchmarkLaunch,
+    activeBenchmarkRun,
+    benchmarkActiveRefreshing:
+      benchmarkActiveRefresh.isRefreshing,
+    benchmarkActiveLastUpdatedAt:
+      benchmarkActiveRefresh.lastUpdatedAt,
     benchmarkDetail,
     executionDetail,
     detailLoading,
@@ -564,7 +895,10 @@ export function useAdminAi(user, showToast, t) {
     loadCosts,
     loadFinances,
     syncProviderFinances,
+    loadBenchmarkCatalog,
     loadBenchmarks,
+    preflightBenchmark,
+    launchBenchmark,
     loadBenchmarkDetail,
     loadExecutionDetail,
     setBenchmarkDetail,

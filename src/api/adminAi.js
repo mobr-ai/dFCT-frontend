@@ -75,6 +75,35 @@ export const fetchAdminAiBenchmarks = (
     params,
   );
 
+
+export const fetchAdminAiBenchmarkCatalog = (
+  authRequest,
+) =>
+  get(
+    authRequest,
+    "/api/admin/ai/benchmarks/catalog",
+  );
+
+export const preflightAdminAiBenchmark = (
+  authRequest,
+  payload = {},
+) =>
+  post(
+    authRequest,
+    "/api/admin/ai/benchmarks/preflight",
+    payload,
+  );
+
+export const launchAdminAiBenchmark = (
+  authRequest,
+  payload = {},
+) =>
+  post(
+    authRequest,
+    "/api/admin/ai/benchmarks/runs",
+    payload,
+  );
+
 export const fetchAdminAiBenchmarkDetail = (
   authRequest,
   benchmarkRunId,
