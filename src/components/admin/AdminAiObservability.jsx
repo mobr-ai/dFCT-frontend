@@ -2844,6 +2844,39 @@ function ExecutionDag({
     }
   };
 
+  const centerDag = (
+    animated = true,
+  ) => {
+    const viewport = (
+      viewportRef.current
+    );
+
+    if (!viewport) {
+      return;
+    }
+
+    animateViewportTo(
+      Math.max(
+        0,
+        (
+          viewport.scrollWidth
+          - viewport.clientWidth
+        ) / 2,
+      ),
+      Math.max(
+        0,
+        (
+          viewport.scrollHeight
+          - viewport.clientHeight
+        ) / 2,
+      ),
+      {
+        animated,
+        duration: 260,
+      },
+    );
+  };
+
   /*
    * Tooltip coordinates are stored in the scrollable viewport's own
    * content coordinate system. This is important: absolute coordinates
@@ -3197,16 +3230,39 @@ function ExecutionDag({
   );
 
   /*
-   * Reset whenever a different durable DAG is loaded.
+   * A refreshed execution can retain the same node/edge counts while costs,
+   * statuses, timestamps, or telemetry change. Include durable node and edge
+   * fields in the identity so a material graph update triggers a fresh fit.
    */
   useEffect(() => {
+    const nodeIdentity = nodes
+      .map(
+        (node) => [
+          node.nodeId,
+          node.status,
+          node.startedAt,
+          node.finishedAt,
+          node.resolvedCostUsd,
+        ].join(":"),
+      )
+      .join("|");
+
+    const edgeIdentity = edges
+      .map(
+        (edge) => [
+          edge.sourceNodeId,
+          edge.targetNodeId,
+          edge.kind,
+        ].join(":"),
+      )
+      .join("|");
+
     const identity = [
-      nodes.length,
-      edges.length,
-      firstNodeId,
+      nodeIdentity,
+      edgeIdentity,
       width,
       height,
-    ].join(":");
+    ].join("::");
 
     if (
       !nodes.length
@@ -3216,18 +3272,10 @@ function ExecutionDag({
       return;
     }
 
-    dagIdentityRef.current = (
-      identity
-    );
-
-    effectiveZoomRef.current = 0.8;
+    dagIdentityRef.current = identity;
 
     setZoomMode(
-      "manual",
-    );
-
-    setManualZoom(
-      0.8,
+      "fit",
     );
 
     setPinnedNodeId("");
@@ -3238,7 +3286,7 @@ function ExecutionDag({
       () => {
         window.requestAnimationFrame(
           () => {
-            centerFirstStep(
+            centerDag(
               false,
             );
           },
@@ -3246,10 +3294,9 @@ function ExecutionDag({
       },
     );
   }, [
-    edges.length,
-    firstNodeId,
+    edges,
     height,
-    nodes.length,
+    nodes,
     width,
   ]);
 
@@ -4254,7 +4301,7 @@ function ExecutionDag({
                 () => {
                   window.requestAnimationFrame(
                     () => {
-                      centerFirstStep(
+                      centerDag(
                         true,
                       );
                     },
@@ -6182,6 +6229,10 @@ function profileStatusTone(
 
 function BenchmarkOperations({
   adminAi,
+  benchmarkKey,
+  benchmarkVersion,
+  setBenchmarkKey,
+  setBenchmarkVersion,
   onInspect,
   t,
 }) {
@@ -6198,8 +6249,6 @@ function BenchmarkOperations({
     catalog.analysisProfiles,
   );
 
-  const [benchmarkKey, setBenchmarkKey] = useState("");
-  const [benchmarkVersion, setBenchmarkVersion] = useState("");
   const [profileReference, setProfileReference] = useState("");
   const [showCandidateProfiles, setShowCandidateProfiles] = useState(false);
   const [preflightSignature, setPreflightSignature] = useState("");
@@ -6422,6 +6471,11 @@ function BenchmarkOperations({
       return;
     }
 
+    const catalogDefault = (
+      catalog.defaultAnalysisProfile
+      || ""
+    );
+
     const recommended = (
       selectedBenchmark
         ?.recommendedAnalysisProfile
@@ -6429,6 +6483,12 @@ function BenchmarkOperations({
 
     const preferred = (
       visibleProfiles.find(
+        (profile) => (
+          profile.reference
+          === catalogDefault
+        ),
+      )
+      || visibleProfiles.find(
         (profile) => (
           profile.reference
           === recommended
@@ -6445,6 +6505,7 @@ function BenchmarkOperations({
     );
     setPreflightSignature("");
   }, [
+    catalog.defaultAnalysisProfile,
     profileReference,
     profiles,
     selectedBenchmark,
@@ -7390,6 +7451,15 @@ export function BenchmarksView({
 
   const data = adminAi.benchmarkData || {};
 
+  const catalog = (
+    adminAi.benchmarkCatalog
+    || {}
+  );
+
+  const catalogBenchmarks = asArray(
+    catalog.benchmarks,
+  );
+
   const items = asArray(
     data.items,
   );
@@ -7406,32 +7476,49 @@ export function BenchmarksView({
     () => (
       Array.from(
         new Set(
-          items
-            .map(
+          [
+            ...catalogBenchmarks.map(
+              (benchmark) => benchmark.key,
+            ),
+            ...items.map(
               (run) => run.benchmarkKey,
-            )
-            .filter(Boolean),
+            ),
+          ].filter(Boolean),
         ),
       ).sort()
     ),
-    [items],
+    [
+      catalogBenchmarks,
+      items,
+    ],
   );
 
   useEffect(() => {
-    if (!latest) {
+    if (!benchmarkKeys.length) {
       return;
     }
 
     if (
-      !benchmarkKey
-      || !benchmarkKeys.includes(
+      benchmarkKey
+      && benchmarkKeys.includes(
         benchmarkKey,
       )
     ) {
-      setBenchmarkKey(
-        latest.benchmarkKey || "",
-      );
+      return;
     }
+
+    const preferred = (
+      latest?.benchmarkKey
+      && benchmarkKeys.includes(
+        latest.benchmarkKey,
+      )
+    )
+      ? latest.benchmarkKey
+      : benchmarkKeys[0];
+
+    setBenchmarkKey(
+      preferred || "",
+    );
   }, [
     benchmarkKey,
     benchmarkKeys,
@@ -7439,24 +7526,48 @@ export function BenchmarksView({
   ]);
 
   const versions = useMemo(
-    () => (
-      Array.from(
+    () => {
+      const catalogBenchmark = (
+        catalogBenchmarks.find(
+          (benchmark) => (
+            benchmark.key
+            === benchmarkKey
+          ),
+        )
+        || null
+      );
+
+      const catalogVersions = asArray(
+        catalogBenchmark?.versions,
+      ).map(
+        (version) => String(
+          version?.version
+          ?? version
+          ?? "",
+        ),
+      );
+
+      const historyVersions = items
+        .filter(
+          (run) => (
+            !benchmarkKey
+            || run.benchmarkKey
+              === benchmarkKey
+          ),
+        )
+        .map(
+          (run) => String(
+            run.benchmarkVersion
+            ?? "",
+          ),
+        );
+
+      return Array.from(
         new Set(
-          items
-            .filter(
-              (run) => (
-                !benchmarkKey
-                || run.benchmarkKey
-                  === benchmarkKey
-              ),
-            )
-            .map(
-              (run) => String(
-                run.benchmarkVersion
-                ?? "",
-              ),
-            )
-            .filter(Boolean),
+          [
+            ...catalogVersions,
+            ...historyVersions,
+          ].filter(Boolean),
         ),
       ).sort(
         (left, right) => (
@@ -7468,10 +7579,11 @@ export function BenchmarksView({
             },
           )
         ),
-      )
-    ),
+      );
+    },
     [
       benchmarkKey,
+      catalogBenchmarks,
       items,
     ],
   );
@@ -7495,8 +7607,19 @@ export function BenchmarksView({
         ),
       );
 
+      const catalogBenchmark = (
+        catalogBenchmarks.find(
+          (benchmark) => (
+            benchmark.key
+            === benchmarkKey
+          ),
+        )
+        || null
+      );
+
       const preferred = String(
-        latestForKey?.benchmarkVersion
+        catalogBenchmark?.defaultVersion
+        ?? latestForKey?.benchmarkVersion
         ?? versions[0],
       );
 
@@ -7509,34 +7632,16 @@ export function BenchmarksView({
   }, [
     benchmarkKey,
     benchmarkVersion,
+    catalogBenchmarks,
     items,
     versions,
   ]);
 
-  const historyRuns = useMemo(
-    () => (
-      items.filter(
-        (run) => (
-          (
-            !benchmarkKey
-            || run.benchmarkKey
-              === benchmarkKey
-          )
-          && (
-            !benchmarkVersion
-            || String(
-              run.benchmarkVersion,
-            ) === benchmarkVersion
-          )
-        ),
-      )
-    ),
-    [
-      benchmarkKey,
-      benchmarkVersion,
-      items,
-    ],
-  );
+  /*
+   * The selectors above configure the next benchmark execution only.
+   * Durable history must remain global and show every benchmark run.
+   */
+  const historyRuns = items;
 
   const visibleRuns = useMemo(
     () => {
@@ -7748,6 +7853,10 @@ export function BenchmarksView({
     <>
       <BenchmarkOperations
         adminAi={adminAi}
+        benchmarkKey={benchmarkKey}
+        benchmarkVersion={benchmarkVersion}
+        setBenchmarkKey={setBenchmarkKey}
+        setBenchmarkVersion={setBenchmarkVersion}
         onInspect={selectRun}
         t={t}
       />
