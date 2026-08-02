@@ -2923,7 +2923,7 @@
       "dagFit": "Ajustar",
       "dagInteractionHint": "Passe o cursor ou foque um nó para ver a telemetria; toque em dispositivos móveis para abrir detalhes.",
       "dagReset": "Redefinir",
-      "dagResetHelp": "Voltar à visualização inicial em 80% e centralizar a primeira etapa da execução"
+      "dagResetHelp": "Redefinir para 80% e centralizar o grafo completo da execução"
     }
   }
 }

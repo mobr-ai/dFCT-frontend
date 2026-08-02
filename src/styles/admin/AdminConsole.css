@@ -4863,39 +4863,88 @@ html[data-theme="paper"]
 .DfctAdminAI-benchmarkConfirmModal
   .DfctAdminAI-paidRunConfirm
   .form-check-input {
-  border: 1px solid
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.12rem;
+  border: 2px solid
     color-mix(
       in srgb,
-      var(--theme-text) 40%,
+      var(--theme-text) 72%,
       var(--theme-border)
     );
-  background-color: var(--theme-surface-soft);
-  box-shadow: none;
+  border-radius: 0.22rem;
+  background-color:
+    color-mix(
+      in srgb,
+      var(--theme-surface) 82%,
+      var(--theme-text) 18%
+    );
+  background-image: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.78rem 0.78rem;
+  box-shadow:
+    inset 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--theme-surface) 70%,
+      transparent
+    );
+  color-scheme: light dark;
+  accent-color: var(--theme-primary);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-input:hover {
+  border-color: var(--theme-primary);
 }
 
 .DfctAdminAI-benchmarkConfirmModal
   .DfctAdminAI-paidRunConfirm
   .form-check-input:checked {
-  border-color: var(--theme-primary);
-  background-color: var(--theme-primary);
+  border-color: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.4' d='m3.2 8.2 3 3.1 6.7-7'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 0.78rem 0.78rem;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.6' d='m3.1 8.2 3 3.1 6.8-7.2'/%3E%3C/svg%3E") !important;
+  box-shadow:
+    0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--theme-primary) 55%,
+      transparent
+    );
 }
 
 .DfctAdminAI-benchmarkConfirmModal
   .DfctAdminAI-paidRunConfirm
-  .form-check-input:focus {
+  .form-check-input:focus-visible {
   border-color: var(--theme-primary);
+  outline: 2px solid
+    color-mix(
+      in srgb,
+      var(--theme-primary) 55%,
+      transparent
+    );
+  outline-offset: 2px;
   box-shadow:
     0 0 0 0.2rem
     color-mix(
       in srgb,
-      var(--theme-primary) 18%,
+      var(--theme-primary) 20%,
       transparent
     );
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-label {
+  color: var(--theme-text);
+  cursor: pointer;
 }
 
 /* The same lifecycle strip is used by launcher and dedicated detail views. */

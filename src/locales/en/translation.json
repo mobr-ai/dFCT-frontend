@@ -2923,7 +2923,7 @@
       "dagFit": "Fit",
       "dagInteractionHint": "Hover or focus a node for telemetry; tap on mobile to open details.",
       "dagReset": "Reset",
-      "dagResetHelp": "Reset to the initial 80% view and center the first execution step"
+      "dagResetHelp": "Reset to 80% and center the complete execution graph"
     }
   }
 }
