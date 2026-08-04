@@ -156,7 +156,10 @@ function AuthPage(props) {
 
   const handleGoogleResponse = async (tokenResponse, handleLogin) => {
     try {
-      const payload = { token: tokenResponse.access_token };
+      const payload = {
+        token: tokenResponse.access_token,
+        remember_me: rememberMe,
+      };
 
       const apiResponse = await handleApiRequest("/api/auth/google", {
         method: "POST",
@@ -297,18 +300,23 @@ function AuthPage(props) {
                     />
                     <Form.Text id="Auth-help-msg" muted />
                   </InputGroup>
-                  <Form.Check
-                    type="checkbox"
-                    id="rememberMe"
-                    label={t("keepMeLoggedIn")}
-                    className="Auth-keep-logged-toggle"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
                 </>
               )}
               {email && props.type === "login" && !confirmationError && (
                 <p className="Auth-alternative-link">{t("forgotPass")}</p>
+              )}
+
+              {props.type === "login" && !confirmationError && (
+                <Form.Check
+                  type="checkbox"
+                  id="rememberMe"
+                  label={t("keepMeLoggedIn")}
+                  className="Auth-keep-logged-toggle"
+                  checked={rememberMe}
+                  onChange={(event) =>
+                    setRememberMe(event.target.checked)
+                  }
+                />
               )}
 
               <>
@@ -380,6 +388,7 @@ function AuthPage(props) {
                 <CardanoWalletLogin
                   onLogin={handleLogin}
                   showToast={showToast}
+                  rememberMe={rememberMe}
                 />
               </Suspense>
             </Container>

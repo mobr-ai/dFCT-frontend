@@ -8,7 +8,11 @@ import {
   WALLET_ICONS,
 } from "../../chains/cardano/constants";
 
-function CardanoWalletLogin({ onLogin, showToast }) {
+function CardanoWalletLogin({
+  onLogin,
+  showToast,
+  rememberMe = false,
+}) {
   const { t } = useTranslation();
   const [availableWallets, setAvailableWallets] = useState([]);
 
@@ -71,6 +75,7 @@ function CardanoWalletLogin({ onLogin, showToast }) {
             challenge_token: challenge.challenge_token,
             signature: signed.signature,
             key: signed.key,
+            remember_me: rememberMe,
           }),
         })
       );
