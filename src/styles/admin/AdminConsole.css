@@ -626,7 +626,7 @@
 
 .DfctAdminConsole .DfctAdmin-section {
   width: 100%;
-  /* margin-top: 1rem; */
+  margin-bottom: 1rem;
   padding: 1rem;
   border: 1px solid var(--theme-border);
   border-radius: var(--theme-radius-xl, 18px);
@@ -3547,7 +3547,6 @@ html[data-workspace-theme]
   }
 }
 
-
 /* Compact cost dashboard. */
 
 .DfctAdminConsole .DfctAdminAI-costVisualGrid {
@@ -3627,7 +3626,9 @@ html[data-workspace-theme]
   user-select: none;
 }
 
-.DfctAdminConsole .DfctAdminAI-financeDetails > summary::-webkit-details-marker {
+.DfctAdminConsole
+  .DfctAdminAI-financeDetails
+  > summary::-webkit-details-marker {
   display: none;
 }
 
@@ -3643,11 +3644,7 @@ html[data-workspace-theme]
 
 .DfctAdminConsole .DfctAdminAI-financeDetails[open] > summary {
   border-bottom: 1px solid var(--theme-border);
-  background: color-mix(
-    in srgb,
-    var(--theme-primary) 2%,
-    var(--theme-card-bg)
-  );
+  background: color-mix(in srgb, var(--theme-primary) 2%, var(--theme-card-bg));
 }
 
 @media (max-width: 980px) {
@@ -3777,7 +3774,6 @@ html[data-workspace-theme]
   line-height: 1.45;
 }
 
-
 .DfctAdminConsole .DfctAdminAI-financeScoped {
   padding: 0 1rem 1rem;
 }
@@ -3827,10 +3823,7 @@ html[data-workspace-theme]
 
 .DfctAdminConsole .DfctAdminAI-financeScopedMetrics {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(170px, 1fr)
-  );
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.55rem;
   margin-top: 0.75rem;
 }
@@ -3853,10 +3846,7 @@ html[data-workspace-theme]
 
 .DfctAdminConsole .DfctAdminAI-financeScopedMeta {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(220px, 1fr)
-  );
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.55rem;
   margin-top: 0.6rem;
 }
@@ -3936,7 +3926,10 @@ html[data-workspace-theme]
   background: var(--theme-surface-soft, var(--theme-card-bg));
   color: var(--theme-text);
   text-align: left;
-  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .DfctAdminOverview-statusCard:hover,
@@ -3946,10 +3939,34 @@ html[data-workspace-theme]
   box-shadow: var(--theme-shadow-soft);
 }
 
-.DfctAdminOverview-statusCard.is-danger { border-color: color-mix(in srgb, var(--bs-danger, #dc3545) 42%, var(--theme-border)); }
-.DfctAdminOverview-statusCard.is-warning { border-color: color-mix(in srgb, var(--bs-warning, #ffc107) 48%, var(--theme-border)); }
-.DfctAdminOverview-statusCard.is-success { border-color: color-mix(in srgb, var(--bs-success, #198754) 36%, var(--theme-border)); }
-.DfctAdminOverview-statusCard.is-info { border-color: color-mix(in srgb, var(--bs-info, #0dcaf0) 38%, var(--theme-border)); }
+.DfctAdminOverview-statusCard.is-danger {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 42%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-warning {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 48%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-success {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 36%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-info {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-info, #0dcaf0) 38%,
+    var(--theme-border)
+  );
+}
 
 .DfctAdminOverview-statusHead {
   display: flex;
@@ -4051,14 +4068,23 @@ html[data-workspace-theme]
   background: var(--bs-secondary, #6c757d);
 }
 
-.DfctAdminOverview-attentionItem.is-danger .DfctAdminOverview-attentionDot { background: var(--bs-danger, #dc3545); }
-.DfctAdminOverview-attentionItem.is-warning .DfctAdminOverview-attentionDot { background: var(--bs-warning, #ffc107); }
+.DfctAdminOverview-attentionItem.is-danger .DfctAdminOverview-attentionDot {
+  background: var(--bs-danger, #dc3545);
+}
+.DfctAdminOverview-attentionItem.is-warning .DfctAdminOverview-attentionDot {
+  background: var(--bs-warning, #ffc107);
+}
 
 .DfctAdminOverview-clearState {
   padding: 1rem;
-  border: 1px dashed color-mix(in srgb, var(--bs-success, #198754) 45%, var(--theme-border));
+  border: 1px dashed
+    color-mix(in srgb, var(--bs-success, #198754) 45%, var(--theme-border));
   border-radius: 14px;
-  background: color-mix(in srgb, var(--bs-success, #198754) 5%, var(--theme-surface));
+  background: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 5%,
+    var(--theme-surface)
+  );
 }
 
 .DfctAdminOverview-clearState p {
@@ -4315,13 +4341,7 @@ html[data-workspace-theme]
 }
 
 .DfctAdminConsole .is-mono {
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .DfctAdminConsole .DfctAdminAI-preflightPanel {
@@ -4335,12 +4355,11 @@ html[data-workspace-theme]
       var(--theme-border)
     );
   border-radius: 14px;
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-success, var(--bs-success)) 4%,
-      var(--theme-surface)
-    );
+  background: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success)) 4%,
+    var(--theme-surface)
+  );
 }
 
 .DfctAdminConsole .DfctAdminAI-preflightHeader {
@@ -4401,8 +4420,7 @@ html[data-workspace-theme]
 
 .DfctAdminConsole .DfctAdminAI-preflightRoles {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.45rem;
 }
 
@@ -4410,12 +4428,7 @@ html[data-workspace-theme]
   display: grid;
   gap: 0.12rem;
   padding-top: 0.5rem;
-  border-top: 1px solid
-    color-mix(
-      in srgb,
-      currentColor 18%,
-      transparent
-    );
+  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
 }
 
 .DfctAdminConsole .DfctAdminAI-preflightRoles small {
@@ -4448,27 +4461,17 @@ html[data-workspace-theme]
   gap: 0.8rem;
   padding: 0.9rem;
   border: 1px solid
-    color-mix(
-      in srgb,
-      var(--theme-primary) 35%,
-      var(--theme-border)
-    );
+    color-mix(in srgb, var(--theme-primary) 35%, var(--theme-border));
   border-radius: 14px;
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 5%,
-      var(--theme-surface)
-    );
+  background: color-mix(in srgb, var(--theme-primary) 5%, var(--theme-surface));
 }
 
 .DfctAdminConsole .DfctAdminAI-activeBenchmark.is-terminal {
-  border-color:
-    color-mix(
-      in srgb,
-      var(--theme-success, var(--bs-success)) 32%,
-      var(--theme-border)
-    );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success)) 32%,
+    var(--theme-border)
+  );
 }
 
 .DfctAdminConsole .DfctAdminAI-activeBenchmarkHeader,
@@ -4522,10 +4525,8 @@ html[data-workspace-theme]
 }
 
 .DfctAdminConsole .DfctAdminAI-runProgress > div.is-complete {
-  border-color:
-    var(--theme-success, var(--bs-success));
-  color:
-    var(--theme-success, var(--bs-success));
+  border-color: var(--theme-success, var(--bs-success));
+  color: var(--theme-success, var(--bs-success));
 }
 
 .DfctAdminConsole .DfctAdminAI-runProgress span {
@@ -4641,18 +4642,9 @@ html[data-workspace-theme]
 .DfctAdminAI-paidRunConfirm {
   padding: 0.7rem 0.75rem 0.7rem 2.25rem;
   border: 1px solid
-    color-mix(
-      in srgb,
-      var(--bs-danger) 28%,
-      var(--theme-border)
-    );
+    color-mix(in srgb, var(--bs-danger) 28%, var(--theme-border));
   border-radius: 10px;
-  background:
-    color-mix(
-      in srgb,
-      var(--bs-danger) 5%,
-      var(--theme-surface)
-    );
+  background: color-mix(in srgb, var(--bs-danger) 5%, var(--theme-surface));
   color: var(--theme-text);
   font-weight: 800;
 }
@@ -4715,7 +4707,6 @@ html[data-workspace-theme]
   }
 }
 
-
 /* d-FCT benchmark fixture-owned preview + select hardening */
 
 html[data-theme]
@@ -4735,14 +4726,10 @@ html[data-theme]
    * Theme-native chevron. Using an inline SVG here keeps the affordance
    * independent from the browser's native select arrow.
    */
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2398a6b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
-  background-position:
-    right 0.8rem center !important;
-  background-repeat:
-    no-repeat !important;
-  background-size:
-    0.72rem auto !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2398a6b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-position: right 0.8rem center !important;
+  background-repeat: no-repeat !important;
+  background-size: 0.72rem auto !important;
 
   padding-right: 2.35rem;
 }
@@ -4788,23 +4775,14 @@ html[data-theme="paper"]
   background:
     radial-gradient(
       circle at 26% 24%,
-      color-mix(
-        in srgb,
-        var(--theme-primary) 14%,
-        transparent
-      ),
+      color-mix(in srgb, var(--theme-primary) 14%, transparent),
       transparent 52%
     ),
     var(--theme-surface);
   border: 1px solid var(--theme-border);
   border-radius: 10px;
-  box-shadow:
-    inset 0 1px 0
-      color-mix(
-        in srgb,
-        var(--theme-text) 6%,
-        transparent
-      );
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--theme-text) 6%, transparent);
   min-width: 0;
   overflow: hidden;
   position: relative;
@@ -4827,16 +4805,13 @@ html[data-theme="paper"]
   }
 }
 
-
 /* d-FCT benchmark profile hygiene + section rhythm */
 
 .DfctAdminConsole .DfctAdminAI-candidateProfileToggle {
   margin-top: 0.5rem;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-candidateProfileToggle
-  .form-check-label {
+.DfctAdminConsole .DfctAdminAI-candidateProfileToggle .form-check-label {
   color: var(--theme-muted);
   font-size: 0.74rem;
   font-weight: 700;
@@ -4847,16 +4822,13 @@ html[data-theme="paper"]
  * operations grid. Give every section after the launcher explicit breathing
  * room without changing spacing in the other AI subtabs.
  */
-.DfctAdminConsole
-  .DfctAdminAI-benchmarkOps
-  + .DfctAdmin-section,
+.DfctAdminConsole .DfctAdminAI-benchmarkOps + .DfctAdmin-section,
 .DfctAdminConsole
   .DfctAdminAI-benchmarkOps
   ~ .DfctAdmin-section
   + .DfctAdmin-section {
   margin-top: 0.9rem;
 }
-
 
 /* d-FCT benchmark paid-run checkbox contrast */
 
@@ -4869,29 +4841,19 @@ html[data-theme="paper"]
   height: 1.05rem;
   margin-top: 0.12rem;
   border: 2px solid
-    color-mix(
-      in srgb,
-      var(--theme-text) 72%,
-      var(--theme-border)
-    );
+    color-mix(in srgb, var(--theme-text) 72%, var(--theme-border));
   border-radius: 0.22rem;
-  background-color:
-    color-mix(
-      in srgb,
-      var(--theme-surface) 82%,
-      var(--theme-text) 18%
-    );
+  background-color: color-mix(
+    in srgb,
+    var(--theme-surface) 82%,
+    var(--theme-text) 18%
+  );
   background-image: none;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 0.78rem 0.78rem;
-  box-shadow:
-    inset 0 0 0 1px
-    color-mix(
-      in srgb,
-      var(--theme-surface) 70%,
-      transparent
-    );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--theme-surface) 70%, transparent);
   color-scheme: light dark;
   accent-color: var(--theme-primary);
   opacity: 1;
@@ -4909,35 +4871,19 @@ html[data-theme="paper"]
   .form-check-input:checked {
   border-color: var(--theme-primary) !important;
   background-color: var(--theme-primary) !important;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.6' d='m3.1 8.2 3 3.1 6.8-7.2'/%3E%3C/svg%3E") !important;
-  box-shadow:
-    0 0 0 1px
-    color-mix(
-      in srgb,
-      var(--theme-primary) 55%,
-      transparent
-    );
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.6' d='m3.1 8.2 3 3.1 6.8-7.2'/%3E%3C/svg%3E") !important;
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--theme-primary) 55%, transparent);
 }
 
 .DfctAdminAI-benchmarkConfirmModal
   .DfctAdminAI-paidRunConfirm
   .form-check-input:focus-visible {
   border-color: var(--theme-primary);
-  outline: 2px solid
-    color-mix(
-      in srgb,
-      var(--theme-primary) 55%,
-      transparent
-    );
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
   outline-offset: 2px;
-  box-shadow:
-    0 0 0 0.2rem
-    color-mix(
-      in srgb,
-      var(--theme-primary) 20%,
-      transparent
-    );
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 20%, transparent);
 }
 
 .DfctAdminAI-benchmarkConfirmModal
@@ -4948,11 +4894,9 @@ html[data-theme="paper"]
 }
 
 /* The same lifecycle strip is used by launcher and dedicated detail views. */
-.DfctAdminAI-benchmarkDetail
-  > .DfctAdminAI-runProgress {
+.DfctAdminAI-benchmarkDetail > .DfctAdminAI-runProgress {
   margin: 0.15rem 0 0.15rem;
 }
-
 
 /* === d-FCT BENCHMARK DETAIL COMPACT VERTICAL DAG === */
 
@@ -4966,55 +4910,49 @@ html[data-theme="paper"]
   gap: 0.72rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-benchmarkHero {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-benchmarkHero {
   align-items: center;
   padding-bottom: 0.65rem;
   border-bottom: 1px solid var(--theme-border);
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-benchmarkHero h2 {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-benchmarkHero h2 {
   font-size: clamp(1.22rem, 2vw, 1.55rem);
   line-height: 1.12;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-hardGateBadge {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-hardGateBadge {
   padding: 0.48rem 0.66rem;
   font-size: 0.86rem;
   font-weight: 900;
 }
 
 .DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid {
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
   margin: 0.1rem 0;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid
-  .DfctAdminAI-metric {
+.DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid .DfctAdminAI-metric {
   padding: 0.58rem 0.68rem;
   border-radius: 0.68rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid
-  .DfctAdminAI-metric > strong {
+.DfctAdminConsole
+  .DfctAdminAI-benchmarkMetricGrid
+  .DfctAdminAI-metric
+  > strong {
   font-size: 0.94rem;
 }
 
 /* Assertions remain individually inspectable, but no longer dominate. */
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertionStrip {
-  grid-template-columns:
-    repeat(auto-fit, minmax(170px, 1fr));
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertionStrip {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.32rem;
   margin: 0.15rem 0 0.25rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -5023,40 +4961,34 @@ html[data-theme="paper"]
   border-radius: 0.55rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion span {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
   min-width: 0;
 }
 
-.DfctAdminConsole .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion strong {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion strong {
   flex: 0 0 auto;
   font-size: 0.61rem;
 }
 
 /* Execution overview: compact telemetry rather than five large cards. */
 .DfctAdminConsole .DfctAdminAI-executionSummary {
-  grid-template-columns:
-    repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.45rem;
   margin: 0;
 }
 
-.DfctAdminConsole .DfctAdminAI-executionSummary
-  .DfctAdminAI-metric {
+.DfctAdminConsole .DfctAdminAI-executionSummary .DfctAdminAI-metric {
   padding: 0.55rem 0.62rem;
   border-radius: 0.65rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-executionSummary
-  .DfctAdminAI-metric > strong {
+.DfctAdminConsole .DfctAdminAI-executionSummary .DfctAdminAI-metric > strong {
   font-size: 0.9rem;
 }
 
 /* Provider/service strip becomes a lightweight telemetry index. */
 .DfctAdminConsole .DfctAdminAI-serviceStrip {
-  grid-template-columns:
-    repeat(auto-fit, minmax(145px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
   gap: 0.38rem;
 }
 
@@ -5111,27 +5043,31 @@ html[data-theme="paper"]
   margin: 0 0.65rem 0.7rem;
   padding: 0.68rem 0.75rem;
   border-radius: 0.72rem;
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 3%,
-      var(--theme-surface-soft)
-    );
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 3%,
+    var(--theme-surface-soft)
+  );
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
   .DfctAdminAI-nodeInspectorHeader {
   align-items: center;
   margin-bottom: 0.55rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-nodeInspectorHeader h4 {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeInspectorHeader
+  h4 {
   font-size: 0.86rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-nodeInspectorHeader p {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeInspectorHeader
+  p {
   max-width: 720px;
   font-size: 0.58rem;
 }
@@ -5165,39 +5101,46 @@ html[data-theme="paper"]
   outline: none;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
   .DfctAdminAI-inspectorGrid {
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.32rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-inspectorGrid > div {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  > div {
   padding: 0.38rem 0.44rem;
   border-radius: 0.46rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-inspectorGrid span {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  span {
   font-size: 0.57rem;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-inspectorGrid strong {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  strong {
   font-size: 0.66rem;
 }
 
 /* Long execution identifiers are available, but deliberately subordinate. */
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-nodeRefs {
+.DfctAdminConsole .DfctAdminAI-nodeInspector--compact .DfctAdminAI-nodeRefs {
   margin-top: 0.52rem;
   padding-top: 0;
   border-top: 0;
 }
 
-.DfctAdminConsole .DfctAdminAI-nodeInspector--compact
-  .DfctAdminAI-nodeRefs > summary {
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeRefs
+  > summary {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -5210,8 +5153,7 @@ html[data-theme="paper"]
 
 .DfctAdminConsole .DfctAdminAI-nodeRefsBody {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.36rem;
   margin-top: 0.45rem;
 }
@@ -5231,34 +5173,34 @@ html[data-theme="paper"]
 
 @media (max-width: 980px) {
   .DfctAdminConsole .DfctAdminAI-executionSummary {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .DfctAdminConsole .DfctAdminAI-nodeInspector--compact
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
     .DfctAdminAI-inspectorGrid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
   .DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid,
   .DfctAdminConsole .DfctAdminAI-executionSummary {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .DfctAdminConsole .DfctAdminAI-dagHint {
     white-space: normal;
   }
 
-  .DfctAdminConsole .DfctAdminAI-nodeInspector--compact
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
     .DfctAdminAI-nodeInspectorHeader {
     align-items: flex-start;
   }
 
-  .DfctAdminConsole .DfctAdminAI-nodeInspector--compact
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
     .DfctAdminAI-inspectorGrid {
     grid-template-columns: 1fr;
   }
@@ -5267,7 +5209,6 @@ html[data-theme="paper"]
     grid-template-columns: 1fr;
   }
 }
-
 
 /* d-FCT benchmark DAG fit / zoom / responsive inspector */
 
@@ -5313,12 +5254,7 @@ html[data-theme="paper"]
 .DfctAdminConsole .DfctAdminAI-dagZoom button:focus-visible,
 .DfctAdminConsole .DfctAdminAI-dagZoom button.is-active {
   border-color: var(--theme-border-strong);
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 8%,
-      var(--theme-card-bg)
-    );
+  background: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-card-bg));
   color: var(--theme-primary);
   outline: none;
 }
@@ -5344,8 +5280,7 @@ html[data-theme="paper"]
  * graph at a glance. Zooming above fit turns the same surface into the
  * forensic inspection canvas.
  */
-.DfctAdminConsole
-  .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
   position: relative;
   display: block;
   height: clamp(460px, 68vh, 760px);
@@ -5385,20 +5320,9 @@ html[data-theme="paper"]
   padding: 0.65rem;
   border: 1px solid var(--theme-border-strong);
   border-radius: 0.7rem;
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-surface) 97%,
-      transparent
-    );
+  background: color-mix(in srgb, var(--theme-surface) 97%, transparent);
   color: var(--theme-text);
-  box-shadow:
-    0 14px 34px
-    color-mix(
-      in srgb,
-      var(--theme-bg) 48%,
-      transparent
-    );
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--theme-bg) 48%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   pointer-events: none;
@@ -5416,26 +5340,18 @@ html[data-theme="paper"]
   gap: 0.55rem;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipHeader
-  > div {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader > div {
   min-width: 0;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipHeader
-  span,
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipGrid
-  span {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader span,
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid span {
   display: block;
   color: var(--theme-muted);
   font-size: 0.58rem;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipHeader
-  strong {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader strong {
   display: block;
   margin-top: 0.08rem;
   color: var(--theme-text);
@@ -5446,15 +5362,12 @@ html[data-theme="paper"]
 
 .DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid {
   display: grid;
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.32rem;
   margin-top: 0.55rem;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipGrid
-  > div {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid > div {
   min-width: 0;
   padding: 0.34rem 0.4rem;
   border: 1px solid var(--theme-border);
@@ -5462,9 +5375,7 @@ html[data-theme="paper"]
   background: var(--theme-surface-soft);
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipGrid
-  strong {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid strong {
   display: block;
   margin-top: 0.08rem;
   color: var(--theme-text);
@@ -5484,10 +5395,7 @@ html[data-theme="paper"]
  * Assertion labels are now human-facing translations, so allow slightly
  * longer copy without losing the underlying assertion key in the title.
  */
-.DfctAdminConsole
-  .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion
-  span {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
   line-height: 1.25;
 }
 
@@ -5501,8 +5409,7 @@ html[data-theme="paper"]
     text-align: left;
   }
 
-  .DfctAdminConsole
-    .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+  .DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
     height: clamp(400px, 62vh, 620px);
   }
 
@@ -5521,24 +5428,18 @@ html[data-theme="paper"]
   }
 }
 
-
 /* === d-FCT benchmark DAG interaction refinement === */
 
 /*
  * Assertion labels are human-readable i18n labels now. Preserve the entire
  * title instead of treating the card as a machine-key chip.
  */
-.DfctAdminConsole
-  .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion {
   align-items: flex-start;
   min-height: 0;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion
-  span {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
   flex: 1 1 auto;
   overflow: visible;
   text-overflow: clip;
@@ -5547,10 +5448,7 @@ html[data-theme="paper"]
   line-height: 1.28;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-benchmarkDetail
-  .DfctAdminAI-assertion
-  strong {
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion strong {
   margin-top: 0.04rem;
   white-space: nowrap;
 }
@@ -5606,15 +5504,13 @@ html[data-theme="paper"]
   transform: scale(0.94);
 }
 
-
 /* === d-FCT DAG hardened canvas interaction === */
 
 /*
  * Wheel and pinch are owned by the DAG while the pointer is inside the
  * canvas. The native non-passive JS listener performs the actual zoom.
  */
-.DfctAdminConsole
-  .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
   overscroll-behavior: contain;
   overscroll-behavior-x: contain;
   overscroll-behavior-y: contain;
@@ -5668,8 +5564,7 @@ html[data-theme="paper"]
  * JS owns camera interpolation so native smooth scrolling cannot fight
  * wheel/trackpad input.
  */
-.DfctAdminConsole
-  .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
   scroll-behavior: auto;
 }
 
@@ -5683,25 +5578,14 @@ html[data-theme="paper"]
 
 .DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-pinned {
   pointer-events: auto;
-  border-color:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 36%,
-      var(--theme-border-strong)
-    );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-primary) 36%,
+    var(--theme-border-strong)
+  );
   box-shadow:
-    0 16px 38px
-    color-mix(
-      in srgb,
-      var(--theme-bg) 52%,
-      transparent
-    ),
-    0 0 0 1px
-    color-mix(
-      in srgb,
-      var(--theme-primary) 8%,
-      transparent
-    );
+    0 16px 38px color-mix(in srgb, var(--theme-bg) 52%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-primary) 8%, transparent);
 }
 
 .DfctAdminConsole .DfctAdminAI-dagNodeTooltipActions {
@@ -5719,12 +5603,7 @@ html[data-theme="paper"]
   padding: 0;
   border: 1px solid var(--theme-border);
   border-radius: 6px;
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-surface-soft) 96%,
-      transparent
-    );
+  background: color-mix(in srgb, var(--theme-surface-soft) 96%, transparent);
   color: var(--theme-muted);
   font: inherit;
   font-size: 0.86rem;
@@ -5742,12 +5621,11 @@ html[data-theme="paper"]
 .DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:hover,
 .DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:focus-visible {
   border-color: var(--theme-primary);
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 8%,
-      var(--theme-surface-soft)
-    );
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 8%,
+    var(--theme-surface-soft)
+  );
   color: var(--theme-primary);
   opacity: 1;
   outline: none;
@@ -5761,15 +5639,9 @@ html[data-theme="paper"]
  * Clicked DAG nodes remain visibly selected while their telemetry is pinned.
  */
 .DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
-  filter:
-    drop-shadow(
-      0 3px 8px
-      color-mix(
-        in srgb,
-        var(--theme-primary) 22%,
-        transparent
-      )
-    );
+  filter: drop-shadow(
+    0 3px 8px color-mix(in srgb, var(--theme-primary) 22%, transparent)
+  );
 }
 
 /*
@@ -5787,8 +5659,7 @@ html[data-theme="paper"]
  * The viewport itself is the hard clipping boundary for floating telemetry.
  * No DAG tooltip should ever survive visually outside this rectangle.
  */
-.DfctAdminConsole
-  .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
   position: relative;
   overflow: auto;
   overscroll-behavior: contain;
@@ -5833,49 +5704,34 @@ html[data-theme="paper"]
   pointer-events: none;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltip.is-pinned {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-pinned {
   pointer-events: auto;
 
-  border-color:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 34%,
-      var(--theme-border-strong)
-    );
+  border-color: color-mix(
+    in srgb,
+    var(--theme-primary) 34%,
+    var(--theme-border-strong)
+  );
 
   box-shadow:
-    0 14px 34px
-      color-mix(
-        in srgb,
-        var(--theme-bg) 48%,
-        transparent
-      ),
-    0 0 0 1px
-      color-mix(
-        in srgb,
-        var(--theme-primary) 7%,
-        transparent
-      );
+    0 14px 34px color-mix(in srgb, var(--theme-bg) 48%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-primary) 7%, transparent);
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltip.is-fading {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-fading {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipActions {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipActions {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   flex: 0 0 auto;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipClose {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose {
   display: inline-grid;
   place-items: center;
 
@@ -5886,12 +5742,7 @@ html[data-theme="paper"]
   border: 1px solid var(--theme-border);
   border-radius: 6px;
 
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-surface-soft) 96%,
-      transparent
-    );
+  background: color-mix(in srgb, var(--theme-surface-soft) 96%, transparent);
 
   color: var(--theme-muted);
 
@@ -5910,26 +5761,22 @@ html[data-theme="paper"]
     transform 120ms ease;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipClose:hover,
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipClose:focus-visible {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:hover,
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:focus-visible {
   border-color: var(--theme-primary);
 
-  background:
-    color-mix(
-      in srgb,
-      var(--theme-primary) 8%,
-      var(--theme-surface-soft)
-    );
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 8%,
+    var(--theme-surface-soft)
+  );
 
   color: var(--theme-primary);
   opacity: 1;
   outline: none;
 }
 
-.DfctAdminConsole
-  .DfctAdminAI-dagNodeTooltipClose:active {
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:active {
   transform: scale(0.9);
 }
 
@@ -5937,18 +5784,10 @@ html[data-theme="paper"]
  * Pinned selection remains visually clear while the floating inspector is
  * alive. Zoom dismisses both the inspector and this selected state.
  */
-.DfctAdminConsole
-  .DfctAdminAI-dagNode.is-selected
-  rect {
-  filter:
-    drop-shadow(
-      0 3px 8px
-      color-mix(
-        in srgb,
-        var(--theme-primary) 22%,
-        transparent
-      )
-    );
+.DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
+  filter: drop-shadow(
+    0 3px 8px color-mix(in srgb, var(--theme-primary) 22%, transparent)
+  );
 }
 
 /*
