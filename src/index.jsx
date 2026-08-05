@@ -11,6 +11,7 @@ import reportWebVitals from "./reportWebVitals";
 import TopicBreakdownPage from "./pages/TopicBreakdownPage";
 import TopicSubmissionPage from "./pages/TopicSubmissionPage";
 import AuthPage from "./pages/AuthPage";
+import InstantAssessmentClaimPage from "./pages/InstantAssessmentClaimPage";
 import WaitingList from "./pages/WaitingListPage";
 import SettingsPage from "./pages/SettingsPage";
 import BillingAccessPage from "./pages/BillingAccessPage.jsx";
@@ -31,6 +32,7 @@ import {
 import GovernancePage from "./pages/GovernancePage";
 import ProposalPage from "./pages/ProposalPage";
 import WelcomePage from "./pages/WelcomePage";
+import { safeInternalReturnPath } from "./auth/safeReturnPath";
 import { installThemeRouteSync } from "./theme/themeStorage";
 
 import { Buffer } from "buffer";
@@ -93,12 +95,19 @@ function Layout() {
   };
 
   const handleLogin = useCallback(
-    (userData) => {
+    (userData, options = {}) => {
       if (userData) {
         setUser(userData);
         window.localStorage.setItem("userData", JSON.stringify(userData));
         showToast(t("loginSuccess"), "success");
-        navigate("/");
+
+        const destination =
+          safeInternalReturnPath(options?.returnTo) ||
+          "/";
+
+        navigate(destination, {
+          replace: Boolean(options?.replace),
+        });
         setLoading(false);
       } else {
         setUser(null);
@@ -107,7 +116,7 @@ function Layout() {
         setLoading(false);
       }
     },
-    [setLoading, setUser, navigate]
+    [setLoading, setUser, navigate, showToast, t]
   );
 
   // Keep the authenticated account cache valid on every state change.
@@ -395,6 +404,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <AuthPage type="login" />,
+      },
+      {
+        path: "/instant-assessments/:publicId/claim",
+        element: <InstantAssessmentClaimPage />,
       },
       {
         path: "/submit",

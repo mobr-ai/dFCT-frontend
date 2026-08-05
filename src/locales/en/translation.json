@@ -2925,5 +2925,24 @@
       "dagReset": "Reset",
       "dagResetHelp": "Reset to 80% and center the complete execution graph"
     }
+  },
+  "instantAssessmentClaim": {
+    "eyebrow": "Instant Assessment",
+    "title": "Linking this assessment to your account",
+    "claiming": "We are securely confirming ownership and preparing your private assessment.",
+    "opening": "Ownership confirmed. Opening your assessment…",
+    "errorTitle": "This link cannot be completed",
+    "securityNote": "The link is short-lived and can only be claimed once.",
+    "logInAgain": "Log in again",
+    "goHome": "Go to d-FCT",
+    "errors": {
+      "missing": "The account-link credential is missing from this URL.",
+      "invalid": "This account-link URL is invalid or has been replaced by a newer link.",
+      "expired": "This account-link URL has expired. Request a new assessment link from the Telegram conversation.",
+      "conflict": "This assessment has already been linked to another d-FCT account.",
+      "notReady": "The assessment topic is not ready to be linked yet.",
+      "notFound": "This Instant Assessment could not be found.",
+      "generic": "We could not link this assessment. Return to Telegram and use the latest button."
+    }
   }
 }

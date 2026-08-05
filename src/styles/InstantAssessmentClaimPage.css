@@ -1,0 +1,139 @@
+.InstantAssessmentClaimPage {
+  min-height: calc(100vh - 72px);
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+  background:
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(88, 112, 135, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 90%,
+      rgba(64, 84, 103, 0.2),
+      transparent 36%
+    ),
+    var(--bs-body-bg);
+}
+
+.InstantAssessmentClaimCard {
+  width: min(100%, 34rem);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  border: 1px solid rgba(128, 144, 160, 0.25);
+  border-radius: 1.35rem;
+  background: color-mix(
+    in srgb,
+    var(--bs-body-bg) 92%,
+    slategray 8%
+  );
+  box-shadow:
+    0 1.5rem 5rem rgba(10, 18, 26, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.InstantAssessmentClaimLogo {
+  width: 3.75rem;
+  height: 3.75rem;
+  margin-bottom: 1.1rem;
+  border-radius: 1rem;
+}
+
+.InstantAssessmentClaimEyebrow {
+  margin-bottom: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.InstantAssessmentClaimCard h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 4vw, 2.35rem);
+  line-height: 1.12;
+}
+
+.InstantAssessmentClaimCard p {
+  max-width: 28rem;
+  margin: 1rem auto;
+  line-height: 1.65;
+  opacity: 0.78;
+}
+
+.InstantAssessmentClaimCard small {
+  display: block;
+  margin-top: 1.35rem;
+  line-height: 1.5;
+  opacity: 0.5;
+}
+
+.InstantAssessmentClaimSpinner {
+  width: 2.2rem;
+  height: 2.2rem;
+  margin: 1.7rem auto 0.6rem;
+  border: 3px solid rgba(112, 128, 144, 0.22);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: instant-assessment-claim-spin 0.8s linear infinite;
+}
+
+.InstantAssessmentClaimActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
+.InstantAssessmentClaimPrimary,
+.InstantAssessmentClaimSecondary {
+  min-height: 2.75rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: 0.8rem;
+  font-weight: 650;
+  transition:
+    transform 140ms ease,
+    opacity 140ms ease;
+}
+
+.InstantAssessmentClaimPrimary {
+  border: 1px solid transparent;
+  background: var(--bs-body-color);
+  color: var(--bs-body-bg);
+}
+
+.InstantAssessmentClaimSecondary {
+  border: 1px solid rgba(128, 144, 160, 0.38);
+  background: transparent;
+  color: inherit;
+}
+
+.InstantAssessmentClaimPrimary:hover,
+.InstantAssessmentClaimSecondary:hover {
+  transform: translateY(-1px);
+}
+
+.InstantAssessmentClaimPrimary:focus-visible,
+.InstantAssessmentClaimSecondary:focus-visible {
+  outline: 3px solid rgba(112, 128, 144, 0.4);
+  outline-offset: 3px;
+}
+
+@keyframes instant-assessment-claim-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .InstantAssessmentClaimSpinner {
+    animation-duration: 1.8s;
+  }
+
+  .InstantAssessmentClaimPrimary,
+  .InstantAssessmentClaimSecondary {
+    transition: none;
+  }
+}

@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "../styles/AuthPage.css";
 import CardanoWalletLogin from "../components/wallet/CardanoWalletLogin";
+import { safeInternalReturnPath } from "../auth/safeReturnPath";
 import LoadingPage from "./LoadingPage";
 
 function AuthPage(props) {
@@ -33,6 +34,20 @@ function AuthPage(props) {
   const [confirmationError, setConfirmationError] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const returnTo = safeInternalReturnPath(
+    searchParams.get("returnTo"),
+  );
+
+  const completeLogin = useCallback(
+    (userData) => {
+      handleLogin(userData, {
+        returnTo,
+        replace: true,
+      });
+    },
+    [handleLogin, returnTo],
+  );
 
   const handleResendConfirmation = async () => {
     setResendLoading(true);
@@ -81,11 +96,11 @@ function AuthPage(props) {
       if (props.type === "login") {
 
         if (result.access_token) {
-          handleLogin(result);
+          completeLogin(result);
         }
       }
 
-      if (result.redirect) {
+      if (result.redirect && !returnTo) {
         navigate(result.redirect);
       }
     } catch (error) {
@@ -154,7 +169,7 @@ function AuthPage(props) {
     [props.userData]
   );
 
-  const handleGoogleResponse = async (tokenResponse, handleLogin) => {
+  const handleGoogleResponse = async (tokenResponse) => {
     try {
       const payload = {
         token: tokenResponse.access_token,
@@ -166,7 +181,7 @@ function AuthPage(props) {
         body: JSON.stringify(payload),
       });
 
-      handleLogin(apiResponse);
+      completeLogin(apiResponse);
     } catch (err) {
       console.error("Authentication Error:", err);
     }
@@ -174,7 +189,7 @@ function AuthPage(props) {
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      handleGoogleResponse(tokenResponse, handleLogin);
+      handleGoogleResponse(tokenResponse);
     },
     onError: (errorResponse) => {
       console.error("Google OAuth error:", errorResponse);
@@ -386,7 +401,7 @@ function AuthPage(props) {
 
               <Suspense fallback={<LoadingPage type="simple" />}>
                 <CardanoWalletLogin
-                  onLogin={handleLogin}
+                  onLogin={completeLogin}
                   showToast={showToast}
                   rememberMe={rememberMe}
                 />
