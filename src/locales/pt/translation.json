@@ -2925,5 +2925,24 @@
       "dagReset": "Redefinir",
       "dagResetHelp": "Redefinir para 80% e centralizar o grafo completo da execução"
     }
+  },
+  "instantAssessmentClaim": {
+    "eyebrow": "Avaliação inicial",
+    "title": "Vinculando esta avaliação à sua conta",
+    "claiming": "Estamos confirmando a titularidade com segurança e preparando sua avaliação privada.",
+    "opening": "Titularidade confirmada. Abrindo sua avaliação…",
+    "errorTitle": "Não foi possível concluir este vínculo",
+    "securityNote": "O link tem validade curta e só pode ser reivindicado uma vez.",
+    "logInAgain": "Entrar novamente",
+    "goHome": "Ir para o d-FCT",
+    "errors": {
+      "missing": "A credencial de vínculo não está presente nesta URL.",
+      "invalid": "Este link de vínculo é inválido ou foi substituído por um link mais recente.",
+      "expired": "Este link de vínculo expirou. Solicite um novo link de avaliação na conversa do Telegram.",
+      "conflict": "Esta avaliação já foi vinculada a outra conta do d-FCT.",
+      "notReady": "O tópico da avaliação ainda não está pronto para ser vinculado.",
+      "notFound": "Esta Avaliação inicial não foi encontrada.",
+      "generic": "Não foi possível vincular esta avaliação. Volte ao Telegram e use o botão mais recente."
+    }
   }
 }
