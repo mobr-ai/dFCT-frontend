@@ -26,6 +26,7 @@ import { useState, useEffect, Suspense, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useS3Upload } from "../hooks/useS3Upload.js";
 import { useAuthRequest } from "../hooks/useAuthRequest";
+import { loginPathForReturnTo } from "../auth/safeReturnPath";
 
 function TopicSubmissionPage() {
   const { t } = useTranslation();
@@ -251,7 +252,12 @@ function TopicSubmissionPage() {
   useEffect(() => {
     window.addEventListener("resize", handleResize, false);
 
-    if (!user) navigate("/");
+    if (!user) {
+      navigate(
+        loginPathForReturnTo("/submit"),
+        { replace: true }
+      );
+    }
 
     return () => window.removeEventListener("resize", handleResize, false);
   }, [user, navigate]);
