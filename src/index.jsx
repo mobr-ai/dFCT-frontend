@@ -25,7 +25,6 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
-  defer,
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
@@ -201,7 +200,7 @@ const fetchAllTopics = async () => {
 
 const allTopicsLoader = async () => {
   const allTopicsPromise = fetchAllTopics();
-  return defer({ allTopicsPromise });
+  return { allTopicsPromise };
 };
 
 const homeLoader = async () => {
@@ -261,7 +260,7 @@ const govProposalsLoader = async () => {
 
   if (userData?.id) {
     const govProposalsPromise = fetchGovProposals(userData);
-    return defer({ govProposalsPromise });
+    return { govProposalsPromise };
   }
 
   return {};
@@ -272,7 +271,7 @@ const userTopicsLoader = async () => {
 
   if (userData?.id) {
     const userTopicsPromise = fetchUserTopics(userData);
-    return defer({ userTopicsPromise });
+    return { userTopicsPromise };
   }
 
   return {};
@@ -335,13 +334,13 @@ const fetchTopic = async (userId, topicId, signal) => {
 };
 
 const topicLoader = async (dynData) => {
-  const userTopicsPromise = await userTopicsLoader();
+  const { userTopicsPromise } = await userTopicsLoader();
   const topicPromise = fetchTopic(
     dynData.params.userId,
     dynData.params.topicId,
     dynData.request.signal
   );
-  return defer({ topicPromise, userTopicsPromise });
+  return { topicPromise, userTopicsPromise };
 };
 
 const router = createBrowserRouter([
