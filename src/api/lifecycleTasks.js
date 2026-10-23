@@ -1,15 +1,39 @@
 export const TOPIC_REVIEW_TASK_TYPE = "topic_review";
+export const CONTRIBUTION_REVIEW_TASK_TYPE = "contribution_review";
+export const CLAIM_REVIEW_CURATION_TASK_TYPE = "claim_review_curation";
+export const REVIEW_TASK_TYPES = [
+  TOPIC_REVIEW_TASK_TYPE,
+  CONTRIBUTION_REVIEW_TASK_TYPE,
+  CLAIM_REVIEW_CURATION_TASK_TYPE,
+];
 
 const LIFECYCLE_REQUEST_TIMEOUT = {
   response: 10000,
   deadline: 20000,
 };
 
+function normalizeAcceptedAssignment(item) {
+  if (!item?.task || !item?.assignment) return null;
+
+  return {
+    ...item.task,
+    assignment: item.assignment,
+    assignmentId: item.assignment.assignmentId,
+    assignmentStatus: item.assignment.status,
+    acceptedAt: item.assignment.acceptedAt,
+    assignmentExpiresAt: item.assignment.expiresAt,
+  };
+}
+
 function normalizeTaskList(body) {
-  if (Array.isArray(body)) return body;
   if (Array.isArray(body?.tasks)) return body.tasks;
-  if (Array.isArray(body?.items)) return body.items;
-  if (Array.isArray(body?.data)) return body.data;
+
+  if (Array.isArray(body?.assignments)) {
+    return body.assignments
+      .map(normalizeAcceptedAssignment)
+      .filter(Boolean);
+  }
+
   return [];
 }
 

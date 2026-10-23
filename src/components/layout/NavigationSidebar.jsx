@@ -114,7 +114,7 @@ function NavigationSidebarContent({
       {isAdmin && (
         <Link
           onClick={closeIfUnpinned}
-          to="/admin/billing"
+          to="/admin"
           className={`Navbar-item ${
             location.pathname.startsWith("/admin") ? "active" : ""
           }`}
@@ -131,6 +131,15 @@ function NavigationSidebarContent({
         }`}
       >
         <FontAwesomeIcon icon={faFolderOpen} /> {t("myTopics")}
+      </Link>
+      <Link
+        onClick={closeIfUnpinned}
+        to="/workbench/topic-review"
+        className={`Navbar-item ${
+          location.pathname.includes("/workbench/topic-review") ? "active" : ""
+        }`}
+      >
+        <FontAwesomeIcon icon={faClipboardCheck} /> {t("topicReview.nav")}
       </Link>
 
       <Link
@@ -151,15 +160,6 @@ function NavigationSidebarContent({
         }`}
       >
         <FontAwesomeIcon icon={faCreditCard} /> {t("billingAccess.nav")}
-      </Link>
-      <Link
-        onClick={closeIfUnpinned}
-        to="/workbench/topic-review"
-        className={`Navbar-item ${
-          location.pathname.includes("/workbench/topic-review") ? "active" : ""
-        }`}
-      >
-        <FontAwesomeIcon icon={faClipboardCheck} /> {t("topicReview.nav")}
       </Link>
 
       <Link

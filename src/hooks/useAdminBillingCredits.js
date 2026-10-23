@@ -3,12 +3,14 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   createAdminCreditGrant,
   fetchAdminAccessTiers,
+  fetchAdminBillingNotificationSettings,
   fetchAdminBillingUsers,
   fetchAdminCreditGrants,
   fetchAdminCreditPackages,
   fetchAdminGateways,
   fetchAdminPaymentIntents,
   fulfillAdminPaymentIntent,
+  updateAdminBillingNotificationSettings,
 } from "../api/billingCredits";
 import { getApiErrorMessage, useAuthRequest } from "./useAuthRequest";
 import { useAutoRefresh } from "./useAutoRefresh";
@@ -96,6 +98,48 @@ function paymentIntentMetaFromPayload(payload = {}, params = {}) {
   };
 }
 
+const DEFAULT_NOTIFICATION_SETTINGS = {
+  credit_granted: {
+    key: "credit_granted",
+    enabled: false,
+    implemented: false,
+  },
+  payment_submitted: {
+    key: "payment_submitted",
+    enabled: true,
+    implemented: true,
+  },
+  payment_confirmed: {
+    key: "payment_confirmed",
+    enabled: true,
+    implemented: true,
+  },
+  access_changed: {
+    key: "access_changed",
+    enabled: false,
+    implemented: false,
+  },
+};
+
+function notificationSettingsFromPayload(payload = {}) {
+  const settings = { ...DEFAULT_NOTIFICATION_SETTINGS };
+
+  for (const item of arrayFrom(payload, "settings")) {
+    const key = item?.key || item?.setting_key;
+    if (!key) continue;
+
+    settings[key] = {
+      ...settings[key],
+      ...item,
+      key,
+      enabled: Boolean(item?.enabled ?? item?.is_enabled),
+      implemented: item?.implemented !== false,
+    };
+  }
+
+  return settings;
+}
+
 export function useAdminBillingCredits(user) {
   const { authRequest } = useAuthRequest(user);
 
@@ -109,6 +153,7 @@ export function useAdminBillingCredits(user) {
   const [creditPackages, setCreditPackages] = useState([]);
   const [gateways, setGateways] = useState([]);
   const [accessTiers, setAccessTiers] = useState([]);
+  const [notificationSettings, setNotificationSettings] = useState(DEFAULT_NOTIFICATION_SETTINGS);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState("");
   const [accessDenied, setAccessDenied] = useState(false);
@@ -134,6 +179,7 @@ export function useAdminBillingCredits(user) {
           packagesPayload,
           gatewaysPayload,
           tiersPayload,
+          notificationSettingsPayload,
         ] = await Promise.all([
           fetchAdminBillingUsers(authRequest, { limit: 250 }),
           fetchAdminCreditGrants(authRequest, { limit: 100 }),
@@ -141,6 +187,10 @@ export function useAdminBillingCredits(user) {
           fetchAdminCreditPackages(authRequest),
           fetchAdminGateways(authRequest),
           fetchAdminAccessTiers(authRequest),
+          fetchAdminBillingNotificationSettings(authRequest).catch((err) => {
+            if (isNotFoundError(err)) return null;
+            throw err;
+          }),
         ]);
 
         clearAdminBillingApiUnavailable();
@@ -153,6 +203,7 @@ export function useAdminBillingCredits(user) {
         setCreditPackages(arrayFrom(packagesPayload, "packages"));
         setGateways(arrayFrom(gatewaysPayload, "gateways"));
         setAccessTiers(arrayFrom(tiersPayload, "access_tiers"));
+        setNotificationSettings(notificationSettingsFromPayload(notificationSettingsPayload));
 
         const now = new Date();
         setManualLastUpdatedAt(now);
@@ -289,6 +340,34 @@ export function useAdminBillingCredits(user) {
     [authRequest, canLoad, loadAll],
   );
 
+  const updateNotificationSetting = useCallback(
+    async (key, enabled) => {
+      if (!canLoad || !key) return null;
+
+      setActionLoading(`notificationSetting:${key}`);
+      setError("");
+
+      try {
+        const payload = await updateAdminBillingNotificationSettings(authRequest, {
+          settings: {
+            [key]: Boolean(enabled),
+          },
+        });
+
+        setNotificationSettings(notificationSettingsFromPayload(payload));
+        clearAdminBillingApiUnavailable();
+        setApiUnavailable(false);
+        return payload;
+      } catch (err) {
+        setError(getApiErrorMessage(err, "Unable to update notification setting."));
+        throw err;
+      } finally {
+        setActionLoading("");
+      }
+    },
+    [authRequest, canLoad],
+  );
+
   return useMemo(
     () => ({
       users,
@@ -298,6 +377,7 @@ export function useAdminBillingCredits(user) {
       creditPackages,
       gateways,
       accessTiers,
+      notificationSettings,
       loading,
       actionLoading,
       accessDenied,
@@ -310,6 +390,7 @@ export function useAdminBillingCredits(user) {
       loadPaymentIntents,
       grantCredits,
       fulfillPaymentIntent,
+      updateNotificationSetting,
     }),
     [
       users,
@@ -319,6 +400,7 @@ export function useAdminBillingCredits(user) {
       creditPackages,
       gateways,
       accessTiers,
+      notificationSettings,
       loading,
       actionLoading,
       accessDenied,
@@ -332,6 +414,7 @@ export function useAdminBillingCredits(user) {
       loadPaymentIntents,
       grantCredits,
       fulfillPaymentIntent,
+      updateNotificationSetting,
     ],
   );
 }

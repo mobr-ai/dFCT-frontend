@@ -3,7 +3,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "../styles/SettingsPage.css";
 import { ShareModal } from "../components/share";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { Container, Form, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Row,
+  Col,
+  Image,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Button, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,6 +21,7 @@ import {
   faPen,
   faUpload,
   faTrash,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuthRequest } from "../hooks/useAuthRequest";
 import { useS3Upload } from "../hooks/useS3Upload";
@@ -20,13 +29,22 @@ import { resizeImage } from "../utils/resizeImage"; // helper class
 import useOnClickOutside from "../hooks/useOnClickOutside"; // custom hook
 import avatarImg from "../icons/avatar.png";
 import ThemeSelector from "../components/settings/ThemeSelector";
+import {
+  normalizeAccountLanguage,
+  parseUserSettings,
+  settingsWithNotificationLanguage,
+} from "../utils/userSettings";
 
 function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { user, setUser, showToast } = useOutletContext();
   const { authFetch, authRequest } = useAuthRequest(user);
   const { handleUploads } = useS3Upload();
-  const [language, setLanguage] = useState(i18n.language.split("-")[0]);
+  const [language, setLanguage] = useState(() =>
+    normalizeAccountLanguage(
+      parseUserSettings(user?.settings).notificationLanguage || i18n.language,
+    ),
+  );
   const [showShareModal, setShowShareModal] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
   const [editingAvatar, setEditingAvatar] = useState(false);
@@ -35,9 +53,6 @@ function SettingsPage() {
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const avatarInputRef = useRef(null);
-  const parsedSettings = JSON.parse(
-    user && user.settings ? user.settings : "{}"
-  );
   const navigate = useNavigate();
   const usernameRef = useRef(null);
 
@@ -45,7 +60,7 @@ function SettingsPage() {
     if (editingUsername) {
       if (newUsername !== user.username) {
         saveSettings({
-          ...JSON.parse(user.settings || "{}"),
+          ...parseUserSettings(user?.settings),
           username: newUsername,
         });
       }
@@ -58,6 +73,18 @@ function SettingsPage() {
   useEffect(() => {
     if (!user || !user.id || !user.access_token) navigate("/");
   }, [user, navigate]);
+
+  useEffect(() => {
+    const savedLanguage = parseUserSettings(user?.settings).notificationLanguage;
+    if (!savedLanguage) return;
+
+    const normalizedLanguage = normalizeAccountLanguage(savedLanguage);
+    setLanguage(normalizedLanguage);
+    localStorage.setItem("i18nextLng", normalizedLanguage);
+    if (i18n.language.split("-")[0] !== normalizedLanguage) {
+      i18n.changeLanguage(normalizedLanguage);
+    }
+  }, [user?.settings, i18n]);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -82,7 +109,7 @@ function SettingsPage() {
       }
 
       // update the backend user profile
-      await saveSettings({ ...JSON.parse(user.settings || "{}"), avatar: avatarUrl });
+      await saveSettings({ ...parseUserSettings(user?.settings), avatar: avatarUrl });
     } catch (err) {
       console.error("Error updating avatar:", err);
       showToast(t("avatarUpdateFailed"), "danger");
@@ -92,18 +119,21 @@ function SettingsPage() {
     }
   };
 
-  const handleLanguageChange = (e) => {
-    const selectedLang = e.target.value;
+  const handleLanguageChange = async (e) => {
+    const selectedLang = normalizeAccountLanguage(e.target.value);
     setLanguage(selectedLang);
     localStorage.setItem("i18nextLng", selectedLang);
-    i18n.changeLanguage(selectedLang);
+    await i18n.changeLanguage(selectedLang);
+    await saveSettings(
+      settingsWithNotificationLanguage(user?.settings, selectedLang),
+    );
   };
 
   const handleUsernameSubmit = async () => {
     if (newUsername === user.username || !newUsername) return;
 
     await saveSettings({
-      ...JSON.parse(user.settings || "{}"),
+      ...parseUserSettings(user?.settings),
       username: newUsername.trim(),
     });
 
@@ -383,37 +413,38 @@ function SettingsPage() {
           </div>
           <Form>
             <Form.Group controlId="languageSelect" className="mb-3">
-              <Form.Label>{t("languageConf")}</Form.Label>
+              <div className="Settings-fieldLabelRow">
+                <Form.Label>{t("languageConf")}</Form.Label>
+
+                <OverlayTrigger
+                  placement="right"
+                  overlay={
+                    <Tooltip
+                      id="settings-language-help"
+                      className="Settings-language-tooltip"
+                    >
+                      {t("languageCommunicationHint")}
+                    </Tooltip>
+                  }
+                >
+                  <button
+                    type="button"
+                    className="Settings-language-helpTrigger"
+                    aria-label={t("languageCommunicationHint")}
+                  >
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </button>
+                </OverlayTrigger>
+              </div>
+
               <Form.Select value={language} onChange={handleLanguageChange}>
                 <option value="en">🇺🇸 English (US)</option>
                 <option value="pt">🇧🇷 Português (BR)</option>
               </Form.Select>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>{t("llmEngine")}</Form.Label>
-              <Form.Control
-                as="select"
-                value={parsedSettings.llmEngine || ""}
-                onChange={(e) => {
-                  saveSettings({
-                    ...JSON.parse(user.settings || "{}"),
-                    llmEngine: e.target.value,
-                  });
-                }}
-              >
-                <option value="">{t("selectAnOption")}</option>
-                <option value="openai">OpenAI</option>
-                <option value="xai">xAI</option>
-                <option value="deepseek" disabled>
-                  Deepseek
-                </option>
-                <option value="anthropic" disabled>
-                  Anthropic
-                </option>
-                <option value="all" disabled>
-                  {t("allEngines")} ({t("premiumOnly")})
-                </option>
-              </Form.Control>
+
+              <Form.Text className="Settings-language-hint-mobile">
+                {t("languageCommunicationHint")}
+              </Form.Text>
             </Form.Group>
           </Form>
 

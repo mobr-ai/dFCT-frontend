@@ -11,10 +11,12 @@ import reportWebVitals from "./reportWebVitals";
 import TopicBreakdownPage from "./pages/TopicBreakdownPage";
 import TopicSubmissionPage from "./pages/TopicSubmissionPage";
 import AuthPage from "./pages/AuthPage";
+import InstantAssessmentClaimPage from "./pages/InstantAssessmentClaimPage";
 import WaitingList from "./pages/WaitingListPage";
 import SettingsPage from "./pages/SettingsPage";
 import BillingAccessPage from "./pages/BillingAccessPage.jsx";
-import AdminBillingCreditsPage from "./pages/AdminBillingCreditsPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
+import AdminBenchmarkExecutionPage from "./pages/AdminBenchmarkExecutionPage.jsx";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -23,27 +25,53 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
-  defer,
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
 import GovernancePage from "./pages/GovernancePage";
 import ProposalPage from "./pages/ProposalPage";
 import WelcomePage from "./pages/WelcomePage";
+import { safeInternalReturnPath } from "./auth/safeReturnPath";
 import { installThemeRouteSync } from "./theme/themeStorage";
 
 import { Buffer } from "buffer";
 window.Buffer = Buffer;
 installThemeRouteSync();
 
+function getStoredUserData() {
+  const raw = window.localStorage.getItem("userData");
+
+  if (!raw || raw === "null" || raw === "undefined") {
+    if (raw) {
+      window.localStorage.removeItem("userData");
+    }
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      window.localStorage.removeItem("userData");
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.warn("Discarding invalid cached user data.", error);
+    window.localStorage.removeItem("userData");
+    return null;
+  }
+}
+
 function Layout() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(
-    window.localStorage.userData
-      ? JSON.parse(window.localStorage.userData)
-      : null
-  );
+  const [user, setUser] = useState(() => getStoredUserData());
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({
     show: false,
@@ -66,12 +94,19 @@ function Layout() {
   };
 
   const handleLogin = useCallback(
-    (userData) => {
+    (userData, options = {}) => {
       if (userData) {
         setUser(userData);
         window.localStorage.setItem("userData", JSON.stringify(userData));
         showToast(t("loginSuccess"), "success");
-        navigate("/");
+
+        const destination =
+          safeInternalReturnPath(options?.returnTo) ||
+          "/";
+
+        navigate(destination, {
+          replace: Boolean(options?.replace),
+        });
         setLoading(false);
       } else {
         setUser(null);
@@ -80,12 +115,24 @@ function Layout() {
         setLoading(false);
       }
     },
-    [setLoading, setUser, navigate]
+    [setLoading, setUser, navigate, showToast, t]
   );
 
-  // save user data on changes
+  // Keep the authenticated account cache valid on every state change.
   useEffect(() => {
-    window.localStorage.setItem("userData", JSON.stringify(user));
+    if (
+      user &&
+      typeof user === "object" &&
+      !Array.isArray(user)
+    ) {
+      window.localStorage.setItem(
+        "userData",
+        JSON.stringify(user),
+      );
+      return;
+    }
+
+    window.localStorage.removeItem("userData");
   }, [user]);
 
   return (
@@ -103,7 +150,14 @@ function Layout() {
       <ToastContainer
         position="bottom-end"
         className="p-3"
-        style={{ zIndex: 9999 }}
+        style={{
+          position: "fixed",
+          right: 0,
+          bottom: 0,
+          top: "auto",
+          left: "auto",
+          zIndex: 9999,
+        }}
       >
         <Toast
           bg={toast.variant}
@@ -146,11 +200,11 @@ const fetchAllTopics = async () => {
 
 const allTopicsLoader = async () => {
   const allTopicsPromise = fetchAllTopics();
-  return defer({ allTopicsPromise });
+  return { allTopicsPromise };
 };
 
 const homeLoader = async () => {
-  if (!window.localStorage.userData) {
+  if (!getStoredUserData()) {
     return {};
   }
 
@@ -202,24 +256,22 @@ const fetchUserTopics = async (userData) => {
 };
 
 const govProposalsLoader = async () => {
-  if (!window.localStorage.userData) return {};
+  const userData = getStoredUserData();
 
-  let userData = JSON.parse(window.localStorage.userData);
-  if (userData && userData.id) {
+  if (userData?.id) {
     const govProposalsPromise = fetchGovProposals(userData);
-    return defer({ govProposalsPromise });
+    return { govProposalsPromise };
   }
 
   return {};
 };
 
 const userTopicsLoader = async () => {
-  if (!window.localStorage.userData) return {};
+  const userData = getStoredUserData();
 
-  let userData = JSON.parse(window.localStorage.userData);
-  if (userData && userData.id) {
+  if (userData?.id) {
     const userTopicsPromise = fetchUserTopics(userData);
-    return defer({ userTopicsPromise });
+    return { userTopicsPromise };
   }
 
   return {};
@@ -239,9 +291,26 @@ const normalizeTopicPayload = (payload) => {
 };
 
 const fetchTopic = async (userId, topicId, signal) => {
+  const userData = getStoredUserData();
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (userData?.access_token) {
+    headers.Authorization = `Bearer ${userData.access_token}`;
+  }
+
   const response = await fetch(`/api/topic/full/${userId}/${topicId}`, {
-    signal: signal,
+    method: "GET",
+    headers,
+    signal,
   });
+
+  if (response.status === 401) {
+    console.warn("Unauthorized: redirecting to /login");
+    window.localStorage.removeItem("userData");
+    window.location.href = "/login?sessionExpired=1";
+  }
 
   const payload = await response.json().catch(() => null);
 
@@ -265,13 +334,13 @@ const fetchTopic = async (userId, topicId, signal) => {
 };
 
 const topicLoader = async (dynData) => {
-  const userTopicsPromise = await userTopicsLoader();
+  const { userTopicsPromise } = await userTopicsLoader();
   const topicPromise = fetchTopic(
     dynData.params.userId,
     dynData.params.topicId,
     dynData.request.signal
   );
-  return defer({ topicPromise, userTopicsPromise });
+  return { topicPromise, userTopicsPromise };
 };
 
 const router = createBrowserRouter([
@@ -303,8 +372,16 @@ const router = createBrowserRouter([
         element: <BillingAccessPage />,
       },
       {
+        path: "/admin",
+        element: <AdminPage />,
+      },
+      {
         path: "/admin/billing",
-        element: <AdminBillingCreditsPage />,
+        element: <AdminPage />,
+      },
+      {
+        path: "/admin/ai/benchmarks/:benchmarkRunId",
+        element: <AdminBenchmarkExecutionPage />,
       },
       {
         path: "/gov",
@@ -326,6 +403,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <AuthPage type="login" />,
+      },
+      {
+        path: "/instant-assessments/:publicId/claim",
+        element: <InstantAssessmentClaimPage />,
       },
       {
         path: "/submit",

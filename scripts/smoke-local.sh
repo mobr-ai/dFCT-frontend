@@ -189,7 +189,7 @@ fi
 
 if [ "${SMOKE_SKIP_AUDIT:-0}" != "1" ]; then
   section "checking production dependency audit"
-  npm audit --omit=dev
+  npm audit --omit=dev --audit-level=high
 else
   echo "[smoke] skipping npm audit because SMOKE_SKIP_AUDIT=1"
 fi

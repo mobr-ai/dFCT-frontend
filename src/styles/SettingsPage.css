@@ -153,3 +153,80 @@
   border: 1px solid color-mix(in srgb, var(--theme-danger, #ef4444) 30%, var(--theme-border));
   border-radius: var(--theme-radius-lg);
 }
+
+/* Settings language communication help */
+.Settings-fieldLabelRow {
+  align-items: center;
+  display: flex;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+}
+
+.Settings-fieldLabelRow .form-label {
+  margin-bottom: 0;
+}
+
+.Settings-language-helpTrigger {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--theme-text-muted, #9ca3af);
+  cursor: help;
+  display: inline-flex;
+  font-size: 0.82rem;
+  height: 1.45rem;
+  justify-content: center;
+  padding: 0;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+  width: 1.45rem;
+}
+
+.Settings-language-helpTrigger:hover,
+.Settings-language-helpTrigger:focus-visible {
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 14%,
+    transparent
+  );
+  color: var(--theme-primary);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.Settings-language-tooltip .tooltip-inner {
+  background: var(--theme-surface, #1f2937);
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.14));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  color: var(--theme-text, #f3f4f6);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  max-width: 280px;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+}
+
+.Settings-language-tooltip.bs-tooltip-end .tooltip-arrow::before {
+  border-right-color: var(--theme-surface, #1f2937);
+}
+
+.Settings-language-hint-mobile {
+  color: var(--theme-text-muted, #9ca3af) !important;
+  display: none;
+  line-height: 1.45;
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 767.98px) {
+  .Settings-language-helpTrigger {
+    display: none;
+  }
+
+  .Settings-language-hint-mobile {
+    display: block;
+  }
+}

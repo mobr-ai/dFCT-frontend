@@ -99,17 +99,42 @@ function formatCreditAmount(amount) {
   return `${sign}${formatCredits(numeric)} DFCT`;
 }
 
-function formatActivityStatus(status) {
-  const value = String(status || "—").trim();
+function formatActivityStatus(tOrStatus, maybeStatus) {
+  const hasTranslator = typeof tOrStatus === "function";
+  const t = hasTranslator ? tOrStatus : null;
+  const rawStatus = hasTranslator ? maybeStatus : tOrStatus;
+  const value = String(rawStatus || "—").trim();
 
   if (!value || value === "—") return "—";
 
-  return value
+  const normalized = value.toLowerCase().replace(/[_\s-]+/g, "_");
+  const fallback = value
     .replace(/[_-]+/g, " ")
     .split(" ")
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ");
+
+  const statusKeyMap = {
+    paid: "statusPaid",
+    pending: "statusPending",
+    expired: "statusExpired",
+    canceled: "statusCanceled",
+    cancelled: "statusCanceled",
+    failed: "statusFailed",
+    submitted: "statusSubmitted",
+    confirmed: "statusConfirmed",
+    fulfilled: "statusFulfilled",
+    payment_fulfilled: "statusPaymentFulfilled",
+    payment_submitted: "statusPaymentSubmitted",
+    requires_payment: "statusRequiresPayment",
+    verification_started: "statusVerificationStarted",
+    verifying: "statusVerifying",
+  };
+
+  const i18nKey = statusKeyMap[normalized];
+
+  return t && i18nKey ? t(`billingAccess.${i18nKey}`, fallback) : fallback;
 }
 
 function activityTimestamp(item) {
@@ -118,43 +143,246 @@ function activityTimestamp(item) {
   return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
 }
 
-function ledgerActivityLabel(t, entry) {
-  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
 
-  if (reason.includes("topic_publication")) {
-    const topicId = entry?.source_id || entry?.metadata?.topic_id;
+function ledgerEntryMetadata(entry) {
+  return (
+    entry?.metadata ||
+    entry?.metadata_json ||
+    entry?.entry_metadata ||
+    entry?.ledger_metadata ||
+    {}
+  );
+}
+
+function ledgerDsmContext(entry) {
+  const metadata = ledgerEntryMetadata(entry);
+  const nested = metadata?.dsm || metadata?.dsm_context || {};
+  return {
+    schema: nested.schema || metadata.dsm_schema || "",
+    machine: nested.machine || metadata.dsm_machine || "",
+    action: nested.action || metadata.dsm_action || "",
+    entityKind: nested.entity_kind || metadata.dsm_entity_kind || "",
+    entityId: nested.entity_id || metadata.dsm_entity_id || "",
+    topicId: nested.topic_id || metadata.dsm_topic_id || metadata.topic_id || "",
+    lifecycleTaskId: nested.lifecycle_task_id || metadata.dsm_lifecycle_task_id || "",
+    stateEventId: nested.state_event_id || metadata.dsm_state_event_id || "",
+    source: nested.source || metadata.dsm_source || "",
+  };
+}
+
+function normalizeActivityValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s-]+/g, "_");
+}
+
+function humanizeActivityValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "—";
+  return raw
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function dsmActionLabel(t, action) {
+  const normalized = normalizeActivityValue(action);
+  const keyMap = {
+    submit_topic: "dsmActionSubmitTopic",
+    review_topic: "dsmActionReviewTopic",
+    reject_topic: "dsmActionRejectTopic",
+  };
+  const i18nKey = keyMap[normalized];
+  return i18nKey
+    ? t(`billingAccess.${i18nKey}`, humanizeActivityValue(action))
+    : humanizeActivityValue(action);
+}
+
+function ledgerDsmDetailRows(t, entry) {
+  const dsm = ledgerDsmContext(entry);
+  const hasDsmContext = Boolean(
+    dsm.machine ||
+      dsm.action ||
+      dsm.entityKind ||
+      dsm.entityId ||
+      dsm.topicId ||
+      dsm.lifecycleTaskId ||
+      dsm.stateEventId ||
+      dsm.source,
+  );
+
+  if (!hasDsmContext) return [];
+
+  const entityId = dsm.topicId || dsm.entityId;
+  const entity = [humanizeActivityValue(dsm.entityKind), entityId ? `#${entityId}` : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  return [
+    [t("billingAccess.transactionDetailsDsmMachine"), dsm.machine || "—"],
+    [t("billingAccess.transactionDetailsDsmAction"), dsmActionLabel(t, dsm.action)],
+    entity ? [t("billingAccess.transactionDetailsDsmEntity"), entity] : null,
+    dsm.source ? [t("billingAccess.transactionDetailsDsmSource"), humanizeActivityValue(dsm.source)] : null,
+    dsm.lifecycleTaskId
+      ? [t("billingAccess.transactionDetailsLifecycleTask"), dsm.lifecycleTaskId]
+      : null,
+    dsm.stateEventId
+      ? [t("billingAccess.transactionDetailsStateEvent"), dsm.stateEventId]
+      : null,
+  ].filter(Boolean);
+}
+
+function ledgerActivityType(entry) {
+  return normalizeActivityValue(entry?.reason || entry?.source_type || "");
+}
+
+function ledgerActivityTopicId(entry) {
+  const dsm = ledgerDsmContext(entry);
+  const metadata = ledgerEntryMetadata(entry);
+  return dsm.topicId || dsm.entityId || metadata.topicId || metadata.topic_id || "";
+}
+
+function ledgerActivityContext(t, entry) {
+  const type = ledgerActivityType(entry);
+  const metadata = ledgerEntryMetadata(entry);
+  const topicId = ledgerActivityTopicId(entry);
+
+  if (topicId) {
+    return t("billingAccess.activityContextTopic", { topicId });
+  }
+
+  const anchorJobId =
+    metadata.anchorJobId ||
+    metadata.anchor_job_id ||
+    (type.startsWith("cardano_anchor") ? entry?.source_id : "");
+  if (anchorJobId) {
+    return t("billingAccess.activityContextAnchorJob", { anchorJobId });
+  }
+
+  const rewardPoolId = metadata.rewardPoolId || metadata.reward_pool_id;
+  if (rewardPoolId) {
+    return t("billingAccess.activityContextRewardPool", { rewardPoolId });
+  }
+
+  return entry?.source_id
+    ? t("billingAccess.activityContextReference", { reference: entry.source_id })
+    : "—";
+}
+
+function ledgerFinancialDetailRows(t, entry) {
+  const metadata = ledgerEntryMetadata(entry);
+  const rows = [
+    entry?.reason
+      ? [t("billingAccess.transactionDetailsReason"), humanizeActivityValue(entry.reason)]
+      : null,
+    entry?.source_type
+      ? [t("billingAccess.transactionDetailsSourceType"), humanizeActivityValue(entry.source_type)]
+      : null,
+    entry?.source_id
+      ? [t("billingAccess.transactionDetailsSourceId"), entry.source_id]
+      : null,
+    entry?.idempotency_key
+      ? [t("billingAccess.transactionDetailsIdempotencyKey"), entry.idempotency_key]
+      : null,
+    (metadata.settlementId || metadata.settlement_id)
+      ? [
+          t("billingAccess.transactionDetailsSettlementId"),
+          metadata.settlementId || metadata.settlement_id,
+        ]
+      : null,
+    (metadata.anchorJobId || metadata.anchor_job_id)
+      ? [
+          t("billingAccess.transactionDetailsAnchorJobId"),
+          metadata.anchorJobId || metadata.anchor_job_id,
+        ]
+      : null,
+  ];
+
+  return rows.filter(Boolean);
+}
+
+function ledgerActivityLabel(t, entry) {
+  const dsm = ledgerDsmContext(entry);
+  const dsmAction = normalizeActivityValue(dsm.action);
+  const dsmEntityKind = normalizeActivityValue(dsm.entityKind);
+  if (dsmEntityKind === "topic" && dsmAction === "submit_topic") {
+    const topicId = ledgerActivityTopicId(entry);
     return topicId
       ? t("billingAccess.activityTopicPublicationWithId", { topicId })
       : t("billingAccess.activityTopicPublication");
   }
 
-  if (reason.includes("payment_fulfilled")) {
+  const type = ledgerActivityType(entry);
+  const topicId = ledgerActivityTopicId(entry);
+
+  if (type.includes("topic_publication")) {
+    return topicId
+      ? t("billingAccess.activityTopicPublicationWithId", { topicId })
+      : t("billingAccess.activityTopicPublication");
+  }
+  if (type === "cardano_anchor") {
+    return t("billingAccess.activityCardanoAnchor");
+  }
+  if (type === "cardano_anchor_refund") {
+    return t("billingAccess.activityCardanoAnchorRefund");
+  }
+  if (["reward_pool_reserve", "reward_pool_fund", "reward_pool_funded"].includes(type)) {
+    return t("billingAccess.activityRewardPoolFunded");
+  }
+  if (["reward_pool_award", "reward_award", "reward_earned"].includes(type)) {
+    return t("billingAccess.activityRewardEarned");
+  }
+  if (["reward_pool_release", "reward_pool_return", "reward_return"].includes(type)) {
+    return t("billingAccess.activityRewardReturned");
+  }
+  if (["subscription_allocation", "plan_credit_allocation"].includes(type)) {
+    return t("billingAccess.activitySubscriptionAllocation");
+  }
+  if (["credits_expired", "subscription_credits_expired"].includes(type)) {
+    return t("billingAccess.activityCreditsExpired");
+  }
+  if (type.includes("payment_fulfilled")) {
     return t("billingAccess.activityPaymentFulfilled");
   }
-
-  if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
+  if (type.includes("manual_grant") || Number(entry?.amount) > 0) {
     return t("billingAccess.activityCreditGrant");
   }
-
   return entry?.reason || entry?.source_type || t("billingAccess.activityLedgerEntry");
 }
 
 function ledgerActivityStatus(t, entry) {
-  const reason = String(entry?.reason || entry?.source_type || "").toLowerCase();
-
-  if (reason.includes("topic_publication")) {
-    return t("billingAccess.activityCreditDebit");
+  const dsm = ledgerDsmContext(entry);
+  const dsmAction = normalizeActivityValue(dsm.action);
+  if (dsmAction === "submit_topic") {
+    return t("billingAccess.activityServiceDebit");
   }
 
-  if (reason.includes("payment_fulfilled")) {
+  const type = ledgerActivityType(entry);
+  if (type.includes("topic_publication") || type === "cardano_anchor") {
+    return t("billingAccess.activityServiceDebit");
+  }
+  if (type === "cardano_anchor_refund") {
+    return t("billingAccess.activityRefund");
+  }
+  if (["reward_pool_reserve", "reward_pool_fund", "reward_pool_funded"].includes(type)) {
+    return t("billingAccess.activityReserved");
+  }
+  if (["reward_pool_award", "reward_award", "reward_earned"].includes(type)) {
+    return t("billingAccess.activityReward");
+  }
+  if (["reward_pool_release", "reward_pool_return", "reward_return"].includes(type)) {
+    return t("billingAccess.activityReturned");
+  }
+  if (type.includes("payment_fulfilled")) {
     return t("billingAccess.activityPaymentFulfilled");
   }
-
-  if (reason.includes("manual_grant") || Number(entry?.amount) > 0) {
+  if (type.includes("manual_grant") || Number(entry?.amount) > 0) {
     return t("billingAccess.activityCreditGrant");
   }
-
-  return formatActivityStatus(entry?.reason || entry?.source_type);
+  return formatActivityStatus(t, entry?.reason || entry?.source_type);
 }
 
 
@@ -180,6 +408,190 @@ function paymentIntentTxHash(intent) {
   );
 }
 
+
+function cardanoExplorerUrl(network, txHash) {
+  if (!txHash) return "";
+
+  const normalizedNetwork = String(network || "preview").toLowerCase();
+
+  if (normalizedNetwork === "mainnet" || normalizedNetwork === "main") {
+    return `https://cardanoscan.io/transaction/${txHash}`;
+  }
+
+  if (normalizedNetwork === "preprod") {
+    return `https://preprod.cardanoscan.io/transaction/${txHash}`;
+  }
+
+  return `https://preview.cardanoscan.io/transaction/${txHash}`;
+}
+
+function shortTxHash(txHash) {
+  if (!txHash) return "—";
+
+  const value = String(txHash);
+  if (value.length <= 24) return value;
+
+  return `${value.slice(0, 14)}…${value.slice(-10)}`;
+}
+
+function billingActivityPaymentIntent(activity) {
+  if (activity?.sourceType === "payment_intent") return activity.source || null;
+  return activity?.relatedPaymentIntent || null;
+}
+
+function billingActivityLedgerEntry(activity) {
+  if (activity?.sourceType === "ledger") return activity.source || null;
+  return null;
+}
+
+function BillingActivityDetailsModal({ t, activity, onHide }) {
+  const [copied, setCopied] = useState(false);
+
+  if (!activity) return null;
+
+  const intent = billingActivityPaymentIntent(activity);
+  const ledgerEntry = billingActivityLedgerEntry(activity);
+  const dsmRows = ledgerEntry ? ledgerDsmDetailRows(t, ledgerEntry) : [];
+  const financialRows = ledgerEntry ? ledgerFinancialDetailRows(t, ledgerEntry) : [];
+  const cardano = paymentIntentCardanoMetadata(intent);
+  const txHash = paymentIntentTxHash(intent);
+  const network = cardano?.network || "";
+  const explorerUrl = cardanoExplorerUrl(network, txHash);
+
+  const copyHash = async () => {
+    if (!txHash || !navigator?.clipboard) return;
+
+    try {
+      await navigator.clipboard.writeText(txHash);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const overviewRows = [
+    [t("billingAccess.transactionDetailsCreated"), formatIntentDate(activity.createdAt)],
+    intent ? [t("billingAccess.transactionDetailsPaymentIntentId"), paymentIntentId(intent)] : null,
+    ledgerEntry?.ledger_entry_id
+      ? [t("billingAccess.transactionDetailsLedgerEntryId"), ledgerEntry.ledger_entry_id]
+      : null,
+    activity.context && activity.context !== "—"
+      ? [t("billingAccess.transactionDetailsContext"), activity.context]
+      : null,
+    ...financialRows,
+    ...dsmRows,
+  ].filter(Boolean);
+
+  const cardanoRows = intent
+    ? [
+        [t("billingAccess.transactionDetailsGateway"), intent.gateway || "cardano"],
+        [t("billingAccess.transactionDetailsNetwork"), network || "—"],
+        [t("billingAccess.transactionDetailsAdaAmount"), cardano?.amount_ada ? `${cardano.amount_ada} ADA` : "—"],
+        [t("billingAccess.transactionDetailsReference"), cardano?.external_reference || "—"],
+        [t("billingAccess.transactionDetailsQuote"), cardano?.quote_rate_source || cardano?.pricing_provider || "—"],
+      ]
+    : [];
+
+  return (
+    <Modal
+      show
+      scrollable
+      size="lg"
+      onHide={onHide}
+      className="BillingTransactionModal"
+      backdropClassName="BillingPaymentModal-backdrop"
+      contentClassName="BillingTransactionModal-content"
+    >
+      <Modal.Header>
+        <div>
+          <span className="BillingTransactionModal-eyebrow">
+            {t("billingAccess.transactionDetailsEyebrow")}
+          </span>
+          <Modal.Title>{t("billingAccess.transactionDetailsTitle")}</Modal.Title>
+          <p>{t("billingAccess.transactionDetailsSubtitle")}</p>
+        </div>
+
+        <button
+          type="button"
+          className="BillingPaymentModalProduct-close"
+          aria-label={t("billingAccess.transactionDetailsClose")}
+          onClick={onHide}
+        >
+          ×
+        </button>
+      </Modal.Header>
+
+      <Modal.Body>
+        <section className="BillingTransactionModal-summary">
+          <div>
+            <span>{t("billingAccess.transactionDetailsActivity")}</span>
+            <strong>{activity.kind}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.transactionDetailsStatus")}</span>
+            <strong>{activity.status}</strong>
+          </div>
+          <div>
+            <span>{t("billingAccess.transactionDetailsAmount")}</span>
+            <strong>{activity.amount}</strong>
+          </div>
+        </section>
+
+        <section className="BillingTransactionModal-section">
+          <h4>{t("billingAccess.transactionDetailsOverview")}</h4>
+          <div className="BillingTransactionModal-grid">
+            {overviewRows.map(([label, value]) => (
+              <div className="BillingTransactionModal-field" key={label}>
+                <span>{label}</span>
+                <strong>{value || "—"}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {intent ? (
+          <section className="BillingTransactionModal-section">
+            <h4>{t("billingAccess.transactionDetailsCardano")}</h4>
+
+            <div className="BillingTransactionModal-grid">
+              {cardanoRows.map(([label, value]) => (
+                <div className="BillingTransactionModal-field" key={label}>
+                  <span>{label}</span>
+                  <strong>{value || "—"}</strong>
+                </div>
+              ))}
+            </div>
+
+            {txHash ? (
+              <div className="BillingTransactionModal-hashBox">
+                <span>{t("billingAccess.transactionDetailsTxHash")}</span>
+                <code title={txHash}>{shortTxHash(txHash)}</code>
+
+                <div className="BillingTransactionModal-actions">
+                  <button type="button" onClick={copyHash}>
+                    {copied
+                      ? t("billingAccess.transactionDetailsCopied")
+                      : t("billingAccess.transactionDetailsCopy")}
+                  </button>
+
+                  <a href={explorerUrl} target="_blank" rel="noreferrer">
+                    {t("billingAccess.transactionDetailsOpenExplorer")}
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="BillingTransactionModal-empty">
+                {t("billingAccess.transactionDetailsNoExplorer")}
+              </div>
+            )}
+          </section>
+        ) : null}
+      </Modal.Body>
+    </Modal>
+  );
+}
+
 function shouldShowPaymentIntentInActivity(intent) {
   const status = String(intent?.status || "").toLowerCase();
   const txHash = paymentIntentTxHash(intent);
@@ -197,24 +609,42 @@ function shouldShowPaymentIntentInActivity(intent) {
 
 function buildBillingActivity({ t, language, paymentIntents = [], ledgerEntries = [] }) {
   const visiblePaymentIntents = paymentIntents.filter(shouldShowPaymentIntentInActivity);
+  const paymentIntentById = new Map(
+    visiblePaymentIntents.map((intent) => [String(paymentIntentId(intent)), intent])
+  );
 
   const paymentRows = visiblePaymentIntents.map((intent) => ({
     id: `intent:${intent.payment_intent_id || intent.id || intent.created_at}`,
+    sourceType: "payment_intent",
+    source: intent,
     kind: intent.package?.name || intent.package_name || intent.gateway || t("billingAccess.activityPaymentRequest"),
-    status: formatActivityStatus(intent.status),
+    context: t("billingAccess.activityContextCreditPurchase"),
+    status: formatActivityStatus(t, intent.status),
     amount: formatPaymentAmount(intent, language),
     createdAt: intent.created_at,
     timestamp: activityTimestamp(intent),
   }));
 
-  const ledgerRows = ledgerEntries.map((entry) => ({
-    id: `ledger:${entry.ledger_entry_id || entry.id || entry.created_at}`,
-    kind: ledgerActivityLabel(t, entry),
-    status: ledgerActivityStatus(t, entry),
-    amount: formatCreditAmount(entry.amount),
-    createdAt: entry.created_at,
-    timestamp: activityTimestamp(entry),
-  }));
+  const ledgerRows = ledgerEntries.map((entry) => {
+    const sourceType = String(entry?.source_type || "").toLowerCase();
+    const relatedPaymentIntent =
+      sourceType === "billing_payment_intent"
+        ? paymentIntentById.get(String(entry?.source_id))
+        : null;
+
+    return {
+      id: `ledger:${entry.ledger_entry_id || entry.id || entry.created_at}`,
+      sourceType: "ledger",
+      source: entry,
+      relatedPaymentIntent,
+      kind: ledgerActivityLabel(t, entry),
+      context: ledgerActivityContext(t, entry),
+      status: ledgerActivityStatus(t, entry),
+      amount: formatCreditAmount(entry.amount),
+      createdAt: entry.created_at,
+      timestamp: activityTimestamp(entry),
+    };
+  });
 
   return [...ledgerRows, ...paymentRows]
     .sort((a, b) => b.timestamp - a.timestamp)
@@ -264,11 +694,20 @@ function paymentCredits(intent, fallbackPackage) {
   );
 }
 
-function describeCheckoutError(err, fallback, step = "") {
+function describeCheckoutError(err, fallback, step = "", t = null) {
   const body = err?.response?.body || {};
+  const isQuoteExpired =
+    body.code === "quote_expired" ||
+    body.error === "quoteExpired";
+
+  if (isQuoteExpired && typeof t === "function") {
+    const detail = t("billingAccess.paymentModalQuoteExpiredSubmitError");
+    return step ? `${step}: ${detail}` : detail;
+  }
+
   const detail =
-    body.error ||
     body.message ||
+    body.error ||
     body.detail ||
     err?.response?.text ||
     err?.message ||
@@ -324,6 +763,33 @@ function formatCheckoutCurrencyLabel(currency) {
   return normalized || "—";
 }
 
+function parseCheckoutDate(value) {
+  if (!value) return null;
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isCheckoutQuoteExpired(cardanoQuote, nowMs = Date.now()) {
+  if (!cardanoQuote) return false;
+  if (cardanoQuote.quote_expired === true) return true;
+
+  const expiresAt = parseCheckoutDate(cardanoQuote.quote_expires_at);
+  if (!expiresAt) return false;
+
+  return nowMs >= expiresAt.getTime();
+}
+
+function formatCheckoutDateTime(value, language) {
+  const parsed = parseCheckoutDate(value);
+  if (!parsed) return "";
+
+  return new Intl.DateTimeFormat(language || undefined, {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(parsed);
+}
+
 function PaymentRequestModal({
   show,
   onHide,
@@ -340,6 +806,8 @@ function PaymentRequestModal({
   checkoutError = "",
   checkoutSuccess = "",
   checkoutStage = "",
+  quoteRefreshing = false,
+  onRefreshCardanoQuote,
   onPayCardano,
 }) {
   const packageName =
@@ -376,6 +844,61 @@ function PaymentRequestModal({
         })
     : "";
   const checkoutSuccessRef = useRef(null);
+  const autoRefreshQuoteKeyRef = useRef("");
+  const [quoteClockMs, setQuoteClockMs] = useState(() => Date.now());
+
+  const quoteExpired = isCheckoutQuoteExpired(cardanoQuote, quoteClockMs);
+  const formattedQuoteExpiry = formatCheckoutDateTime(cardanoQuote?.quote_expires_at, language);
+  const quoteExpiryText = cardanoQuote?.quote_expires_at
+    ? quoteRefreshing
+      ? t("billingAccess.paymentModalQuoteRefreshing")
+      : quoteExpired
+        ? t("billingAccess.paymentModalQuoteExpired")
+        : t("billingAccess.paymentModalQuoteExpiresAt", {
+            date: formattedQuoteExpiry,
+          })
+    : "";
+  const quoteStatusExpired = quoteExpired && !quoteRefreshing;
+
+  useEffect(() => {
+    if (!cardanoQuote?.quote_expires_at) return undefined;
+
+    setQuoteClockMs(Date.now());
+
+    const intervalId = window.setInterval(() => {
+      setQuoteClockMs(Date.now());
+    }, 15000);
+
+    return () => window.clearInterval(intervalId);
+  }, [cardanoQuote?.quote_expires_at]);
+
+  useEffect(() => {
+    if (!quoteExpired || quoteRefreshing) return undefined;
+    if (typeof onRefreshCardanoQuote !== "function") return undefined;
+
+    const quoteKey = [
+      cardanoQuote?.payment_intent_id || selectedPaymentIntent?.payment_intent_id || selectedPaymentIntent?.id,
+      cardanoQuote?.quote_expires_at,
+    ].filter(Boolean).join(":");
+
+    if (!quoteKey || autoRefreshQuoteKeyRef.current === quoteKey) return undefined;
+
+    autoRefreshQuoteKeyRef.current = quoteKey;
+
+    const timeoutId = window.setTimeout(() => {
+      onRefreshCardanoQuote({ reason: "expired" });
+    }, 650);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    cardanoQuote?.payment_intent_id,
+    cardanoQuote?.quote_expires_at,
+    onRefreshCardanoQuote,
+    quoteExpired,
+    quoteRefreshing,
+    selectedPaymentIntent?.id,
+    selectedPaymentIntent?.payment_intent_id,
+  ]);
 
   useEffect(() => {
     if (!checkoutSuccess) return undefined;
@@ -411,7 +934,9 @@ function PaymentRequestModal({
     cardanoQuote?.payment_address &&
     cardanoQuote?.amount_lovelace &&
     effectiveSelectedWallet?.name &&
-    !checkoutLoading,
+    !checkoutLoading &&
+    !quoteRefreshing &&
+    !quoteExpired,
   );
 
   const shortNetwork =
@@ -508,6 +1033,11 @@ function PaymentRequestModal({
           <span>{t("billingAccess.paymentModalTrustWallet")}</span>
           <span>{t("billingAccess.paymentModalTrustVerification")}</span>
           <span>{shortNetwork}</span>
+          {quoteExpiryText ? (
+            <span className={quoteStatusExpired ? "is-expired" : undefined}>
+              {quoteExpiryText}
+            </span>
+          ) : null}
         </section>
 
         <section className="BillingPaymentModalProduct-journey">
@@ -593,6 +1123,16 @@ function PaymentRequestModal({
           )}
         </section>
 
+        {quoteRefreshing ? (
+          <div className="BillingPaymentModal-alert is-info">
+            {t("billingAccess.paymentModalQuoteRefreshingAction")}
+          </div>
+        ) : quoteExpired ? (
+          <div className="BillingPaymentModal-alert is-error">
+            {t("billingAccess.paymentModalQuoteExpiredAction")}
+          </div>
+        ) : null}
+
         {checkoutStage ? (
           <div className="BillingPaymentModal-alert is-info">{checkoutStage}</div>
         ) : null}
@@ -641,9 +1181,13 @@ function PaymentRequestModal({
           onClick={() => onPayCardano?.(effectiveSelectedWallet)}
           disabled={!canPay}
         >
-          {checkoutLoading
-            ? t("billingAccess.paymentModalPrimaryCtaLoading")
-            : t("billingAccess.paymentModalPrimaryCta")}
+          {quoteRefreshing
+            ? t("billingAccess.paymentModalPrimaryCtaRefreshingQuote")
+            : quoteExpired
+              ? t("billingAccess.paymentModalPrimaryCtaExpired")
+              : checkoutLoading
+                ? t("billingAccess.paymentModalPrimaryCtaLoading")
+                : t("billingAccess.paymentModalPrimaryCta")}
         </button>
       </Modal.Footer>
     </Modal>
@@ -682,15 +1226,18 @@ export default function BillingAccessPage() {
   const [selectedPaymentPackage, setSelectedPaymentPackage] = useState(null);
   const [cardanoQuote, setCardanoQuote] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [quoteRefreshing, setQuoteRefreshing] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkoutSuccess, setCheckoutSuccess] = useState("");
   const [checkoutStage, setCheckoutStage] = useState("");
+  const [selectedBillingActivity, setSelectedBillingActivity] = useState(null);
 
   const closePaymentModal = () => {
     setSelectedPaymentIntent(null);
     setSelectedPaymentPackage(null);
     setCardanoQuote(null);
     setCheckoutLoading(false);
+    setQuoteRefreshing(false);
     setCheckoutError("");
     setCheckoutSuccess("");
     setCheckoutStage("");
@@ -769,6 +1316,46 @@ export default function BillingAccessPage() {
         variant: "secondary",
         message: t("billingAccess.purchaseIntentFailed"),
       });
+    }
+  };
+
+  const refreshCardanoQuote = async () => {
+    const intentId = paymentIntentId(selectedPaymentIntent);
+
+    if (!authRequest || !intentId || intentId === "—") return null;
+
+    setQuoteRefreshing(true);
+    setCheckoutError("");
+    setCheckoutStage(t("billingAccess.paymentModalQuoteRefreshing"));
+
+    try {
+      const payload = await fetchCardanoPaymentQuote(authRequest, intentId);
+      const nextQuote = payload?.cardano_quote || payload?.quote || null;
+      const nextIntent = payload?.payment_intent || payload?.intent || null;
+
+      if (nextQuote) {
+        setCardanoQuote(nextQuote);
+      }
+
+      if (nextIntent) {
+        setSelectedPaymentIntent(nextIntent);
+      }
+
+      setCheckoutStage("");
+      return nextQuote;
+    } catch (err) {
+      setCheckoutError(
+        describeCheckoutError(
+          err,
+          t("billingAccess.paymentModalQuoteRefreshFailed"),
+          "",
+          t,
+        ),
+      );
+      setCheckoutStage("");
+      return null;
+    } finally {
+      setQuoteRefreshing(false);
     }
   };
 
@@ -903,6 +1490,7 @@ export default function BillingAccessPage() {
           err,
           getApiErrorMessage(err, t("billingAccess.paymentModalCheckoutFailed")),
           checkoutStep,
+          t,
         ),
       );
     } finally {
@@ -1045,6 +1633,7 @@ export default function BillingAccessPage() {
               <thead>
                 <tr>
                   <th>{t("billingAccess.intentKind")}</th>
+                  <th>{t("billingAccess.activityContext")}</th>
                   <th>{t("billingAccess.intentStatus")}</th>
                   <th>{t("billingAccess.intentAmount")}</th>
                   <th>{t("billingAccess.intentCreated")}</th>
@@ -1052,19 +1641,38 @@ export default function BillingAccessPage() {
               </thead>
               <tbody>
                 {billingActivity.length > 0 ? billingActivity.map((item) => (
-                  <tr key={item.id}>
+                  <tr
+                    key={item.id}
+                    className="BillingAccess-activityRow"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedBillingActivity(item)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedBillingActivity(item);
+                      }
+                    }}
+                  >
                     <td>{item.kind}</td>
+                    <td>{item.context || "—"}</td>
                     <td>{item.status}</td>
                     <td>{item.amount}</td>
                     <td>{formatIntentDate(item.createdAt)}</td>
                   </tr>
                 )) : (
-                  <tr><td colSpan="4">{t("billingAccess.noActivity")}</td></tr>
+                  <tr><td colSpan="5">{t("billingAccess.noActivity")}</td></tr>
                 )}
               </tbody>
             </Table>
           </div>
         </section>
+
+        <BillingActivityDetailsModal
+          t={t}
+          activity={selectedBillingActivity}
+          onHide={() => setSelectedBillingActivity(null)}
+        />
 
         <PaymentRequestModal
           show={Boolean(selectedPaymentIntent)}
@@ -1082,6 +1690,8 @@ export default function BillingAccessPage() {
           checkoutError={checkoutError}
           checkoutSuccess={checkoutSuccess}
           checkoutStage={checkoutStage}
+          quoteRefreshing={quoteRefreshing}
+          onRefreshCardanoQuote={refreshCardanoQuote}
           onPayCardano={handleCardanoPayment}
         />
 

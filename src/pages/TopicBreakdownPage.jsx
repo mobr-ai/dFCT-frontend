@@ -1,17 +1,31 @@
 import "../styles/TopicBreakdownPage.css";
+import "../styles/WelcomePage.css";
 import "../styles/NavigationSidebar.css";
 import { TopicSidebar } from "../components/topic";
 import { TopicToolbar } from "../components/topic";
+import { RewardPoolModal } from "../components/topic";
+import TopicFinancialSummary from "../components/topic/TopicFinancialSummary";
 import { EvidenceModal } from "../components/submission";
+import { TopicLifecycleAuditTrail } from "../components/dsm";
 import Badge from "react-bootstrap/Badge";
 import LoadingPage from "./LoadingPage";
+import AuthPage from "./AuthPage";
 import { ContentList } from "../components/content";
 import { ClaimList } from "../components/topic";
 import { ContentCarousel } from "../components/content";
 import i18n from "../i18n";
-import { Button } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowUp,
+  faFile,
+  faFileAlt,
+  faFileAudio,
+  faFileImage,
+  faFilePdf,
+  faFileVideo,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   useLoaderData,
   Await,
@@ -20,9 +34,554 @@ import {
 } from "react-router-dom";
 import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect, useRef } from "react";
-import TextTransition, { presets } from "react-text-transition";
-import { CARDANO_EXPLORER_URL } from "../chains/cardano/constants";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useAuthRequest } from "../hooks/useAuthRequest";
+import {
+  fetchTopicVerificationSummary,
+  fetchClaimEvidenceAssertions,
+  castClaimVote,
+  reviewClaim,
+} from "../api/claimVerification";
+
+function isActiveTopicStatus(status) {
+  return Number(status) === 2 || String(status || "").toLowerCase() === "active";
+}
+
+const CLAIM_REVIEW_VERDICTS = [
+  "true",
+  "mostly_true",
+  "partially_true",
+  "misleading",
+  "false",
+  "unverified",
+];
+
+
+const EVIDENCE_ASSESSMENT_VALUES = [
+  "agree",
+  "disagree",
+  "contextualize",
+  "insufficient",
+];
+
+function groupEvidenceAssertions(assertions = []) {
+  const evidenceGroups = new Map();
+
+  assertions.forEach((assertion) => {
+    const evidenceKey =
+      assertion?.evidenceGroupKey ||
+      assertion?.evidenceAssertionId;
+
+    if (!evidenceGroups.has(evidenceKey)) {
+      evidenceGroups.set(evidenceKey, {
+        key: evidenceKey,
+        interpretations: new Map(),
+      });
+    }
+
+    const group = evidenceGroups.get(evidenceKey);
+    const interpretationKey =
+      assertion?.interpretationGroupKey ||
+      `${evidenceKey}:${assertion?.relation || "unknown"}`;
+
+    if (!group.interpretations.has(interpretationKey)) {
+      group.interpretations.set(interpretationKey, {
+        key: interpretationKey,
+        relation: assertion?.relation || "insufficient",
+        assertions: [],
+      });
+    }
+
+    group.interpretations
+      .get(interpretationKey)
+      .assertions.push(assertion);
+  });
+
+  return Array.from(evidenceGroups.values()).map((group) => ({
+    ...group,
+    interpretations: Array.from(group.interpretations.values()),
+  }));
+}
+
+function evidenceModelLabel(execution) {
+  return execution?.model || null;
+}
+
+function evidenceProviderLabel(execution) {
+  const provider = String(execution?.provider || "").trim();
+
+  if (!provider) return null;
+
+  const aliases = {
+    openai: "OpenAI",
+    xai: "xAI",
+    anthropic: "Anthropic",
+  };
+
+  return aliases[provider.toLowerCase()] || provider;
+}
+
+function evidencePromptVersion(execution) {
+  const prompt = execution?.prompts?.[0];
+  return prompt?.version ?? null;
+}
+
+function normalizeTopicClaimId(value) {
+  if (value === undefined || value === null) return "";
+  return String(value);
+}
+
+function getTopicClaimId(claim) {
+  return claim?.claim_id ?? claim?.claimId;
+}
+
+function findClaimSummaryForClaim(verificationSummary, claim) {
+  const claimId = normalizeTopicClaimId(getTopicClaimId(claim));
+
+  return (verificationSummary?.claims || []).find(
+    (item) => normalizeTopicClaimId(item.claimId ?? item.claim_id) === claimId,
+  );
+}
+
+function ClaimReviewModal({
+  show,
+  onHide,
+  claim,
+  claimSummary,
+  evidenceAssertions = [],
+  evidenceLoading = false,
+  evidenceError = false,
+  onSubmit,
+  submitting = false,
+}) {
+  const { t } = useTranslation();
+  const currentReview = claimSummary?.reviewSummary?.currentUserReview;
+
+  const evidenceAssessmentHydrationKey = evidenceAssertions
+    .map((assertion) => [
+      assertion?.evidenceAssertionId,
+      assertion?.currentUserAssessment?.assessment || "",
+    ].join(":"))
+    .join("|");
+
+  const [verdictTag, setVerdictTag] = useState("unverified");
+  const [confidence, setConfidence] = useState(50);
+  const [rationale, setRationale] = useState("");
+  const [evidenceAssessments, setEvidenceAssessments] = useState({});
+
+  useEffect(() => {
+    if (!show) return;
+
+    setVerdictTag(currentReview?.verdictTag || "unverified");
+    setConfidence(
+      currentReview?.confidence === undefined || currentReview?.confidence === null
+        ? 50
+        : Number(currentReview.confidence),
+    );
+    setRationale(currentReview?.rationale || "");
+
+    const nextEvidenceAssessments = {};
+
+    evidenceAssertions.forEach((assertion) => {
+      const currentAssessment =
+        assertion?.currentUserAssessment?.assessment;
+
+      if (currentAssessment) {
+        nextEvidenceAssessments[
+          assertion.evidenceAssertionId
+        ] = currentAssessment;
+      }
+    });
+
+    setEvidenceAssessments(nextEvidenceAssessments);
+  }, [
+    currentReview,
+    evidenceAssessmentHydrationKey,
+    show,
+  ]);
+
+  const evidenceGroups = groupEvidenceAssertions(
+    evidenceAssertions,
+  );
+
+  const setEvidenceAssessment = (
+    evidenceAssertionId,
+    assessment,
+  ) => {
+    setEvidenceAssessments((current) => {
+      const next = { ...current };
+
+      if (next[evidenceAssertionId] === assessment) {
+        delete next[evidenceAssertionId];
+      } else {
+        next[evidenceAssertionId] = assessment;
+      }
+
+      return next;
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    onSubmit?.({
+      verdictTag,
+      confidence: Number(confidence),
+      rationale,
+      evidenceAssessments: Object.entries(
+        evidenceAssessments,
+      ).map(([evidenceAssertionId, assessment]) => ({
+        evidenceAssertionId,
+        assessment,
+      })),
+    });
+  };
+
+  return (
+    <Modal
+      show={show}
+      onHide={submitting ? undefined : onHide}
+      centered
+      keyboard={!submitting}
+      backdrop={submitting ? "static" : true}
+      className="Breakdown-claim-review-modal"
+      contentClassName="Breakdown-claim-review-modalContent"
+    >
+      <Form onSubmit={handleSubmit}>
+        <Modal.Header>
+          <div className="Breakdown-claim-review-heading">
+            <span className="Breakdown-claim-review-modalEyebrow">
+              {t("claimVoting.reviewModalEyebrow")}
+            </span>
+            <Modal.Title>{t("claimVoting.reviewModalTitle")}</Modal.Title>
+            <p>{t("claimVoting.reviewModalSubtitle")}</p>
+          </div>
+
+          <button
+            type="button"
+            className="Breakdown-claim-review-close"
+            aria-label={t("close")}
+            onClick={onHide}
+            disabled={submitting}
+          >
+            ×
+          </button>
+        </Modal.Header>
+
+        <Modal.Body>
+          {claim?.statement && (
+            <div className="Breakdown-claim-review-claimBox">
+              <strong>{t("claimVoting.claimUnderReview")}</strong>
+              <p>{claim.statement}</p>
+            </div>
+          )}
+
+          <section className="Breakdown-claim-review-section Breakdown-claim-review-evidenceSection">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.evidenceInterpretation")}</span>
+              {!evidenceLoading && evidenceAssertions.length > 0 && (
+                <small>
+                  {t("claimVoting.evidenceAssertionCount", {
+                    count: evidenceAssertions.length,
+                  })}
+                </small>
+              )}
+            </div>
+
+            {evidenceLoading && (
+              <div className="Breakdown-claim-review-evidenceState">
+                {t("claimVoting.loadingEvidenceInterpretations")}
+              </div>
+            )}
+
+            {!evidenceLoading && evidenceError && (
+              <div className="Breakdown-claim-review-evidenceState is-error">
+                {t("claimVoting.evidenceInterpretationsFailed")}
+              </div>
+            )}
+
+            {!evidenceLoading &&
+              !evidenceError &&
+              evidenceGroups.length === 0 && (
+                <div className="Breakdown-claim-review-evidenceState">
+                  {t("claimVoting.noEvidenceInterpretations")}
+                </div>
+              )}
+
+            {!evidenceLoading &&
+              !evidenceError &&
+              evidenceGroups.map((group) => (
+                <div
+                  key={group.key}
+                  className="Breakdown-claim-review-evidenceGroup"
+                >
+                  {group.interpretations.map((interpretation) => (
+                    <div
+                      key={interpretation.key}
+                      className="Breakdown-claim-review-interpretation"
+                    >
+                      <div className="Breakdown-claim-review-interpretationHeader">
+                        <span className={`is-${interpretation.relation}`}>
+                          {t(
+                            `claimVoting.evidenceRelations.${interpretation.relation}`,
+                          )}
+                        </span>
+
+                        {interpretation.assertions.length > 1 && (
+                          <small>
+                            {t("claimVoting.analysisCount", {
+                              count: interpretation.assertions.length,
+                            })}
+                          </small>
+                        )}
+                      </div>
+
+                      {interpretation.assertions.map((assertion) => {
+                        const execution =
+                          assertion?.llmExecution || null;
+
+                        const model =
+                          evidenceModelLabel(execution);
+
+                        const provider =
+                          evidenceProviderLabel(execution);
+
+                        const promptVersion =
+                          evidencePromptVersion(execution);
+
+                        const selectedAssessment =
+                          evidenceAssessments[
+                            assertion.evidenceAssertionId
+                          ];
+
+                        return (
+                          <article
+                            key={assertion.evidenceAssertionId}
+                            className="Breakdown-claim-review-evidenceAssertion"
+                          >
+                            {assertion.evidenceText && (
+                              <blockquote>
+                                “{assertion.evidenceText}”
+                              </blockquote>
+                            )}
+
+                            <div className="Breakdown-claim-review-evidenceMeta">
+                              <div className="Breakdown-claim-review-confidenceMetric">
+                                <span>
+                                  {t("claimVoting.aiConfidence")}
+                                </span>
+                                <strong>
+                                  {assertion.confidence === null ||
+                                  assertion.confidence === undefined
+                                    ? "—"
+                                    : `${Math.round(
+                                        Number(assertion.confidence) * 100,
+                                      )}%`}
+                                </strong>
+                              </div>
+
+                              {(model || provider) && (
+                                <div className="Breakdown-claim-review-modelBadge">
+                                  <span>
+                                    {[model, provider]
+                                      .filter(Boolean)
+                                      .join(" · ")}
+                                  </span>
+
+                                  {promptVersion !== null && (
+                                    <small>
+                                      {t(
+                                        "claimVoting.evidenceInterpretationVersion",
+                                        {
+                                          version: promptVersion,
+                                        },
+                                      )}
+                                    </small>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {assertion?.metadata?.rationale && (
+                              <p className="Breakdown-claim-review-aiRationale">
+                                {assertion.metadata.rationale}
+                              </p>
+                            )}
+
+                            {!execution && (
+                              <small className="Breakdown-claim-review-legacyProvenance">
+                                {t(
+                                  "claimVoting.modelProvenanceUnavailable",
+                                )}
+                              </small>
+                            )}
+
+                            <div className="Breakdown-claim-review-assessmentBlock">
+                              <span>
+                                {t(
+                                  "claimVoting.yourEvidenceAssessment",
+                                )}
+                              </span>
+
+                              <div className="Breakdown-claim-review-assessmentGrid">
+                                {EVIDENCE_ASSESSMENT_VALUES.map(
+                                  (assessment) => (
+                                    <button
+                                      key={assessment}
+                                      type="button"
+                                      disabled={submitting}
+                                      aria-pressed={
+                                        selectedAssessment === assessment
+                                      }
+                                      className={[
+                                        "Breakdown-claim-review-assessmentPill",
+                                        selectedAssessment ===
+                                          assessment &&
+                                          "is-selected",
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" ")}
+                                      onClick={() =>
+                                        setEvidenceAssessment(
+                                          assertion.evidenceAssertionId,
+                                          assessment,
+                                        )
+                                      }
+                                    >
+                                      {t(
+                                        `claimVoting.evidenceAssessments.${assessment}`,
+                                      )}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </section>
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.verdictLabel")}</span>
+              <small>{t("claimVoting.verdictHelp")}</small>
+            </div>
+
+            <div className="Breakdown-claim-review-verdictGrid">
+              {CLAIM_REVIEW_VERDICTS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={submitting}
+                  className={[
+                    "Breakdown-claim-review-verdictPill",
+                    verdictTag === value && "is-selected",
+                  ].filter(Boolean).join(" ")}
+                  onClick={() => setVerdictTag(value)}
+                >
+                  <span>{t(`claimVoting.verdicts.${value}`)}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.yourConfidence")}</span>
+              <strong>{t("claimVoting.confidenceValue", { value: confidence })}</strong>
+            </div>
+
+            <input
+              className="Breakdown-claim-review-confidenceRange"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={confidence}
+              disabled={submitting}
+              onChange={(event) => setConfidence(Number(event.target.value))}
+            />
+
+            <div className="Breakdown-claim-review-confidenceScale">
+              <span>{t("claimVoting.confidenceLow")}</span>
+              <span>{t("claimVoting.confidenceHigh")}</span>
+            </div>
+          </section>
+
+          <section className="Breakdown-claim-review-section">
+            <div className="Breakdown-claim-review-sectionHeader">
+              <span>{t("claimVoting.rationaleLabel")}</span>
+              <small>{t("claimVoting.rationaleHelp")}</small>
+            </div>
+
+            <Form.Control
+              as="textarea"
+              rows={4}
+              maxLength={4000}
+              value={rationale}
+              disabled={submitting}
+              placeholder={t("claimVoting.rationalePlaceholder")}
+              onChange={(event) => setRationale(event.target.value)}
+            />
+          </section>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onHide} disabled={submitting}>
+            {t("cancel")}
+          </Button>
+          <Button type="submit" variant="primary" disabled={submitting || !verdictTag}>
+            {submitting ? t("claimVoting.reviewing") : t("claimVoting.submitReview")}
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  );
+}
+
+function TopicAuthPromptModal({ show, onHide }) {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      keyboard
+      backdrop
+      className="Breakdown-auth-modal"
+      backdropClassName="Breakdown-auth-modal-backdrop"
+      contentClassName="Breakdown-auth-modal-content"
+    >
+      <Modal.Body>
+        <div className="WelcomePage Breakdown-auth-welcome-shell">
+          <button
+            type="button"
+            className="Breakdown-auth-close"
+            aria-label={t("close")}
+            onClick={onHide}
+          >
+            ×
+          </button>
+
+          <aside className="WelcomePage-auth Breakdown-auth-card">
+            <div className="WelcomePage-authHeader">
+              <span>{t("welcomePage.authEyebrow")}</span>
+              <h2>{t("welcomePage.authTitle")}</h2>
+              <p>{t("welcomePage.authBody")}</p>
+            </div>
+
+            <AuthPage type="login" />
+          </aside>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+}
 
 function getHashtags(
   contentList,
@@ -32,19 +591,34 @@ function getHashtags(
 ) {
   let tags = [
     ...new Set(
-      contentList
+      (contentList || [])
         .map((c) => {
-          return c.concept_list
+          const conceptList = String(
+            c?.concept_list ??
+            c?.conceptList ??
+            "",
+          ).trim();
+
+          if (!conceptList) return [];
+
+          return conceptList
             .replaceAll("'", "")
             .replaceAll('"', "")
             .replaceAll("}", "")
             .replaceAll("{", "")
             .replaceAll("-", "")
             .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
             .map((s) =>
               s
                 .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .filter(Boolean)
+                .map(
+                  (word) =>
+                    word.charAt(0).toUpperCase() +
+                    word.slice(1),
+                )
                 .join(""),
             );
         })
@@ -67,6 +641,532 @@ function getHashtags(
     ));
   }
   return tags;
+}
+
+
+const REFERENCE_TYPE_ICONS = {
+  image: faFileImage,
+  video: faFileVideo,
+  audio: faFileAudio,
+  pdf: faFilePdf,
+  link: faFileAlt,
+  document: faFileAlt,
+  file: faFile,
+};
+
+const REFERENCE_EXTENSION_TYPES = {
+  image: ["avif", "bmp", "gif", "heic", "jpeg", "jpg", "png", "svg", "webp"],
+  video: ["m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "webm"],
+  audio: ["aac", "flac", "m4a", "mp3", "ogg", "wav"],
+  pdf: ["pdf"],
+  document: [
+    "csv",
+    "doc",
+    "docx",
+    "json",
+    "md",
+    "odt",
+    "ppt",
+    "pptx",
+    "rtf",
+    "txt",
+    "xls",
+    "xlsx",
+    "xml",
+  ],
+};
+
+function referenceSourceUrl(item = {}) {
+  return (
+    item.src_url ||
+    item.srcUrl ||
+    item.original_url ||
+    item.originalUrl ||
+    item.source_url ||
+    item.sourceUrl ||
+    ""
+  );
+}
+
+function referenceCandidateUrl(item = {}) {
+  return (
+    referenceSourceUrl(item) ||
+    item.local_url ||
+    item.localUrl ||
+    item.url ||
+    item.source ||
+    ""
+  );
+}
+
+function referenceKey(item, index) {
+  return String(
+    item?.content_id ||
+      item?.contentId ||
+      item?.local_url ||
+      item?.localUrl ||
+      item?.url ||
+      item?.source_url ||
+      item?.sourceUrl ||
+      item?.file_name ||
+      item?.fileName ||
+      item?.filename ||
+      `reference-${index}`,
+  );
+}
+
+function referenceDisplayPriority(item = {}) {
+  const type = String(
+    item?.content_type ??
+    item?.contentType ??
+    "",
+  ).toLowerCase();
+
+  const localUrl = String(
+    item?.local_url ??
+    item?.localUrl ??
+    "",
+  ).toLowerCase();
+
+  if (
+    type === "image" ||
+    /\.(png|jpe?g|webp|gif)(?:[?#]|$)/i.test(localUrl)
+  ) {
+    return 30;
+  }
+
+  if (type === "video") return 25;
+  if (type === "audio") return 20;
+
+  if (
+    type === "text" &&
+    localUrl.endsWith(".json")
+  ) {
+    return 10;
+  }
+
+  return 5;
+}
+
+function groupReferencesBySource(contentList = []) {
+  const groups = new Map();
+
+  (contentList || []).forEach((item, index) => {
+    const sourceUrl = String(
+      referenceSourceUrl(item) ||
+      referenceCandidateUrl(item) ||
+      referenceKey(item, index),
+    ).trim();
+
+    const key = sourceUrl || referenceKey(item, index);
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        key,
+        sourceUrl,
+        items: [],
+      });
+    }
+
+    groups.get(key).items.push({
+      item,
+      index,
+    });
+  });
+
+  return Array.from(groups.values()).map((group) => {
+    const ranked = [...group.items].sort(
+      (left, right) =>
+        referenceDisplayPriority(right.item) -
+        referenceDisplayPriority(left.item),
+    );
+
+    return {
+      ...group,
+      representative: ranked[0],
+    };
+  });
+}
+
+function referenceFileName(item = {}, index = 0) {
+  const directName =
+    item.title ||
+    item.name ||
+    item.file_name ||
+    item.fileName ||
+    item.filename;
+
+  if (directName) return String(directName);
+
+  const candidate = String(referenceCandidateUrl(item) || "");
+  if (candidate) {
+    try {
+      const parsed = new URL(candidate, window.location.origin);
+      const segment = parsed.pathname.split("/").filter(Boolean).pop();
+      if (segment) return decodeURIComponent(segment);
+    } catch {
+      const segment = candidate.split(/[?#]/)[0].split("/").filter(Boolean).pop();
+      if (segment) return decodeURIComponent(segment);
+    }
+  }
+
+  return `Reference ${index + 1}`;
+}
+
+function referenceExtensionFromValue(value) {
+  const candidate = String(value || "").trim().toLowerCase();
+  const match = candidate.match(/\.([a-z0-9]{1,8})(?:[?#\s]|$)/);
+  return match?.[1] || "";
+}
+
+function referenceExtension(item = {}) {
+  const candidate = [
+    item.file_name,
+    item.fileName,
+    item.filename,
+    referenceCandidateUrl(item),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return referenceExtensionFromValue(candidate);
+}
+
+function referenceTypeFromExtension(extension) {
+  for (const [type, extensions] of Object.entries(REFERENCE_EXTENSION_TYPES)) {
+    if (extensions.includes(extension)) return type;
+  }
+
+  return "";
+}
+
+function referenceType(item = {}) {
+  const sourceUrl = String(referenceSourceUrl(item) || "").trim();
+  const sourceExtension = referenceExtensionFromValue(sourceUrl);
+  const sourceFileType = referenceTypeFromExtension(sourceExtension);
+
+  // A fetched web page can have an extracted image/video preview. The
+  // reference icon should represent the source itself, not its cached preview.
+  if (/^https?:\/\//i.test(sourceUrl)) {
+    return sourceFileType || "link";
+  }
+
+  const explicitType = [
+    item.content_type,
+    item.contentType,
+    item.mime_type,
+    item.mimeType,
+    item.media_type,
+    item.mediaType,
+    item.type,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  for (const type of ["image", "video", "audio", "pdf"]) {
+    if (explicitType.includes(type)) return type;
+  }
+
+  if (
+    explicitType.includes("url") ||
+    explicitType.includes("link") ||
+    explicitType.includes("html")
+  ) {
+    return "link";
+  }
+
+  if (
+    explicitType.includes("text") ||
+    explicitType.includes("document") ||
+    explicitType.includes("json") ||
+    explicitType.includes("csv")
+  ) {
+    return "document";
+  }
+
+  const extension = referenceExtension(item);
+  const extensionType = referenceTypeFromExtension(extension);
+  if (extensionType) return extensionType;
+
+  const candidateUrl = String(referenceCandidateUrl(item) || "");
+  if (/^https?:\/\//i.test(candidateUrl)) return "link";
+
+  return "file";
+}
+
+function normalizeReferenceContentId(value) {
+  if (value === undefined || value === null) return "";
+  return String(value);
+}
+
+function referenceContentId(item = {}) {
+  return normalizeReferenceContentId(item.content_id ?? item.contentId);
+}
+
+function referenceAssessmentTone(assessment = {}) {
+  const verdict = String(assessment.dominantVerdict || "").toLowerCase();
+
+  if (["true", "mostly_true"].includes(verdict)) return "positive";
+  if (["false", "misleading"].includes(verdict)) return "negative";
+  if (["partially_true", "mixed"].includes(verdict)) return "mixed";
+  if (verdict === "unverified") return "pending";
+
+  if (assessment.voteLean === "agree") return "positive";
+  if (assessment.voteLean === "disagree") return "negative";
+  if (assessment.voteLean === "mixed") return "mixed";
+
+  return "pending";
+}
+
+function buildReferenceAssessmentMap(
+  contentList = [],
+  claimList = [],
+  verificationSummary = null,
+) {
+  const summaryByClaimId = new Map(
+    (verificationSummary?.claims || []).map((summary) => [
+      normalizeTopicClaimId(summary.claimId ?? summary.claim_id),
+      summary,
+    ]),
+  );
+
+  const claimsByContentId = new Map();
+
+  for (const claim of claimList || []) {
+    const contentId = normalizeReferenceContentId(
+      claim.content_id ?? claim.contentId,
+    );
+
+    if (!contentId) continue;
+
+    const linked = claimsByContentId.get(contentId) || [];
+    linked.push(claim);
+    claimsByContentId.set(contentId, linked);
+  }
+
+  const assessments = {};
+
+  for (const content of contentList || []) {
+    const contentId = referenceContentId(content);
+    if (!contentId) continue;
+
+    const linkedClaims = claimsByContentId.get(contentId) || [];
+    let agreeCount = 0;
+    let disagreeCount = 0;
+    const curatedVerdicts = [];
+
+    for (const claim of linkedClaims) {
+      const claimId = normalizeTopicClaimId(getTopicClaimId(claim));
+      const summary = summaryByClaimId.get(claimId);
+
+      agreeCount += Number(summary?.agreeCount || 0);
+      disagreeCount += Number(summary?.disagreeCount || 0);
+
+      const curatedVerdict =
+        summary?.reviewSummary?.latestCuratedReview?.verdictTag;
+
+      if (curatedVerdict) curatedVerdicts.push(curatedVerdict);
+    }
+
+    const totalVotes = agreeCount + disagreeCount;
+    const agreePercent = totalVotes
+      ? Math.round((agreeCount / totalVotes) * 100)
+      : 0;
+    const disagreePercent = totalVotes
+      ? Math.round((disagreeCount / totalVotes) * 100)
+      : 0;
+
+    const verdictCounts = curatedVerdicts.reduce((counts, verdict) => {
+      counts[verdict] = (counts[verdict] || 0) + 1;
+      return counts;
+    }, {});
+
+    const rankedVerdicts = Object.entries(verdictCounts).sort(
+      (left, right) => right[1] - left[1],
+    );
+
+    let dominantVerdict = null;
+
+    if (rankedVerdicts.length === 1) {
+      dominantVerdict = rankedVerdicts[0][0];
+    } else if (
+      rankedVerdicts.length > 1 &&
+      rankedVerdicts[0][1] > rankedVerdicts[1][1]
+    ) {
+      dominantVerdict = rankedVerdicts[0][0];
+    } else if (rankedVerdicts.length > 1) {
+      dominantVerdict = "mixed";
+    }
+
+    const voteLean =
+      !totalVotes
+        ? "pending"
+        : agreePercent >= 60
+          ? "agree"
+          : disagreePercent >= 60
+            ? "disagree"
+            : "mixed";
+
+    assessments[contentId] = {
+      contentId,
+      claimCount: linkedClaims.length,
+      totalVotes,
+      agreeCount,
+      disagreeCount,
+      agreePercent,
+      disagreePercent,
+      reviewedClaimCount: curatedVerdicts.length,
+      dominantVerdict,
+      voteLean,
+    };
+  }
+
+  return assessments;
+}
+
+function ReferenceDesktop({
+  contentList,
+  refsMap,
+  assessmentsByContentId,
+  activeKey,
+  onSelect,
+  onClose,
+  sectionRef,
+}) {
+  const { t } = useTranslation();
+
+  const references = groupReferencesBySource(
+    contentList,
+  ).map((group) => {
+    const { item, index } = group.representative;
+    const type = referenceType(item);
+
+    return {
+      item,
+      index,
+      key: group.key,
+      type,
+      icon: REFERENCE_TYPE_ICONS[type] || faFile,
+      name: referenceFileName(item, index),
+      sourceUrl: group.sourceUrl,
+      artifactCount: group.items.length,
+      assessment:
+        assessmentsByContentId?.[
+          referenceContentId(item)
+        ] || null,
+    };
+  });
+  const activeReference =
+    references.find((reference) => reference.key === activeKey) || null;
+
+  return (
+    <section
+      ref={sectionRef}
+      className="Breakdown-referenceDesktop"
+      aria-labelledby="topic-references-title"
+    >
+      <header className="Breakdown-referenceDesktop-header">
+        <div>
+          <span>{t("topicReferences.eyebrow")}</span>
+          <h3 id="topic-references-title">{t("topicReferences.title")}</h3>
+        </div>
+        <small>
+          {t("topicReferences.count", { count: references.length })}
+        </small>
+      </header>
+
+      <div
+        className="Breakdown-referenceDesktop-grid"
+        role="list"
+        aria-label={t("topicReferences.desktopLabel")}
+      >
+        {references.map((reference) => {
+          const selected = activeReference?.key === reference.key;
+          return (
+            <button
+              key={reference.key}
+              type="button"
+              role="listitem"
+              className={[
+                "Breakdown-referenceFile",
+                `is-${reference.type}`,
+                selected ? "is-selected" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-expanded={selected}
+              aria-controls="topic-reference-preview"
+              onClick={() => onSelect(reference.key)}
+              title={`${reference.name} · ${t(
+                `topicReferences.types.${reference.type}`,
+              )}`}
+            >
+              <span className="Breakdown-referenceFile-icon" aria-hidden="true">
+                <FontAwesomeIcon icon={reference.icon} />
+                <span
+                  className={[
+                    "Breakdown-referenceFile-assessment",
+                    `tone-${referenceAssessmentTone(reference.assessment)}`,
+                  ].join(" ")}
+                />
+              </span>
+              <strong>{reference.name}</strong>
+              <small>{t(`topicReferences.types.${reference.type}`)}</small>
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        id="topic-reference-preview"
+        className={[
+          "Breakdown-referencePreview",
+          activeReference ? "is-open" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden={!activeReference}
+      >
+        <div className="Breakdown-referencePreview-collapse">
+          {activeReference && (
+            <article className="Breakdown-referenceWindow">
+              <header className="Breakdown-referenceWindow-bar">
+                <span
+                  className={[
+                    "Breakdown-referenceWindow-appIcon",
+                    `is-${activeReference.type}`,
+                  ].join(" ")}
+                  aria-hidden="true"
+                >
+                  <FontAwesomeIcon icon={activeReference.icon} />
+                </span>
+                <strong title={activeReference.name}>
+                  {activeReference.name}
+                </strong>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label={t("topicReferences.closePreview")}
+                  title={t("topicReferences.closePreview")}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </header>
+
+              <div className="Breakdown-referenceWindow-body">
+                <ContentList
+                  content={[activeReference.item]}
+                  refsMap={refsMap}
+                  assessmentsByContentId={assessmentsByContentId}
+                />
+              </div>
+            </article>
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function TopicDataResolver({
@@ -130,20 +1230,90 @@ const Topic = ({
     article,
     claims: claimList,
     content: contentList,
-    transaction_hash: transactionHash,
     proposed_by: proposedBy,
+    financialSummary:
+      topicFinancialSummary,
   } = topic;
+  const financialSummary =
+    topicFinancialSummary || topic.financial_summary || null;
 
   const [evidenceModalTitle, setEvidenceModalTitle] = useState(title);
   const [evidenceType, setEvidenceType] = useState();
   const [claimId, setClaimId] = useState();
+  const [
+    evidenceRelationshipModalShow,
+    setEvidenceRelationshipModalShow,
+  ] = useState(false);
+  const [verificationSummary, setVerificationSummary] = useState(null);
+  const [verificationLoading, setVerificationLoading] = useState(false);
+  const [votingClaimId, setVotingClaimId] = useState(null);
+  const [reviewModalShow, setReviewModalShow] = useState(false);
+  const [reviewingClaim, setReviewingClaim] = useState(null);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewEvidenceAssertions, setReviewEvidenceAssertions] = useState([]);
+  const [reviewEvidenceLoading, setReviewEvidenceLoading] = useState(false);
+  const [reviewEvidenceError, setReviewEvidenceError] = useState(false);
+  const [authPromptShow, setAuthPromptShow] = useState(false);
+  const [rewardPoolModalShow, setRewardPoolModalShow] = useState(false);
+  const [activeReferenceKey, setActiveReferenceKey] = useState(null);
+  const referencesSectionRef = useRef(null);
+  const referenceAssessments = React.useMemo(
+    () =>
+      buildReferenceAssessmentMap(
+        contentList,
+        claimList,
+        verificationSummary,
+      ),
+    [claimList, contentList, verificationSummary],
+  );
   const locale = i18n.language || navigator.language || "en-US"; // defaults to current i18n setting or browser
   const navigate = useNavigate();
+  const { authRequest } = useAuthRequest(user);
+  const authRequestRef = useRef(authRequest);
+  const showToastRef = useRef(showToast);
+  const translationRef = useRef(t);
+  const topicIdRef = useRef(topicId);
+  const verificationLoadRef = useRef(null);
+  const openLifecycleDetails = useCallback(() => {
+    const target = document.getElementById("topic-lifecycle-audit");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  useEffect(() => {
+    authRequestRef.current = authRequest;
+    showToastRef.current = showToast;
+    translationRef.current = t;
+    topicIdRef.current = topicId;
+  }, [authRequest, showToast, t, topicId]);
 
   const handleTopicUpdate = ({ message, updatedTopic, datumHash }) => {
     setTopic((prev) => ({ ...prev, ...updatedTopic }));
     if (message) showToast(message, "success");
   };
+
+  const handleRewardPoolUpdated = useCallback((payload) => {
+    if (!payload) return;
+
+    setTopic((prev) => {
+      const currentSummary =
+        prev?.financialSummary ||
+        prev?.financial_summary ||
+        {};
+      const nextRewardPool = payload.rewardPool ?? null;
+
+      return {
+        ...prev,
+        financialSummary: {
+          ...currentSummary,
+          rewardPool: nextRewardPool,
+          rewardPoolAccountingReady:
+            payload.rewardPoolAccountingReady ?? Boolean(nextRewardPool),
+          hasFinancialActivity:
+            currentSummary.hasFinancialActivity || Boolean(nextRewardPool),
+        },
+      };
+    });
+  }, [setTopic]);
 
   const handleTagClick = (tag) => {
     // Navigate to LandingPage with search query
@@ -154,84 +1324,319 @@ const Topic = ({
     navigate(`/?q=${encodeURIComponent(hashtagQuery)}`);
   };
 
-  const showEvidenceModal = (title, evidenceType, claimId) => {
-    setEvidenceType(evidenceType);
-    setEvidenceModalTitle(title);
-    setClaimId(claimId);
+  const showAuthPrompt = useCallback(() => {
+    setAuthPromptShow(true);
+  }, []);
+
+  useEffect(() => {
+    if (user?.access_token) {
+      setAuthPromptShow(false);
+    }
+  }, [user?.access_token]);
+
+  const showEvidenceModal = (nextClaimId) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    setClaimId(nextClaimId);
+    setEvidenceRelationshipModalShow(true);
+  };
+
+  const continueEvidenceSubmission = (nextEvidenceType) => {
+    setEvidenceType(nextEvidenceType);
+    setEvidenceModalTitle(
+      t("evidenceContribution.submitEvidence"),
+    );
+    setEvidenceRelationshipModalShow(false);
     setEvidenceModalShow(true);
   };
 
-  // Map refs for each content item
+  const evidenceClaim = (claimList || []).find(
+    (item) =>
+      String(getTopicClaimId(item) || "") ===
+      String(claimId || ""),
+  );
+
+  const loadVerificationSummary = useCallback(async ({ silent = false } = {}) => {
+    const requestTopicId = topicId;
+    const requestClient = authRequestRef.current;
+
+    if (!requestTopicId || !user?.access_token || !requestClient?.get) {
+      setVerificationSummary(null);
+      return null;
+    }
+
+    if (verificationLoadRef.current) return verificationLoadRef.current;
+
+    if (!silent) setVerificationLoading(true);
+
+    const request = fetchTopicVerificationSummary(
+      requestClient,
+      requestTopicId,
+    )
+      .then((summary) => {
+        if (String(topicIdRef.current) === String(requestTopicId)) {
+          setVerificationSummary(summary);
+        }
+        return summary;
+      })
+      .catch(() => {
+        if (!silent) {
+          showToastRef.current?.(
+            translationRef.current("claimVoting.summaryFailed"),
+            "secondary",
+          );
+        }
+        return null;
+      })
+      .finally(() => {
+        if (verificationLoadRef.current === request) {
+          verificationLoadRef.current = null;
+        }
+        if (!silent) setVerificationLoading(false);
+      });
+
+    verificationLoadRef.current = request;
+    return request;
+  }, [topicId, user?.access_token]);
+
+  useEffect(() => {
+    loadVerificationSummary({ silent: true });
+  }, [loadVerificationSummary]);
+
+  const getReviewingClaimSummary = useCallback(
+    () => findClaimSummaryForClaim(verificationSummary, reviewingClaim),
+    [reviewingClaim, verificationSummary],
+  );
+
+
+  useEffect(() => {
+    const nextClaimId = getTopicClaimId(reviewingClaim);
+
+    if (
+      !reviewModalShow ||
+      !nextClaimId ||
+      !user?.access_token
+    ) {
+      setReviewEvidenceAssertions([]);
+      setReviewEvidenceLoading(false);
+      setReviewEvidenceError(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    setReviewEvidenceLoading(true);
+    setReviewEvidenceError(false);
+
+    fetchClaimEvidenceAssertions(
+      authRequestRef.current,
+      nextClaimId,
+    )
+      .then((payload) => {
+        if (cancelled) return;
+
+        setReviewEvidenceAssertions(
+          Array.isArray(payload?.evidenceAssertions)
+            ? payload.evidenceAssertions
+            : [],
+        );
+      })
+      .catch(() => {
+        if (cancelled) return;
+
+        setReviewEvidenceAssertions([]);
+        setReviewEvidenceError(true);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setReviewEvidenceLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    reviewModalShow,
+    reviewingClaim,
+    user?.access_token,
+  ]);
+
+  const closeClaimReviewModal = useCallback(() => {
+    if (reviewSubmitting) return;
+    setReviewModalShow(false);
+    setReviewingClaim(null);
+  }, [reviewSubmitting]);
+
+  const handleOpenClaimReview = useCallback((nextClaim) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    if (!isActiveTopicStatus(currentStatus)) {
+      showToast?.(t("claimVoting.activeTopicRequired"), "secondary");
+      return;
+    }
+
+    setReviewingClaim(nextClaim);
+    setReviewModalShow(true);
+  }, [currentStatus, showAuthPrompt, showToast, t, user?.access_token]);
+
+  const handleClaimReview = useCallback(async (payload) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    const nextClaimId = getTopicClaimId(reviewingClaim);
+    if (!nextClaimId || reviewSubmitting) return;
+
+    setReviewSubmitting(true);
+
+    try {
+      const result = await reviewClaim(authRequestRef.current, nextClaimId, payload);
+      await loadVerificationSummary({ silent: true });
+
+      showToast?.(
+        result?.changed
+          ? t("claimVoting.reviewSaved")
+          : t("claimVoting.reviewAlreadySaved"),
+        result?.changed ? "success" : "secondary",
+      );
+
+      setReviewModalShow(false);
+      setReviewingClaim(null);
+    } catch {
+      showToast?.(t("claimVoting.reviewFailed"), "danger");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  }, [
+    loadVerificationSummary,
+    reviewSubmitting,
+    reviewingClaim,
+    showAuthPrompt,
+    showToast,
+    t,
+    user?.access_token,
+  ]);
+
+  const handleClaimVote = useCallback(async (nextClaimId, vote) => {
+    if (!user?.access_token) {
+      showAuthPrompt();
+      return;
+    }
+
+    if (!nextClaimId || votingClaimId) return;
+
+    setVotingClaimId(nextClaimId);
+
+    try {
+      const result = await castClaimVote(authRequestRef.current, nextClaimId, vote);
+      await loadVerificationSummary({ silent: true });
+
+      showToast?.(
+        result?.changed
+          ? t("claimVoting.voteUpdated")
+          : t("claimVoting.voteAlreadyCounted"),
+        result?.changed ? "success" : "secondary",
+      );
+    } catch {
+      showToast?.(t("claimVoting.voteFailed"), "danger");
+    } finally {
+      setVotingClaimId(null);
+    }
+  }, [loadVerificationSummary, showAuthPrompt, showToast, t, user?.access_token, votingClaimId]);
+
+  // Map refs for each content item.
   const contentRefs = useRef({});
-  contentList.forEach((item) => {
-    contentRefs.current[item.local_url] =
-      contentRefs.current[item.local_url] || React.createRef();
+  (contentList || []).forEach((item, index) => {
+    const key = item.local_url || item.localUrl || referenceKey(item, index);
+    contentRefs.current[key] =
+      contentRefs.current[key] || React.createRef();
   });
 
-  // Scroll handler
-  const handleCarouselClick = (localUrl) => {
-    const targetRef = contentRefs.current[localUrl];
-    if (targetRef && targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  useEffect(() => {
+    if (!activeReferenceKey) return;
+
+    const referenceStillExists = groupReferencesBySource(
+      contentList,
+    ).some((group) => group.key === activeReferenceKey);
+
+    if (!referenceStillExists) {
+      setActiveReferenceKey(null);
     }
+  }, [activeReferenceKey, contentList]);
+
+  const openReference = useCallback((key, { scroll = false } = {}) => {
+    setActiveReferenceKey((current) =>
+      current === key && !scroll ? null : key,
+    );
+
+    if (scroll) {
+      window.requestAnimationFrame(() => {
+        referencesSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      });
+    }
+  }, []);
+
+  // Carousel media open the logical source they belong to.
+  const handleCarouselClick = (localUrl) => {
+    const index = (contentList || []).findIndex(
+      (item) =>
+        item.local_url === localUrl ||
+        item.localUrl === localUrl ||
+        item.url === localUrl,
+    );
+
+    if (index < 0) return;
+
+    const item = contentList[index];
+    const sourceKey = String(
+      referenceSourceUrl(item) ||
+      referenceCandidateUrl(item) ||
+      referenceKey(item, index),
+    ).trim();
+
+    if (!sourceKey) return;
+
+    openReference(sourceKey, { scroll: true });
   };
 
   return (
     <div className="Breakdown-topic-container">
       <h1 className="Breakdown-topic-title">{title}</h1>
-      <small className="Breakdown-topic-subheading">
-        <span>
-          {t("status")}:
-          <b>
-            <TextTransition
-              springConfig={presets.wobbly}
-              className="Breakdown-topic-status"
-            >
-              {transactionHash ? (
-                <a
-                  href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t(currentStatus)}
-                </a>
-              ) : (
-                t(currentStatus)
-              )}
-            </TextTransition>
-          </b>
-        </span>
-        <span>•</span>
-        <span>
-          {t("rewardPool")}:{" "}
-          <TextTransition springConfig={presets.gentle}>
-            {transactionHash ? (
-              <a
-                href={`${CARDANO_EXPLORER_URL}/transaction/${transactionHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {rewardAmount || 0} $DFCT
-              </a>
-            ) : (
-              `${rewardAmount || 0} $DFCT`
-            )}
-          </TextTransition>
-        </span>
-      </small>
+      <div className="Breakdown-topic-commandBar">
+        <TopicFinancialSummary
+          status={currentStatus}
+          financialSummary={financialSummary}
+          legacyRewardAmount={rewardAmount}
+          locale={locale}
+          onOpenLifecycle={openLifecycleDetails}
+          onOpenRewardPool={() => setRewardPoolModalShow(true)}
+        />
 
-      <TopicToolbar
-        user={user}
-        shareModalShow={shareModalShow}
-        setShareModalShow={setShareModalShow}
-        title={title}
-        showToast={showToast}
-        hashtags={getHashtags(contentList)}
-        onTopicUpdated={handleTopicUpdate}
-        topicId={topicId}
-        status={currentStatus}
-        proposedBy={proposedBy}
-      />
+        <TopicToolbar
+          user={user}
+          shareModalShow={shareModalShow}
+          setShareModalShow={setShareModalShow}
+          title={title}
+          showToast={showToast}
+          hashtags={getHashtags(contentList)}
+          onTopicUpdated={handleTopicUpdate}
+          topicId={topicId}
+          status={currentStatus}
+          proposedBy={proposedBy}
+          financialSummary={financialSummary}
+        />
+      </div>
       {contentList && contentList.length > 0 && (
         <div style={{ marginBottom: "2rem" }}>
           <ContentCarousel
@@ -259,11 +1664,141 @@ const Topic = ({
         content={claimList}
         showEvidenceModal={showEvidenceModal}
         topicId={topicId}
+        verificationSummary={verificationSummary}
+        verificationLoading={verificationLoading}
+        votingClaimId={votingClaimId}
+        votingEnabled={isActiveTopicStatus(currentStatus)}
+        reviewEnabled={isActiveTopicStatus(currentStatus)}
+        reviewingClaimId={getTopicClaimId(reviewingClaim)}
+        onClaimVote={handleClaimVote}
+        onClaimReview={handleOpenClaimReview}
+      />
+      <ClaimReviewModal
+        show={reviewModalShow}
+        onHide={closeClaimReviewModal}
+        claim={reviewingClaim}
+        claimSummary={getReviewingClaimSummary()}
+        evidenceAssertions={reviewEvidenceAssertions}
+        evidenceLoading={reviewEvidenceLoading}
+        evidenceError={reviewEvidenceError}
+        onSubmit={handleClaimReview}
+        submitting={reviewSubmitting}
+      />
+      <TopicAuthPromptModal
+        show={authPromptShow}
+        onHide={() => setAuthPromptShow(false)}
       />
       <div className="Breakdown-topic-article">{article}</div>
       {contentList && contentList.length > 0 && (
-        <ContentList content={contentList} refsMap={contentRefs.current} />
+        <ReferenceDesktop
+          contentList={contentList}
+          refsMap={contentRefs.current}
+          assessmentsByContentId={referenceAssessments}
+          activeKey={activeReferenceKey}
+          onSelect={(key) => openReference(key)}
+          onClose={() => setActiveReferenceKey(null)}
+          sectionRef={referencesSectionRef}
+        />
       )}
+      <RewardPoolModal
+        show={rewardPoolModalShow}
+        onHide={() => setRewardPoolModalShow(false)}
+        topicId={topicId}
+        topicTitle={title}
+        user={user}
+        locale={locale}
+        onRewardPoolUpdated={handleRewardPoolUpdated}
+        onRequireAuth={showAuthPrompt}
+        showToast={showToast}
+      />
+      <Modal
+        show={evidenceRelationshipModalShow}
+        onHide={() =>
+          setEvidenceRelationshipModalShow(false)
+        }
+        centered
+        className="Breakdown-evidence-relationship-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {t("evidenceContribution.relationshipTitle")}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p className="Breakdown-evidence-relationship-intro">
+            {t(
+              "evidenceContribution.relationshipSubtitle",
+            )}
+          </p>
+
+          {evidenceClaim?.statement && (
+            <div className="Breakdown-evidence-relationship-claim">
+              <strong>
+                {t("evidenceContribution.claimLabel")}
+              </strong>
+              <p>{evidenceClaim.statement}</p>
+            </div>
+          )}
+
+          <div className="Breakdown-evidence-relationship-options">
+            <button
+              type="button"
+              className="Breakdown-evidence-relationship-option"
+              onClick={() =>
+                continueEvidenceSubmission(
+                  "proEvidence",
+                )
+              }
+            >
+              <div className="Breakdown-evidence-relationship-optionCopy">
+                <strong>
+                  {t("evidenceContribution.supports")}
+                </strong>
+                <span>
+                  {t(
+                    "evidenceContribution.supportsDescription",
+                  )}
+                </span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="Breakdown-evidence-relationship-option"
+              onClick={() =>
+                continueEvidenceSubmission(
+                  "conEvidence",
+                )
+              }
+            >
+              <div className="Breakdown-evidence-relationship-optionCopy">
+                <strong>
+                  {t("evidenceContribution.challenges")}
+                </strong>
+                <span>
+                  {t(
+                    "evidenceContribution.challengesDescription",
+                  )}
+                </span>
+              </div>
+            </button>
+
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() =>
+              setEvidenceRelationshipModalShow(false)
+            }
+          >
+            {t("cancel")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <EvidenceModal
         show={evidenceModalShow}
         title={evidenceModalTitle}
@@ -346,7 +1881,15 @@ function TopicBreakdownPage() {
             <FontAwesomeIcon icon={faArrowUp} />
           </Button>
         </div>
-        <div className="Breakdown-right-column"></div>
+        <div className="Breakdown-right-column" id="topic-lifecycle-audit">
+          {topicData?.topic_id && (
+            <TopicLifecycleAuditTrail
+              user={user}
+              topic={topicData}
+              topicId={topicData.topic_id}
+            />
+          )}
+        </div>
       </Suspense>
       {user && (
         <Suspense>

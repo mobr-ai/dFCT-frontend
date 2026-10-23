@@ -29,3 +29,44 @@
   flex-wrap: wrap-reverse;
   justify-content: space-evenly;
 }
+
+/*
+ * URL previews use a deliberately light metadata card even inside dark
+ * workspaces. Keep the original compact layout, but force readable dark
+ * typography whenever the surrounding workspace uses a dark theme.
+ */
+[data-theme="graphite"] .Url-card,
+[data-theme="midnight"] .Url-card,
+[data-theme="dark"] .Url-card {
+  color: #20242b;
+}
+
+[data-theme="graphite"] .Url-card .card-title,
+[data-theme="graphite"] .Url-card .card-text,
+[data-theme="graphite"] .Url-card .text-muted,
+[data-theme="graphite"] .Url-card small,
+[data-theme="graphite"] .Url-card .card-footer,
+[data-theme="midnight"] .Url-card .card-title,
+[data-theme="midnight"] .Url-card .card-text,
+[data-theme="midnight"] .Url-card .text-muted,
+[data-theme="midnight"] .Url-card small,
+[data-theme="midnight"] .Url-card .card-footer,
+[data-theme="dark"] .Url-card .card-title,
+[data-theme="dark"] .Url-card .card-text,
+[data-theme="dark"] .Url-card .text-muted,
+[data-theme="dark"] .Url-card small,
+[data-theme="dark"] .Url-card .card-footer {
+  color: #20242b !important;
+}
+
+[data-theme="graphite"] .Url-card .text-muted,
+[data-theme="graphite"] .Url-card small,
+[data-theme="graphite"] .Url-card .card-footer,
+[data-theme="midnight"] .Url-card .text-muted,
+[data-theme="midnight"] .Url-card small,
+[data-theme="midnight"] .Url-card .card-footer,
+[data-theme="dark"] .Url-card .text-muted,
+[data-theme="dark"] .Url-card small,
+[data-theme="dark"] .Url-card .card-footer {
+  color: #667085 !important;
+}

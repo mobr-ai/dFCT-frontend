@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "apexcharts": "^6.5.0",
     "assert": "^2.1.0",
     "bootstrap": "^5.3.3",
     "i18next": "^24.0.0",
@@ -19,12 +20,13 @@
     "linkifyjs": "^4.1.4",
     "process": "^0.11.10",
     "react": "^18.3.1",
+    "react-apexcharts": "^2.1.1",
     "react-bootstrap": "^2.10.5",
     "react-burger-menu": "^3.1.0",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-i18next": "^15.7.4",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "7.18.2",
     "react-share": "^5.1.1",
     "react-string-replace": "^1.1.1",
     "react-text-transition": "^3.1.0",
@@ -38,7 +40,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:ci": "node --test src/instantAssessmentClaim.contract.test.mjs src/topicSubmissionAuthReturn.contract.test.mjs"
   },
   "eslintConfig": {
     "extends": [
@@ -70,6 +73,7 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "overrides": {
-    "uuid": "^11.1.1"
+    "uuid": "^11.1.1",
+    "nanoid": "3.3.18"
   }
 }

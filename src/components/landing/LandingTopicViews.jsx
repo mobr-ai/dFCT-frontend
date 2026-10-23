@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarDays, faClock, faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 
 const PLACEHOLDER_IMAGE_URL = "/placeholder.png";
 
@@ -325,52 +325,38 @@ export const getTopicMediaItems = (topic) => {
   return normalized.sort((a, b) => mediaPriority(a) - mediaPriority(b));
 };
 
-function useDesktopHoverMode() {
-  const [desktopHover, setDesktopHover] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return undefined;
-
-    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const update = () => setDesktopHover(Boolean(query.matches));
-
-    update();
-
-    if (query.addEventListener) {
-      query.addEventListener("change", update);
-      return () => query.removeEventListener("change", update);
-    }
-
-    query.addListener(update);
-    return () => query.removeListener(update);
-  }, []);
-
-  return desktopHover;
-}
-
-function useVisiblePlayback(ref, enabled) {
+function useElementPresence(
+  ref,
+  enabled,
+  { minRatio = 0.55, rootMargin = "64px 0px" } = {}
+) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!enabled || !ref.current || typeof IntersectionObserver === "undefined") {
+    if (!enabled || !ref.current) {
       setVisible(false);
+      return undefined;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
       return undefined;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.55));
+        setVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio >= minRatio));
       },
       {
-        threshold: [0, 0.35, 0.55, 0.75, 1],
-        rootMargin: "80px 0px",
+        threshold: [0, 0.18, 0.35, 0.55, 0.75, 1],
+        rootMargin,
       }
     );
 
     observer.observe(ref.current);
 
     return () => observer.disconnect();
-  }, [enabled, ref]);
+  }, [enabled, minRatio, ref, rootMargin]);
 
   return visible;
 }
@@ -638,6 +624,19 @@ function MediaPlaceholder({ state = "unavailable", title }) {
   );
 }
 
+function TopicAudioAffordance({ label = "Audio" }) {
+  return (
+    <>
+      <span className="Landing-topic-audio-overlay" aria-hidden="true">
+        <FontAwesomeIcon icon={faVolumeHigh} />
+      </span>
+      <span className="Landing-topic-visual-type-badge Landing-topic-visual-type-badge-audio">
+        {label}
+      </span>
+    </>
+  );
+}
+
 function TopicImage({ src, fallbackSrc = PLACEHOLDER_IMAGE_URL, alt, compact }) {
   const imgRef = useRef(null);
   const initialSrc = normalizeUrl(src) || fallbackSrc || PLACEHOLDER_IMAGE_URL;
@@ -700,24 +699,17 @@ function TopicImage({ src, fallbackSrc = PLACEHOLDER_IMAGE_URL, alt, compact }) 
   );
 }
 
-function TopicVideo({ media, title, active = true, compact = false }) {
+function TopicVideo({ media, title, active = true }) {
   const frameRef = useRef(null);
   const videoRef = useRef(null);
-  const desktopHoverMode = useDesktopHoverMode();
-  const mobileVisible = useVisiblePlayback(frameRef, compact && !desktopHoverMode);
 
-  const [hovered, setHovered] = useState(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
 
   const fallbackSrc = media?.poster || media?.fallbackUrl || PLACEHOLDER_IMAGE_URL;
   const hasRealPoster = !isPlaceholderUrl(fallbackSrc);
 
-  const shouldPlay = compact
-    ? desktopHoverMode
-      ? hovered
-      : mobileVisible
-    : active;
+  const shouldPlay = Boolean(active);
 
   useEffect(() => {
     setFailed(false);
@@ -766,12 +758,7 @@ function TopicVideo({ media, title, active = true, compact = false }) {
   }
 
   return (
-    <div
-      className="Landing-topic-video-frame"
-      ref={frameRef}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <div className="Landing-topic-video-frame" ref={frameRef}>
       {!ready && <MediaPlaceholder state="loading" title={title} />}
 
       <video
@@ -779,11 +766,11 @@ function TopicVideo({ media, title, active = true, compact = false }) {
         className={`Landing-topic-visual-media Landing-topic-visual-video ${ready ? "is-ready" : "is-loading"}`}
         src={media.url}
         poster={hasRealPoster ? fallbackSrc : undefined}
-        preload="metadata"
+        preload={shouldPlay ? "auto" : "metadata"}
         muted
         loop
         playsInline
-        autoPlay={!compact && active}
+        autoPlay={shouldPlay}
         controls={false}
         aria-label={title}
         onLoadedMetadata={handleLoadedMetadata}
@@ -799,11 +786,89 @@ function TopicVideo({ media, title, active = true, compact = false }) {
 }
 
 function TopicAudio({ media, title }) {
+  const audioTitle = media?.alt || title;
+
   return (
     <>
-      <MediaPlaceholder state="unavailable" title={media?.alt || title} />
-      <span className="Landing-topic-visual-type-badge">Audio</span>
+      <MediaPlaceholder state="unavailable" title={audioTitle} />
+      <TopicAudioAffordance label="Audio" />
     </>
+  );
+}
+
+function TopicVisualBokeh({ media, backdropUrl, compact = false, active = true }) {
+  const imageBackdrop = normalizeUrl(backdropUrl);
+  const videoBackdrop =
+    media?.type === "video" && !compact ? normalizeUrl(media?.url) : "";
+  const poster =
+    media?.poster && !isPlaceholderUrl(media.poster) ? media.poster : undefined;
+
+  if (imageBackdrop) {
+    return (
+      <div
+        className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-image"
+        aria-hidden="true"
+      >
+        <img
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-fill"
+          src={imageBackdrop}
+          alt=""
+          loading={compact ? "lazy" : "eager"}
+          decoding="async"
+        />
+        <img
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-contain"
+          src={imageBackdrop}
+          alt=""
+          loading={compact ? "lazy" : "eager"}
+          decoding="async"
+        />
+      </div>
+    );
+  }
+
+  if (videoBackdrop) {
+    return (
+      <div
+        className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-video"
+        aria-hidden="true"
+      >
+        <video
+          className="Landing-topic-visual-bokeh-media Landing-topic-visual-bokeh-media-fill"
+          src={videoBackdrop}
+          poster={poster}
+          preload={active ? "metadata" : "none"}
+          muted
+          loop
+          playsInline
+          autoPlay={active}
+          controls={false}
+          tabIndex={-1}
+          onLoadedMetadata={(event) => {
+            const video = event.currentTarget;
+
+            try {
+              if (
+                Number.isFinite(video.duration) &&
+                video.duration > 0 &&
+                video.currentTime < 0.05
+              ) {
+                video.currentTime = Math.min(0.16, video.duration / 4);
+              }
+            } catch {
+              // Some remote videos reject early seeking.
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="Landing-topic-visual-bokeh Landing-topic-visual-bokeh-fallback"
+      aria-hidden="true"
+    />
   );
 }
 
@@ -838,13 +903,28 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
           ? displayMedia.backdropUrl
           : "";
 
-  const style = backdropUrl
-    ? { "--landing-topic-visual": `url("${backdropUrl.replace(/"/g, "%22")}")` }
-    : undefined;
+
+  const isNoVisualMedia =
+    displayMedia?.type === "audio" ||
+    displayMedia?.type === "placeholder" ||
+    !["image", "video"].includes(displayMedia?.type);
+
+  const isAudioLikeNoVisual =
+    isNoVisualMedia &&
+    /\b(audio|sound|mp3|wav|m4a|podcast|voice|music)\b/i.test(
+      [title, displayMedia?.alt, displayMedia?.url, displayMedia?.source]
+        .filter(Boolean)
+        .join(" ")
+    );
 
   return (
-    <div className="Landing-topic-visual-frame" style={style}>
-      {backdropUrl && <div className="Landing-topic-visual-bokeh" />}
+    <div className={`Landing-topic-visual-frame ${isNoVisualMedia ? "is-no-visual" : ""}`}>
+      <TopicVisualBokeh
+        media={displayMedia}
+        backdropUrl={backdropUrl}
+        compact={compact}
+        active={active}
+      />
       <div className="Landing-topic-visual-inner">
         {displayMedia?.type === "audio" ? (
           <TopicAudio media={displayMedia} title={title} />
@@ -853,7 +933,6 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
             media={displayMedia}
             title={title}
             active={active}
-            compact={compact}
           />
         ) : displayMedia?.type === "image" && displayMedia?.url ? (
           <TopicImage
@@ -863,7 +942,10 @@ function LandingTopicMedia({ media, title, compact = false, active = true, times
             compact={compact}
           />
         ) : (
-          <MediaPlaceholder state="unavailable" title={title} />
+          <>
+            <MediaPlaceholder state="unavailable" title={title} />
+            {isAudioLikeNoVisual && <TopicAudioAffordance label="Audio" />}
+          </>
         )}
         {timestampOverlay}
       </div>
@@ -890,9 +972,27 @@ export function LandingTopicCard({
   const isList = variant === "list";
   const isCompact = isGrid || isList;
   const showDescription = variant === "spotlight" || isList;
+  const cardRef = useRef(null);
+  const cardInView = useElementPresence(cardRef, isCompact, {
+    minRatio: isList ? 0.42 : 0.5,
+    rootMargin: "72px 0px",
+  });
+  const cardScrollFocus = useElementPresence(cardRef, isCompact, {
+    minRatio: 0.08,
+    rootMargin: "-34% 0px -34% 0px",
+  });
+  const mediaActive = isCompact ? cardInView : active;
+  const cardClassName = [
+    "Landing-topic-card",
+    `Landing-topic-card-${variant}`,
+    isCompact && cardInView ? "is-in-view" : "",
+    isCompact && cardScrollFocus ? "is-scroll-focus" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <article className={`Landing-topic-card Landing-topic-card-${variant}`}>
+    <article ref={cardRef} className={cardClassName}>
       {variant !== "spotlight" && <TopicTimestampOverlay topic={topic} variant={variant} />}
       <Link
         className="Landing-topic-card-link"
@@ -903,7 +1003,7 @@ export function LandingTopicCard({
           media={media}
           title={title}
           compact={isCompact}
-          active={active}
+          active={mediaActive}
           timestampOverlay={
             variant === "spotlight" ? (
               <TopicTimestampOverlay topic={topic} variant={variant} />

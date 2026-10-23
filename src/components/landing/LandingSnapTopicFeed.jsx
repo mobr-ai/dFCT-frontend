@@ -36,6 +36,42 @@ export default function LandingSnapTopicFeed({
     [safeTopics.length]
   );
 
+  const scrollToFirstTopic = useCallback((behavior = "smooth") => {
+    setActiveIndex(0);
+    setVisualTick(0);
+    lastWheelAtRef.current = 0;
+
+    requestAnimationFrame(() => {
+      const feed = feedRef.current;
+      const firstSection = sectionRefs.current[0];
+
+      feed?.scrollTo?.({ top: 0, left: 0, behavior });
+      firstSection?.scrollIntoView?.({
+        behavior,
+        block: "start",
+        inline: "nearest",
+      });
+
+      window.setTimeout(() => {
+        feed?.scrollTo?.({ top: 0, left: 0, behavior });
+      }, 80);
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleLandingScrollTop = () => {
+      scrollToFirstTopic("smooth");
+    };
+
+    window.addEventListener("dfct:landing-scroll-top", handleLandingScrollTop);
+    document.addEventListener("dfct:landing-scroll-top", handleLandingScrollTop);
+
+    return () => {
+      window.removeEventListener("dfct:landing-scroll-top", handleLandingScrollTop);
+      document.removeEventListener("dfct:landing-scroll-top", handleLandingScrollTop);
+    };
+  }, [scrollToFirstTopic]);
+
   const swipeHandlers = useVerticalSwipeFeed({
     activeIndex,
     itemCount: safeTopics.length,
@@ -74,7 +110,7 @@ export default function LandingSnapTopicFeed({
 
     activeSection.scrollIntoView({
       behavior: "smooth",
-      block: "nearest",
+      block: "start",
       inline: "nearest",
     });
   }, [activeIndex]);

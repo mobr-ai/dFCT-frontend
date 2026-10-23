@@ -1,0 +1,5806 @@
+.DfctAdminConsole {
+  --dfct-admin-bg: var(--theme-bg, var(--bs-body-bg));
+  --dfct-admin-surface: var(
+    --theme-surface,
+    var(--theme-card-bg, var(--bs-body-bg))
+  );
+  --dfct-admin-surface-soft: var(
+    --theme-surface-soft,
+    var(--theme-card-bg, var(--bs-tertiary-bg))
+  );
+  --dfct-admin-text: var(--theme-text, var(--bs-body-color));
+  --dfct-admin-muted: var(--theme-muted, var(--bs-secondary-color));
+  --dfct-admin-border: var(--theme-border, var(--bs-border-color));
+  --dfct-admin-accent: var(--theme-accent, var(--bs-primary));
+  --dfct-admin-accent-text: var(--theme-accent-contrast, #ffffff);
+
+  min-height: 100vh;
+  padding: 32px 0 56px;
+  background: var(--dfct-admin-bg);
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-inner {
+  max-width: 1240px;
+}
+
+.DfctAdminConsole-hero {
+  margin-bottom: 18px;
+}
+
+.DfctAdminConsole-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--dfct-admin-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole-hero h1,
+.DfctAdminConsole-sectionHeader h2 {
+  margin: 0;
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.DfctAdminConsole-hero p,
+.DfctAdminConsole-sectionHeader p {
+  max-width: 760px;
+  margin: 8px 0 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 22px;
+  padding: 6px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 999px;
+  background: var(--dfct-admin-surface);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.DfctAdminTabs-button {
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: var(--dfct-admin-text);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.DfctAdminTabs-button:hover,
+.DfctAdminTabs-button:focus {
+  color: var(--dfct-admin-text);
+  text-decoration: none;
+}
+
+.DfctAdminTabs-button.is-active {
+  background: var(--dfct-admin-accent);
+  color: var(--dfct-admin-accent-text);
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccessPage {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccess {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.DfctAdminConsole-embeddedPage .BillingAccess-hero {
+  display: none;
+}
+
+.DfctAdminConsole-section {
+  margin-top: 16px;
+}
+
+.DfctAdminConsole-card {
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 24px;
+  background: var(--dfct-admin-surface);
+  color: var(--dfct-admin-text);
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.DfctAdminConsole-sectionHeader {
+  margin-bottom: 18px;
+}
+
+.DfctAdminConsole-placeholderGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-placeholderItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 132px;
+  padding: 16px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+  color: var(--dfct-admin-text);
+}
+
+.DfctAdminConsole-placeholderItem strong {
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+}
+
+.DfctAdminConsole-placeholderItem span {
+  color: var(--dfct-admin-muted);
+  font-size: 0.94rem;
+}
+
+.DfctAdminConsole-note {
+  margin: 16px 0 0;
+  border-radius: 16px;
+}
+
+.DfctAdminConsole-tabFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 768px) {
+  .DfctAdminConsole {
+    padding-top: 20px;
+  }
+
+  .DfctAdminTabs {
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .DfctAdminTabs-button {
+    flex: 1 1 auto;
+  }
+
+  .DfctAdminConsole-placeholderGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.DfctAdminConsole-inner.BillingAccess {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.DfctAdminConsole .DfctBillingAdmin-section {
+  margin-top: 18px;
+}
+
+.DfctAdminConsole .DfctBillingAdmin-section:first-of-type {
+  margin-top: 0;
+}
+
+.DfctAdminConsole-actionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-actionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+  color: var(--dfct-admin-text);
+  text-align: left;
+}
+
+.DfctAdminConsole-actionCard span {
+  color: var(--dfct-admin-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole-actionCard strong {
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole-actionCard p {
+  margin: 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminConsole-actionCardButton {
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.DfctAdminConsole-actionCardButton:hover,
+.DfctAdminConsole-actionCardButton:focus {
+  border-color: var(--dfct-admin-accent);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+.DfctAdminConsole-anchorFlow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.DfctAdminConsole-anchorFlow > div {
+  min-height: 156px;
+  padding: 18px;
+  border: 1px solid var(--dfct-admin-border);
+  border-radius: 18px;
+  background: var(--dfct-admin-surface-soft);
+}
+
+.DfctAdminConsole-anchorFlow span {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: var(--dfct-admin-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.DfctAdminConsole-anchorFlow strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dfct-admin-text);
+  font-weight: 900;
+}
+
+.DfctAdminConsole-anchorFlow p {
+  margin: 0;
+  color: var(--dfct-admin-muted);
+}
+
+.DfctAdminConsole-tabFooter {
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .DfctAdminConsole-actionGrid,
+  .DfctAdminConsole-anchorFlow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Admin shell polish: keep custom overview/anchoring cards aligned with billing surfaces. */
+.DfctAdminConsole-panel {
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-panelHeader {
+  margin-top: 2.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.DfctAdminConsole-panelHeader h1 {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.DfctAdminConsole-panelHeader p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole-subtabs {
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole-subtabs .nav-link:disabled {
+  color: var(--theme-muted);
+  opacity: 0.64;
+}
+
+.DfctAdminConsole-actionCard,
+.DfctAdminConsole-anchorFlow > div {
+  background: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-actionCard span,
+.DfctAdminConsole-anchorFlow span {
+  color: var(--theme-primary);
+}
+
+.DfctAdminConsole-actionCard strong,
+.DfctAdminConsole-anchorFlow strong {
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole-actionCard p,
+.DfctAdminConsole-anchorFlow p {
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole-actionCardButton:hover,
+.DfctAdminConsole-actionCardButton:focus {
+  border-color: var(--theme-primary);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminConsole .BillingAccess-eyebrow,
+.DfctAdminConsole .DfctBillingAdmin-sectionHeader .BillingAccess-eyebrow {
+  color: var(--theme-primary) !important;
+}
+
+.DfctAdminAnchorJobs-filters {
+  display: grid;
+  grid-template-columns: 180px 160px minmax(220px, 1fr) 110px auto;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+.DfctAdminAnchorJobs-tableWrap tr.is-selected {
+  background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
+}
+
+.DfctAdminAnchorJobs-detailLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.DfctAdminAnchorJobs-detailCard {
+  padding: 18px;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 18px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAnchorJobs-detailCard h3 {
+  margin: 0 0 12px;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminAnchorJobs-detailCard p {
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorJobs-detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.DfctAdminAnchorJobs-detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminAnchorJobs-detailRow span {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-detailRow strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--theme-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminAnchorJobs-detailRow strong.is-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.DfctAdminAnchorJobs-inlineAlert {
+  border-radius: 14px;
+}
+
+.DfctAdminAnchorJobs-settlement {
+  display: grid;
+  gap: 14px;
+}
+
+.DfctAdminAnchorJobs-settlementHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.DfctAdminAnchorJobs-settlementHeader p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-text-soft, var(--theme-text));
+}
+
+.DfctAdminAnchorJobs-settlementHeader .badge {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.DfctAdminAnchorJobs-confirmedSummary {
+  display: grid;
+  gap: 16px;
+}
+
+.DfctAdminAnchorJobs-confirmedHero {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid
+    color-mix(in srgb, var(--bs-success, #198754) 38%, var(--theme-border));
+  border-radius: 16px;
+  background: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 8%,
+    var(--theme-surface)
+  );
+}
+
+.DfctAdminAnchorJobs-confirmedIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bs-success, #198754);
+  color: var(--bs-white, #fff);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy h3 {
+  margin-bottom: 6px;
+}
+
+.DfctAdminAnchorJobs-confirmedCopy p {
+  margin: 0;
+}
+
+.DfctAdminAnchorJobs-confirmedBadge {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 0.55rem 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-confirmedGrid .DfctAdminAnchorJobs-detailRow {
+  min-height: 74px;
+}
+
+.DfctAdminAnchorJobs-confirmedFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorJobs-confirmedFooter p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorJobs-confirmedHero,
+  .DfctAdminAnchorJobs-confirmedFooter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminAnchorJobs-confirmedBadge {
+    align-self: flex-start;
+  }
+}
+
+@media (min-width: 1180px) {
+  .DfctAdminAnchorJobs-detailLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .DfctAdminAnchorJobs-settlementCard,
+  .DfctAdminAnchorJobs-verifyCard {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 920px) {
+  .DfctAdminAnchorJobs-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminAnchorJobs-detailGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.DfctAdminAnchorJobs-sync {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Admin shell theme fix: keep main shell eyebrows highlighted across themes. */
+.DfctAdminConsole .DfctAdminConsole-eyebrow {
+  color: var(--theme-primary) !important;
+}
+
+/* Generic admin workspace primitives used by all admin tabs. */
+.DfctAdminConsole .DfctAdmin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-eyebrow {
+  display: inline-block;
+  color: var(--theme-primary) !important;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs {
+  border-bottom: 1px solid var(--theme-border);
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs .nav-link {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminConsole .DfctAdmin-tabs .nav-link.active {
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-section {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 18px);
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow-soft);
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader h2 {
+  margin: 0;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminConsole .DfctAdmin-sectionHeader p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdmin-statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.DfctAdminConsole .DfctAdmin-stat {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminConsole .DfctAdmin-stat span {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdmin-stat strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--theme-text);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.DfctAdminConsole .DfctAdmin-stat small {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdmin-tableWrap {
+  overflow: auto;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface);
+}
+
+.DfctAdminConsole .DfctAdmin-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdmin-table th,
+.DfctAdminConsole .DfctAdmin-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--theme-border);
+  vertical-align: middle;
+}
+
+.DfctAdminConsole .DfctAdmin-table th {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorJobs-modal .modal-content,
+.DfctAdminAnchorJobs-modalContent {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 20px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminAnchorJobs-modal .modal-header,
+.DfctAdminAnchorJobs-modal .modal-body {
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAnchorJobs-modalHeaderCopy p {
+  margin: 0.35rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorJobs-modalLoading {
+  display: flex;
+  align-items: center;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminAnchorJobs-actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+[data-theme="dfct-dark"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="graphite"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="terminal"] .DfctAdminAnchorJobs-modal .btn-close,
+[data-theme="midnight"] .DfctAdminAnchorJobs-modal .btn-close {
+  filter: invert(1) grayscale(100%);
+}
+
+@media (max-width: 900px) {
+  .DfctAdminConsole .DfctAdmin-header {
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdmin-statGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminConsole .DfctAdmin-statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Admin shell layout repair after generic class cleanup. */
+.DfctAdminConsole .DfctAdminConsole-inner.DfctAdminShell {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 32px 56px 64px;
+}
+
+.DfctAdminConsole .DfctAdminConsole-hero p {
+  color: var(--theme-text) !important;
+  opacity: 0.72;
+}
+
+/* Anchor job filters auto-apply, so no manual Apply button column is needed. */
+.DfctAdminAnchorJobs-filters {
+  grid-template-columns: 180px 160px minmax(220px, 1fr) 110px;
+}
+
+/* Keep admin modals above sticky navigation and away from the top bar. */
+.modal-backdrop.show {
+  z-index: 2490;
+}
+
+.modal.show {
+  z-index: 2500;
+}
+
+.DfctAdminAnchorJobs-modal.modal-dialog {
+  margin-top: 96px;
+  margin-bottom: 32px;
+  max-width: min(1100px, calc(100vw - 48px));
+}
+
+.DfctAdminAnchorJobs-modal.modal-dialog-scrollable .modal-content {
+  max-height: calc(100vh - 128px);
+}
+
+.DfctAdminAnchorJobs-modalTop {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorJobs-modalClose {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-color: var(--theme-border) !important;
+  border-radius: 10px;
+  background: var(--theme-surface-soft, transparent) !important;
+  color: var(--theme-text) !important;
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 800;
+  box-shadow: none !important;
+}
+
+.DfctAdminAnchorJobs-modalClose:hover,
+.DfctAdminAnchorJobs-modalClose:focus {
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 14%,
+    transparent
+  ) !important;
+  color: var(--theme-text) !important;
+}
+
+@media (max-width: 900px) {
+  .DfctAdminConsole .DfctAdminConsole-inner.DfctAdminShell {
+    padding: 28px 20px 56px;
+  }
+
+  .DfctAdminAnchorJobs-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .DfctAdminAnchorJobs-modal.modal-dialog {
+    margin-top: 84px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorJobs-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cardano execution admin surfaces */
+.DfctAdminAnchorExecution-heading,
+.DfctAdminAnchorVerification-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorExecution-status {
+  flex: 0 0 auto;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-capabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminAnchorExecution-capability {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminAnchorExecution-capability > span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-readiness {
+  margin-bottom: 1rem;
+  border-radius: 14px;
+}
+
+.DfctAdminAnchorExecution-readiness ul {
+  margin: 0.55rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.DfctAdminAnchorExecution-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 14px;
+}
+
+.DfctAdminAnchorExecution-card {
+  padding: 18px;
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-lg, 18px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAnchorExecution-cardHeader h3 {
+  margin: 0;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminAnchorExecution-cardHeader p {
+  margin: 0.35rem 0 1rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution-switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-switchRow strong,
+.DfctAdminAnchorExecution-switchRow small {
+  display: block;
+}
+
+.DfctAdminAnchorExecution-switchRow small {
+  margin-top: 0.3rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution ::selection {
+  background: var(--dfct-admin-accent);
+  color: var(--dfct-admin-accent-text);
+}
+
+.DfctAdminAnchorExecution-modal ::selection {
+  background: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-modal .modal-content {
+  overflow: hidden;
+  border: 1px solid var(--theme-border, var(--bs-border-color));
+  border-radius: var(--theme-radius-lg, 18px);
+  background: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
+  color: var(--theme-text, var(--bs-body-color));
+  box-shadow: var(--theme-shadow-large, 0 24px 64px rgb(0 0 0 / 28%));
+}
+
+.DfctAdminAnchorExecution-modal .modal-header,
+.DfctAdminAnchorExecution-modal .modal-body,
+.DfctAdminAnchorExecution-modal .modal-footer {
+  border-color: var(--theme-border, var(--bs-border-color));
+  background: var(--theme-surface, var(--theme-card-bg, var(--bs-body-bg)));
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.DfctAdminAnchorExecution-modal .modal-title {
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .modal-body > p {
+  color: var(--theme-muted, var(--bs-secondary-color));
+}
+
+.DfctAdminAnchorExecution-modalClose {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--theme-border, var(--bs-border-color));
+  border-radius: 0.65rem;
+  background: var(--theme-surface-soft, var(--theme-card-bg, transparent));
+  color: var(--theme-text, var(--bs-body-color));
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.DfctAdminAnchorExecution-modalClose:hover,
+.DfctAdminAnchorExecution-modalClose:focus-visible {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  );
+  color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.DfctAdminAnchorExecution-modalAlert {
+  border-width: 1px !important;
+  color: var(--theme-text, var(--bs-body-color)) !important;
+}
+
+.DfctAdminAnchorExecution-modalAlert.is-success {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success, #198754)) 42%,
+    var(--theme-border, transparent)
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success, #198754)) 13%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  ) !important;
+}
+
+.DfctAdminAnchorExecution-modalAlert.is-warning {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-warning, var(--bs-warning, #ffc107)) 46%,
+    var(--theme-border, transparent)
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--theme-warning, var(--bs-warning, #ffc107)) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  ) !important;
+}
+
+.DfctAdminAnchorExecution-modal .btn-outline-secondary {
+  border-color: var(--theme-border, var(--bs-border-color));
+  background: var(--theme-surface-soft, transparent);
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .btn-outline-secondary:hover,
+.DfctAdminAnchorExecution-modal .btn-outline-secondary:focus-visible {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 14%,
+    var(--theme-surface, var(--theme-card-bg, transparent))
+  );
+  color: var(--theme-text, var(--bs-body-color));
+}
+
+.DfctAdminAnchorExecution-modal .btn-primary {
+  border-color: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  background: var(--theme-accent, var(--theme-primary, var(--bs-primary)));
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-modal .btn-primary:hover,
+.DfctAdminAnchorExecution-modal .btn-primary:focus-visible {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 82%,
+    #000
+  );
+  background: color-mix(
+    in srgb,
+    var(--theme-accent, var(--theme-primary, var(--bs-primary))) 82%,
+    #000
+  );
+  color: var(--theme-accent-contrast, #ffffff);
+}
+
+.DfctAdminAnchorExecution-rollout {
+  margin-top: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid
+    color-mix(in srgb, var(--accent-primary) 24%, var(--theme-border));
+  border-radius: 0.85rem;
+  background: color-mix(
+    in srgb,
+    var(--accent-primary) 7%,
+    var(--theme-card-bg)
+  );
+}
+
+.DfctAdminAnchorExecution-rolloutHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader span,
+.DfctAdminAnchorExecution-rolloutGrid span {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminAnchorExecution-rolloutHeader strong {
+  color: var(--theme-text);
+  font-size: 0.96rem;
+}
+
+.DfctAdminAnchorExecution-rollout > p {
+  margin: 0.65rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.DfctAdminAnchorExecution-rolloutGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.DfctAdminAnchorExecution-rolloutGrid > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-rolloutGrid strong {
+  overflow: hidden;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminAnchorExecution-fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 1rem;
+}
+
+.DfctAdminAnchorExecution-helpText.form-text {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(
+    --theme-text-soft,
+    var(--theme-text, var(--bs-body-color))
+  ) !important;
+  opacity: 1;
+}
+
+.DfctAdminAnchorExecution-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.DfctAdminAnchorExecution-autosave {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  min-height: 2rem;
+  margin-top: 1rem;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.DfctAdminAnchorExecution-autosave.is-saved {
+  color: var(--theme-success, #198754);
+}
+
+.DfctAdminAnchorExecution-autosave.is-invalid,
+.DfctAdminAnchorExecution-autosave.is-error {
+  color: var(--theme-danger, #dc3545);
+}
+
+.DfctAdminAnchorExecution-protocol {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminAnchorExecution-protocol summary {
+  margin-bottom: 0.65rem;
+  color: var(--theme-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.DfctAdminAnchorExecution-protocol code {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--theme-muted);
+}
+
+.DfctAdminAnchorExecution-protocol code + code {
+  margin-top: 0.45rem;
+}
+
+.DfctAdminAnchorExecution-loading {
+  display: flex;
+  align-items: center;
+  min-height: 140px;
+  color: var(--theme-muted);
+  font-weight: 800;
+}
+
+.DfctAdminAnchorVerification-autoRefresh {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.25rem;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.DfctAdminAnchorVerification-tableWrap {
+  margin-top: 1rem;
+}
+
+.DfctAdminAnchorVerification-tableWrap .is-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media (max-width: 980px) {
+  .DfctAdminAnchorExecution-capabilityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .DfctAdminAnchorExecution-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminAnchorExecution-heading,
+  .DfctAdminAnchorVerification-header {
+    flex-direction: column;
+  }
+
+  .DfctAdminAnchorExecution-capabilityGrid,
+  .DfctAdminAnchorExecution-fieldGrid,
+  .DfctAdminAnchorExecution-rolloutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminAnchorExecution-actions {
+    flex-direction: column-reverse;
+  }
+
+  .DfctAdminAnchorExecution-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Admin Workflow: operational review health, queue, and reviewer coverage. */
+.DfctAdminConsole-actionGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.DfctAdminConsole .DfctAdmin-stat--success {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 34%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminConsole .DfctAdmin-stat--info {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-info, #0dcaf0) 36%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminConsole .DfctAdmin-stat--warning {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 42%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminConsole .DfctAdmin-stat--danger {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 38%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminWorkflow-poweredBy {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--theme-muted);
+  font-weight: 700;
+}
+
+.DfctAdminWorkflow-headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.DfctAdminWorkflow-sync {
+  display: inline-flex !important;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-recoveryNotice {
+  margin-top: 0.75rem;
+  border-radius: 14px;
+}
+
+.DfctAdminWorkflow-sectionHeaderSplit {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminWorkflow-attentionList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.DfctAdminWorkflow-attentionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-border);
+  border-left: 4px solid var(--bs-danger, #dc3545);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-attentionMain {
+  min-width: 0;
+}
+
+.DfctAdminWorkflow-attentionMain p {
+  margin: 0.3rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.9rem;
+}
+
+.DfctAdminWorkflow-taskHeading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.DfctAdminWorkflow-topicLink {
+  color: var(--theme-text);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.DfctAdminWorkflow-topicLink:hover,
+.DfctAdminWorkflow-topicLink:focus {
+  color: var(--theme-primary);
+  text-decoration: underline;
+}
+
+.DfctAdminWorkflow-reasonList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.DfctAdminWorkflow-reasonList > span {
+  display: inline-flex;
+  padding: 0.28rem 0.5rem;
+  border: 1px solid
+    color-mix(in srgb, var(--bs-danger, #dc3545) 30%, var(--theme-border));
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 7%,
+    var(--theme-surface)
+  );
+  color: var(--theme-text);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.DfctAdminWorkflow-cardActions,
+.DfctAdminWorkflow-rowActions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.DfctAdminWorkflow-emptyState,
+.DfctAdminWorkflow-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 145px;
+  padding: 1.5rem;
+  border: 1px dashed var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  text-align: center;
+}
+
+.DfctAdminWorkflow-emptyState strong {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminWorkflow-emptyState p,
+.DfctAdminWorkflow-loading span {
+  margin: 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-filters {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 0.8fr) minmax(190px, 1fr) minmax(150px, 0.75fr)
+    auto;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminWorkflow-reviewerSearch {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto auto;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.DfctAdminWorkflow-tableWrap {
+  max-height: min(66vh, 760px);
+}
+
+.DfctAdminWorkflow-table {
+  min-width: 1040px;
+}
+
+.DfctAdminWorkflow-table tr.needs-attention td:first-child {
+  box-shadow: inset 4px 0 0 var(--bs-danger, #dc3545);
+}
+
+.DfctAdminWorkflow-table td {
+  min-width: 110px;
+}
+
+.DfctAdminWorkflow-table td:first-child {
+  min-width: 220px;
+}
+
+.DfctAdminWorkflow-table td > strong,
+.DfctAdminWorkflow-table td > small {
+  display: block;
+}
+
+.DfctAdminWorkflow-table td > small {
+  margin-top: 0.2rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-roleList {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 190px;
+}
+
+.DfctAdminWorkflow-roleList > span {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.DfctAdminWorkflow-roleList small {
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-roleList button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--theme-muted);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-roleList button:hover,
+.DfctAdminWorkflow-roleList button:focus {
+  border-color: var(--bs-danger, #dc3545);
+  color: var(--bs-danger, #dc3545);
+}
+
+.DfctAdminWorkflow-roleList button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.DfctAdminWorkflow-modal .modal-content {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 20px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminWorkflow-modal .modal-header,
+.DfctAdminWorkflow-modal .modal-footer {
+  border-color: var(--theme-border);
+}
+
+.DfctAdminWorkflow-modal .modal-title,
+.DfctAdminWorkflow-modal h4 {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminWorkflow-modal p,
+.DfctAdminWorkflow-modal .form-text,
+.DfctAdminWorkflow-muted {
+  color: var(--theme-muted);
+}
+
+.DfctAdminWorkflow-inspectGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminWorkflow-inspectGrid > div {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-inspectGrid span,
+.DfctAdminWorkflow-inspectGrid strong {
+  display: block;
+}
+
+.DfctAdminWorkflow-inspectGrid span {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminWorkflow-inspectGrid strong {
+  margin-top: 0.25rem;
+  overflow: hidden;
+  color: var(--theme-text);
+  text-overflow: ellipsis;
+}
+
+.DfctAdminWorkflow-modalSection {
+  margin-top: 1.25rem;
+}
+
+.DfctAdminWorkflow-modalSection h4 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
+
+.DfctAdminWorkflow-auditList {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.DfctAdminWorkflow-auditList > div {
+  display: grid;
+  grid-template-columns: minmax(140px, auto) auto;
+  gap: 0.2rem 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminWorkflow-auditList strong {
+  color: var(--theme-text);
+}
+
+.DfctAdminWorkflow-auditList span {
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.DfctAdminWorkflow-auditList p {
+  grid-column: 1 / -1;
+  margin: 0.2rem 0 0;
+}
+
+[data-theme="dfct-dark"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="graphite"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="terminal"] .DfctAdminWorkflow-modal .btn-close,
+[data-theme="midnight"] .DfctAdminWorkflow-modal .btn-close {
+  filter: invert(1) grayscale(100%);
+}
+
+@media (max-width: 980px) {
+  .DfctAdminConsole-actionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-filters,
+  .DfctAdminWorkflow-reviewerSearch {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminWorkflow-headerActions,
+  .DfctAdminWorkflow-sectionHeaderSplit,
+  .DfctAdminWorkflow-attentionCard {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminWorkflow-cardActions,
+  .DfctAdminWorkflow-cardActions .btn {
+    width: 100%;
+  }
+
+  .DfctAdminWorkflow-inspectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-auditList > div {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminWorkflow-auditList span {
+    text-align: left;
+  }
+}
+
+/* Workflow console refinements: responsive table, automatic filters, themed modal close. */
+.DfctAdminWorkflow-sync {
+  gap: 0.45rem;
+}
+
+.DfctAdminWorkflow-filters {
+  grid-template-columns:
+    minmax(140px, 0.7fr) minmax(180px, 0.9fr) minmax(260px, 1.5fr)
+    minmax(130px, 0.65fr);
+}
+
+.DfctAdminWorkflow-tableWrap {
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+}
+
+.DfctAdminWorkflow-table {
+  width: 100%;
+  min-width: 960px;
+  table-layout: auto;
+}
+
+.DfctAdminWorkflow-table th,
+.DfctAdminWorkflow-table td {
+  min-width: 0;
+  white-space: normal;
+}
+
+.DfctAdminWorkflow-table th:first-child,
+.DfctAdminWorkflow-table td:first-child {
+  min-width: 190px;
+}
+
+.DfctAdminWorkflow-table th:nth-child(2),
+.DfctAdminWorkflow-table td:nth-child(2) {
+  width: 92px;
+  min-width: 82px;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-modal .btn-close {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px;
+  background: var(--theme-surface-soft, var(--theme-card-bg)) !important;
+  background-image: none !important;
+  color: var(--theme-text) !important;
+  filter: none !important;
+  opacity: 0.82 !important;
+}
+
+.DfctAdminWorkflow-modal .btn-close::before {
+  content: "×";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: currentColor;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-modal .btn-close:hover,
+.DfctAdminWorkflow-modal .btn-close:focus-visible {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 1080px) {
+  .DfctAdminWorkflow-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Workflow modal close: fully theme-driven, without Bootstrap's static icon tile. */
+.DfctAdminWorkflow-modal .btn-close {
+  align-items: center;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px;
+  color: var(--theme-text) !important;
+  display: inline-flex;
+  filter: none !important;
+  height: 2rem;
+  justify-content: center;
+  opacity: 0.82 !important;
+  padding: 0 !important;
+  position: relative;
+  width: 2rem;
+}
+
+.DfctAdminWorkflow-modal .btn-close::before {
+  color: currentColor;
+  content: "×";
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.DfctAdminWorkflow-modal .btn-close:hover,
+.DfctAdminWorkflow-modal .btn-close:focus-visible {
+  background: var(--theme-surface-soft) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+/* Billing lives inside the shared admin shell, so its sync state must remain visible. */
+.DfctAdminConsole .DfctBillingAdmin .BillingAccess-sync,
+.DfctAdminConsole .DfctBillingAdmin .DfctBillingAdmin-sync,
+.DfctAdminConsole .DfctBillingAdmin .BillingAccess-syncStatus {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+/* Final Workflow modal close-button override.
+   Must outrank the global themed modal button rules. */
+html[data-theme] body .DfctAdminWorkflow-modal .modal-header > button.btn-close,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close {
+  appearance: none !important;
+  align-items: center !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: var(--theme-text) !important;
+  display: inline-flex !important;
+  filter: none !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  opacity: 0.82 !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 2rem !important;
+  text-align: center !important;
+  align-content: center !important;
+}
+
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close::before,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close::before {
+  color: currentColor !important;
+  content: "×" !important;
+  display: grid !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  place-items: center !important;
+  align-content: center !important;
+  text-align: center !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:focus-visible,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-workspace-theme]
+  body
+  .DfctAdminWorkflow-modal
+  .modal-header
+  > button.btn-close:focus-visible {
+  background-color: var(--theme-surface-soft) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+/* Shared Workflow, Billing, and Anchoring synchronization indicator. */
+.DfctAdminWorkflow-sync {
+  align-items: center;
+  display: inline-flex !important;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.DfctAdminWorkflow-syncSpinner {
+  flex: 0 0 auto;
+  height: 0.78rem !important;
+  width: 0.78rem !important;
+  border-width: 0.12em !important;
+}
+
+.DfctAdminWorkflow-syncDot {
+  background: currentColor;
+  border-radius: 999px;
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 0.42rem;
+  opacity: 0.72;
+  width: 0.42rem;
+}
+
+/* Reward operations */
+.DfctAdminRewards-sectionHeaderSplit,
+.DfctAdminRewards-cardHeading,
+.DfctAdminRewards-attentionCard,
+.DfctAdminRewards-previewList article {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.DfctAdminRewards-topicLink {
+  color: var(--theme-text);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.DfctAdminRewards-topicLink:hover,
+.DfctAdminRewards-topicLink:focus {
+  color: var(--theme-primary);
+  text-decoration: none;
+}
+
+.DfctAdminRewards-attentionList,
+.DfctAdminRewards-previewList,
+.DfctAdminRewards-detailLayout,
+.DfctAdminRewards-actionBreakdown {
+  display: grid;
+  gap: 12px;
+}
+
+.DfctAdminRewards-attentionCard,
+.DfctAdminRewards-detailCard,
+.DfctAdminRewards-previewList article {
+  padding: 16px;
+  border: 1px solid var(--theme-border);
+  border-radius: 16px;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminRewards-attentionCard p,
+.DfctAdminRewards-detailCard p {
+  margin: 6px 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminRewards-cardHeading {
+  align-items: center;
+}
+
+.DfctAdminRewards-cardHeading h3,
+.DfctAdminRewards-detailCard h3 {
+  margin: 0;
+  color: var(--theme-text);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.DfctAdminRewards-cardActions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.DfctAdminRewards-reasonList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.DfctAdminRewards-reasonList span {
+  padding: 5px 8px;
+  border: 1px solid
+    color-mix(in srgb, var(--bs-warning, #ffc107) 42%, var(--theme-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bs-warning, #ffc107) 8%, transparent);
+  color: var(--theme-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.DfctAdminRewards-emptyState,
+.DfctAdminRewards-loading {
+  padding: 24px;
+  border: 1px dashed var(--theme-border);
+  border-radius: 16px;
+  background: var(--theme-surface-soft, var(--theme-surface));
+  color: var(--theme-muted);
+  text-align: center;
+}
+
+.DfctAdminRewards-emptyState strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--theme-text);
+}
+
+.DfctAdminRewards-emptyState p {
+  margin: 0;
+}
+
+.DfctAdminRewards-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.DfctAdminRewards-filters {
+  display: grid;
+  grid-template-columns: 220px minmax(260px, 1fr);
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.DfctAdminRewards-tableWrap {
+  overflow-x: auto;
+}
+
+.DfctAdminRewards-table {
+  min-width: 1120px;
+}
+
+.DfctAdminRewards-table td small {
+  display: block;
+  margin-top: 4px;
+  color: var(--theme-muted);
+}
+
+.DfctAdminRewards-table tr.needs-attention {
+  background: color-mix(in srgb, var(--bs-danger, #dc3545) 6%, transparent);
+}
+
+.DfctAdminRewards-detailLayout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.DfctAdminRewards-detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.DfctAdminRewards-detailGrid > div,
+.DfctAdminRewards-actionBreakdown > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-surface));
+}
+
+.DfctAdminRewards-detailGrid span,
+.DfctAdminRewards-actionBreakdown span {
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminRewards-detailGrid strong,
+.DfctAdminRewards-actionBreakdown strong {
+  color: var(--theme-text);
+}
+
+.DfctAdminRewards-actionBreakdown {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.DfctAdminRewards-distributionCard form {
+  margin-top: 14px;
+}
+
+.DfctAdminRewards-previewList article {
+  align-items: center;
+  padding: 12px;
+}
+
+.DfctAdminRewards-previewList article > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.DfctAdminRewards-previewList small {
+  color: var(--theme-muted);
+}
+
+@media (max-width: 900px) {
+  .DfctAdminRewards-detailLayout,
+  .DfctAdminRewards-actionBreakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .DfctAdminRewards-filters,
+  .DfctAdminRewards-detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminRewards-attentionCard,
+  .DfctAdminRewards-sectionHeaderSplit {
+    flex-direction: column;
+  }
+
+  .DfctAdminRewards-cardActions {
+    width: 100%;
+    align-items: stretch;
+  }
+}
+
+/* Admin Rewards themed modals. */
+.DfctAdminRewards-modal .modal-content {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(
+    --theme-shadow-lg,
+    0 24px 70px rgba(0, 0, 0, 0.34)
+  ) !important;
+  color: var(--theme-text) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  overflow: hidden;
+}
+
+.DfctAdminRewards-modal .modal-header,
+.DfctAdminRewards-modal .modal-body,
+.DfctAdminRewards-modal .modal-footer {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.DfctAdminRewards-modal .modal-title,
+.DfctAdminRewards-modal p,
+.DfctAdminRewards-modal label,
+.DfctAdminRewards-modal small,
+.DfctAdminRewards-modal div {
+  color: inherit;
+}
+
+.DfctAdminRewards-modal .modal-footer {
+  gap: 0.5rem;
+}
+
+/* Override global themed close-button rules for Rewards modals. */
+html[data-theme] body .DfctAdminRewards-modal .modal-header > button.btn-close,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close {
+  appearance: none !important;
+  align-items: center !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  color: var(--theme-text) !important;
+  display: inline-flex !important;
+  filter: none !important;
+  height: 2rem !important;
+  justify-content: center !important;
+  opacity: 0.82 !important;
+  padding: 0 !important;
+  position: relative !important;
+  width: 2rem !important;
+}
+
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close::before,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close::before {
+  align-content: center !important;
+  color: currentColor !important;
+  content: "×" !important;
+  display: grid !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  height: 100% !important;
+  inset: 0 !important;
+  line-height: 1 !important;
+  place-items: center !important;
+  position: absolute !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:focus-visible,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:hover,
+html[data-workspace-theme]
+  body
+  .DfctAdminRewards-modal
+  .modal-header
+  > button.btn-close:focus-visible {
+  background-color: var(--theme-surface-soft) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+  opacity: 1 !important;
+}
+
+/* Confirmation must remain fully theme-native rather than Bootstrap yellow. */
+.DfctAdminRewards-confirmModal .alert-warning {
+  background: color-mix(
+    in srgb,
+    var(--theme-warning, #d9a400) 12%,
+    var(--theme-surface)
+  ) !important;
+  border: 1px solid
+    color-mix(in srgb, var(--theme-warning, #d9a400) 48%, var(--theme-border)) !important;
+  color: var(--theme-text) !important;
+}
+
+.DfctAdminRewards-confirmModal .alert-warning,
+.DfctAdminRewards-confirmModal .alert-warning * {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+[data-theme="paper"] .DfctAdminRewards-modal .modal-content,
+[data-workspace-theme="paper"] .DfctAdminRewards-modal .modal-content {
+  box-shadow: 0 22px 60px rgba(24, 31, 42, 0.16) !important;
+}
+
+/* Pre-screen operations: runtime safety readiness, DB-backed policy, and audit activity. */
+.DfctAdminPreScreen-capabilityGrid,
+.DfctAdminPreScreen-settingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.DfctAdminPreScreen-capability,
+.DfctAdminPreScreen-settingCard {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminPreScreen-capability {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.DfctAdminPreScreen-capability strong {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminPreScreen-capability p,
+.DfctAdminPreScreen-settingCard .form-text,
+.DfctAdminPreScreen-settingActions > span {
+  color: var(--theme-muted);
+}
+
+.DfctAdminPreScreen-capability p {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+}
+
+.DfctAdminPreScreen-settingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.DfctAdminPreScreen-settingCard.is-critical {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 42%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminPreScreen-settingCard .form-label,
+.DfctAdminPreScreen-settingCard .form-check-label {
+  color: var(--theme-text);
+  font-weight: 800;
+}
+
+.DfctAdminPreScreen-settingActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.DfctAdminPreScreen-settingActions > span {
+  font-size: 0.82rem;
+}
+
+.DfctAdminPreScreen-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.DfctAdminPreScreen-table {
+  width: 100%;
+  min-width: 920px;
+}
+
+.DfctAdminPreScreen-table td.is-mono {
+  font-family: var(
+    --theme-font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace
+  );
+  font-size: 0.8rem;
+}
+
+@media (max-width: 820px) {
+  .DfctAdminPreScreen-capabilityGrid,
+  .DfctAdminPreScreen-settingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminPreScreen-settingActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminPreScreen-settingActions .btn {
+    width: 100%;
+  }
+}
+
+.DfctAdminPreScreen-table .DfctAdmin-tableEmpty {
+  padding: 1.5rem;
+  color: var(--theme-muted);
+  text-align: center;
+}
+
+.DfctAdminPreScreen-refreshControls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.DfctAdminPreScreen-autoSaveStatus {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+  min-height: 2rem;
+}
+
+/* AI operations: provider credentials, model roles, quick-check policy, and usage. */
+.DfctAdminAI-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.DfctAdminAI-readinessGrid,
+.DfctAdminAI-providerGrid,
+.DfctAdminAI-roleGrid,
+.DfctAdminAI-settingGrid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.DfctAdminAI-readinessGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.DfctAdminAI-readinessCard,
+.DfctAdminAI-providerCard,
+.DfctAdminAI-roleCard,
+.DfctAdminAI-fieldCard {
+  min-width: 0;
+  border: 1px solid var(--theme-border);
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+}
+
+.DfctAdminAI-readinessCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+}
+
+.DfctAdminAI-readinessCard strong,
+.DfctAdminAI-cardHeader h3,
+.DfctAdminAI-fieldCard .form-label,
+.DfctAdminAI-fieldCard .form-check-label {
+  color: var(--theme-text);
+  font-weight: 850;
+}
+
+.DfctAdminAI-readinessCard p,
+.DfctAdminAI-cardHeader p,
+.DfctAdminAI-fieldCard .form-text,
+.DfctAdminAI-roleReadiness,
+.DfctAdminAI-stickyActions > span,
+.DfctAdminAI-empty {
+  color: var(--theme-muted);
+}
+
+.DfctAdminAI-readinessCard p {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.DfctAdminAI-providerGrid,
+.DfctAdminAI-roleGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.DfctAdminAI-providerCard,
+.DfctAdminAI-roleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.DfctAdminAI-cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminAI-cardHeader h3 {
+  margin: 0.18rem 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.DfctAdminAI-cardHeader p {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.DfctAdminAI-providerForm,
+.DfctAdminAI-roleForm,
+.DfctAdminAI-settingGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.DfctAdminAI-providerForm,
+.DfctAdminAI-roleForm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.DfctAdminAI-fieldCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 13px;
+}
+
+.DfctAdminAI-fieldCard--wide {
+  grid-column: 1 / -1;
+}
+
+.DfctAdminAI-fieldCard.is-toggle {
+  justify-content: center;
+}
+
+.DfctAdminAI-fieldCard .form-control,
+.DfctAdminAI-fieldCard .form-select {
+  background: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+}
+
+.DfctAdminAI-fieldCard .form-control:focus,
+.DfctAdminAI-fieldCard .form-select:focus {
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 18%, transparent);
+}
+
+.DfctAdminAI-fieldCard .form-control:disabled,
+.DfctAdminAI-fieldCard .form-select:disabled,
+.DfctAdminAI-fieldCard .form-check-input:disabled {
+  opacity: 0.62;
+}
+
+.DfctAdminAI-clearCredential {
+  margin-top: 0.35rem;
+}
+
+.DfctAdminAI-cardActions,
+.DfctAdminAI-stickyActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.DfctAdminAI-cardActions {
+  margin-top: auto;
+}
+
+.DfctAdminAI-roleReadiness {
+  margin-right: auto;
+  font-size: 0.78rem;
+}
+
+.DfctAdminAI-forensicSection {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-warning, #d9a400) 42%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminAI-capabilityList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminAI-capabilityList .form-check-label {
+  color: var(--theme-text);
+  font-weight: 700;
+}
+
+.DfctAdminAI-stickyActions {
+  position: sticky;
+  z-index: 4;
+  bottom: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--theme-surface) 94%, transparent);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--theme-text) 10%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.DfctAdminAI-stickyActions > span {
+  margin-right: auto;
+  font-size: 0.8rem;
+}
+
+.DfctAdminAI-usageTable {
+  min-width: 940px;
+}
+
+.DfctAdminAI-loading,
+.DfctAdminAI-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 5rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .DfctAdminAI-readinessGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .DfctAdminAI-providerGrid,
+  .DfctAdminAI-roleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminAI-readinessGrid,
+  .DfctAdminAI-providerForm,
+  .DfctAdminAI-roleForm,
+  .DfctAdminAI-settingGrid,
+  .DfctAdminAI-capabilityList {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminAI-cardHeader,
+  .DfctAdminAI-cardActions,
+  .DfctAdminAI-stickyActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminAI-cardActions .btn,
+  .DfctAdminAI-stickyActions .btn {
+    width: 100%;
+  }
+
+  .DfctAdminAI-roleReadiness,
+  .DfctAdminAI-stickyActions > span {
+    margin-right: 0;
+  }
+
+  .DfctAdminAI-stickyActions {
+    position: static;
+  }
+}
+
+.DfctAdminAI-roleSaveState {
+  min-width: 7rem;
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.DfctAdminAI-roleSaveState.is-failed {
+  color: var(--bs-danger);
+}
+
+@media (max-width: 700px) {
+  .DfctAdminAI-roleSaveState {
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+/* === d-FCT AI OBSERVABILITY === */
+
+/* d-FCT observability theme aliases */
+.DfctAdminConsole {
+  --theme-card-bg: var(--theme-surface);
+  --theme-muted: var(--theme-text-muted);
+}
+
+.DfctAdminConsole .DfctAdminAI-observabilityHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-rangeSelector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface-soft);
+  flex-shrink: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-rangeSelector button {
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.42rem 0.62rem;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.DfctAdminConsole .DfctAdminAI-rangeSelector button:hover {
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdminAI-rangeSelector button.is-active {
+  color: var(--theme-primary);
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 12%,
+    var(--theme-card-bg)
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--theme-primary) 28%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-metricGrid,
+.DfctAdminConsole .DfctAdminAI-executionSummary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 0.7rem;
+  margin: 1rem 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-metric {
+  min-width: 0;
+  padding: 0.78rem 0.85rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.8rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-metric > span,
+.DfctAdminConsole .DfctAdminAI-metric > small {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-metric > strong {
+  display: block;
+  color: var(--theme-text);
+  font-size: 1.08rem;
+  line-height: 1.2;
+  margin: 0.18rem 0;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-metric.is-warning {
+  border-color: color-mix(in srgb, var(--bs-warning) 45%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-metric.is-success {
+  border-color: color-mix(in srgb, var(--bs-success) 42%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-metric.is-danger {
+  border-color: color-mix(in srgb, var(--bs-danger) 42%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-metric.is-info {
+  border-color: color-mix(in srgb, var(--bs-info) 42%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-chartCard,
+.DfctAdminConsole .DfctAdminAI-visualCard {
+  border: 1px solid var(--theme-border);
+  border-radius: 0.9rem;
+  background: var(--theme-card-bg);
+  overflow: hidden;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartHeader,
+.DfctAdminConsole .DfctAdminAI-visualCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem 0.2rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartHeader strong,
+.DfctAdminConsole .DfctAdminAI-visualCardHeader h3 {
+  display: block;
+  margin: 0;
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdminAI-chartHeader span,
+.DfctAdminConsole .DfctAdminAI-visualCardHeader p {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+  margin: 0.18rem 0 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-costTable td,
+.DfctAdminConsole .DfctAdminAI-benchmarkTable td {
+  vertical-align: middle;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkTable tbody tr {
+  cursor: pointer;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkTable tbody tr:hover,
+.DfctAdminConsole .DfctAdminAI-benchmarkTable tbody tr.is-selected {
+  background: color-mix(in srgb, var(--theme-primary) 7%, var(--theme-card-bg));
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkTable td small {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkFilters {
+  display: flex;
+  gap: 0.5rem;
+  min-width: min(100%, 260px);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkFilters .form-select {
+  min-width: 110px;
+  background-color: var(--theme-card-bg);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkHero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkHero h2 {
+  margin: 0.12rem 0 0;
+  color: var(--theme-text);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkHero p {
+  margin: 0.22rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdminAI-hardGateBadge {
+  font-size: 1rem;
+  padding: 0.55rem 0.72rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-assertionStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.45rem;
+  margin: 1rem 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-assertion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.65rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-assertion span {
+  color: var(--theme-text);
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-assertion strong {
+  color: var(--theme-muted);
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+.DfctAdminConsole .DfctAdminAI-assertion.is-passed {
+  border-color: color-mix(in srgb, var(--bs-success) 35%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-assertion.is-failed {
+  border-color: color-mix(in srgb, var(--bs-danger) 45%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-execution {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 0.55rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.62rem 0.7rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.72rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard strong,
+.DfctAdminConsole .DfctAdminAI-serviceCard span {
+  display: block;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard strong {
+  color: var(--theme-text);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard span {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceMetrics {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-executionSplit {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(230px, 300px);
+  gap: 0.8rem;
+  align-items: stretch;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagScroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35rem 0.65rem 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dag {
+  display: block;
+  width: 100%;
+  min-width: 820px;
+  min-height: 300px;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagEdges path {
+  fill: none;
+  stroke: var(--theme-border);
+  stroke-width: 1.25;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode {
+  cursor: pointer;
+  outline: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode rect {
+  fill: var(--theme-card-bg);
+  stroke: var(--theme-border);
+  stroke-width: 1.25;
+  transition:
+    stroke 130ms ease,
+    fill 130ms ease,
+    filter 130ms ease;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-container rect {
+  fill: var(--theme-surface-soft);
+  stroke-dasharray: 4 3;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode:hover rect,
+.DfctAdminConsole .DfctAdminAI-dagNode:focus-visible rect {
+  stroke: color-mix(in srgb, var(--theme-primary) 55%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
+  stroke: var(--theme-primary);
+  stroke-width: 2;
+  fill: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-card-bg));
+  filter: drop-shadow(
+    0 3px 6px color-mix(in srgb, var(--theme-primary) 18%, transparent)
+  );
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode circle {
+  fill: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-llm circle {
+  fill: var(--theme-primary);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-external_provider circle {
+  fill: var(--bs-warning);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-orchestration circle {
+  fill: var(--bs-info);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTitle {
+  fill: var(--theme-text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeMeta {
+  fill: var(--theme-muted);
+  font-size: 8.5px;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeCost {
+  fill: var(--theme-primary);
+  font-size: 7.5px;
+  font-weight: 700;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspector {
+  border: 1px solid var(--theme-border);
+  border-radius: 0.9rem;
+  background: var(--theme-surface-soft);
+  padding: 0.85rem;
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspector.is-empty {
+  display: grid;
+  place-items: center;
+  color: var(--theme-muted);
+  text-align: center;
+  min-height: 220px;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorHeader h4 {
+  color: var(--theme-text);
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorHeader p {
+  color: var(--theme-muted);
+  font-size: 0.62rem;
+  margin: 0.15rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-inspectorGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-inspectorGrid > div {
+  min-width: 0;
+  padding: 0.48rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.55rem;
+  background: var(--theme-card-bg);
+}
+
+.DfctAdminConsole .DfctAdminAI-inspectorGrid span,
+.DfctAdminConsole .DfctAdminAI-inspectorGrid strong {
+  display: block;
+}
+
+.DfctAdminConsole .DfctAdminAI-inspectorGrid span {
+  color: var(--theme-muted);
+  font-size: 0.62rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-inspectorGrid strong {
+  color: var(--theme-text);
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefs {
+  margin-top: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefs > strong {
+  color: var(--theme-text);
+  font-size: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefs > div {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefs span {
+  color: var(--theme-muted);
+  font-size: 0.6rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefs code {
+  color: var(--theme-text);
+  font-size: 0.61rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltip {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 190px;
+  max-width: 310px;
+  padding: 0.55rem 0.65rem;
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--theme-text) 12%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltip strong {
+  font-size: 0.78rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltip span,
+.DfctAdminConsole .DfctAdminAI-chartTooltip div {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-runLookup {
+  display: flex;
+  gap: 0.55rem;
+  max-width: 720px;
+}
+
+.DfctAdminConsole .DfctAdminAI-runLookup .form-control {
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-generalExecution {
+  margin-top: 1rem;
+}
+
+.DfctAdminConsole .apexcharts-canvas,
+.DfctAdminConsole .apexcharts-svg {
+  background: transparent !important;
+}
+
+.DfctAdminConsole .apexcharts-tooltip,
+.DfctAdminConsole .apexcharts-xaxistooltip,
+.DfctAdminConsole .apexcharts-yaxistooltip {
+  background: var(--theme-card-bg) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+.DfctAdminConsole .apexcharts-tooltip-title {
+  background: var(--theme-surface-soft) !important;
+  border-color: var(--theme-border) !important;
+}
+
+@media (max-width: 1050px) {
+  .DfctAdminConsole .DfctAdminAI-executionSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-nodeInspector {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-observabilityHeader,
+  .DfctAdminConsole .DfctAdminAI-benchmarkHero,
+  .DfctAdminConsole .DfctAdminAI-chartHeader,
+  .DfctAdminConsole .DfctAdminAI-visualCardHeader {
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-rangeSelector {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-rangeSelector button {
+    flex: 1;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkFilters {
+    width: 100%;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-runLookup {
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-runLookup .btn {
+    width: 100%;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-inspectorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-dag {
+    min-width: 760px;
+  }
+}
+
+/* === d-FCT AI OBSERVABILITY UX REFINEMENT === */
+
+/*
+ * ApexCharts tooltips live inside ApexCharts-managed elements.
+ * Force an opaque d-FCT surface rather than relying on the
+ * library's light/dark default CSS.
+ */
+.DfctAdminConsole .apexcharts-tooltip,
+.DfctAdminConsole .apexcharts-tooltip.apexcharts-theme-light,
+.DfctAdminConsole .apexcharts-tooltip.apexcharts-theme-dark,
+.DfctAdminConsole .apexcharts-xaxistooltip,
+.DfctAdminConsole .apexcharts-yaxistooltip {
+  background: color-mix(
+    in srgb,
+    var(--theme-surface) 94%,
+    transparent
+  ) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border-strong) !important;
+  backdrop-filter: blur(8px) saturate(1.08);
+  -webkit-backdrop-filter: blur(8px) saturate(1.08);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--theme-bg) 38%, transparent) !important;
+}
+
+.DfctAdminConsole .apexcharts-tooltip-title {
+  background: var(--theme-surface-2) !important;
+  color: var(--theme-text) !important;
+  border-bottom: 1px solid var(--theme-border) !important;
+}
+
+.DfctAdminConsole .apexcharts-tooltip-series-group {
+  background: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+.DfctAdminConsole .apexcharts-tooltip-text,
+.DfctAdminConsole .apexcharts-tooltip-text-y-label,
+.DfctAdminConsole .apexcharts-tooltip-text-y-value,
+.DfctAdminConsole .apexcharts-tooltip-text-goals-label,
+.DfctAdminConsole .apexcharts-tooltip-text-goals-value {
+  color: var(--theme-text) !important;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltip {
+  background: color-mix(in srgb, var(--theme-surface) 94%, transparent);
+  color: var(--theme-text);
+  border-color: var(--theme-border-strong);
+  backdrop-filter: blur(8px) saturate(1.08);
+  -webkit-backdrop-filter: blur(8px) saturate(1.08);
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltip--benchmark {
+  min-width: 230px;
+  padding: 0.72rem 0.78rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltipGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.42rem;
+  margin-top: 0.35rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltipGrid > span {
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.35rem 0.4rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.45rem;
+  background: var(--theme-surface-2);
+}
+
+.DfctAdminConsole .DfctAdminAI-chartTooltipGrid b {
+  color: var(--theme-text);
+  font-weight: 700;
+}
+
+/* Benchmark table controls. */
+
+.DfctAdminConsole .DfctAdminAI-benchmarkListHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSearch {
+  width: min(100%, 330px);
+  flex: 0 1 330px;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSearch::placeholder {
+  color: var(--theme-text-muted);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSearch:focus {
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 14%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-sortButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+}
+
+.DfctAdminConsole .DfctAdminAI-sortButton:hover,
+.DfctAdminConsole .DfctAdminAI-sortButton:focus-visible,
+.DfctAdminConsole .DfctAdminAI-sortButton.is-active {
+  color: var(--theme-primary);
+}
+
+.DfctAdminConsole .DfctAdminAI-sortButton:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-sortIndicator {
+  color: var(--theme-text-muted);
+  font-size: 0.72rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-sortButton.is-active .DfctAdminAI-sortIndicator {
+  color: var(--theme-primary);
+}
+
+/* Execution DAG. */
+
+.DfctAdminConsole .DfctAdminAI-dagScroll {
+  margin: 0.45rem 0.65rem 0.7rem;
+  padding: 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.78rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-surface-2) 94%, var(--theme-primary) 6%),
+    var(--theme-surface)
+  );
+}
+
+.DfctAdminConsole .DfctAdminAI-dag {
+  width: auto;
+  max-width: none;
+  min-height: 300px;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagEdges path {
+  stroke: color-mix(in srgb, var(--theme-text-muted) 46%, var(--theme-border));
+  stroke-width: 1.35;
+  opacity: 0.78;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode rect {
+  fill: var(--theme-surface);
+  stroke: var(--theme-border-strong);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-work rect {
+  fill: color-mix(in srgb, var(--theme-surface-2) 94%, var(--theme-primary) 6%);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-container rect {
+  fill: color-mix(in srgb, var(--theme-surface) 92%, var(--theme-bg) 8%);
+  stroke: color-mix(in srgb, var(--theme-text-muted) 52%, var(--theme-border));
+  stroke-dasharray: 5 4;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-llm rect {
+  stroke: color-mix(in srgb, var(--theme-primary) 48%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-external_provider rect {
+  stroke: color-mix(in srgb, var(--bs-warning) 54%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-orchestration rect {
+  stroke: color-mix(in srgb, var(--bs-info) 54%, var(--theme-border));
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-pipeline_stage circle {
+  fill: var(--theme-accent);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-provenance circle {
+  fill: var(--bs-success);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode:hover rect,
+.DfctAdminConsole .DfctAdminAI-dagNode:focus-visible rect {
+  fill: color-mix(in srgb, var(--theme-primary) 9%, var(--theme-surface));
+  stroke: var(--theme-primary);
+  stroke-width: 1.8;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
+  fill: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface));
+  stroke: var(--theme-primary);
+  stroke-width: 2.2;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTitle {
+  fill: var(--theme-text);
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeMeta {
+  fill: var(--theme-text-muted);
+  font-size: 9px;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeCost {
+  fill: var(--theme-primary);
+  font-size: 8px;
+}
+
+/* Dedicated durable benchmark execution page. */
+
+.DfctAdminConsole .DfctAdminAI-benchmarkExecutionPage {
+  padding-bottom: 2rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dedicatedBenchmarkHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dedicatedBenchmarkHeader .btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-benchmarkListHeader,
+  .DfctAdminConsole .DfctAdminAI-dedicatedBenchmarkHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkSearch {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-chartTooltipGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Compact cost dashboard. */
+
+.DfctAdminConsole .DfctAdminAI-costVisualGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-costVisualGrid .DfctAdminAI-chartCard {
+  min-width: 0;
+  margin: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-costBasis {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.8rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-costBasisLabel {
+  color: var(--theme-text);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.065em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdminAI-costBasisItems {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-costBasisItems > span {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 0.5rem;
+  padding: 0.48rem 0.58rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.62rem;
+  background: var(--theme-card-bg);
+  color: var(--theme-muted);
+  font-size: 0.69rem;
+  line-height: 1.35;
+}
+
+.DfctAdminConsole .DfctAdminAI-costBasisItems > span .badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeSection {
+  margin-top: 0.9rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeDetails {
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeDetails > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.72rem 1rem;
+  color: var(--theme-primary);
+  font-size: 0.76rem;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-financeDetails
+  > summary::-webkit-details-marker {
+  display: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeDetails > summary::after {
+  content: "＋";
+  color: var(--theme-muted);
+  font-size: 0.9rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeDetails[open] > summary::after {
+  content: "−";
+}
+
+.DfctAdminConsole .DfctAdminAI-financeDetails[open] > summary {
+  border-bottom: 1px solid var(--theme-border);
+  background: color-mix(in srgb, var(--theme-primary) 2%, var(--theme-card-bg));
+}
+
+@media (max-width: 980px) {
+  .DfctAdminConsole .DfctAdminAI-costVisualGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-costBasisItems {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Provider-reported finance observations. */
+
+.DfctAdminConsole .DfctAdminAI-financeHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeProviderStack {
+  display: grid;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCard {
+  min-width: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.95rem;
+  background: var(--theme-card-bg);
+  overflow: hidden;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--theme-border);
+  background: color-mix(in srgb, var(--theme-primary) 3%, var(--theme-card-bg));
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader h3 {
+  margin: 0.12rem 0 0;
+  color: var(--theme-text);
+  font-size: 1.05rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeCardHeader p {
+  margin: 0.2rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.76rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeActions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeMetrics {
+  margin: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.65rem;
+  padding: 0 1rem 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope > div {
+  min-width: 0;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope span,
+.DfctAdminConsole .DfctAdminAI-financeScope small {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScope strong {
+  display: block;
+  margin: 0.15rem 0;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  margin: 0 1rem 1rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid
+    color-mix(in srgb, var(--bs-warning) 45%, var(--theme-border));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--bs-warning) 7%, var(--theme-card-bg));
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice strong {
+  color: var(--theme-text);
+  font-size: 0.78rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeNotice span {
+  color: var(--theme-muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScoped {
+  padding: 0 1rem 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedGrid {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedCard {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.8rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedHeader > div {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedHeader span,
+.DfctAdminConsole .DfctAdminAI-financeScopedHeader small,
+.DfctAdminConsole .DfctAdminAI-financeScopedMetrics span,
+.DfctAdminConsole .DfctAdminAI-financeScopedMetrics small,
+.DfctAdminConsole .DfctAdminAI-financeScopedMeta span {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.7rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedHeader strong {
+  display: block;
+  margin: 0.15rem 0;
+  color: var(--theme-text);
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMetrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMetrics > div {
+  min-width: 0;
+  padding: 0.62rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.65rem;
+  background: var(--theme-card-bg);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMetrics strong {
+  display: block;
+  margin: 0.16rem 0;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.6rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMeta > div {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedMeta strong {
+  display: block;
+  margin-top: 0.12rem;
+  color: var(--theme-text);
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeScopedReason {
+  margin: 0.65rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeLineItems {
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-financeTable td {
+  vertical-align: middle;
+}
+
+.DfctAdminConsole .DfctAdminAI-financeTable td:first-child {
+  min-width: 260px;
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-financeHeader,
+  .DfctAdminConsole .DfctAdminAI-financeCardHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-financeActions {
+    justify-content: flex-start;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-financeScope {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Admin overview: compact cross-domain operational dashboard. */
+.DfctAdminOverview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.DfctAdminOverview-sectionHeaderSplit {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminOverview-statusGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminOverview-statusCard {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.DfctAdminOverview-statusCard:hover,
+.DfctAdminOverview-statusCard:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--theme-border-strong, var(--theme-border));
+  box-shadow: var(--theme-shadow-soft);
+}
+
+.DfctAdminOverview-statusCard.is-danger {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-danger, #dc3545) 42%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-warning {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-warning, #ffc107) 48%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-success {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 36%,
+    var(--theme-border)
+  );
+}
+.DfctAdminOverview-statusCard.is-info {
+  border-color: color-mix(
+    in srgb,
+    var(--bs-info, #0dcaf0) 38%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminOverview-statusHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-statusHead > span,
+.DfctAdminOverview-snapshotGrid span {
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.DfctAdminOverview-statusBadge {
+  padding: 0.18rem 0.42rem;
+  border-radius: 999px;
+  background: var(--theme-surface);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.DfctAdminOverview-statusCard h3 {
+  margin: 0.7rem 0 0.8rem;
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+.DfctAdminOverview-statusMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-statusMetrics div {
+  min-width: 0;
+}
+
+.DfctAdminOverview-statusMetrics strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.DfctAdminOverview-statusMetrics span,
+.DfctAdminOverview-statusCard > small {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--theme-muted);
+  font-size: 0.69rem;
+}
+
+.DfctAdminOverview-statusCard > small {
+  margin-top: 0.8rem;
+  font-weight: 800;
+}
+
+.DfctAdminOverview-attentionCount {
+  display: grid;
+  place-items: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  border: 1px solid var(--theme-border);
+}
+
+.DfctAdminOverview-attentionList {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.DfctAdminOverview-attentionItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+}
+
+.DfctAdminOverview-attentionItem > span:last-child {
+  color: var(--theme-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.DfctAdminOverview-attentionDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--bs-secondary, #6c757d);
+}
+
+.DfctAdminOverview-attentionItem.is-danger .DfctAdminOverview-attentionDot {
+  background: var(--bs-danger, #dc3545);
+}
+.DfctAdminOverview-attentionItem.is-warning .DfctAdminOverview-attentionDot {
+  background: var(--bs-warning, #ffc107);
+}
+
+.DfctAdminOverview-clearState {
+  padding: 1rem;
+  border: 1px dashed
+    color-mix(in srgb, var(--bs-success, #198754) 45%, var(--theme-border));
+  border-radius: 14px;
+  background: color-mix(
+    in srgb,
+    var(--bs-success, #198754) 5%,
+    var(--theme-surface)
+  );
+}
+
+.DfctAdminOverview-clearState p {
+  margin: 0.25rem 0 0;
+  color: var(--theme-muted);
+}
+
+.DfctAdminOverview-snapshotGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.DfctAdminOverview-snapshotGrid > div {
+  min-width: 0;
+  padding: 0.85rem;
+  border-left: 3px solid var(--theme-border-strong, var(--theme-border));
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+}
+
+.DfctAdminOverview-snapshotGrid strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.15rem;
+}
+
+.DfctAdminOverview-snapshotGrid small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--theme-muted);
+}
+
+.DfctAdminOverview-inlineLink {
+  border: 0;
+  background: transparent;
+  color: var(--theme-primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.DfctAdminOverview-areaLinks {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.DfctAdminOverview-areaLinks button {
+  position: relative;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface-soft, var(--theme-card-bg));
+  color: var(--theme-text);
+  text-align: left;
+}
+
+.DfctAdminOverview-areaLinks strong,
+.DfctAdminOverview-areaLinks span {
+  display: block;
+}
+
+.DfctAdminOverview-areaLinks span {
+  margin-top: 0.3rem;
+  color: var(--theme-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.DfctAdminOverview-areaLinks small {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  color: var(--theme-muted);
+}
+
+@media (max-width: 1100px) {
+  .DfctAdminOverview-statusGrid,
+  .DfctAdminOverview-areaLinks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .DfctAdminOverview-snapshotGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .DfctAdminOverview-sectionHeaderSplit {
+    flex-direction: column;
+  }
+
+  .DfctAdminOverview-statusGrid,
+  .DfctAdminOverview-snapshotGrid,
+  .DfctAdminOverview-areaLinks {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminOverview-attentionItem {
+    grid-template-columns: auto 1fr;
+  }
+
+  .DfctAdminOverview-attentionItem > span:last-child {
+    grid-column: 2;
+  }
+}
+
+/* === d-FCT ADMIN BENCHMARK OPERATIONS WORKSPACE === */
+
+.DfctAdminConsole .DfctAdminAI-benchmarkOps {
+  display: grid;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkOpsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkLiveStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0.38rem 0.68rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-surface-soft);
+  color: var(--theme-muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-liveDot {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: var(--theme-success, var(--bs-success));
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkConfigGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 1.35fr)
+    minmax(150px, 0.6fr)
+    minmax(210px, 1fr);
+  gap: 0.75rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkConfigGrid .form-label {
+  margin-bottom: 0.32rem;
+  color: var(--theme-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkConfigGrid .form-select {
+  min-height: 42px;
+  border-color: var(--theme-border);
+  background-color: var(--theme-surface-soft);
+  color: var(--theme-text);
+  font-weight: 700;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkConfigGrid .form-select:focus {
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 14%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelection {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(360px, 0.95fr);
+  gap: 0.85rem;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 14px;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionMain {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionTitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionTitle > strong {
+  color: var(--theme-text);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionMain p {
+  margin: 0.38rem 0 0;
+  color: var(--theme-text);
+  font-size: 0.88rem;
+  line-height: 1.48;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionMain > small {
+  display: block;
+  margin-top: 0.42rem;
+  color: var(--theme-muted);
+  line-height: 1.45;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionFacts,
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionFacts > span,
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts > span {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.58rem 0.65rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 10px;
+  background: var(--theme-surface);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionFacts small,
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts small {
+  color: var(--theme-muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkSelectionFacts strong,
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts strong {
+  overflow: hidden;
+  color: var(--theme-text);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .is-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightPanel {
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--theme-success, var(--bs-success)) 24%,
+      var(--theme-border)
+    );
+  border-radius: 14px;
+  background: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success)) 4%,
+    var(--theme-surface)
+  );
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightHeader strong {
+  display: block;
+  color: var(--theme-text);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightHeader p {
+  max-width: 660px;
+  margin: 0.2rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.84rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-safetyBadges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightPending {
+  padding: 0.68rem 0.75rem;
+  border: 1px dashed var(--theme-border);
+  border-radius: 10px;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightResult {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  border-radius: 10px;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightResult > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightResult span {
+  font-size: 0.8rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightRoles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightRoles > span {
+  display: grid;
+  gap: 0.12rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightRoles small {
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.DfctAdminConsole .DfctAdminAI-preflightRoles strong {
+  overflow: hidden;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkActions .btn {
+  min-width: 160px;
+  font-weight: 800;
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmark {
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  border: 1px solid
+    color-mix(in srgb, var(--theme-primary) 35%, var(--theme-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--theme-primary) 5%, var(--theme-surface));
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmark.is-terminal {
+  border-color: color-mix(
+    in srgb,
+    var(--theme-success, var(--bs-success)) 32%,
+    var(--theme-border)
+  );
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkHeader,
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFooter {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkHeader h3 {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkHeader p {
+  margin: 0.2rem 0 0;
+  color: var(--theme-muted);
+  font-size: 0.8rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.52rem 0.68rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress > div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.5rem 0.65rem;
+  border-top: 2px solid var(--theme-border);
+  color: var(--theme-muted);
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress > div.is-current {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress > div.is-complete {
+  border-color: var(--theme-success, var(--bs-success));
+  color: var(--theme-success, var(--bs-success));
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress span {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole .DfctAdminAI-runProgress strong {
+  overflow: hidden;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFooter {
+  align-items: center;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-activeBenchmarkFooter > span {
+  color: var(--theme-muted);
+  font-size: 0.78rem;
+}
+
+.DfctAdminAI-benchmarkConfirmModal .modal-content {
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-xl, 18px);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  box-shadow: var(--theme-shadow-large);
+}
+
+.DfctAdminAI-benchmarkConfirmModal .modal-header,
+.DfctAdminAI-benchmarkConfirmModal .modal-body,
+.DfctAdminAI-benchmarkConfirmModal .modal-footer {
+  border-color: var(--theme-border);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}
+
+.DfctAdminAI-benchmarkConfirmModal .modal-title {
+  color: var(--theme-text);
+  font-weight: 900;
+}
+
+.DfctAdminAI-benchmarkConfirmModal .modal-body > p {
+  color: var(--theme-muted);
+}
+
+.DfctAdminAI-modalClose {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 9px;
+  background: var(--theme-surface-soft);
+  color: var(--theme-text);
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.DfctAdminAI-modalClose:hover,
+.DfctAdminAI-modalClose:focus-visible {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+  outline: none;
+}
+
+.DfctAdminAI-paidRunWarnings {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.9rem 0;
+}
+
+.DfctAdminAI-paidRunWarnings > div {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.68rem 0.75rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 10px;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminAI-paidRunWarnings strong {
+  color: var(--theme-text);
+  font-size: 0.82rem;
+}
+
+.DfctAdminAI-paidRunWarnings span {
+  color: var(--theme-muted);
+  font-size: 0.77rem;
+  line-height: 1.42;
+}
+
+.DfctAdminAI-paidRunConfirm {
+  padding: 0.7rem 0.75rem 0.7rem 2.25rem;
+  border: 1px solid
+    color-mix(in srgb, var(--bs-danger) 28%, var(--theme-border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bs-danger) 5%, var(--theme-surface));
+  color: var(--theme-text);
+  font-weight: 800;
+}
+
+@media (max-width: 980px) {
+  .DfctAdminConsole .DfctAdminAI-benchmarkConfigGrid,
+  .DfctAdminConsole .DfctAdminAI-benchmarkSelection {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-benchmarkOpsHeader,
+  .DfctAdminConsole .DfctAdminAI-preflightHeader,
+  .DfctAdminConsole .DfctAdminAI-activeBenchmarkHeader,
+  .DfctAdminConsole .DfctAdminAI-activeBenchmarkFooter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkLiveStatus {
+    align-self: flex-start;
+    white-space: normal;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkSelectionFacts,
+  .DfctAdminConsole .DfctAdminAI-activeBenchmarkFacts {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-runProgress {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-runProgress > div {
+    border-top: 0;
+    border-left: 2px solid var(--theme-border);
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkActions {
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-benchmarkActions .btn {
+    width: 100%;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-safetyBadges {
+    justify-content: flex-start;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-preflightResult > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* d-FCT benchmark fixture-owned preview + select hardening */
+
+html[data-theme]
+  body
+  .DfctAdminConsole
+  .DfctAdminAI-benchmarkConfigGrid
+  .form-select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  color-scheme: dark;
+
+  background-color: var(--theme-surface-soft) !important;
+  color: var(--theme-text) !important;
+
+  /*
+   * Theme-native chevron. Using an inline SVG here keeps the affordance
+   * independent from the browser's native select arrow.
+   */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2398a6b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-position: right 0.8rem center !important;
+  background-repeat: no-repeat !important;
+  background-size: 0.72rem auto !important;
+
+  padding-right: 2.35rem;
+}
+
+html[data-theme="paper"]
+  body
+  .DfctAdminConsole
+  .DfctAdminAI-benchmarkConfigGrid
+  .form-select {
+  color-scheme: light;
+}
+
+html[data-theme]
+  body
+  .DfctAdminConsole
+  .DfctAdminAI-benchmarkConfigGrid
+  .form-select
+  option {
+  background-color: var(--theme-surface, #111827);
+  color: var(--theme-text, #f8fafc);
+}
+
+html[data-theme="paper"]
+  body
+  .DfctAdminConsole
+  .DfctAdminAI-benchmarkConfigGrid
+  .form-select
+  option {
+  background-color: var(--theme-surface, #ffffff);
+  color: var(--theme-text, #111827);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkIdentity {
+  align-items: flex-start;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 112px minmax(0, 1fr);
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkPreview {
+  aspect-ratio: 16 / 10;
+  background:
+    radial-gradient(
+      circle at 26% 24%,
+      color-mix(in srgb, var(--theme-primary) 14%, transparent),
+      transparent 52%
+    ),
+    var(--theme-surface);
+  border: 1px solid var(--theme-border);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--theme-text) 6%, transparent);
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkPreview img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkIdentityCopy {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .DfctAdminConsole .DfctAdminAI-benchmarkIdentity {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+}
+
+/* d-FCT benchmark profile hygiene + section rhythm */
+
+.DfctAdminConsole .DfctAdminAI-candidateProfileToggle {
+  margin-top: 0.5rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-candidateProfileToggle .form-check-label {
+  color: var(--theme-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+/*
+ * Benchmark views are separate Admin sections rather than children of the
+ * operations grid. Give every section after the launcher explicit breathing
+ * room without changing spacing in the other AI subtabs.
+ */
+.DfctAdminConsole .DfctAdminAI-benchmarkOps + .DfctAdmin-section,
+.DfctAdminConsole
+  .DfctAdminAI-benchmarkOps
+  ~ .DfctAdmin-section
+  + .DfctAdmin-section {
+  margin-top: 0.9rem;
+}
+
+/* d-FCT benchmark paid-run checkbox contrast */
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.12rem;
+  border: 2px solid
+    color-mix(in srgb, var(--theme-text) 72%, var(--theme-border));
+  border-radius: 0.22rem;
+  background-color: color-mix(
+    in srgb,
+    var(--theme-surface) 82%,
+    var(--theme-text) 18%
+  );
+  background-image: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.78rem 0.78rem;
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--theme-surface) 70%, transparent);
+  color-scheme: light dark;
+  accent-color: var(--theme-primary);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-input:hover {
+  border-color: var(--theme-primary);
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-input:checked {
+  border-color: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.6' d='m3.1 8.2 3 3.1 6.8-7.2'/%3E%3C/svg%3E") !important;
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--theme-primary) 55%, transparent);
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-input:focus-visible {
+  border-color: var(--theme-primary);
+  outline: 2px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in srgb, var(--theme-primary) 20%, transparent);
+}
+
+.DfctAdminAI-benchmarkConfirmModal
+  .DfctAdminAI-paidRunConfirm
+  .form-check-label {
+  color: var(--theme-text);
+  cursor: pointer;
+}
+
+/* The same lifecycle strip is used by launcher and dedicated detail views. */
+.DfctAdminAI-benchmarkDetail > .DfctAdminAI-runProgress {
+  margin: 0.15rem 0 0.15rem;
+}
+
+/* === d-FCT BENCHMARK DETAIL COMPACT VERTICAL DAG === */
+
+/*
+ * Benchmark detail is an execution report, not a second dashboard.
+ * Keep the high-signal outcome prominent and make supporting telemetry
+ * materially denser.
+ */
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-benchmarkHero {
+  align-items: center;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-benchmarkHero h2 {
+  font-size: clamp(1.22rem, 2vw, 1.55rem);
+  line-height: 1.12;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-hardGateBadge {
+  padding: 0.48rem 0.66rem;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.1rem 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid .DfctAdminAI-metric {
+  padding: 0.58rem 0.68rem;
+  border-radius: 0.68rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-benchmarkMetricGrid
+  .DfctAdminAI-metric
+  > strong {
+  font-size: 0.94rem;
+}
+
+/* Assertions remain individually inspectable, but no longer dominate. */
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertionStrip {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.32rem;
+  margin: 0.15rem 0 0.25rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.42rem 0.52rem;
+  border-radius: 0.55rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion strong {
+  flex: 0 0 auto;
+  font-size: 0.61rem;
+}
+
+/* Execution overview: compact telemetry rather than five large cards. */
+.DfctAdminConsole .DfctAdminAI-executionSummary {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-executionSummary .DfctAdminAI-metric {
+  padding: 0.55rem 0.62rem;
+  border-radius: 0.65rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-executionSummary .DfctAdminAI-metric > strong {
+  font-size: 0.9rem;
+}
+
+/* Provider/service strip becomes a lightweight telemetry index. */
+.DfctAdminConsole .DfctAdminAI-serviceStrip {
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 0.38rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard {
+  padding: 0.46rem 0.54rem;
+  border-radius: 0.6rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard strong {
+  font-size: 0.72rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-serviceCard span {
+  font-size: 0.62rem;
+}
+
+/*
+ * Vertical DAG owns the whole card width.
+ * Horizontal overflow remains as a safety valve only for unusually wide
+ * sibling fan-outs; normal execution should fit the report naturally.
+ */
+.DfctAdminConsole .DfctAdminAI-dagCard {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagScroll {
+  overflow: auto;
+  max-height: 980px;
+  margin: 0.35rem 0.65rem 0.65rem;
+  padding: 0.85rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dag {
+  display: block;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  margin: 0 auto;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagHint {
+  align-self: center;
+  color: var(--theme-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Compact node details appear only after explicit selection. */
+.DfctAdminConsole .DfctAdminAI-nodeInspector--compact {
+  margin: 0 0.65rem 0.7rem;
+  padding: 0.68rem 0.75rem;
+  border-radius: 0.72rem;
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 3%,
+    var(--theme-surface-soft)
+  );
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeInspectorHeader {
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeInspectorHeader
+  h4 {
+  font-size: 0.86rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeInspectorHeader
+  p {
+  max-width: 720px;
+  font-size: 0.58rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorActions {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  flex: 0 0 auto;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorClose {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 7px;
+  background: var(--theme-card-bg);
+  color: var(--theme-muted);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeInspectorClose:hover,
+.DfctAdminConsole .DfctAdminAI-nodeInspectorClose:focus-visible {
+  border-color: var(--theme-primary);
+  color: var(--theme-primary);
+  outline: none;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.32rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  > div {
+  padding: 0.38rem 0.44rem;
+  border-radius: 0.46rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  span {
+  font-size: 0.57rem;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-inspectorGrid
+  strong {
+  font-size: 0.66rem;
+}
+
+/* Long execution identifiers are available, but deliberately subordinate. */
+.DfctAdminConsole .DfctAdminAI-nodeInspector--compact .DfctAdminAI-nodeRefs {
+  margin-top: 0.52rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.DfctAdminConsole
+  .DfctAdminAI-nodeInspector--compact
+  .DfctAdminAI-nodeRefs
+  > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--theme-primary);
+  font-size: 0.64rem;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefsBody {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.36rem;
+  margin-top: 0.45rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefsBody > div {
+  min-width: 0;
+  padding: 0.4rem 0.45rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.46rem;
+  background: var(--theme-card-bg);
+}
+
+.DfctAdminConsole .DfctAdminAI-nodeRefsBody span,
+.DfctAdminConsole .DfctAdminAI-nodeRefsBody code {
+  display: block;
+}
+
+@media (max-width: 980px) {
+  .DfctAdminConsole .DfctAdminAI-executionSummary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
+    .DfctAdminAI-inspectorGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-benchmarkMetricGrid,
+  .DfctAdminConsole .DfctAdminAI-executionSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .DfctAdminConsole .DfctAdminAI-dagHint {
+    white-space: normal;
+  }
+
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
+    .DfctAdminAI-nodeInspectorHeader {
+    align-items: flex-start;
+  }
+
+  .DfctAdminConsole
+    .DfctAdminAI-nodeInspector--compact
+    .DfctAdminAI-inspectorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-nodeRefsBody {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* d-FCT benchmark DAG fit / zoom / responsive inspector */
+
+.DfctAdminConsole .DfctAdminAI-dagWorkspace {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin: 0.35rem 0.65rem 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  padding: 0.22rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.62rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 28px;
+  padding: 0 0.48rem;
+  border: 1px solid transparent;
+  border-radius: 0.44rem;
+  background: transparent;
+  color: var(--theme-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom button:hover,
+.DfctAdminConsole .DfctAdminAI-dagZoom button:focus-visible,
+.DfctAdminConsole .DfctAdminAI-dagZoom button.is-active {
+  border-color: var(--theme-border-strong);
+  background: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-card-bg));
+  color: var(--theme-primary);
+  outline: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoomValue {
+  min-width: 48px;
+  color: var(--theme-text);
+  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  text-align: center;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagViewportMeta {
+  color: var(--theme-muted);
+  font-size: 0.64rem;
+  line-height: 1.35;
+  text-align: right;
+}
+
+/*
+ * A stable viewport lets the first "fit" render communicate the complete
+ * graph at a glance. Zooming above fit turns the same surface into the
+ * forensic inspection canvas.
+ */
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+  position: relative;
+  display: block;
+  height: clamp(460px, 68vh, 760px);
+  max-height: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 0.35rem 0.65rem 0.65rem;
+  padding: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: max-content;
+  height: max-content;
+  padding: 0.8rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagStage .DfctAdminAI-dag {
+  display: block;
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  margin: auto;
+}
+
+/*
+ * Desktop details are transient: they preserve the graph as the primary
+ * surface rather than turning inspection into another permanent column.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip {
+  position: absolute;
+  z-index: 8;
+  width: min(300px, calc(100% - 20px));
+  padding: 0.65rem;
+  border: 1px solid var(--theme-border-strong);
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--theme-surface) 97%, transparent);
+  color: var(--theme-text);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--theme-bg) 48%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-above {
+  transform: translate(-50%, -100%);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader > div {
+  min-width: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader span,
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid span {
+  display: block;
+  color: var(--theme-muted);
+  font-size: 0.58rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipHeader strong {
+  display: block;
+  margin-top: 0.08rem;
+  color: var(--theme-text);
+  font-size: 0.76rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.32rem;
+  margin-top: 0.55rem;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid > div {
+  min-width: 0;
+  padding: 0.34rem 0.4rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.45rem;
+  background: var(--theme-surface-soft);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipGrid strong {
+  display: block;
+  margin-top: 0.08rem;
+  color: var(--theme-text);
+  font-size: 0.64rem;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * The detailed inspector exists for touch-sized interaction only.
+ * Desktop gets the lightweight telemetry tooltip above.
+ */
+.DfctAdminConsole .DfctAdminAI-mobileNodeInspector {
+  display: none;
+}
+
+/*
+ * Assertion labels are now human-facing translations, so allow slightly
+ * longer copy without losing the underlying assertion key in the title.
+ */
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
+  line-height: 1.25;
+}
+
+@media (max-width: 720px) {
+  .DfctAdminConsole .DfctAdminAI-dagToolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-dagViewportMeta {
+    text-align: left;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+    height: clamp(400px, 62vh, 620px);
+  }
+
+  .DfctAdminConsole .DfctAdminAI-dagNodeTooltip {
+    display: none;
+  }
+
+  .DfctAdminConsole .DfctAdminAI-mobileNodeInspector {
+    display: block;
+  }
+
+  .DfctAdminConsole
+    .DfctAdminAI-mobileNodeInspector
+    .DfctAdminAI-nodeInspector--compact {
+    margin-top: 0;
+  }
+}
+
+/* === d-FCT benchmark DAG interaction refinement === */
+
+/*
+ * Assertion labels are human-readable i18n labels now. Preserve the entire
+ * title instead of treating the card as a machine-key chip.
+ */
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion {
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion span {
+  flex: 1 1 auto;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.28;
+}
+
+.DfctAdminConsole .DfctAdminAI-benchmarkDetail .DfctAdminAI-assertion strong {
+  margin-top: 0.04rem;
+  white-space: nowrap;
+}
+
+/*
+ * The DAG behaves as a lightweight canvas:
+ * - wheel/trackpad zoom remains inside this surface;
+ * - touch permits native two-finger pinch handling;
+ * - zoom transitions are intentionally short enough to feel direct.
+ */
+.DfctAdminConsole .DfctAdminAI-dagViewport {
+  overscroll-behavior: contain;
+  touch-action: none;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagStage {
+  transform-origin: 0 0;
+  will-change: transform;
+  transition:
+    width 90ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 90ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+ * SVG contents get a tiny compositing hint so repeated wheel frames remain
+ * crisp without adding heavyweight animation machinery.
+ */
+.DfctAdminConsole .DfctAdminAI-dag {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Make zoom affordances feel like canvas controls rather than form buttons. */
+.DfctAdminConsole .DfctAdminAI-dagZoom {
+  user-select: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom button {
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom button:hover {
+  transform: translateY(-1px);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagZoom button:active {
+  transform: scale(0.94);
+}
+
+/* === d-FCT DAG hardened canvas interaction === */
+
+/*
+ * Wheel and pinch are owned by the DAG while the pointer is inside the
+ * canvas. The native non-passive JS listener performs the actual zoom.
+ */
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+  overscroll-behavior: contain;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: contain;
+  touch-action: none;
+  scrollbar-gutter: stable;
+}
+
+/*
+ * Size changes from high-resolution wheels and trackpads get a very short
+ * easing window. This removes visual stepping without making the canvas lag
+ * behind the gesture.
+ */
+.DfctAdminConsole .DfctAdminAI-dagStage .DfctAdminAI-dag {
+  transition:
+    width 70ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 70ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateZ(0);
+  transform-origin: center top;
+  will-change: width, height;
+}
+
+/*
+ * Desktop telemetry is positioned in browser coordinates and explicitly
+ * clamped by JS to the currently visible portion of the DAG.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip {
+  position: fixed;
+  z-index: 1080;
+  max-width: calc(100vw - 16px);
+  margin: 0;
+  transform: none;
+  pointer-events: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-above {
+  transform: none;
+}
+
+/*
+ * Keep the canvas from visually selecting text during wheel/pinch gestures.
+ */
+.DfctAdminConsole .DfctAdminAI-dagViewport,
+.DfctAdminConsole .DfctAdminAI-dagViewport svg {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* === d-FCT DAG persistent focal inspection === */
+
+/*
+ * JS owns camera interpolation so native smooth scrolling cannot fight
+ * wheel/trackpad input.
+ */
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+  scroll-behavior: auto;
+}
+
+/*
+ * Hover telemetry remains non-interactive. A clicked/pinned tooltip becomes
+ * an interactive floating inspector so its subtle close control can be used.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip {
+  pointer-events: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-pinned {
+  pointer-events: auto;
+  border-color: color-mix(
+    in srgb,
+    var(--theme-primary) 36%,
+    var(--theme-border-strong)
+  );
+  box-shadow:
+    0 16px 38px color-mix(in srgb, var(--theme-bg) 52%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-primary) 8%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--theme-border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--theme-surface-soft) 96%, transparent);
+  color: var(--theme-muted);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.8;
+  transition:
+    opacity 110ms ease,
+    color 110ms ease,
+    border-color 110ms ease,
+    background-color 110ms ease,
+    transform 110ms ease;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:hover,
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:focus-visible {
+  border-color: var(--theme-primary);
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 8%,
+    var(--theme-surface-soft)
+  );
+  color: var(--theme-primary);
+  opacity: 1;
+  outline: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:active {
+  transform: scale(0.92);
+}
+
+/*
+ * Clicked DAG nodes remain visibly selected while their telemetry is pinned.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
+  filter: drop-shadow(
+    0 3px 8px color-mix(in srgb, var(--theme-primary) 22%, transparent)
+  );
+}
+
+/*
+ * Hints were removed from the UI. These rules prevent stale markup from
+ * resurfacing during hot reload while old DOM nodes are being replaced.
+ */
+.DfctAdminConsole .DfctAdminAI-dagViewportMeta,
+.DfctAdminConsole .DfctAdminAI-dagHint {
+  display: none !important;
+}
+
+/* === d-FCT DAG canvas v2 === */
+
+/*
+ * The viewport itself is the hard clipping boundary for floating telemetry.
+ * No DAG tooltip should ever survive visually outside this rectangle.
+ */
+.DfctAdminConsole .DfctAdminAI-dagScroll.DfctAdminAI-dagViewport {
+  position: relative;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: auto;
+
+  /*
+   * Pointer Events own touch pan/pinch inside this inspection canvas.
+   */
+  touch-action: none;
+}
+
+/*
+ * Do not animate stage dimensions independently from JS camera movement.
+ * Competing CSS width/height animations are a common source of "rubbery"
+ * wheel and pinch behaviour.
+ */
+.DfctAdminConsole .DfctAdminAI-dagStage {
+  transition: none;
+}
+
+/*
+ * Tooltip position is expressed in DAG scroll-content coordinates.
+ * Its containing overflow viewport therefore clips it naturally.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip {
+  position: absolute;
+  z-index: 12;
+
+  box-sizing: border-box;
+  margin: 0;
+  transform: none;
+
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+
+  pointer-events: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-pinned {
+  pointer-events: auto;
+
+  border-color: color-mix(
+    in srgb,
+    var(--theme-primary) 34%,
+    var(--theme-border-strong)
+  );
+
+  box-shadow:
+    0 14px 34px color-mix(in srgb, var(--theme-bg) 48%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--theme-primary) 7%, transparent);
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltip.is-fading {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose {
+  display: inline-grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+  padding: 0;
+
+  border: 1px solid var(--theme-border);
+  border-radius: 6px;
+
+  background: color-mix(in srgb, var(--theme-surface-soft) 96%, transparent);
+
+  color: var(--theme-muted);
+
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1;
+
+  opacity: 0.78;
+
+  transition:
+    opacity 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease,
+    transform 120ms ease;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:hover,
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:focus-visible {
+  border-color: var(--theme-primary);
+
+  background: color-mix(
+    in srgb,
+    var(--theme-primary) 8%,
+    var(--theme-surface-soft)
+  );
+
+  color: var(--theme-primary);
+  opacity: 1;
+  outline: none;
+}
+
+.DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose:active {
+  transform: scale(0.9);
+}
+
+/*
+ * Pinned selection remains visually clear while the floating inspector is
+ * alive. Zoom dismisses both the inspector and this selected state.
+ */
+.DfctAdminConsole .DfctAdminAI-dagNode.is-selected rect {
+  filter: drop-shadow(
+    0 3px 8px color-mix(in srgb, var(--theme-primary) 22%, transparent)
+  );
+}
+
+/*
+ * These hints were deliberately removed from the current DAG UX.
+ */
+.DfctAdminConsole .DfctAdminAI-dagViewportMeta,
+.DfctAdminConsole .DfctAdminAI-dagHint {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .DfctAdminConsole .DfctAdminAI-dagNodeTooltip,
+  .DfctAdminConsole .DfctAdminAI-dagNodeTooltipClose {
+    transition-duration: 1ms;
+  }
+}

@@ -1,3 +1,53 @@
+.ShareModal-content {
+  background: var(--theme-surface, var(--theme-surface-1, #ffffff));
+  color: var(--theme-text, #111827);
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
+  box-shadow: var(--theme-shadow-large, 0 24px 80px rgba(15, 23, 42, 0.24));
+}
+
+.ShareModal-header {
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
+}
+
+.ShareModal-close {
+  appearance: none;
+  border: 1px solid var(--theme-border, rgba(15, 23, 42, 0.16));
+  background: var(--theme-surface-2, rgba(15, 23, 42, 0.04));
+  color: var(--theme-text, #111827);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  padding: 0;
+  margin-left: auto;
+  opacity: 0.82;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.ShareModal-close:hover,
+.ShareModal-close:focus-visible {
+  background: var(--theme-surface-3, rgba(15, 23, 42, 0.08));
+  border-color: var(--theme-border-strong, var(--theme-border, rgba(15, 23, 42, 0.24)));
+  color: var(--theme-text, #111827);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.ShareModal-close:focus-visible {
+  outline: 2px solid var(--theme-accent, #0ea5e9);
+  outline-offset: 2px;
+}
+
 .ShareModal-grid-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -17,7 +67,7 @@
 }
 
 .ShareModal-share-icon:hover {
-  background-color: lightgray;
+  background-color: var(--theme-surface-2, rgba(15, 23, 42, 0.06));
 }
 
 .ShareModal-share-icon p {
@@ -25,8 +75,9 @@
   font-size: 0.8rem;
 }
 
-.modal-footer {
+.ShareModal-footer {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  border-top: 1px solid var(--theme-border, rgba(15, 23, 42, 0.12));
 }

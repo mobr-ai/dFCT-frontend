@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import "../../styles/topic/PublishTopicModal.css";
 
 function numberFrom(...values) {
   for (const value of values) {
@@ -23,6 +25,7 @@ function PublishTopicModal({
   isPublishing = false,
 }) {
   const { t } = useTranslation();
+  const [anchoringEnabled, setAnchoringEnabled] = useState(false);
 
   const access = billingStatus?.access || {};
   const balance = billingStatus?.balance || {};
@@ -73,6 +76,12 @@ function PublishTopicModal({
   const handleSubmit = () => {
     onConfirm?.({
       rewardPoolEnabled: false,
+      anchoringEnabled,
+      anchorPolicy: anchoringEnabled ? "recommended" : "none",
+      anchorScope: "topic_publication",
+      anchorFundingSource: "topic_owner_credits",
+      anchorProvider: "cardano",
+      anchorNetwork: "preview",
     });
   };
 
@@ -117,6 +126,39 @@ function PublishTopicModal({
             <strong>{formatCredits(publishCost)} DFCT</strong>
           </div>
         </div>
+
+        <button
+          type="button"
+          className={`PublishTopicModal-powerUp ${
+            anchoringEnabled ? "is-selected" : ""
+          }`}
+          aria-pressed={anchoringEnabled}
+          onClick={() => setAnchoringEnabled((enabled) => !enabled)}
+          disabled={isPublishing}
+        >
+          <span className="PublishTopicModal-powerUpTopline">
+            <span className="PublishTopicModal-powerUpEyebrow">
+              {t("publicationProvenanceEyebrow")}
+            </span>
+            <span className="PublishTopicModal-powerUpStatus">
+              {anchoringEnabled
+                ? t("publicationPowerUpStatusOn")
+                : t("publicationPowerUpStatusOff")}
+            </span>
+          </span>
+
+          <strong>{t("publicationProvenanceTitle")}</strong>
+          <span className="PublishTopicModal-powerUpText">
+            {t("publicationProvenanceText")}
+          </span>
+
+          <span className="PublishTopicModal-powerUpFooter">
+            <span>{t("publicationProvenanceCredits")}</span>
+            <span className="PublishTopicModal-powerUpSwitch" aria-hidden="true">
+              <span />
+            </span>
+          </span>
+        </button>
 
         <div className="PublishTopicModal-note">
           <strong>{t("publicationNoWalletRequired")}</strong>

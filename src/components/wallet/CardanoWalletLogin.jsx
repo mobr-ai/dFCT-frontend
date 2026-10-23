@@ -8,7 +8,11 @@ import {
   WALLET_ICONS,
 } from "../../chains/cardano/constants";
 
-function CardanoWalletLogin({ onLogin, showToast }) {
+function CardanoWalletLogin({
+  onLogin,
+  showToast,
+  rememberMe = false,
+}) {
   const { t } = useTranslation();
   const [availableWallets, setAvailableWallets] = useState([]);
 
@@ -71,6 +75,7 @@ function CardanoWalletLogin({ onLogin, showToast }) {
             challenge_token: challenge.challenge_token,
             signature: signed.signature,
             key: signed.key,
+            remember_me: rememberMe,
           }),
         })
       );
@@ -131,14 +136,6 @@ function CardanoWalletLogin({ onLogin, showToast }) {
                 <a
                   className="Auth-wallet-link"
                   href="https://lace.io/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              ),
-              flint: (
-                <a
-                  className="Auth-wallet-link"
-                  href="https://flint-wallet.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                 />
